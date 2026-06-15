@@ -1,0 +1,53 @@
+---
+import { Image } from "astro:assets";
+
+export interface ImgProps {
+  src: ImageMetadata | string;
+  alt?: string;
+
+  kind?: "content" | "decorative";
+
+  priority?: "auto" | "high";
+
+  sizes?: string;
+  widths?: number[];
+  formats?: ("avif" | "webp" | "jpeg" | "png")[];
+
+  class?: string;
+  style?: string;
+}
+
+const {
+  src,
+  alt,
+  kind = "content",
+  priority = "auto",
+  sizes = "(min-width: 1024px) 960px, 100vw",
+  widths = [320, 640, 960, 1280],
+  formats = ["avif", "webp"],
+  class: className,
+  style,
+} = Astro.props;
+
+// === Guardrails ===
+if (import.meta.env.DEV && kind === "content" && !alt) {
+  throw new Error("[Img] Missing alt text for content image");
+}
+
+const loading = priority === "high" ? "eager" : "lazy";
+const fetchpriority = priority === "high" ? "high" : "auto";
+---
+
+<Image
+  src={src}
+  alt={kind === "decorative" ? "" : alt}
+  aria-hidden={kind === "decorative" ? "true" : undefined}
+  loading={loading}
+  fetchpriority={fetchpriority}
+  decoding="async"
+  widths={widths}
+  sizes={sizes}
+  formats={formats}
+  class={className}
+  style={style}
+/>

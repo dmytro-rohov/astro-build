@@ -1,0 +1,18 @@
+---
+export interface Props {
+  name: string;
+  size?: string;
+  class?: string;
+}
+
+const { name, size = "1em", class: className } = Astro.props;
+---
+
+<svg
+  class={className}
+  width={size}
+  height={size}
+  aria-hidden="true"
+>
+  <use href={`/icons/sprite.svg#${name}`} />
+</svg>

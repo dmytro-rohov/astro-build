@@ -1,0 +1,28 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro"
+
+import Container from "@/components/layouts/Container.astro"
+import Section from "@/components/layouts/Section.astro"
+
+import ContactForm from "@/components/widgets/form/Form.astro"
+---
+
+<BaseLayout title="Contact">
+
+<Section>
+  <Container>
+
+    <header class="contact-header">
+      <h1>Contact us</h1>
+      <p>
+        Have a question or want to work together?  
+        Fill out the form below and we’ll get back to you.
+      </p>
+    </header>
+
+    <ContactForm />
+
+  </Container>
+</Section>
+
+</BaseLayout>

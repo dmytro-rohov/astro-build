@@ -1,0 +1,46 @@
+@layer components {
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.switch__input {
+  position: absolute;
+  opacity: 0;
+}
+
+.switch__track {
+  width: 40px;
+  height: 22px;
+  background: var(--color-border);
+  border-radius: 999px;
+  position: relative;
+  transition: background var(--motion-fast);
+}
+
+.switch__thumb {
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform var(--motion-fast);
+}
+
+.switch__input:checked + .switch__track {
+  background: var(--color-action-primary);
+}
+
+.switch__input:checked + .switch__track .switch__thumb {
+  transform: translateX(18px);
+}
+
+.switch__input:focus-visible + .switch__track {
+  outline: 2px solid var(--color-focus-ring);
+}
+
+}

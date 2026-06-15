@@ -1,0 +1,5 @@
+@layer layout {
+  .stack > * + * {
+  margin-top: var(--stack-space, 1rem);
+  }
+}

@@ -1,0 +1,20 @@
+@use "../abstracts/mixins" as *;
+
+@layer layout {
+  .sidebar-layout {
+    display: grid;
+    gap: var(--sidebar-gap, 2rem);
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@include mq(lg) {
+  .sidebar-layout.sidebar-right {
+    grid-template-columns: 1fr var(--sidebar-width, 300px);
+  }
+
+  .sidebar-layout.sidebar-left {
+    grid-template-columns: var(--sidebar-width, 300px) 1fr;
+  }
+}

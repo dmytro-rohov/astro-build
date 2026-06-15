@@ -1,0 +1,31 @@
+@layer components {
+
+.form-group {
+  display: grid;
+  gap: var(--spacing-lg);
+}
+
+.form-field {
+  display: grid;
+  gap: var(--spacing-xs);
+}
+
+.form-label {
+  font-weight: 500;
+}
+
+.form-hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.form-error {
+  font-size: var(--font-size-sm);
+  color: var(--color-danger);
+}
+
+.form-field[data-invalid="true"] .input {
+  border-color: var(--color-danger);
+}
+
+}

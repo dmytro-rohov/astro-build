@@ -1,0 +1,27 @@
+---
+import "../button/_button.scss";
+
+interface Props {
+  variant?: "primary" | "secondary" | "ghost" | "danger";
+  size?: "sm" | "md" | "lg";
+  disabled?: boolean;
+  type?: "button" | "submit" | "reset";
+}
+
+const {
+  variant = "primary",
+  size = "md",
+  disabled = false,
+  type = "button"
+} = Astro.props;
+---
+
+<button
+  class="button"
+  data-variant={variant}
+  data-size={size}
+  disabled={disabled}
+  type={type}
+>
+  <slot />
+</button>

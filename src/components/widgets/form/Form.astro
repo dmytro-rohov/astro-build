@@ -1,0 +1,145 @@
+---
+import FormField from "@/components/patterns/form/FormField.astro"
+import FormGroup from "@/components/patterns/form/FormGroup.astro"
+import Label from "@/components/patterns/form/Label.astro"
+import FieldHint from "@/components/patterns/form/FieldHint.astro"
+import FieldError from "@/components/patterns/form/FieldError.astro"
+
+import Input from "@/components/ui-primitives/form/input/Input.astro"
+import Textarea from "@/components/ui-primitives/form/textarea/Textarea.astro"
+import Button from "@/components/ui-primitives/interactive/button/Button.astro"
+
+interface Props {
+    action?: string
+    method?: "POST" | "GET"
+    nameLabel?: string
+    emailLabel?: string
+    messageLabel?: string
+    emailHint?: string
+    submitLabel?: string
+    submittingLabel?: string
+    successMessage?: string
+}
+
+const {
+    action = "/api/contact",
+    method = "POST",
+    nameLabel = "Name",
+    emailLabel = "Email",
+    messageLabel = "Message",
+    emailHint = "We'll never share your email",
+    submitLabel = "Send message",
+    submittingLabel = "Sending...",
+    successMessage = "Message sent successfully!"
+} = Astro.props
+---
+
+<form class="contact-form" data-contact-form action={action} method={method}>
+
+    <!-- honeypot -->
+    <input type="text" name="company" class="hidden" tabindex="-1" autocomplete="off" />
+
+    <FormGroup>
+        <FormField id="name">
+            <Label for="name">{nameLabel}</Label>
+            <Input id="name" name="name" required />
+            <FieldError id="error-name"></FieldError>
+        </FormField>
+
+        <FormField id="email">
+            <Label for="email">{emailLabel}</Label>
+            <Input id="email" name="email" type="email" required />
+            <FieldHint id="email-hint">{emailHint}</FieldHint>
+            <FieldError id="error-email"></FieldError>
+        </FormField>
+
+        <FormField id="message">
+            <Label for="message">{messageLabel}</Label>
+            <Textarea id="message" name="message" required />
+            <FieldError id="error-message"></FieldError>
+        </FormField>
+
+        <Button type="submit" class="submit-btn" data-default-label={submitLabel} data-submitting-label={submittingLabel}>
+            {submitLabel}
+        </Button>
+
+        <p class="form-success" hidden>{successMessage}</p>
+    </FormGroup>
+
+</form>
+
+<script>
+    const forms = document.querySelectorAll("[data-contact-form]");
+
+    forms.forEach((formEl) => {
+        const form = formEl;
+        const button = form.querySelector(".submit-btn");
+        const success = form.querySelector(".form-success");
+
+        if (!button || !success) {
+            return;
+        }
+
+        const defaultLabel = button.dataset.defaultLabel || "Send message";
+        const submittingLabel = button.dataset.submittingLabel || "Sending...";
+        const errorEls = {
+            name: form.querySelector("#error-name"),
+            email: form.querySelector("#error-email"),
+            message: form.querySelector("#error-message")
+        };
+
+        function clearErrors() {
+            Object.values(errorEls).forEach((el) => {
+                if (el) el.textContent = "";
+            });
+        }
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            clearErrors();
+            success.hidden = true;
+
+            button.disabled = true;
+            button.textContent = submittingLabel;
+
+            const formData = new FormData(form);
+            const data = {
+                name: formData.get("name"),
+                email: formData.get("email"),
+                message: formData.get("message"),
+                company: formData.get("company")
+            };
+
+            try {
+                const res = await fetch(form.action || "/api/contact", {
+                    method: form.method || "POST",
+                    body: JSON.stringify(data),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                const result = await res.json();
+
+                if (res.status === 400 && result.errors) {
+                    Object.entries(result.errors).forEach(([key, value]) => {
+                        if (errorEls[key]) {
+                            errorEls[key].textContent = String(value);
+                        }
+                    });
+                }
+
+                if (res.ok && result.success) {
+                    success.hidden = false;
+                    form.reset();
+                }
+            } catch (_err) {
+                alert("Network error");
+            } finally {
+                button.disabled = false;
+                button.textContent = defaultLabel;
+            }
+        });
+    });
+</script>

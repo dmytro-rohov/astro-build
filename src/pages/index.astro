@@ -1,0 +1,231 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// media components
+import Img from "@components/media/Img.astro";
+import Icon from "@/components/media/Icon.astro";
+import { images } from "@assets/img";
+
+// layouts
+import Grid from "@/components/layouts/Grid.astro";
+import Section from "@/components/layouts/Section.astro";
+import Container from "@/components/layouts/Container.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Cluster from "@/components/layouts/Cluster.astro";
+import Split from "@/components/layouts/Split.astro";
+import Sidebar from "@/components/layouts/Sidebar.astro";
+
+// primitive components
+import Button from "@/components/ui-primitives/interactive/button/Button.astro";
+
+---
+
+<BaseLayout>
+
+  <form action="https://formspree.io/f/xbdpkdbq" method="POST">
+  <label>
+    Your email:
+    <input type="email" name="email">
+  </label>
+  <label>
+    Your message:
+    <textarea name="message"></textarea>
+  </label>
+  <!-- your other form fields go here -->
+  <button type="submit">Send</button>
+</form>
+
+
+  <Fragment slot="title">Home</Fragment>
+  <Grid>
+    <Section>
+      <Stack space="2rem">
+      <h1>Zażółć gęślą jaźń 123</h1>
+        <p>Opis sekcji hero.</p>
+
+        <Cluster gap="1rem">
+          <button>Primary</button>
+          <button>Secondary</button>
+        </Cluster>
+      </Stack>
+    </Section>
+
+    <Section full class="user-color">
+      <div>
+        Full width banner
+      </div>
+
+    <Button>
+      Click me
+    </Button>
+
+    <Button variant="secondary">
+      Cancel
+    </Button>
+
+    <Button variant="danger" size="lg">
+      Delete
+    </Button>
+    </Section>
+
+    <Section>
+      <Split ratio="2fr 1fr">
+        <div>Main article</div>
+        <aside>Sidebar</aside>
+      </Split>
+    </Section>
+
+    <Section>
+      <Sidebar side="right" width="280px">
+       <article>Blog content</article>
+       <aside>Categories</aside>
+      </Sidebar>
+    </Section>
+
+    <Section>
+      <Container size="sm">
+        <Stack space="20rem">
+          <h2>Węższa treść</h2>
+          <p>Ta treść ma ograniczoną szerokość.</p>
+        </Stack>
+      </Container>
+    </Section>
+  </Grid>
+
+
+  <!-- <Img
+    {...images["linux-meme-10"]}
+    alt="super alt"
+     priority = "high"
+    class="test-class"
+  /> -->
+  <Img
+    {...images["met-1"]}
+  />
+  <Img
+    {...images["met-2"]}
+  />
+  <Img
+    {...images["met-3"]}
+  />
+  <Img
+    {...images["met-4"]}
+  />
+  <Img
+    {...images["met-5"]}
+  />
+  <Img
+    {...images["met-6"]}
+  />
+  <Img
+    {...images["met-7"]}
+  />
+  <Img
+    {...images["met-8"]}
+  />
+  <Img
+    {...images["met-9"]}
+  />
+  <Img
+    {...images["met-10"]}
+  />
+  <Img
+    {...images["met-11"]}
+  />
+  <Img
+    {...images["met-12"]}
+  />
+  <Img
+    {...images["met-13"]}
+  />
+  <Img
+    {...images["met-14"]}
+  />
+  <Img
+    {...images["met-15"]}
+  />
+  <Img
+    {...images["met-16"]}
+  />
+  <Img
+    {...images["met-17"]}
+  />
+  <Img
+    {...images["met-18"]}
+  />
+  <Img
+    {...images["met-19"]}
+  />
+  <Img
+    {...images["met-20"]}
+  />
+  <Img
+    {...images["met-21"]}
+  />
+  <Img
+    {...images["met-22"]}
+  />
+  <Img
+    {...images["met-23"]}
+  />
+  <Img
+    {...images["met-24"]}
+  />
+  <Img
+    {...images["met-25"]}
+  />
+  <Img
+    {...images["met-26"]}
+  />
+  <Img
+    {...images["met-27"]}
+  />
+  <Img
+    {...images["met-28"]}
+  />
+  <Img
+    {...images["met-29"]}
+  />
+  <Img
+    {...images["met-30"]}
+  />
+  <Img
+    {...images["met-31"]}
+  />
+  <Img
+    {...images["met-32"]}
+  />
+  <Img
+    {...images["met-33"]}
+  />
+  <Img
+    {...images["met-34"]}
+  />
+  <Img
+    {...images["met-35"]}
+  />
+  <Img
+    {...images["met-36"]}
+  />
+  <Img
+    {...images["met-37"]}
+  />
+  <Img
+    {...images["met-38"]}
+  />
+  <Img
+    {...images["met-39"]}
+  />
+  <Img
+    {...images["met-40"]}
+  />
+
+  <Icon name="ic-test" class="icon" />
+
+
+<button>
+  <Icon name="ic-test" class="icon" />
+  Submit
+</button>
+
+</BaseLayout>

@@ -1,0 +1,37 @@
+---
+import "./checkbox.scss";
+
+interface Props {
+  name?: string
+  value?: string
+  checked?: boolean
+  disabled?: boolean
+  invalid?: boolean
+}
+
+const {
+  name,
+  value,
+  checked = false,
+  disabled = false,
+  invalid = false
+} = Astro.props;
+---
+
+<label class="checkbox">
+  <input
+    class="checkbox__input"
+    type="checkbox"
+    name={name}
+    value={value}
+    checked={checked}
+    disabled={disabled}
+    aria-invalid={invalid}
+  />
+
+  <span class="checkbox__control"></span>
+
+  <span class="checkbox__label">
+    <slot />
+  </span>
+</label>

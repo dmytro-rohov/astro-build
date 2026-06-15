@@ -1,0 +1,20 @@
+---
+export interface Props {
+  gap?: string;
+  ratio?: string; // np. "1fr 300px"
+  class?: string;
+}
+
+const {
+  gap = "2rem",
+  ratio = "1fr 1fr",
+  class: className
+} = Astro.props;
+---
+
+<div
+  class:list={["split", className]}
+  style={`--split-gap:${gap}; --split-ratio:${ratio}`}
+>
+  <slot />
+</div>

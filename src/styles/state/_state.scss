@@ -1,0 +1,203 @@
+@layer state {
+
+/* =================================================
+GLOBAL INTERACTION STATES
+================================================= */
+
+/*
+Focus styles for keyboard users.
+:focus-visible ensures focus ring only appears
+for keyboard navigation, not mouse clicks.
+*/
+:focus-visible {
+  outline: 2px solid var(--color-focus, #2563eb);
+  outline-offset: 2px;
+}
+
+
+/*
+Ensure hover and focus states behave consistently
+for interactive elements.
+*/
+a:hover,
+button:hover {
+  text-decoration: underline;
+}
+
+a:focus-visible,
+button:focus-visible {
+  text-decoration: underline;
+}
+
+
+/*
+Active state for clickable elements.
+Provides tactile feedback when pressing buttons.
+*/
+button:active,
+a:active {
+  transform: translateY(1px);
+}
+
+
+
+/* =================================================
+DISABLED STATE
+================================================= */
+
+/*
+Disabled UI elements should appear visually inactive
+and should not allow pointer interactions.
+*/
+:disabled,
+[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: 1rem;
+    background: black;
+    color: white;
+    padding: 0.5rem 1rem;
+}
+
+.skip-link:focus {
+    top: 1rem;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+
+/* =================================================
+ARIA INTERACTION STATES
+================================================= */
+
+/*
+aria-expanded is used for elements that toggle content,
+like accordions, dropdowns, and menus.
+*/
+[aria-expanded="true"] {
+  /* Example style for expanded state */
+}
+
+
+/*
+aria-pressed is used for toggle buttons.
+*/
+[aria-pressed="true"] {
+  /* Example active style */
+}
+
+
+/*
+aria-current is typically used in navigation
+to indicate the current page or active item.
+*/
+[aria-current="page"] {
+  font-weight: 600;
+}
+
+
+
+/* =================================================
+FORM ACCESSIBILITY STATES
+================================================= */
+
+/*
+aria-invalid indicates validation errors.
+Useful for form inputs.
+*/
+[aria-invalid="true"] {
+  border-color: var(--color-error, red);
+}
+
+
+/*
+Highlight form group when an input inside receives focus.
+Improves usability of grouped inputs.
+*/
+.form-group:focus-within {
+  outline: 2px solid var(--color-focus, #2563eb);
+  outline-offset: 2px;
+}
+
+
+
+/* =================================================
+LOADING / BUSY STATE
+================================================= */
+
+/*
+aria-busy indicates that content is loading
+or being updated dynamically.
+*/
+[aria-busy="true"] {
+  cursor: progress;
+}
+
+
+
+/* =================================================
+VISUALLY HIDDEN UTILITY
+================================================= */
+
+/*
+Utility class for screen-reader-only content.
+Content remains accessible but visually hidden.
+*/
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+
+  padding: 0;
+  margin: -1px;
+
+  overflow: hidden;
+
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+
+  border: 0;
+}
+
+
+
+/* =================================================
+PREFERS REDUCED MOTION
+================================================= */
+
+/*
+Respects user system preference for reduced motion.
+Disables animations and transitions.
+*/
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+
+    transition-duration: 0.01ms !important;
+
+    scroll-behavior: auto !important;
+  }
+
+}
+
+}

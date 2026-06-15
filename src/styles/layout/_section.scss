@@ -1,0 +1,21 @@
+@use "../abstracts/mixins" as *;
+
+@layer layout {
+  .section {
+    grid-column: content;
+    padding-block: 3rem;
+  }
+
+  .section-full {
+    grid-column: full;
+    padding-block: 3rem;
+  }
+
+}
+
+@include mq(md) {
+  .section,
+  .section-full {
+    padding-block: 5rem;
+  }
+}

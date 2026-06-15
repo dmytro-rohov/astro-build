@@ -1,0 +1,13 @@
+---
+import "./badge.scss"
+
+interface Props {
+  variant?: "default" | "success" | "warning" | "danger"
+}
+
+const { variant = "default" } = Astro.props
+---
+
+<span class="badge" data-variant={variant}>
+  <slot />
+</span>

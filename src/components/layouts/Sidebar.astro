@@ -1,0 +1,26 @@
+---
+export interface Props {
+  side?: "left" | "right";
+  width?: string;
+  gap?: string;
+  class?: string;
+}
+
+const {
+  side = "right",
+  width = "300px",
+  gap = "2rem",
+  class: className
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    "sidebar-layout",
+    `sidebar-${side}`,
+    className
+  ]}
+  style={`--sidebar-width:${width}; --sidebar-gap:${gap}`}
+>
+  <slot />
+</div>

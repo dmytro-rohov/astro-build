@@ -1,0 +1,32 @@
+@layer components {
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--font-size-xs);
+  padding: var(--spacing-2xs) var(--spacing-xs);
+  border-radius: var(--radius-full);
+  font-weight: 500;
+}
+
+.badge[data-variant="default"] {
+  background: var(--color-background-muted);
+  color: var(--color-text-primary);
+}
+
+.badge[data-variant="success"] {
+  background: var(--color-success);
+  color: white;
+}
+
+.badge[data-variant="warning"] {
+  background: var(--color-warning);
+  color: white;
+}
+
+.badge[data-variant="danger"] {
+  background: var(--color-danger);
+  color: white;
+}
+
+}

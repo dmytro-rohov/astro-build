@@ -1,0 +1,11 @@
+---
+import "./divider.scss"
+
+interface Props {
+  orientation?: "horizontal" | "vertical"
+}
+
+const { orientation = "horizontal" } = Astro.props
+---
+
+<hr class="divider" data-orientation={orientation} />

@@ -1,0 +1,30 @@
+---
+import Img, { type ImgProps } from "./Img.astro";
+
+export interface PictureSource {
+  srcset: string;
+  media?: string;
+  type?: string;
+}
+
+export interface PictureProps extends ImgProps {
+  sources?: PictureSource[];
+}
+
+const {
+  sources = [],
+  ...imgProps
+} = Astro.props;
+---
+
+<picture>
+  {sources.map((source) => (
+    <source
+      srcset={source.srcset}
+      media={source.media}
+      type={source.type}
+    />
+  ))}
+
+  <Img {...imgProps} />
+</picture>

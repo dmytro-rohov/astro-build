@@ -1,0 +1,35 @@
+@layer base {
+:root {
+  --container-max: rem(1200);
+  --container-gutter: 1rem;
+}
+
+.container {
+  width: min(100% - (var(--container-gutter) * 2), var(--container-max));
+  margin-inline: auto;
+}
+
+h1 {
+  font-family: var(--main-font);
+  font-size-adjust: 0.5;
+  text-rendering: optimizeLegibility;
+  font-synthesis: none;
+  font-size: rem(24px);
+}
+
+// --- icon
+
+.icon {
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+  display: inline-block;
+}
+
+section {
+    background-color: var(--color-primary);
+}
+}
+
+
+

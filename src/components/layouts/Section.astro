@@ -1,0 +1,22 @@
+---
+export interface Props {
+  as?: string;
+  full?: boolean;
+  class?: string;
+}
+
+const {
+  as: Tag = "section",
+  full = false,
+  class: className
+} = Astro.props;
+---
+
+<Tag
+  class:list={[
+    full ? "section-full" : "section",
+    className
+  ]}
+>
+  <slot />
+</Tag>

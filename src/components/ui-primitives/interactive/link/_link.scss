@@ -1,0 +1,28 @@
+@layer components {
+
+.link {
+  color: var(--color-action-primary);
+  text-decoration: none;
+  transition:
+    color var(--motion-fast),
+    text-decoration-color var(--motion-fast);
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.link[data-variant="muted"] {
+  color: var(--color-text-muted);
+}
+
+.link[data-variant="underline"] {
+  text-decoration: underline;
+}
+
+}

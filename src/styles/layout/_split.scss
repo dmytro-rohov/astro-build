@@ -1,0 +1,16 @@
+@use "../abstracts/mixins" as *;
+
+@layer layout {
+  .split {
+    display: grid;
+    gap: var(--split-gap, 2rem);
+    grid-template-columns: 1fr;
+}
+
+}
+
+@include mq(md) {
+  .split {
+    grid-template-columns: var(--split-ratio, 1fr 1fr);
+  }
+}

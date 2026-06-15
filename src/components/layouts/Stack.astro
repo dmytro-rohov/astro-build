@@ -1,0 +1,18 @@
+---
+export interface Props {
+  space?: string;
+  class?: string;
+}
+
+const {
+  space = "1rem",
+  class: className
+} = Astro.props;
+---
+
+<div
+  class:list={["stack", className]}
+  style={`--stack-space:${space}`}
+>
+  <slot />
+</div>

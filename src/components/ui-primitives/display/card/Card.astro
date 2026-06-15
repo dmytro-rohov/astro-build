@@ -1,0 +1,13 @@
+---
+import "./card.scss"
+
+interface Props {
+  variant?: "default" | "outlined" | "elevated"
+}
+
+const { variant = "default" } = Astro.props
+---
+
+<div class="card" data-variant={variant}>
+  <slot />
+</div>

@@ -1,0 +1,11 @@
+---
+interface Props {
+  for?: string
+}
+
+const { for: htmlFor } = Astro.props
+---
+
+<label class="form-label" for={htmlFor}>
+  <slot />
+</label>

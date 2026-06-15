@@ -1,0 +1,39 @@
+:root {
+  --color-text-primary: #111827;
+  --color-text-secondary: #4b5563;
+  --color-text-inverse: #ffffff;
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f9fafb;
+  --color-background-inverse: #111827;
+  --color-border-default: #e5e7eb;
+  --color-border-strong: #9ca3af;
+  --color-action-primary: #2563eb;
+  --color-action-primary-hover: #1d4ed8;
+  --color-feedback-success: #16a34a;
+  --color-feedback-error: #dc2626;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 50%;
+}
+
+$tokens: (
+  "color-text-primary": var(color-text-primary),
+  "color-text-secondary": var(color-text-secondary),
+  "color-text-inverse": var(color-text-inverse),
+  "color-background-primary": var(color-background-primary),
+  "color-background-secondary": var(color-background-secondary),
+  "color-background-inverse": var(color-background-inverse),
+  "color-border-default": var(color-border-default),
+  "color-border-strong": var(color-border-strong),
+  "color-action-primary": var(color-action-primary),
+  "color-action-primary-hover": var(color-action-primary-hover),
+  "color-feedback-success": var(color-feedback-success),
+  "color-feedback-error": var(color-feedback-error),
+  "radius-sm": var(radius-sm),
+  "radius-md": var(radius-md),
+  "radius-lg": var(radius-lg),
+  "radius-xl": var(radius-xl),
+  "radius-pill": var(radius-pill)
+);

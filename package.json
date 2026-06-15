@@ -1,0 +1,31 @@
+{
+  "name": "first-project",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "tokens": "tsx src/design-system/utils/cssVars.ts",
+    "build-icons": "node scripts/build-icons.js",
+    "build:fonts": "node scripts/build-fonts.js",
+    "build:fonts:latin": "node scripts/build-fonts.js latin",
+    "build:fonts:cyrillic": "node scripts/build-fonts.js cyrillic",
+    "build:fonts:all": "node scripts/build-fonts.js all",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "lint:scss": "stylelint \"src/**/*.scss\"",
+    "lint:js": "eslint ."
+  },
+  "dependencies": {
+    "astro": "^5.16.15"
+  },
+  "devDependencies": {
+    "fs-extra": "^11.3.3",
+    "sass": "^1.97.3",
+    "svgo": "^4.0.0",
+    "svgstore": "^3.0.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

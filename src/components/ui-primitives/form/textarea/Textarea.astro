@@ -1,0 +1,31 @@
+---
+import "./textarea.scss";
+
+interface Props {
+  id?: string
+  name?: string
+  placeholder?: string
+  rows?: number
+  disabled?: boolean
+  required?: boolean
+}
+
+const {
+  id,
+  name,
+  placeholder,
+  rows = 4,
+  disabled = false,
+  required = false
+} = Astro.props;
+---
+
+<textarea
+  id={id}
+  class="textarea"
+  name={name}
+  placeholder={placeholder}
+  rows={rows}
+  disabled={disabled}
+  required={required}
+/>
