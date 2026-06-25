@@ -3,14 +3,13 @@
 @layer layout {
   .split {
     display: grid;
-    gap: var(--split-gap, 2rem);
+    gap: var(--split-gap, var(--spacing-xl));
     grid-template-columns: 1fr;
-}
+  }
 
-}
-
-@include mq(md) {
-  .split {
-    grid-template-columns: var(--split-ratio, 1fr 1fr);
+  @include mq(md) {
+    .split {
+      grid-template-columns: var(--split-ratio, 1fr 1fr);
+    }
   }
 }

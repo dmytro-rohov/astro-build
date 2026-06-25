@@ -1,0 +1,49 @@
+@layer base {
+  body {
+    font-family: var(--font-family-base, "Inter", system-ui, sans-serif);
+    font-size: var(--font-size-base, 1rem);
+    font-weight: var(--font-weight-regular, 400);
+    line-height: var(--line-height-normal, 1.5);
+    color: var(--color-text-primary, #0f172a);
+    background: var(--color-background-primary, #ffffff);
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-family-heading, var(--font-family-base, "Inter", system-ui, sans-serif));
+    font-weight: var(--font-weight-bold, 700);
+    line-height: var(--line-height-tight, 1.1);
+    letter-spacing: var(--letter-spacing-tight, -0.02em);
+    color: var(--color-text-primary, #0f172a);
+  }
+
+  p {
+    margin: 0;
+  }
+
+  small {
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+
+  strong {
+    font-weight: var(--font-weight-bold, 700);
+  }
+
+  a {
+    color: inherit;
+    text-decoration-thickness: from-font;
+    text-underline-offset: 0.2em;
+  }
+
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-family-mono, monospace);
+  }
+}

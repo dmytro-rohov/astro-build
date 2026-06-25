@@ -1,0 +1,10 @@
+@layer components {
+  .field-hint {
+    margin: 0;
+
+    color: var(--color-text-muted);
+
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+  }
+}

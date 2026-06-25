@@ -1,0 +1,18 @@
+@layer components {
+  .figure {
+    margin: 0;
+  }
+
+  .figure__image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .figure__caption {
+    margin-block-start: var(--spacing-sm, 0.5rem);
+    color: var(--color-text-muted, #64748b);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: var(--line-height-normal, 1.5);
+  }
+}

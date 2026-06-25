@@ -1,0 +1,28 @@
+---
+export interface Props {
+  orientation?: "horizontal" | "vertical";
+  decorative?: boolean;
+  class?: string;
+}
+
+const {
+  orientation = "horizontal",
+  decorative = true,
+  class: className,
+  ...restProps
+} = Astro.props;
+
+const ariaOrientation = orientation === "vertical" ? "vertical" : undefined;
+---
+
+<div
+  {...restProps}
+  class:list={[
+    "divider",
+    `divider--${orientation}`,
+    className,
+  ]}
+  role={decorative ? undefined : "separator"}
+  aria-orientation={decorative ? undefined : ariaOrientation}
+  aria-hidden={decorative ? "true" : undefined}
+></div>

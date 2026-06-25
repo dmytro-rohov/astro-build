@@ -1,0 +1,20 @@
+---
+export interface Props {
+  class?: string;
+}
+
+const {
+  class: className,
+  ...restProps
+} = Astro.props;
+---
+
+<div
+  {...restProps}
+  class:list={[
+    "form-field",
+    className,
+  ]}
+>
+  <slot />
+</div>

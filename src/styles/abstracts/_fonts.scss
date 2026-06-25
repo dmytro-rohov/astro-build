@@ -1,11 +1,9 @@
 /* AUTO-GENERATED FILE – DO NOT EDIT */
-
+/* Source: scripts/build-fonts.js */
 
 @font-face {
-  font-family: 'Inter Test';
-  src:
-    local('Inter Test'),
-    url('/fonts/inter-test-latin.woff2') format('woff2');
+  font-family: "Inter";
+  src: url("/fonts/inter-400-latin.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -13,60 +11,11 @@
 }
 
 @font-face {
-  font-family: 'Inter Test';
-  src:
-    local('Inter Test'),
-    url('/fonts/inter-test-cyrillic.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0400-04FF,U+0500-052F;
-}
-
-@font-face {
-  font-family: 'Inter V20';
-  src:
-    local('Inter V20'),
-    url('/fonts/inter-v20-latin-ext-700-latin.woff2') format('woff2');
+  font-family: "Inter";
+  src: url("/fonts/inter-700-latin.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
   unicode-range: U+0000-00FF,U+0100-017F;
 }
 
-@font-face {
-  font-family: 'Inter V20';
-  src:
-    local('Inter V20'),
-    url('/fonts/inter-v20-latin-ext-700-cyrillic.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0400-04FF,U+0500-052F;
-}
-
-@font-face {
-  font-family: 'Inter V20';
-  src:
-    local('Inter V20'),
-    url('/fonts/inter-v20-latin-ext-regular-latin.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0000-00FF,U+0100-017F;
-}
-
-@font-face {
-  font-family: 'Inter V20';
-  src:
-    local('Inter V20'),
-    url('/fonts/inter-v20-latin-ext-regular-cyrillic.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0400-04FF,U+0500-052F;
-}
-
-:root {
-  --main-font: 'Inter Test', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-}

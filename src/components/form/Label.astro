@@ -1,0 +1,30 @@
+---
+export interface Props {
+  for?: string;
+  required?: boolean;
+  class?: string;
+}
+
+const {
+  for: htmlFor,
+  required = false,
+  class: className,
+  ...restProps
+} = Astro.props;
+---
+
+<label
+  {...restProps}
+  class:list={[
+    "label",
+    required && "label--required",
+    className,
+  ]}
+  for={htmlFor}
+>
+  <slot />
+
+  {required && (
+    <span class="label__required" aria-hidden="true">*</span>
+  )}
+</label>

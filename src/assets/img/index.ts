@@ -5,6 +5,13 @@ const modules = import.meta.glob('./*.{jpg,jpeg,png,webp,avif}', {
   import: 'default'
 });
 
+type ImageEntry = {
+  src: ImageMetadata | string;
+  alt?: string;
+  kind?: "content" | "decorative";
+  priority?: "auto" | "high";
+}
+
 function filenameToAlt(filename: string) {
   return filename
     .replace(/\.(jpg|jpeg|png|webp|avif)$/i, '')
@@ -26,4 +33,4 @@ export const images = Object.fromEntries(
       }
     ];
   })
-);
+) as Record<string, ImageEntry>;

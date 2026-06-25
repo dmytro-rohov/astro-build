@@ -3,16 +3,37 @@ export interface Props {
   name: string;
   size?: string;
   class?: string;
+  label?: string;
 }
 
-const { name, size = "1em", class: className } = Astro.props;
+const { 
+  name,
+  size = "1em",
+  class: className,
+  label,  
+} = Astro.props;
+
+const isDecorative = !label;
 ---
 
 <svg
   class={className}
   width={size}
   height={size}
-  aria-hidden="true"
+  aria-hidden={isDecorative ? "true" : undefined}
+  role={isDecorative ? undefined : "img"}
+  aria-label={label}
+  focusable="false"
 >
   <use href={`/icons/sprite.svg#${name}`} />
 </svg>
+
+<!-- 
+
+---
+import Icon from "@/components/media/Icon.astro";
+---
+
+<Icon name="github" /> 
+
+-->

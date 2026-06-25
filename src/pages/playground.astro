@@ -1,0 +1,39 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/components/layouts/Container.astro";
+import Section from "@/components/layouts/Section.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Cluster from "@/components/layouts/Cluster.astro";
+
+import Button from "@/components/ui/Button.astro";
+
+import FormField from "@/components/form/FormField.astro";
+import Label from "@/components/form/Label.astro";
+import FieldHint from "@/components/form/FieldHint.astro";
+import Input from "@/components/form/Input.astro";
+---
+
+<BaseLayout
+  title="Astro System Landing"
+  description="Reusable Astro starter for professional landing pages."
+>
+  <Section>
+    <Container size="lg">
+      <Stack space="var(--spacing-lg)">
+        <p>Astro Frontend System</p>
+
+        <h1>Build professional landing pages faster.</h1>
+
+        <p>
+          A reusable Astro template with media optimization, design tokens,
+          local fonts, SVG icons, layout primitives and production-ready structure.
+        </p>
+
+        <Cluster gap="var(--spacing-md)">
+          <Button>Get started</Button>
+          <Button variant="secondary">View components</Button>
+        </Cluster>
+      </Stack>
+    </Container>
+  </Section>
+</BaseLayout>

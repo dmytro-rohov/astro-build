@@ -1,0 +1,46 @@
+---
+import Img, { type ImgProps } from "./Img.astro";
+
+export interface FigureProps extends ImgProps {
+  caption?: string;
+  captionPosition?: "top" | "bottom";
+  figureClass?: string;
+  captionClass?: string;
+  imageClass?: string;
+}
+
+const {
+  caption,
+  captionPosition = "bottom",
+  kind = "content",
+  figureClass = "figure",
+  captionClass = "figure__caption",
+  imageClass = "figure__image",
+  class: className,
+  ...imgProps
+} = Astro.props;
+
+if (import.meta.env.DEV && kind === "decorative") {
+  console.warn("[Figure] Decorative images should not use <figure>. Use <Img kind='decorative' /> instead.");
+}
+---
+
+<figure class:list={[figureClass, className]}>
+  {caption && captionPosition === "top" && (
+    <figcaption class={captionClass}>
+      {caption}
+    </figcaption>
+  )}
+
+  <Img
+    kind={kind}
+    class={imageClass}
+    {...imgProps}
+  />
+
+  {caption && captionPosition === "bottom" && (
+    <figcaption class={captionClass}>
+      {caption}
+    </figcaption>
+  )}
+</figure>

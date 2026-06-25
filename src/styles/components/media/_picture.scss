@@ -1,0 +1,19 @@
+@layer components {
+  .picture {
+    display: block;
+    max-width: 100%;
+  }
+
+  .picture > .image {
+    width: 100%;
+  }
+
+  .picture--rounded {
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+  }
+
+  .picture--shadow {
+    box-shadow: var(--elevation-card);
+  }
+}

@@ -1,0 +1,55 @@
+---
+export interface Props {
+  id?: string;
+  name?: string;
+  value?: string;
+  checked?: boolean;
+  required?: boolean;
+  disabled?: boolean;
+  invalid?: boolean;
+  describedby?: string;
+  class?: string;
+}
+
+const {
+  id,
+  name,
+  value,
+  checked = false,
+  required = false,
+  disabled = false,
+  invalid = false,
+  describedby,
+  class: className,
+  ...restProps
+} = Astro.props;
+---
+
+<label
+  class:list={[
+    "checkbox",
+    disabled && "checkbox--disabled",
+    invalid && "checkbox--invalid",
+    className,
+  ]}
+>
+  <input
+    {...restProps}
+    class="checkbox__input"
+    id={id}
+    name={name}
+    value={value}
+    type="checkbox"
+    checked={checked}
+    required={required}
+    disabled={disabled}
+    aria-invalid={invalid ? "true" : undefined}
+    aria-describedby={describedby}
+  />
+
+  <span class="checkbox__control" aria-hidden="true"></span>
+
+  <span class="checkbox__label">
+    <slot />
+  </span>
+</label>

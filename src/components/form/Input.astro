@@ -1,0 +1,52 @@
+---
+export interface Props {
+  id?: string;
+  name?: string;
+  type?: "text" | "email" | "password" | "number" | "tel" | "url" | "search" | "date";
+  value?: string;
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
+  readonly?: boolean;
+  invalid?: boolean;
+  describedby?: string;
+  autocomplete?: string;
+  class?: string;
+}
+
+const {
+  id,
+  name,
+  type = "text",
+  value,
+  placeholder,
+  required = false,
+  disabled = false,
+  readonly = false,
+  invalid = false,
+  describedby,
+  autocomplete,
+  class: className,
+  ...restProps
+} = Astro.props;
+---
+
+<input
+  {...restProps}
+  id={id}
+  name={name}
+  type={type}
+  value={value}
+  placeholder={placeholder}
+  required={required}
+  disabled={disabled}
+  readonly={readonly}
+  autocomplete={autocomplete}
+  aria-invalid={invalid ? "true" : undefined}
+  aria-describedby={describedby}
+  class:list={[
+    "input",
+    invalid && "input--invalid",
+    className,
+  ]}
+/>

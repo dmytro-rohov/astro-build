@@ -1,93 +1,87 @@
-import fs from "fs"
-import path from "path"
-import { tokens } from "../tokens/index.js"
+import fs from "fs";
+import path from "path";
+import { tokens } from "../tokens/index";
 
-type TokenObject = Record<string, string | TokenObject>
+type TokenValue = string | number;
+type TokenObject = Record<string, TokenValue | TokenObject>;
 
 function toKebab(str: string) {
-  return str.replace(/[A-Z]/g, m => "-" + m.toLowerCase())
+  return str.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
 }
 
 function flatten(
   obj: TokenObject,
   prefix = ""
-): Record<string, string> {
-
-  const result: Record<string, string> = {}
+): Record<string, TokenValue> {
+  const result: Record<string, TokenValue> = {};
 
   for (const [key, value] of Object.entries(obj)) {
-
-    const kebabKey = toKebab(key)
+    const kebabKey = toKebab(key);
 
     const newKey = prefix
       ? `${prefix}-${kebabKey}`
-      : kebabKey
+      : kebabKey;
 
-    if (typeof value === "object" && value !== null) {
-      Object.assign(result, flatten(value, newKey))
+    if (
+      typeof value === "object" &&
+      value !== null &&
+      !Array.isArray(value)
+    ) {
+      Object.assign(result, flatten(value as TokenObject, newKey));
     } else {
-      result[newKey] = value
+      result[newKey] = value as TokenValue;
     }
   }
 
-  return result
+  return result;
 }
 
-const flatTokens = flatten(tokens)
+const flatTokens = flatten(tokens as TokenObject);
 
-const outputDir = path.resolve("src/styles/abstracts")
+const outputDir = path.resolve("src/styles/abstracts");
+const cssVarsOutput = path.join(outputDir, "_tokens.scss");
+const tsTypesOutput = path.resolve("src/design-system/cssVars.ts");
 
-fs.mkdirSync(outputDir, { recursive: true })
-
-/* ---------------------------------- */
-/* CSS VARIABLES */
-/* ---------------------------------- */
+fs.mkdirSync(outputDir, { recursive: true });
 
 const cssLines = Object.entries(flatTokens).map(
   ([key, value]) => `  --${key}: ${value};`
-)
+);
 
-const css = `:root {\n${cssLines.join("\n")}\n}\n`
+const css = `/* AUTO-GENERATED FILE – DO NOT EDIT */
+/* Source: src/design-system/utils/cssVars.ts */
 
-/* ---------------------------------- */
-/* SCSS MAP */
-/* ---------------------------------- */
+:root {
+${cssLines.join("\n")}
+}
+`;
 
-const scssLines = Object.entries(flatTokens).map(
-  ([key], i, arr) => {
+const scssLines = Object.keys(flatTokens).map((key, index, arr) => {
+  const comma = index === arr.length - 1 ? "" : ",";
+  return `  "${key}": var(--${key})${comma}`;
+});
 
-    const comma = i === arr.length - 1 ? "" : ","
-
-    return `  "${key}": var(${key})${comma}`
-  }
-)
-
-const scssMap = `$tokens: (\n${scssLines.join("\n")}\n);\n`
-
-/* ---------------------------------- */
-/* TS TYPE */
-/* ---------------------------------- */
+const scssMap = `$tokens: (
+${scssLines.join("\n")}
+);
+`;
 
 const typeLines = Object.keys(flatTokens)
-  .map(token => `  | "${token}"`)
-  .join("\n")
+  .map((token) => `  | "${token}"`)
+  .join("\n");
 
-const tsTypes = `export type ColorToken =
-${typeLines}
-`
+const tsTypes = `/* AUTO-GENERATED FILE – DO NOT EDIT */
+/* Source: src/design-system/utils/cssVars.ts */
 
-/* ---------------------------------- */
-/* WRITE FILES */
-/* ---------------------------------- */
+export type CssToken =
+${typeLines};
 
-fs.writeFileSync(
-  path.join(outputDir, "_tokens.scss"),
-  css + "\n" + scssMap
-)
+export type CssVar = \`var(--\${CssToken})\`;
+`;
 
-fs.writeFileSync(
-  path.resolve("src/design-system/cssVars.ts"),
-  tsTypes
-)
+fs.writeFileSync(cssVarsOutput, `${css}\n${scssMap}`);
+fs.writeFileSync(tsTypesOutput, tsTypes);
 
-console.log("✅ Tokens generated")
+console.log("✅ Tokens generated");
+console.log(`Generated SCSS: ${cssVarsOutput}`);
+console.log(`Generated TS types: ${tsTypesOutput}`);

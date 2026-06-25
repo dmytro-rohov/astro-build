@@ -1,0 +1,50 @@
+---
+export interface Props {
+  id?: string;
+  name?: string;
+  value?: string;
+  checked?: boolean;
+  disabled?: boolean;
+  describedby?: string;
+  class?: string;
+}
+
+const {
+  id,
+  name,
+  value,
+  checked = false,
+  disabled = false,
+  describedby,
+  class: className,
+  ...restProps
+} = Astro.props;
+---
+
+<label
+  class:list={[
+    "switch",
+    disabled && "switch--disabled",
+    className,
+  ]}
+>
+  <input
+    {...restProps}
+    class="switch__input"
+    id={id}
+    name={name}
+    value={value}
+    type="checkbox"
+    checked={checked}
+    disabled={disabled}
+    aria-describedby={describedby}
+  />
+
+  <span class="switch__track" aria-hidden="true">
+    <span class="switch__thumb"></span>
+  </span>
+
+  <span class="switch__label">
+    <slot />
+  </span>
+</label>

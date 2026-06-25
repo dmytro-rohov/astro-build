@@ -2,7 +2,7 @@
   .cluster {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--cluster-gap, 0.5rem);
+    gap: var(--cluster-gap, var(--spacing-sm));
     align-items: center;
-}
+  }
 }

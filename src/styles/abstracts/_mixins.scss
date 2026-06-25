@@ -1,9 +1,11 @@
 @use "sass:map";
-@use "../abstracts/variables" as *;
-
-
+@use "./variables" as *;
 
 @mixin mq($size) {
+  @if not map.has-key($breakpoints, $size) {
+    @error "Unknown breakpoint: #{$size}. Available: #{map.keys($breakpoints)}";
+  }
+
   @media (min-width: map.get($breakpoints, $size)) {
     @content;
   }

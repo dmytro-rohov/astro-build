@@ -1,0 +1,12 @@
+@layer components {
+  .form-field {
+    display: grid;
+    gap: var(--spacing-xs);
+  }
+
+  .form-field--inline {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+}

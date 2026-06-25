@@ -1,0 +1,41 @@
+---
+export interface Props {
+  href: string;
+  variant?: "default" | "muted" | "underline" | "nav";
+  external?: boolean;
+  class?: string;
+  ariaLabel?: string;
+}
+
+const {
+  href,
+  variant = "default",
+  external = false,
+  class: className,
+  ariaLabel,
+  ...restProps
+} = Astro.props;
+
+const isExternal =
+  external ||
+  href.startsWith("http://") ||
+  href.startsWith("https://");
+
+const rel = isExternal ? "noopener noreferrer" : undefined;
+const target = isExternal ? "_blank" : undefined;
+---
+
+<a
+  {...restProps}
+  class:list={[
+    "link",
+    `link--${variant}`,
+    className,
+  ]}
+  href={href}
+  target={target}
+  rel={rel}
+  aria-label={ariaLabel}
+>
+  <slot />
+</a>

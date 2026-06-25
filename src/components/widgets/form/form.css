@@ -1,0 +1,12 @@
+@layer components {
+  .contact-form {
+    max-width: 500px;
+  }
+  .hidden {
+    display: none;
+  }
+  .form-success {
+    color: var(--color-success);
+    margin-top: var(--spacing-sm);
+  }
+}/*# sourceMappingURL=form.css.map */

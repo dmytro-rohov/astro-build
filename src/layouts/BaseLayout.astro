@@ -1,23 +1,41 @@
 ---
-import Header from "../components/layouts/Header.astro";
-import Footer from "../components/layouts/Footer.astro";
-import "../../src/styles/main.scss";
+import Header from "@/layouts/Header.astro";
+import Footer from "@/layouts/Footer.astro";
+import "@/styles/main.scss";
+
+export interface Props {
+  title?: string;
+  description?: string;
+  lang?: string;
+}
+
+const {
+  title = "Astro Landing",
+  description = "Professional landing page built with Astro.",
+  lang = "en",
+} = Astro.props;
 ---
 
-<html lang="en">
+<!doctype html>
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Test</title>
+
+    <title>{title}</title>
   </head>
 
   <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
     <Header />
 
-    <main>
+    <main id="main-content">
       <slot />
     </main>
 

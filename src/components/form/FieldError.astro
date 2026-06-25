@@ -1,0 +1,23 @@
+---
+export interface Props {
+  id?: string;
+  class?: string;
+}
+
+const {
+  id,
+  class: className,
+  ...restProps
+} = Astro.props;
+---
+
+<p
+  {...restProps}
+  id={id}
+  class:list={[
+    "field-error",
+    className,
+  ]}
+>
+  <slot />
+</p>

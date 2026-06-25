@@ -1,0 +1,56 @@
+@layer utilities {
+  .transition {
+    transition:
+      color var(--motion-duration-fast) var(--motion-easing-standard),
+      background-color var(--motion-duration-fast) var(--motion-easing-standard),
+      border-color var(--motion-duration-fast) var(--motion-easing-standard),
+      box-shadow var(--motion-duration-fast) var(--motion-easing-standard),
+      transform var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .hover-lift {
+    transition: transform var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+
+  .hover-scale {
+    transition: transform var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.03);
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in var(--motion-duration-normal) var(--motion-easing-standard);
+  }
+
+  .animate-slide-up {
+    animation: slide-up var(--motion-duration-normal) var(--motion-easing-emphasized);
+  }
+}

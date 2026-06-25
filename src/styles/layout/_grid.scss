@@ -5,9 +5,17 @@
   .grid-layout {
     display: grid;
     grid-template-columns:
-      [full-start] minmax(1rem, 1fr)
-      [content-start] min(1200px, 100% - 2rem)
-      [content-end] minmax(1rem, 1fr)
+      [full-start] minmax(var(--spacing-md), 1fr)
+      [content-start] min(var(--container-max, 75rem), 100% - calc(var(--spacing-md) * 2))
+      [content-end] minmax(var(--spacing-md), 1fr)
       [full-end];
+  }
+
+  .grid-layout > * {
+    grid-column: content;
+  }
+
+  .grid-layout > .full-bleed {
+    grid-column: full;
   }
 }

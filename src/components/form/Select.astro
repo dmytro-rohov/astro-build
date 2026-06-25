@@ -1,0 +1,39 @@
+---
+export interface Props {
+  id?: string;
+  name?: string;
+  required?: boolean;
+  disabled?: boolean;
+  invalid?: boolean;
+  describedby?: string;
+  class?: string;
+}
+
+const {
+  id,
+  name,
+  required = false,
+  disabled = false,
+  invalid = false,
+  describedby,
+  class: className,
+  ...restProps
+} = Astro.props;
+---
+
+<select
+  {...restProps}
+  id={id}
+  name={name}
+  required={required}
+  disabled={disabled}
+  aria-invalid={invalid ? "true" : undefined}
+  aria-describedby={describedby}
+  class:list={[
+    "select",
+    invalid && "select--invalid",
+    className,
+  ]}
+>
+  <slot />
+</select>

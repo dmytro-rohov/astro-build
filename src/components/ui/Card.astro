@@ -1,0 +1,30 @@
+---
+type CardTag = "div" | "article" | "section" | "li";
+
+export interface Props {
+  as?: CardTag;
+  variant?: "default" | "outlined" | "elevated" | "ghost";
+  padding?: "sm" | "md" | "lg" | "none";
+  class?: string;
+}
+
+const {
+  as: Tag = "div",
+  variant = "default",
+  padding = "md",
+  class: className,
+  ...restProps
+} = Astro.props;
+---
+
+<Tag
+  {...restProps}
+  class:list={[
+    "card",
+    `card--${variant}`,
+    `card--padding-${padding}`,
+    className,
+  ]}
+>
+  <slot />
+</Tag>

@@ -3,19 +3,18 @@
 @layer layout {
   .section {
     grid-column: content;
-    padding-block: 3rem;
+    padding-block: var(--spacing-3xl);
   }
 
   .section-full {
     grid-column: full;
-    padding-block: 3rem;
+    padding-block: var(--spacing-3xl);
   }
 
-}
-
-@include mq(md) {
-  .section,
-  .section-full {
-    padding-block: 5rem;
+  @include mq(md) {
+    .section,
+    .section-full {
+      padding-block: var(--spacing-4xl);
+    }
   }
 }

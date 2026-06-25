@@ -1,0 +1,32 @@
+---
+export interface Props {
+  variant?: "primary" | "secondary" | "ghost" | "danger";
+  size?: "sm" | "md" | "lg";
+  disabled?: boolean;
+  type?: "button" | "submit" | "reset";
+  class?: string;
+}
+
+const {
+  variant = "primary",
+  size = "md",
+  disabled = false,
+  type = "button",
+  class: className,
+  ...restProps
+} = Astro.props;
+---
+
+<button
+  {...restProps}
+  class:list={[
+    "button",
+    `button--${variant}`,
+    `button--${size}`,
+    className,
+  ]}
+  disabled={disabled}
+  type={type}
+>
+  <slot />
+</button>

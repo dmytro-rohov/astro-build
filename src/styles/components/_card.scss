@@ -1,0 +1,63 @@
+@layer components {
+  .card {
+    display: block;
+
+    color: var(--color-text-primary);
+    background: var(--color-background-surface);
+
+    border: 1px solid transparent;
+    border-radius: var(--radius-lg);
+
+    transition:
+      border-color var(--motion-duration-fast) var(--motion-easing-standard),
+      background-color var(--motion-duration-fast) var(--motion-easing-standard),
+      box-shadow var(--motion-duration-fast) var(--motion-easing-standard),
+      transform var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .card--default {
+    border-color: var(--color-border-default);
+  }
+
+  .card--outlined {
+    border-color: var(--color-border-strong);
+  }
+
+  .card--elevated {
+    border-color: transparent;
+    box-shadow: var(--elevation-card);
+  }
+
+  .card--elevated:hover {
+    box-shadow: var(--elevation-card-hover);
+  }
+
+  .card--ghost {
+    background: transparent;
+    border-color: transparent;
+  }
+
+  .card--padding-none {
+    padding: 0;
+  }
+
+  .card--padding-sm {
+    padding: var(--spacing-md);
+  }
+
+  .card--padding-md {
+    padding: var(--spacing-lg);
+  }
+
+  .card--padding-lg {
+    padding: var(--spacing-xl);
+  }
+
+  .card--interactive {
+    cursor: pointer;
+  }
+
+  .card--interactive:hover {
+    transform: translateY(-2px);
+  }
+}

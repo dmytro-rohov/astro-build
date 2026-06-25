@@ -9,15 +9,17 @@ export interface PictureSource {
 
 export interface PictureProps extends ImgProps {
   sources?: PictureSource[];
+  pictureClass?: string;
 }
 
 const {
   sources = [],
+  pictureClass,
   ...imgProps
 } = Astro.props;
 ---
 
-<picture>
+<picture class:list={["picture", pictureClass]}>
   {sources.map((source) => (
     <source
       srcset={source.srcset}

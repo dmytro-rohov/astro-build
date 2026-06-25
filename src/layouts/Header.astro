@@ -1,0 +1,22 @@
+---
+import Container from "@/components/layouts/Container.astro";
+import Navbar from "@/components/widgets/navbar/Navbar.astro";
+
+const links = [
+  { label: "Home", href: "/" },
+  { label: "Contact", href: "/contact" },
+  { label: "About", href: "/about" },
+];
+---
+
+<header class="site-header">
+  <Container size="xl">
+    <div class="site-header__inner">
+      <a class="site-header__brand" href="/">
+        Astro System
+      </a>
+
+      <Navbar links={links} />
+    </div>
+  </Container>
+</header>

@@ -1,0 +1,42 @@
+@layer components {
+  .link {
+    color: var(--color-action-primary);
+    font: inherit;
+    text-decoration: none;
+    text-decoration-thickness: from-font;
+    text-underline-offset: 0.2em;
+
+    transition:
+      color var(--motion-duration-fast) var(--motion-easing-standard),
+      text-decoration-color var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .link:hover {
+    color: var(--color-action-primary-hover);
+    text-decoration: underline;
+  }
+
+  .link--muted {
+    color: var(--color-text-muted);
+  }
+
+  .link--muted:hover {
+    color: var(--color-text-primary);
+  }
+
+  .link--underline {
+    text-decoration: underline;
+  }
+
+  .link--nav {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .link--nav:hover,
+  .link--nav[aria-current="page"] {
+    color: var(--color-text-primary);
+    text-decoration: none;
+  }
+}

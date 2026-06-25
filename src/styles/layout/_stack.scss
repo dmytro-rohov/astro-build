@@ -1,5 +1,5 @@
 @layer layout {
   .stack > * + * {
-  margin-top: var(--stack-space, 1rem);
+    margin-block-start: var(--stack-space, var(--spacing-md));
   }
 }

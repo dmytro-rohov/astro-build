@@ -1,0 +1,17 @@
+@layer components {
+  .form-group {
+    display: grid;
+  }
+
+  .form-group--gap-sm {
+    gap: var(--spacing-sm);
+  }
+
+  .form-group--gap-md {
+    gap: var(--spacing-md);
+  }
+
+  .form-group--gap-lg {
+    gap: var(--spacing-lg);
+  }
+}

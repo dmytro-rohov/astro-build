@@ -1,0 +1,10 @@
+@layer components {
+  .field-error {
+    margin: 0;
+
+    color: var(--color-feedback-error);
+
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+  }
+}

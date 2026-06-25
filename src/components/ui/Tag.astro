@@ -1,0 +1,30 @@
+---
+type TagElement = "span" | "li" | "div";
+
+export interface Props {
+  as?: TagElement;
+  variant?: "default" | "primary" | "success" | "warning" | "danger" | "muted";
+  size?: "sm" | "md";
+  class?: string;
+}
+
+const {
+  as: Tag = "span",
+  variant = "default",
+  size = "md",
+  class: className,
+  ...restProps
+} = Astro.props;
+---
+
+<Tag
+  {...restProps}
+  class:list={[
+    "tag",
+    `tag--${variant}`,
+    `tag--${size}`,
+    className,
+  ]}
+>
+  <slot />
+</Tag>

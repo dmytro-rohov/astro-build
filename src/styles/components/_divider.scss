@@ -1,0 +1,17 @@
+@layer components {
+  .divider {
+    flex-shrink: 0;
+    background: var(--color-border-default);
+  }
+
+  .divider--horizontal {
+    width: 100%;
+    height: 1px;
+  }
+
+  .divider--vertical {
+    width: 1px;
+    align-self: stretch;
+    min-height: 1rem;
+  }
+}

@@ -1,0 +1,13 @@
+---
+import Container from "@/components/layouts/Container.astro";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <Container size="xl">
+    <div class="site-footer__inner">
+      <p>© {year} Astro System. All rights reserved.</p>
+    </div>
+  </Container>
+</footer>

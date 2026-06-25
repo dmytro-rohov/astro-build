@@ -1,0 +1,23 @@
+---
+export interface Props {
+  class?: string;
+  gap?: "sm" | "md" | "lg";
+}
+
+const {
+  class: className,
+  gap = "md",
+  ...restProps
+} = Astro.props;
+---
+
+<div
+  {...restProps}
+  class:list={[
+    "form-group",
+    `form-group--gap-${gap}`,
+    className,
+  ]}
+>
+  <slot />
+</div>
