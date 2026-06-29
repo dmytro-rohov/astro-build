@@ -1,22 +1,31 @@
----
+--- 
+type SectionTag = "section" | "div" | "header" | "footer" | "main" | "article";
+
 export interface Props {
-  as?: string;
-  full?: boolean;
+  as?: SectionTag;
+  spacing?: "none" | "sm" | "md" | "lg" | "xl";
+  tone?: "default" | "muted" | "inverse";
   class?: string;
-}
+ }
 
-const {
+ const {
   as: Tag = "section",
-  full = false,
-  class: className
-} = Astro.props;
+  spacing = "lg",
+  tone = "default",
+  class: className,
+  ...restProps
+ } = Astro.props;
 ---
 
-<Tag
+ <Tag 
+  {...restProps}
   class:list={[
-    full ? "section-full" : "section",
-    className
-  ]}
->
-  <slot />
+    "section",
+    `section--spacing-${spacing}`,
+    `section--tone-${tone}`,
+    className,
+  ]} >
+
+<slot />  
+
 </Tag>

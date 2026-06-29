@@ -1,15 +1,36 @@
 ---
+type GridTag = "div" | "section" | "ul" | "ol";
+
 export interface Props {
-  as?: string;
+  as?: GridTag;
+  columns?: "1" | "2" | "3" | "4" | "auto";
+  gap?: "sm" | "md" | "lg" | "xl" | string;
   class?: string;
 }
 
 const {
   as: Tag = "div",
-  class: className
+  columns = "auto",
+  gap = "lg",
+  class: className,
+  ...restProps
 } = Astro.props;
+
+const tokenGap = gap.startsWith("var(")
+  ? gap
+  : gap.includes("rem") || gap.includes("px")
+    ? gap
+    : `var(--spacing-${gap})`;
 ---
 
-<Tag class:list={["grid-layout", className]}>
+<Tag
+  {...restProps}
+  class:list={[
+    "grid",
+    `grid--cols-${columns}`,
+    className,
+  ]}
+  style={`--grid-gap: ${tokenGap};`}
+>
   <slot />
 </Tag>

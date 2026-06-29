@@ -1,22 +1,49 @@
 ---
 import Container from "@/components/layouts/Container.astro";
-import Navbar from "@/components/widgets/navbar/Navbar.astro";
+import Navbar, { type NavItem, type NavAction } from "@/components/widgets/Navbar.astro";
 
-const links = [
+export interface Props {
+  brandLabel?: string;
+  brandHref?: string;
+  navItems?: NavItem[];
+  cta?: NavAction;
+  sticky?: boolean;
+  class?: string;
+}
+
+const defaultNavItems: NavItem[] = [
   { label: "Home", href: "/" },
+  { label: "Features", href: "/#features" },
+  { label: "Components", href: "/playground" },
   { label: "Contact", href: "/contact" },
-  { label: "About", href: "/about" },
 ];
+
+const {
+  brandLabel = "Astro System",
+  brandHref = "/",
+  navItems = defaultNavItems,
+  cta,
+  sticky = true,
+  class: className,
+  ...restProps
+} = Astro.props;
 ---
 
-<header class="site-header">
+<header
+  {...restProps}
+  class:list={[
+    "site-header",
+    sticky && "site-header--sticky",
+    className,
+  ]}
+>
   <Container size="xl">
     <div class="site-header__inner">
-      <a class="site-header__brand" href="/">
-        Astro System
+      <a class="site-header__brand" href={brandHref}>
+        {brandLabel}
       </a>
 
-      <Navbar links={links} />
+      <Navbar items={navItems} cta={cta} />
     </div>
   </Container>
 </header>

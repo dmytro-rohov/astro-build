@@ -1,0 +1,39 @@
+@layer layout {
+  .cluster {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--cluster-gap, var(--spacing-sm));
+  }
+
+  .cluster--align-start {
+    align-items: flex-start;
+  }
+
+  .cluster--align-center {
+    align-items: center;
+  }
+
+  .cluster--align-end {
+    align-items: flex-end;
+  }
+
+  .cluster--align-stretch {
+    align-items: stretch;
+  }
+
+  .cluster--justify-start {
+    justify-content: flex-start;
+  }
+
+  .cluster--justify-center {
+    justify-content: center;
+  }
+
+  .cluster--justify-end {
+    justify-content: flex-end;
+  }
+
+  .cluster--justify-between {
+    justify-content: space-between;
+  }
+}

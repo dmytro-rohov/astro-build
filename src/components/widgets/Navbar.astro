@@ -1,0 +1,151 @@
+---
+import Link from "@/components/ui/Link.astro";
+
+export type NavItem = {
+  label: string;
+  href: string;
+  external?: boolean;
+};
+
+export type NavAction = {
+  label: string;
+  href: string;
+  external?: boolean;
+};
+
+export interface Props {
+  items: NavItem[];
+  cta?: NavAction;
+  label?: string;
+  class?: string;
+}
+
+const {
+  items,
+  cta,
+  label = "Main navigation",
+  class: className,
+  ...restProps
+} = Astro.props;
+
+const currentPath = Astro.url.pathname;
+
+function normalizePath(path: string) {
+  if (path === "/") return "/";
+
+  return path.replace(/\/$/, "");
+}
+
+function isActiveLink(href: string) {
+  if (href.startsWith("http")) return false;
+  if (href.startsWith("#")) return false;
+  if (href.includes("#")) {
+    return normalizePath(href.split("#")[0] || "/") === normalizePath(currentPath);
+  }
+
+  return normalizePath(href) === normalizePath(currentPath);
+}
+---
+
+<nav
+  {...restProps}
+  class:list={[
+    "navbar",
+    className,
+  ]}
+  aria-label={label}
+  data-navbar
+>
+  <button
+    class="navbar__toggle"
+    type="button"
+    aria-expanded="false"
+    aria-controls="navbar-menu"
+    data-navbar-toggle
+  >
+    <span class="navbar__toggle-text">Menu</span>
+    <span class="navbar__icon" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+  </button>
+
+  <div class="navbar__menu" id="navbar-menu" data-navbar-menu>
+    <ul class="navbar__list">
+      {items.map((item) => (
+        <li class="navbar__item">
+          <Link
+            href={item.href}
+            external={item.external}
+            variant="nav"
+            class="navbar__link"
+            aria-current={isActiveLink(item.href) ? "page" : undefined}
+          >
+            {item.label}
+          </Link>
+        </li>
+      ))}
+    </ul>
+
+    {cta && (
+      <a
+        class="button button--primary button--sm navbar__cta"
+        href={cta.href}
+        target={cta.external ? "_blank" : undefined}
+        rel={cta.external ? "noopener noreferrer" : undefined}
+      >
+        {cta.label}
+      </a>
+    )}
+  </div>
+</nav>
+
+<script>
+  const navbars = document.querySelectorAll("[data-navbar]");
+
+  navbars.forEach((navbar) => {
+    const toggle = navbar.querySelector("[data-navbar-toggle]");
+    const menu = navbar.querySelector("[data-navbar-menu]");
+
+    if (!(toggle instanceof HTMLButtonElement) || !(menu instanceof HTMLElement)) {
+      return;
+    }
+
+    const closeMenu = () => {
+      toggle.setAttribute("aria-expanded", "false");
+      navbar.removeAttribute("data-open");
+    };
+
+    const openMenu = () => {
+      toggle.setAttribute("aria-expanded", "true");
+      navbar.setAttribute("data-open", "");
+    };
+
+    const toggleMenu = () => {
+      const isOpen = toggle.getAttribute("aria-expanded") === "true";
+
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    };
+
+    toggle.addEventListener("click", toggleMenu);
+
+    menu.addEventListener("click", (event) => {
+      const target = event.target;
+
+      if (target instanceof HTMLAnchorElement) {
+        closeMenu();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeMenu();
+      }
+    });
+  });
+</script>

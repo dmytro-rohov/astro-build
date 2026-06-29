@@ -33,7 +33,13 @@ const {
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
 
-    <Header />
+    <Header
+      cta={{
+        label: "Contact",
+        href: "/contact",
+      }}
+    />
+
 
     <main id="main-content">
       <slot />

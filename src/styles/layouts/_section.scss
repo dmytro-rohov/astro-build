@@ -1,0 +1,62 @@
+@use "../abstracts/mixins" as *;
+
+@layer layout {
+  .section {
+    position: relative;
+  }
+
+  .section--spacing-none {
+    padding-block: 0;
+  }
+
+  .section--spacing-sm {
+    padding-block: var(--spacing-2xl);
+  }
+
+  .section--spacing-md {
+    padding-block: var(--spacing-3xl);
+  }
+
+  .section--spacing-lg {
+    padding-block: var(--spacing-4xl);
+  }
+
+  .section--spacing-xl {
+    padding-block: var(--spacing-5xl);
+  }
+
+  .section--tone-default {
+    color: var(--color-text-primary);
+    background: var(--color-background-primary);
+  }
+
+  .section--tone-muted {
+    color: var(--color-text-primary);
+    background: var(--color-background-muted);
+  }
+
+  .section--tone-inverse {
+    color: var(--color-text-inverse);
+    background: var(--color-background-inverse);
+  }
+
+  @include mq(md) {
+
+  .section--spacing-sm {
+    padding-block: var(--spacing-3xl);
+  }
+
+  .section--spacing-md {
+    padding-block: var(--spacing-4xl);
+  }
+
+  .section--spacing-lg {
+    padding-block: var(--spacing-5xl);
+  }
+
+  .section--spacing-xl {
+    padding-block: calc(var(--spacing-5xl) * 1.25);
+  }
+
+  }
+}

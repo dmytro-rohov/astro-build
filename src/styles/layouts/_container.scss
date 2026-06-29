@@ -1,0 +1,25 @@
+@layer layout {
+  .container {
+    width: min(100% - calc(var(--spacing-md) * 2), var(--container-max));
+    margin-inline: auto;
+  }
+
+  .container--sm {
+    --container-max: 40rem;
+  }
+
+  .container--md {
+    --container-max: 56rem;
+  }
+
+  .container--lg {
+    --container-max: 70rem;
+  }
+
+  .container--xl {
+    --container-max: 80rem;
+  }
+  .container--full {
+    --container-max: 100%;
+  }
+}

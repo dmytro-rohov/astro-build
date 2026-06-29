@@ -1,11 +1,12 @@
 ---
+
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import Container from "@/components/layouts/Container.astro";
-import Section from "@/components/layouts/Section.astro";
-import Stack from "@/components/layouts/Stack.astro";
-import Cluster from "@/components/layouts/Cluster.astro";
 
 import Button from "@/components/ui/Button.astro";
+import Tag from "@/components/ui/Tag.astro";
+import Card from "@/components/ui/Card.astro";
+import Link from "@/components/ui/Link.astro";
+import Img from "@/components/media/Img.astro";
 
 import FormGroup from "@/components/form/FormGroup.astro";
 import FormField from "@/components/form/FormField.astro";
@@ -14,7 +15,17 @@ import FieldHint from "@/components/form/FieldHint.astro";
 import Input from "@/components/form/Input.astro";
 import Textarea from "@/components/form/Textarea.astro";
 import Checkbox from "@/components/form/Checkbox.astro";
-import Button from "@/components/ui/Button.astro";
+import Button from "@/components/ui/Button.astro";  
+
+import Section from "@/components/layouts/Section.astro";
+import Container from "@/components/layouts/Container.astro";
+import Split from "@/components/layouts/Split.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Cluster from "@/components/layouts/Cluster.astro";
+import Grid from "@/components/layouts/Grid.astro";
+
+import heroImage from "@/assets/img/photo.jpg";
+
 ---
 
 <BaseLayout
@@ -78,4 +89,61 @@ import Button from "@/components/ui/Button.astro";
 
     </Container>
   </Section>
+
+  <Container size="xl">
+    <Split ratio="text-media" gap="2xl">
+      <Stack space="lg">
+        <Tag variant="primary">Astro Frontend System</Tag>
+
+        <h1>Build landing pages faster.</h1>
+
+        <p>
+          Reusable Astro components, design tokens, local fonts,
+          optimized media and clean SCSS architecture.
+        </p>
+
+        <Cluster gap="md">
+          <Button>Get started</Button>
+          <Link href="/components">View components</Link>
+        </Cluster>
+      </Stack>
+
+      <Img
+        src={heroImage}
+        alt="Astro landing page preview"
+        class="image--rounded image--shadow"
+      />
+    </Split>
+  </Container>
+</Section>
+
+<Section tone="muted">
+  <Container>
+    <Stack space="xl">
+      <Stack space="sm">
+        <h2>Everything needed for modern landing pages.</h2>
+        <p>Start fast with reusable layout and UI primitives.</p>
+      </Stack>
+
+      <Grid columns="3">
+        <Card as="article">
+          <h3>Design tokens</h3>
+          <p>Centralized values for color, spacing, typography and motion.</p>
+        </Card>
+
+        <Card as="article">
+          <h3>Media system</h3>
+          <p>Optimized images, picture sources and local SVG sprite icons.</p>
+        </Card>
+
+        <Card as="article">
+          <h3>Clean SCSS</h3>
+          <p>Organized layers, global primitives and no duplicated component CSS.</p>
+        </Card>
+      </Grid>
+    </Stack>
+  </Container>
+</Section>
+
+
 </BaseLayout>

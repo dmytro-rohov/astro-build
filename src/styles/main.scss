@@ -9,25 +9,26 @@
 @use "./base/base";
 @use "./base/typography";
 
-// layouts
-@use "./layout/grid";
-@use "./layout/container";
-@use "./layout/section";
-@use "./layout/stack";
-@use "./layout/cluster";
-@use "./layout/split";
-@use "./layout/sidebar";
-
 // components
 @use "./components/media/image";
 @use "./components/media/picture";
 @use "./components/media/figure";
 
+// ui
 @use "./components/button";
 @use "./components/link";
 @use "./components/card";
 @use "./components/tag";
 @use "./components/divider";
+
+// primitive layouts
+@use "./layouts/container";
+@use "./layouts/section";
+@use "./layouts/stack";
+@use "./layouts/cluster";
+@use "./layouts/grid";
+@use "./layouts/split";
+@use "./layouts/sidebar";
 
 // form
 @use "./components/form/label";
@@ -46,8 +47,12 @@
 @use "./state/state";
 
 // site layouts
-@use "./layout/header";
-@use "./layout/footer";
+@use "./layouts/header";
+@use "./layouts/footer";
 
+
+// widgets
+
+@use "./widgets/navbar";
 
 @layer reset, tokens, base, layout, components, widgets, utilities, state;

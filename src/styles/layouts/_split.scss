@@ -1,0 +1,60 @@
+@use "../abstracts/mixins" as *;
+
+@layer layout {
+  .split {
+    display: grid;
+    gap: var(--split-gap, var(--spacing-xl));
+    grid-template-columns: 1fr;
+  }
+
+  .split--align-start {
+    align-items: start;
+  }
+
+  .split--align-center {
+    align-items: center;
+  }
+
+  .split--align-end {
+    align-items: end;
+  }
+
+  .split--align-stretch {
+    align-items: stretch;
+  }
+
+  .split--reverse > :first-child {
+    order: 2;
+  }
+
+  .split--reverse > :last-child {
+    order: 1;
+  }
+
+  @include mq(md) {
+    .split {
+      grid-template-columns: var(--split-ratio, 1fr 1fr);
+    }
+
+    .split--equal {
+      --split-ratio: 1fr 1fr;
+    }
+
+    .split--text-media {
+      --split-ratio: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    }
+
+    .split--media-text {
+      --split-ratio: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    }
+
+    .split--sidebar {
+      --split-ratio: minmax(0, 1fr) minmax(16rem, 22rem);
+    }
+
+    .split--reverse > :first-child,
+    .split--reverse > :last-child {
+      order: initial;
+    }
+  }
+}

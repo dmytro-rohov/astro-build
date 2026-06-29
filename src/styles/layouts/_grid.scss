@@ -1,0 +1,53 @@
+@use "../abstracts/mixins" as *;
+
+@layer layout {
+  .grid {
+    display: grid;
+    gap: var(--grid-gap, var(--spacing-lg));
+  }
+
+  .grid--cols-1 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid--cols-2,
+  .grid--cols-3,
+  .grid--cols-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid--cols-auto {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, var(--grid-min, 16rem)), 1fr)
+    );
+  }
+
+  // .feature-grid {
+  //   --grid-min: 18rem;
+  // }
+
+  @include mq(md) {
+    .grid--cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid--cols-3 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid--cols-4 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @include mq(lg) {
+    .grid--cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid--cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+}

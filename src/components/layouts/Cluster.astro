@@ -1,18 +1,39 @@
 ---
+type ClusterTag = "div" | "nav" | "ul" | "ol";
+
 export interface Props {
-  gap?: string;
+  as?: ClusterTag;
+  gap?: "xs" | "sm" | "md" | "lg" | "xl" | string;
+  align?: "start" | "center" | "end" | "stretch";
+  justify?: "start" | "center" | "end" | "between";
   class?: string;
 }
 
 const {
-  gap = "0.5rem",
-  class: className
+  as: Tag = "div",
+  gap = "sm",
+  align = "center",
+  justify = "start",
+  class: className,
+  ...restProps
 } = Astro.props;
+
+const tokenGap = gap.startsWith("var(")
+  ? gap
+  : gap.includes("rem") || gap.includes("px")
+    ? gap
+    : `var(--spacing-${gap})`;
 ---
 
-<div
-  class:list={["cluster", className]}
-  style={`--cluster-gap:${gap}`}
+<Tag
+  {...restProps}
+  class:list={[
+    "cluster",
+    `cluster--align-${align}`,
+    `cluster--justify-${justify}`,
+    className,
+  ]}
+  style={`--cluster-gap: ${tokenGap};`}
 >
   <slot />
-</div>
+</Tag>
