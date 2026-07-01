@@ -52,7 +52,9 @@
 
 
 // widgets
-
 @use "./widgets/navbar";
+@use "./widgets/hero";
+@use "./widgets/feature-grid";
+
 
 @layer reset, tokens, base, layout, components, widgets, utilities, state;

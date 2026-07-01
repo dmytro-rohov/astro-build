@@ -1,0 +1,94 @@
+@use "../abstracts/mixins" as *;
+
+@layer widgets {
+  .hero {
+    overflow: clip;
+  }
+
+  .hero__content {
+    max-width: 42rem;
+  }
+
+  .hero--align-center .hero__content {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .hero--align-center .hero__eyebrow {
+    margin-inline: auto;
+  }
+
+  .hero--align-center .hero__actions {
+    justify-content: center;
+  }
+
+  .hero__title {
+    max-width: 12ch;
+
+    font-size: clamp(
+      var(--font-size-4xl),
+      8vw,
+      var(--font-size-7xl)
+    );
+    line-height: var(--line-height-none);
+    letter-spacing: var(--letter-spacing-tighter);
+  }
+
+  .hero__description {
+    max-width: 62ch;
+
+    color: var(--color-text-secondary);
+
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .hero--align-center .hero__description {
+    margin-inline: auto;
+  }
+
+  .hero__actions {
+    align-items: center;
+  }
+
+  .hero__media {
+    position: relative;
+  }
+
+  .hero__media::before {
+    content: "";
+    position: absolute;
+    inset: 10%;
+
+    z-index: -1;
+
+    background: color-mix(
+      in srgb,
+      var(--color-action-primary) 18%,
+      transparent
+    );
+    border-radius: var(--radius-2xl);
+    filter: blur(48px);
+  }
+
+  .hero__image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .hero--tone-inverse .hero__description,
+  .section--tone-inverse .hero__description {
+    color: color-mix(
+      in srgb,
+      var(--color-text-inverse) 78%,
+      transparent
+    );
+  }
+
+  @include mq(md) {
+    .hero__title {
+      max-width: 13ch;
+    }
+  }
+}

@@ -24,7 +24,44 @@ import Stack from "@/components/layouts/Stack.astro";
 import Cluster from "@/components/layouts/Cluster.astro";
 import Grid from "@/components/layouts/Grid.astro";
 
+import Hero from "@/components/widgets/Hero.astro";
+import FeatureGrid from "@/components/widgets/FeatureGrid.astro";
+
 import heroImage from "@/assets/img/photo.jpg";
+
+
+const features = [
+  {
+    eyebrow: "Tokens",
+    title: "Design tokens",
+    description: "Centralized values for colors, spacing, typography, radius, shadows and motion.",
+  },
+  {
+    eyebrow: "Media",
+    title: "Optimized images",
+    description: "Reusable Img and Picture components with Astro image optimization and sensible defaults.",
+  },
+  {
+    eyebrow: "Icons",
+    title: "SVG sprite",
+    description: "A local SVG sprite pipeline for optimized and reusable icons.",
+  },
+  {
+    eyebrow: "Layout",
+    title: "Layout primitives",
+    description: "Container, Section, Stack, Cluster, Grid, Split and Sidebar for consistent page structure.",
+  },
+  {
+    eyebrow: "Fonts",
+    title: "Local fonts",
+    description: "A local font pipeline with generated @font-face rules and subset support.",
+  },
+  {
+    eyebrow: "SCSS",
+    title: "Clean architecture",
+    description: "Global SCSS layers, reusable components and no duplicated local CSS files.",
+  },
+];
 
 ---
 
@@ -32,6 +69,31 @@ import heroImage from "@/assets/img/photo.jpg";
   title="Astro System Landing"
   description="Reusable Astro starter for professional landing pages."
 >
+
+  <Hero
+    eyebrow="Astro Frontend System"
+    title="Build landing pages faster."
+    description="Reusable Astro components, design tokens, optimized media, local fonts and clean SCSS architecture."
+    image={heroImage}
+    imageAlt="Preview of a modern landing page"
+    primaryAction={{
+      label: "Get started",
+      href: "/#features",
+    }}
+    secondaryAction={{
+      label: "View components",
+      href: "/playground",
+    }}
+  />
+
+  <FeatureGrid
+    eyebrow="Features"
+    title="Everything needed for modern landing pages."
+    description="A reusable Astro system with clean primitives, optimized assets and a predictable styling workflow."
+    items={features}
+  />
+    
+
   <Section>
     <Container size="lg">
       <Stack space="var(--spacing-lg)">

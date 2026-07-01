@@ -1,0 +1,163 @@
+---
+import Section from "@/components/layouts/Section.astro";
+import Container from "@/components/layouts/Container.astro";
+import Split from "@/components/layouts/Split.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Cluster from "@/components/layouts/Cluster.astro";
+
+import Tag from "@/components/ui/Tag.astro";
+import Button from "@/components/ui/Button.astro";
+import Link from "@/components/ui/Link.astro";
+import Img from "@/components/media/Img.astro";
+
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+
+  primaryAction?: {
+    label: string;
+    href?: string;
+  };
+
+  secondaryAction?: {
+    label: string;
+    href: string;
+  };
+
+  image?: ImageMetadata | string;
+  imageAlt?: string;
+
+  align?: "left" | "center";
+  tone?: "default" | "muted" | "inverse";
+  class?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+  primaryAction,
+  secondaryAction,
+  image,
+  imageAlt = "",
+  align = "left",
+  tone = "default",
+  class: className,
+  ...restProps
+} = Astro.props;
+
+const hasImage = Boolean(image);
+const hasActions = Boolean(primaryAction || secondaryAction);
+---
+
+<Section
+  {...restProps}
+  spacing="xl"
+  tone={tone}
+  class:list={[
+  "hero",
+  `hero--align-${align}`,
+  `hero--tone-${tone}`,
+  hasImage && "hero--with-media",
+  className,
+  ]}
+>
+  <Container size="xl">
+    {hasImage ? (
+      <Split ratio="text-media" gap="2xl" align="center">
+        <Stack class="hero__content" space="lg">
+          {eyebrow && (
+            <Tag variant="primary" class="hero__eyebrow">
+              {eyebrow}
+            </Tag>
+          )}
+
+          <Stack space="md">
+            <h1 class="hero__title">{title}</h1>
+
+            {description && (
+              <p class="hero__description">
+                {description}
+              </p>
+            )}
+          </Stack>
+
+          {hasActions && (
+            <Cluster class="hero__actions" gap="md">
+              {primaryAction && primaryAction.href ? (
+                <a
+                  class="button button--primary button--lg"
+                  href={primaryAction.href}
+                >
+                  {primaryAction.label}
+                </a>
+              ) : primaryAction ? (
+                <Button size="lg">
+                  {primaryAction.label}
+                </Button>
+              ) : null}
+
+              {secondaryAction && (
+                <Link href={secondaryAction.href}>
+                  {secondaryAction.label}
+                </Link>
+              )}
+            </Cluster>
+          )}
+        </Stack>
+
+        <div class="hero__media">
+          <Img
+            src={image}
+            alt={imageAlt}
+            kind={imageAlt ? "content" : "decorative"}
+            priority="high"
+            class="hero__image image--rounded image--shadow"
+          />
+        </div>
+      </Split>
+    ) : (
+      <Stack class="hero__content" space="lg">
+        {eyebrow && (
+          <Tag variant="primary" class="hero__eyebrow">
+            {eyebrow}
+          </Tag>
+        )}
+
+        <Stack space="md">
+          <h1 class="hero__title">{title}</h1>
+
+          {description && (
+            <p class="hero__description">
+              {description}
+            </p>
+          )}
+        </Stack>
+
+        {hasActions && (
+          <Cluster class="hero__actions" gap="md">
+            {primaryAction && primaryAction.href ? (
+              <a
+                class="button button--primary button--lg"
+                href={primaryAction.href}
+              >
+                {primaryAction.label}
+              </a>
+            ) : primaryAction ? (
+              <Button size="lg">
+                {primaryAction.label}
+              </Button>
+            ) : null}
+
+            {secondaryAction && (
+              <Link href={secondaryAction.href}>
+                {secondaryAction.label}
+              </Link>
+            )}
+          </Cluster>
+        )}
+      </Stack>
+    )}
+  </Container>
+</Section>

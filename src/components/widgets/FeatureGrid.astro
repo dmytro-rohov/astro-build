@@ -1,0 +1,97 @@
+---
+import Section from "@/components/layouts/Section.astro";
+import Container from "@/components/layouts/Container.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Grid from "@/components/layouts/Grid.astro";
+
+import Card from "@/components/ui/Card.astro";
+import Tag from "@/components/ui/Tag.astro";
+
+export type FeatureItem = {
+  title: string;
+  description: string;
+  eyebrow?: string;
+  icon?: string;
+};
+
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  items: FeatureItem[];
+
+  columns?: "2" | "3" | "4" | "auto";
+  tone?: "default" | "muted" | "inverse";
+  align?: "left" | "center";
+  class?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+  items,
+  columns = "3",
+  tone = "muted",
+  align = "center",
+  class: className,
+  ...restProps
+} = Astro.props;
+---
+
+<Section
+  {...restProps}
+  spacing="lg"
+  tone={tone}
+  class:list={[
+    "feature-grid",
+    `feature-grid--align-${align}`,
+    `feature-grid--tone-${tone}`,
+    className,
+  ]}
+>
+  <Container size="lg">
+    <Stack space="xl">
+      <Stack class="feature-grid__header" space="md">
+        {eyebrow && (
+          <Tag variant="primary" class="feature-grid__eyebrow">
+            {eyebrow}
+          </Tag>
+        )}
+
+        <h2 class="feature-grid__title">
+          {title}
+        </h2>
+
+        {description && (
+          <p class="feature-grid__description">
+            {description}
+          </p>
+        )}
+      </Stack>
+
+      <Grid columns={columns} gap="lg" as="ul" class="feature-grid__list">
+        {items.map((item) => (
+          <Card as="li" variant="elevated" class="feature-grid__item">
+            {item.eyebrow && (
+              <Tag size="sm" variant="muted" class="feature-grid__item-eyebrow">
+                {item.eyebrow}
+              </Tag>
+            )}
+            {item.icon && (
+                <Icon name={item.icon} class="feature-grid__icon" label=""/>
+            )}
+
+            <h3 class="feature-grid__item-title">
+              {item.title}
+            </h3>
+
+            <p class="feature-grid__item-description">
+              {item.description}
+            </p>
+          </Card>
+        ))}
+      </Grid>
+    </Stack>
+  </Container>
+</Section>
