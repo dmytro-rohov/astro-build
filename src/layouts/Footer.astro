@@ -1,13 +1,145 @@
 ---
 import Container from "@/components/layouts/Container.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Cluster from "@/components/layouts/Cluster.astro";
+import Link from "@/components/ui/Link.astro";
+import Divider from "@/components/ui/Divider.astro";
+import Icon from "@/components/media/Icon.astro";
+
+export type FooterLink = {
+  label: string;
+  href: string;
+  external?: boolean;
+};
+
+export type FooterLinkGroup = {
+  title: string;
+  links: FooterLink[];
+};
+
+export type SocialLink = {
+  label: string;
+  href: string;
+  icon: string;
+};
+
+export interface Props {
+  brandLabel?: string;
+  brandHref?: string;
+  description?: string;
+  groups?: FooterLinkGroup[];
+  socialLinks?: SocialLink[];
+  copyright?: string;
+  class?: string;
+}
 
 const year = new Date().getFullYear();
+
+const defaultGroups: FooterLinkGroup[] = [
+  {
+    title: "Product",
+    links: [
+      { label: "Features", href: "/#features" },
+      { label: "Components", href: "/playground" },
+      { label: "Contact", href: "/contact" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "Documentation", href: "/playground" },
+      { label: "GitHub", href: "https://github.com/dmytro-rohov", external: true },
+    ],
+  },
+];
+
+const {
+  brandLabel = "Astro System",
+  brandHref = "/",
+  description = "Reusable Astro frontend system for professional landing pages.",
+  groups = defaultGroups,
+  socialLinks = [],
+  copyright = `© ${year} ${brandLabel}. All rights reserved.`,
+  class: className,
+  ...restProps
+} = Astro.props;
 ---
 
-<footer class="site-footer">
+<footer
+  {...restProps}
+  class:list={[
+    "site-footer",
+    className,
+  ]}
+>
   <Container size="xl">
-    <div class="site-footer__inner">
-      <p>© {year} Astro System. All rights reserved.</p>
-    </div>
+    <Stack space="xl">
+      <div class="site-footer__main">
+        <Stack class="site-footer__brand-block" space="md">
+          <a class="site-footer__brand" href={brandHref}>
+            {brandLabel}
+          </a>
+
+          {description && (
+            <p class="site-footer__description">
+              {description}
+            </p>
+          )}
+
+          {socialLinks.length > 0 && (
+            <Cluster as="ul" gap="sm" class="site-footer__social-list">
+              {socialLinks.map((item) => (
+                <li class="site-footer__social-item">
+                  <a
+                    class="site-footer__social-link"
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={item.label}
+                  >
+                    <Icon name={item.icon} />
+                  </a>
+                </li>
+              ))}
+            </Cluster>
+          )}
+        </Stack>
+
+        {groups.length > 0 && (
+          <div class="site-footer__groups">
+            {groups.map((group) => (
+              <nav class="site-footer__group" aria-label={group.title}>
+                <h2 class="site-footer__group-title">
+                  {group.title}
+                </h2>
+
+                <ul class="site-footer__link-list">
+                  {group.links.map((link) => (
+                    <li>
+                      <Link
+                        href={link.href}
+                        external={link.external}
+                        variant="muted"
+                        class="site-footer__link"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <Divider />
+
+      <div class="site-footer__bottom">
+        <p class="site-footer__copyright">
+          {copyright}
+        </p>
+      </div>
+    </Stack>
   </Container>
 </footer>

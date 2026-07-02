@@ -35,6 +35,12 @@
     margin-inline: auto;
   }
 
+.feature-grid__icon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--color-action-primary);
+}
+
   .feature-grid__list {
     padding: 0;
     margin: 0;

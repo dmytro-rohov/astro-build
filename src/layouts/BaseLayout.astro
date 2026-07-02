@@ -40,11 +40,31 @@ const {
       }}
     />
 
-
     <main id="main-content">
       <slot />
     </main>
 
-    <Footer />
+    <Footer
+    brandLabel="Mytko Studio"
+    description="Frontend development, landing pages and clean web systems."
+    groups={[
+      {
+        title: "Pages",
+        links: [
+          { label: "Home", href: "/" },
+          { label: "Projects", href: "/#projects" },
+          { label: "Contact", href: "/contact" },
+        ],
+      },
+      {
+        title: "Social",
+        links: [
+          { label: "GitHub", href: "https://github.com", external: true },
+          { label: "LinkedIn", href: "https://linkedin.com", external: true },
+        ],
+      },
+    ]}
+/>
+
   </body>
 </html>
