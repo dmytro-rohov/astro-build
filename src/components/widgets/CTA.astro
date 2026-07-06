@@ -1,0 +1,107 @@
+---
+import Section from "@/components/layouts/Section.astro";
+import Container from "@/components/layouts/Container.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Cluster from "@/components/layouts/Cluster.astro";
+
+import Tag from "@/components/ui/Tag.astro";
+import Button from "@/components/ui/Button.astro";
+import Link from "@/components/ui/Link.astro";
+import Stack from "../layouts/Stack.astro";
+import Tag from "../ui/Tag.astro";
+
+export type CTAAction = {
+  label: string;
+  href?: string;
+};
+
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  description: string;
+
+  primaryAction?: CTAAction;
+  secondaryAction?: CTAAction;
+
+  align?: "left" | "center";
+  tone?: "default" | "muted" | "inverse"
+  boxed?: boolean;
+  class?: string;
+}
+
+const {
+  eyebrow,
+  title, 
+  description,
+  primaryAction,
+  secondaryAction,
+  align = "center",
+  tone = "default",
+  boxed = true,
+  class: className,
+  ...restProps
+} = Astro.props;
+
+const hasAction = Boolean(primaryAction || secondaryAction);
+---
+
+<Section
+ {...restProps}
+ spacing="lg"
+ tone={tone}
+ class:list={[
+  "cta",
+  `cta--align-${align}`,
+  `cta--tone-${tone}`,
+  boxed && "cta--boxed",
+  className,
+ ]} >
+
+ <Container size="lg">
+  <div class:list={["cta__box", boxed && "cta__box--boxed"]}>
+    <Stack class="cta__content" space="lg">
+      {eyebrow && (
+        <Tag variant="primary" class="cta__eyebrow">
+          {eyebrow}
+        </Tag>
+      )}
+
+      <Stack space="md">
+        <h2 class="cta__title">
+          {title}
+        </h2>
+
+        {description && (
+          <p class="cta__description">
+            {description}
+          </p>
+        )}
+      </Stack>
+
+      {hasAction && (
+        <Cluster class="cta__actions" gap="md" justify={align === "center" ? "center" : "start"}>
+          {primaryAction && primaryAction.href ? (
+            <a class="button button--primary button--lg" href={primaryAction.href}>
+              {primaryAction.label}
+            </a>
+          ) : primaryAction ? (
+              <Button size="lg">
+                {primaryAction.label}
+              </Button>
+            ) : null}
+
+            {secondaryAction && secondaryAction.href ? (
+              <Link href={secondaryAction.href}>
+                {secondaryAction.label}
+              </Link>
+            ) : secondaryAction ? (
+              <Button variant="secondary" size="lg">
+                {secondaryAction.label}
+              </Button>
+            ) : null}
+
+        </Cluster>
+      )}
+
+  </div>
+ </Container>

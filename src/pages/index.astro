@@ -1,13 +1,16 @@
 ---
 
+// base
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
+// ui + media
 import Button from "@/components/ui/Button.astro";
 import Tag from "@/components/ui/Tag.astro";
 import Card from "@/components/ui/Card.astro";
 import Link from "@/components/ui/Link.astro";
 import Img from "@/components/media/Img.astro";
 
+// form
 import FormGroup from "@/components/form/FormGroup.astro";
 import FormField from "@/components/form/FormField.astro";
 import Label from "@/components/form/Label.astro";
@@ -15,8 +18,8 @@ import FieldHint from "@/components/form/FieldHint.astro";
 import Input from "@/components/form/Input.astro";
 import Textarea from "@/components/form/Textarea.astro";
 import Checkbox from "@/components/form/Checkbox.astro";
-import Button from "@/components/ui/Button.astro";  
 
+// layouts
 import Section from "@/components/layouts/Section.astro";
 import Container from "@/components/layouts/Container.astro";
 import Split from "@/components/layouts/Split.astro";
@@ -24,9 +27,13 @@ import Stack from "@/components/layouts/Stack.astro";
 import Cluster from "@/components/layouts/Cluster.astro";
 import Grid from "@/components/layouts/Grid.astro";
 
+// widgets
 import Hero from "@/components/widgets/Hero.astro";
 import FeatureGrid from "@/components/widgets/FeatureGrid.astro";
+import CTA from "@/components/widgets/CTA.astro";
 
+
+// assets
 import heroImage from "@/assets/img/photo.jpg";
 
 
@@ -93,6 +100,20 @@ const features = [
     items={features}
   />
     
+<CTA
+  eyebrow="Ready?"
+  title="Build your next landing page faster."
+  description="Use a reusable Astro frontend system with design tokens, optimized assets and clean components."
+  primaryAction={{
+    label: "Start project",
+    href: "/contact",
+  }}
+  secondaryAction={{
+    label: "View components",
+    href: "/playground",
+  }}
+/>
+
 
 <Section tone="muted">
   <Container>

@@ -55,6 +55,7 @@
 @use "./widgets/navbar";
 @use "./widgets/hero";
 @use "./widgets/feature-grid";
+@use "./widgets/cta";
 
 
 @layer reset, tokens, base, layout, components, widgets, utilities, state;

@@ -1,0 +1,85 @@
+@layer widgets {
+  .cta {
+    position: relative;
+  }
+
+  .cta__box {
+    position: relative;
+  }
+
+  .cta__box--boxed {
+    padding: var(--spacing-2xl);
+
+    background:
+      radial-gradient(
+        circle at top left,
+        color-mix(in srgb, var(--color-action-primary) 16%, transparent),
+        transparent 22rem
+      ),
+      var(--color-background-surface);
+
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--elevation-card);
+  }
+
+  .cta__content {
+    max-width: 46rem;
+  }
+
+  .cta--align-center .cta__content {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .cta--align-center .cta__eyebrow {
+    margin-inline: auto;
+  }
+
+  .cta__title {
+    font-size: clamp(
+      var(--font-size-3xl),
+      5vw,
+      var(--font-size-5xl)
+    );
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  .cta__description {
+    margin: 0;
+
+    color: var(--color-text-secondary);
+
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .cta--align-center .cta__description {
+    margin-inline: auto;
+  }
+
+  .cta__actions {
+    align-items: center;
+  }
+
+  .cta--tone-inverse .cta__box--boxed {
+    background:
+      radial-gradient(
+        circle at top left,
+        color-mix(in srgb, var(--color-action-primary) 22%, transparent),
+        transparent 22rem
+      ),
+      color-mix(in srgb, var(--color-background-inverse) 92%, var(--color-background-primary));
+
+    border-color: var(--color-border-inverse);
+  }
+
+  .cta--tone-inverse .cta__description {
+    color: color-mix(
+      in srgb,
+      var(--color-text-inverse) 78%,
+      transparent
+    );
+  }
+}
