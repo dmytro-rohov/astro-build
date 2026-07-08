@@ -1,0 +1,72 @@
+---
+import Section from "@/components/layouts/Section.astro";
+import Container from "@/components/layouts/Container.astro";
+import Stack from "@/components/layouts/Stack.astro";
+
+import Tag from "@/components/ui/Tag.astro";
+import Accordion, { type AccordionItem } from "@/components/widgets/Accordion.astro";
+
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  items: AccordionItem[];
+
+  tone?: "default" | "muted" | "inverse";
+  align?: "left" | "center";
+  accordionVariant?: "default" | "boxed" | "minimal";
+  class?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+  items,
+  tone = "default",
+  align = "center",
+  accordionVariant = "default",
+  class: className,
+  ...restProps
+} = Astro.props;
+---
+
+<Section
+  {...restProps}
+  spacing="lg"
+  tone={tone}
+  class:list={[
+    "faq",
+    `faq--align-${align}`,
+    `faq--tone-${tone}`,
+    className,
+  ]}
+>
+  <Container size="md">
+    <Stack space="xl">
+      <Stack class="faq__header" space="md">
+        {eyebrow && (
+          <Tag variant="primary" class="faq__eyebrow">
+            {eyebrow}
+          </Tag>
+        )}
+
+        <h2 class="faq__title">
+          {title}
+        </h2>
+
+        {description && (
+          <p class="faq__description">
+            {description}
+          </p>
+        )}
+      </Stack>
+
+      <Accordion
+        items={items}
+        variant={accordionVariant}
+        class="faq__accordion"
+      />
+    </Stack>
+  </Container>
+</Section>

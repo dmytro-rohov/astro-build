@@ -56,6 +56,8 @@
 @use "./widgets/hero";
 @use "./widgets/feature-grid";
 @use "./widgets/cta";
+@use "./widgets/accordion";
+@use "./widgets/faq";
 
 
 @layer reset, tokens, base, layout, components, widgets, utilities, state;

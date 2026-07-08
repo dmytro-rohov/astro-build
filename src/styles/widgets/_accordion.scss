@@ -1,0 +1,120 @@
+@layer components {
+  .accordion {
+    display: grid;
+    gap: var(--spacing-sm);
+  }
+
+  .accordion__item {
+    color: var(--color-text-primary);
+    background: var(--color-background-surface);
+
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-lg);
+
+    transition:
+      border-color var(--motion-duration-fast) var(--motion-easing-standard),
+      background-color var(--motion-duration-fast) var(--motion-easing-standard),
+      box-shadow var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .accordion__item[open] {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--elevation-card);
+  }
+
+  .accordion__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+
+    padding: var(--spacing-lg);
+
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .accordion__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .accordion__title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+  }
+
+  .accordion__icon {
+    position: relative;
+
+    flex: 0 0 auto;
+
+    width: 1rem;
+    height: 1rem;
+
+    color: var(--color-action-primary);
+  }
+
+  .accordion__icon::before,
+  .accordion__icon::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+
+    width: 0.875rem;
+    height: 2px;
+
+    background: currentColor;
+    border-radius: var(--radius-pill);
+
+    transform: translate(-50%, -50%);
+    transition: transform var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .accordion__icon::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  .accordion__item[open] .accordion__icon::after {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  .accordion__content {
+    padding-inline: var(--spacing-lg);
+    padding-block-end: var(--spacing-lg);
+
+    color: var(--color-text-secondary);
+
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .accordion__content > * {
+    margin: 0;
+  }
+
+  .accordion__content > * + * {
+    margin-block-start: var(--spacing-md);
+  }
+
+  .accordion--minimal {
+    gap: 0;
+  }
+
+  .accordion--minimal .accordion__item {
+    background: transparent;
+    border-inline: 0;
+    border-block-start: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .accordion--minimal .accordion__item:last-child {
+    border-block-end: 1px solid var(--color-border-default);
+  }
+
+  .accordion--boxed .accordion__item {
+    box-shadow: var(--elevation-card);
+  }
+}
