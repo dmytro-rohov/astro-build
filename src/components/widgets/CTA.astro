@@ -7,8 +7,6 @@ import Cluster from "@/components/layouts/Cluster.astro";
 import Tag from "@/components/ui/Tag.astro";
 import Button from "@/components/ui/Button.astro";
 import Link from "@/components/ui/Link.astro";
-import Stack from "../layouts/Stack.astro";
-import Tag from "../ui/Tag.astro";
 
 export type CTAAction = {
   label: string;
@@ -102,6 +100,7 @@ const hasAction = Boolean(primaryAction || secondaryAction);
 
         </Cluster>
       )}
-
+    </Stack>
   </div>
  </Container>
+</Section>

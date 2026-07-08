@@ -1,0 +1,334 @@
+---
+import Section from "@/components/layouts/Section.astro";
+import Container from "@/components/layouts/Container.astro";
+import Split from "@/components/layouts/Split.astro";
+import Stack from "@/components/layouts/Stack.astro";
+
+import Card from "@/components/ui/Card.astro";
+import Link from "@/components/ui/Link.astro";
+import Button from "@/components/ui/Button.astro";
+
+import FormGroup from "@/components/form/FormGroup.astro";
+import FormField from "@/components/form/FormField.astro";
+import Label from "@/components/form/Label.astro";
+import FieldHint from "@/components/form/FieldHint.astro";
+import FieldError from "@/components/form/FieldError.astro";
+import Input from "@/components/form/Input.astro";
+import Textarea from "@/components/form/Textarea.astro";
+import Checkbox from "@/components/form/Checkbox.astro";
+
+export type ContactInfoItem = {
+  label: string;
+  value: string;
+  href?: string;
+};
+
+export interface Props {
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+  contactInfo?: ContactInfoItem[];
+  action?: string;
+  method?: "post";
+  submitLabel?: string;
+  privacyHref?: string;
+  tone?: "default" | "muted" | "inverse";
+  class?: string;
+}
+
+const {
+  eyebrow = "Contact",
+  title = "Let’s build something together.",
+  description = "Send a message and I will get back to you as soon as possible.",
+  contactInfo = [
+    {
+      label: "Email",
+      value: "hello@example.com",
+      href: "mailto:hello@example.com",
+    },
+  ],
+  action = "/api/contact",
+  method = "post",
+  submitLabel = "Send message",
+  privacyHref = "/privacy",
+  tone = "default",
+  class: className,
+  ...restProps
+} = Astro.props;
+
+const hasContactInfo = contactInfo.length > 0;
+---
+
+<Section
+  {...restProps}
+  spacing="lg"
+  tone={tone}
+  class:list={[
+    "contact-form-section",
+    `contact-form-section--tone-${tone}`,
+    className,
+  ]}
+>
+  <Container size="lg">
+    <Split ratio="sidebar" gap="2xl" align="start">
+      <Stack class="contact-form-section__content" space="lg">
+        <Stack space="md">
+          {eyebrow && (
+            <p class="contact-form-section__eyebrow">
+              {eyebrow}
+            </p>
+          )}
+
+          <h2 class="contact-form-section__title">
+            {title}
+          </h2>
+
+          {description && (
+            <p class="contact-form-section__description">
+              {description}
+            </p>
+          )}
+        </Stack>
+
+        {hasContactInfo && (
+          <div class="contact-form-section__info">
+            <h3 class="contact-form-section__info-title">
+              Contact details
+            </h3>
+
+            <ul class="contact-form-section__info-list">
+              {contactInfo.map((item) => (
+                <li class="contact-form-section__info-item">
+                  <span class="contact-form-section__info-label">
+                    {item.label}
+                  </span>
+
+                  {item.href ? (
+                    <Link href={item.href} class="contact-form-section__info-link">
+                      {item.value}
+                    </Link>
+                  ) : (
+                    <span class="contact-form-section__info-value">
+                      {item.value}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </Stack>
+
+      <Card as="div" variant="elevated" padding="lg" class="contact-form-card">
+        <form
+          class="contact-form"
+          action={action}
+          method={method}
+          data-contact-form
+        >
+          <FormGroup gap="lg">
+            <FormField>
+              <Label for="contact-name" required>
+                Name
+              </Label>
+
+              <Input
+                id="contact-name"
+                name="name"
+                type="text"
+                autocomplete="name"
+                required
+                describedby="contact-name-error"
+              />
+
+              <FieldError id="contact-name-error" class="contact-form__error" data-error-for="name" />
+            </FormField>
+
+            <FormField>
+              <Label for="contact-email" required>
+                Email
+              </Label>
+
+              <Input
+                id="contact-email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                describedby="contact-email-hint contact-email-error"
+              />
+
+              <FieldHint id="contact-email-hint">
+                I will use this email only to reply to your message.
+              </FieldHint>
+
+              <FieldError id="contact-email-error" class="contact-form__error" data-error-for="email" />
+            </FormField>
+
+            <FormField>
+              <Label for="contact-subject">
+                Subject
+              </Label>
+
+              <Input
+                id="contact-subject"
+                name="subject"
+                type="text"
+                autocomplete="off"
+              />
+            </FormField>
+
+            <FormField>
+              <Label for="contact-message" required>
+                Message
+              </Label>
+
+              <Textarea
+                id="contact-message"
+                name="message"
+                rows={6}
+                required
+                describedby="contact-message-error"
+              />
+
+              <FieldError id="contact-message-error" class="contact-form__error" data-error-for="message" />
+            </FormField>
+
+            <div class="contact-form__honeypot" aria-hidden="true">
+              <Label for="contact-website">
+                Website
+              </Label>
+
+              <Input
+                id="contact-website"
+                name="website"
+                type="text"
+                tabindex="-1"
+                autocomplete="off"
+              />
+            </div>
+
+            <FormField>
+              <Checkbox
+                id="contact-privacy"
+                name="privacy"
+                required
+                describedby="contact-privacy-error"
+              >
+                I accept the{" "}
+                <Link href={privacyHref}>
+                  privacy policy
+                </Link>
+                .
+              </Checkbox>
+
+              <FieldError id="contact-privacy-error" class="contact-form__error" data-error-for="privacy" />
+            </FormField>
+
+            <p class="contact-form__status" data-contact-status aria-live="polite"></p>
+
+            <Button type="submit" size="lg" class="contact-form__submit">
+              {submitLabel}
+            </Button>
+          </FormGroup>
+        </form>
+      </Card>
+    </Split>
+  </Container>
+</Section>
+
+<script>
+  const forms = document.querySelectorAll("[data-contact-form]");
+
+  forms.forEach((form) => {
+    if (!(form instanceof HTMLFormElement)) {
+      return;
+    }
+
+    const status = form.querySelector("[data-contact-status]");
+    const submit = form.querySelector('button[type="submit"]');
+
+    const clearErrors = () => {
+      form.querySelectorAll("[data-error-for]").forEach((node) => {
+        node.textContent = "";
+      });
+
+      form.querySelectorAll("[aria-invalid='true']").forEach((node) => {
+        node.removeAttribute("aria-invalid");
+      });
+    };
+
+    const setFieldError = (field, message) => {
+      const error = form.querySelector(`[data-error-for="${field}"]`);
+      const input = form.querySelector(`[name="${field}"]`);
+
+      if (error) {
+        error.textContent = message;
+      }
+
+      if (input) {
+        input.setAttribute("aria-invalid", "true");
+      }
+    };
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      clearErrors();
+
+      if (status) {
+        status.textContent = "Sending message...";
+        status.setAttribute("data-state", "pending");
+      }
+
+      if (submit instanceof HTMLButtonElement) {
+        submit.disabled = true;
+      }
+
+      try {
+        const response = await fetch(form.action, {
+          method: form.method,
+          body: new FormData(form),
+          headers: {
+            Accept: "application/json",
+          },
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          if (Array.isArray(result.errors)) {
+            result.errors.forEach((error) => {
+              setFieldError(error.field, error.message);
+            });
+          }
+
+          if (status) {
+            status.textContent = result.message || "Please correct the form.";
+            status.setAttribute("data-state", "error");
+          }
+
+          return;
+        }
+
+        form.reset();
+
+        if (status) {
+          status.textContent = result.message || "Message sent successfully.";
+          status.setAttribute("data-state", "success");
+        }
+      } catch (error) {
+        console.error(error);
+
+        if (status) {
+          status.textContent = "Something went wrong. Please try again later.";
+          status.setAttribute("data-state", "error");
+        }
+      } finally {
+        if (submit instanceof HTMLButtonElement) {
+          submit.disabled = false;
+        }
+      }
+    });
+  });
+</script>

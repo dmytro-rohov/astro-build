@@ -58,6 +58,7 @@
 @use "./widgets/cta";
 @use "./widgets/accordion";
 @use "./widgets/faq";
+@use "./widgets/contact-form";
 
 
 @layer reset, tokens, base, layout, components, widgets, utilities, state;

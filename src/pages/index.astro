@@ -1,74 +1,76 @@
 ---
-
-// base
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
-// ui + media
-import Button from "@/components/ui/Button.astro";
-import Tag from "@/components/ui/Tag.astro";
-import Card from "@/components/ui/Card.astro";
-import Link from "@/components/ui/Link.astro";
-import Img from "@/components/media/Img.astro";
-
-// form
-import FormGroup from "@/components/form/FormGroup.astro";
-import FormField from "@/components/form/FormField.astro";
-import Label from "@/components/form/Label.astro";
-import FieldHint from "@/components/form/FieldHint.astro";
-import Input from "@/components/form/Input.astro";
-import Textarea from "@/components/form/Textarea.astro";
-import Checkbox from "@/components/form/Checkbox.astro";
-
-// layouts
-import Section from "@/components/layouts/Section.astro";
-import Container from "@/components/layouts/Container.astro";
-import Split from "@/components/layouts/Split.astro";
-import Stack from "@/components/layouts/Stack.astro";
-import Cluster from "@/components/layouts/Cluster.astro";
-import Grid from "@/components/layouts/Grid.astro";
-
-// widgets
 import Hero from "@/components/widgets/Hero.astro";
 import FeatureGrid from "@/components/widgets/FeatureGrid.astro";
 import CTA from "@/components/widgets/CTA.astro";
-
-
-// assets
-import heroImage from "@/assets/img/photo.jpg";
-
+import FAQ from "@/components/widgets/FAQ.astro";
 
 const features = [
   {
-    eyebrow: "Tokens",
+    eyebrow: "Core",
     title: "Design tokens",
-    description: "Centralized values for colors, spacing, typography, radius, shadows and motion.",
-  },
-  {
-    eyebrow: "Media",
-    title: "Optimized images",
-    description: "Reusable Img and Picture components with Astro image optimization and sensible defaults.",
-  },
-  {
-    eyebrow: "Icons",
-    title: "SVG sprite",
-    description: "A local SVG sprite pipeline for optimized and reusable icons.",
+    description:
+      "Stable token names for colors, spacing, typography, radius, shadows and motion. Change values per project without rewriting components.",
   },
   {
     eyebrow: "Layout",
     title: "Layout primitives",
-    description: "Container, Section, Stack, Cluster, Grid, Split and Sidebar for consistent page structure.",
+    description:
+      "Compose pages with Container, Section, Stack, Cluster, Grid, Split and Sidebar instead of writing layout CSS from zero.",
   },
   {
-    eyebrow: "Fonts",
-    title: "Local fonts",
-    description: "A local font pipeline with generated @font-face rules and subset support.",
+    eyebrow: "Media",
+    title: "Optimized media",
+    description:
+      "Reusable media components for images, pictures, figures and SVG sprite icons.",
   },
   {
-    eyebrow: "SCSS",
-    title: "Clean architecture",
-    description: "Global SCSS layers, reusable components and no duplicated local CSS files.",
+    eyebrow: "UI",
+    title: "Reusable components",
+    description:
+      "Button, Link, Card, Tag, Divider, Accordion and form primitives prepared for landing page development.",
+  },
+  {
+    eyebrow: "Widgets",
+    title: "Ready sections",
+    description:
+      "Use ready-made widgets like Hero, FeatureGrid, CTA, FAQ and ContactForm to build pages faster.",
+  },
+  {
+    eyebrow: "Backend",
+    title: "Contact form workflow",
+    description:
+      "A backend-ready ContactForm with Astro API route, validation and console delivery for development.",
   },
 ];
+
+const faqItems = [
+  {
+    title: "What is Astro Builder?",
+    content:
+      "Astro Builder is a reusable frontend system for building landing pages and small websites faster with Astro, SCSS, design tokens and ready-made widgets.",
+    open: true,
+  },
+  {
+    title: "Do I need to recreate design tokens for every project?",
+    content:
+      "No. Keep token names stable and change their values to match the brand of each project.",
+  },
+  {
+    title: "Can I build custom sections?",
+    content:
+      "Yes. Use the ready widgets for common cases or compose custom sections manually from layout, UI and media primitives.",
+  },
+  {
+    title: "Is ContactForm backend-ready?",
+    content:
+      "Yes. It can post to an Astro API route and use console delivery during development. Email delivery can be added later through a provider.",
+  },
+];
+
+// assets
+import heroImage from "@/assets/img/photo.jpg";
 
 ---
 
@@ -94,141 +96,35 @@ const features = [
   />
 
   <FeatureGrid
-    eyebrow="Features"
-    title="Everything needed for modern landing pages."
-    description="A reusable Astro system with clean primitives, optimized assets and a predictable styling workflow."
+    eyebrow="System overview"
+    title="Everything you need to start a professional landing page."
+    description="Astro Builder gives you a consistent foundation instead of rebuilding the same setup from scratch for every project."
     items={features}
+    columns="3"
+    tone="muted"
   />
-    
-<CTA
-  eyebrow="Ready?"
-  title="Build your next landing page faster."
-  description="Use a reusable Astro frontend system with design tokens, optimized assets and clean components."
-  primaryAction={{
-    label: "Start project",
-    href: "/contact",
-  }}
-  secondaryAction={{
-    label: "View components",
-    href: "/playground",
-  }}
-/>
 
+  <CTA
+    eyebrow="Ready to use"
+    title="Start from a stronger base."
+    description="Use ready widgets for common pages or compose your own custom sections from small, predictable primitives."
+    primaryAction={{
+      label: "Open playground",
+      href: "/playground",
+    }}
+    secondaryAction={{
+      label: "Test contact form",
+      href: "/contact",
+    }}
+    boxed
+  />
 
-<Section tone="muted">
-  <Container>
-    <Stack space="xl">
-      <Stack space="sm">
-        <h2>Everything needed for modern landing pages.</h2>
-        <p>Start fast with reusable layout and UI primitives.</p>
-      </Stack>
-
-      <Grid columns="3">
-        <Card as="article">
-          <h3>Design tokens</h3>
-          <p>Centralized values for color, spacing, typography and motion.</p>
-        </Card>
-
-        <Card as="article">
-          <h3>Media system</h3>
-          <p>Optimized images, picture sources and local SVG sprite icons.</p>
-        </Card>
-
-        <Card as="article">
-          <h3>Clean SCSS</h3>
-          <p>Organized layers, global primitives and no duplicated component CSS.</p>
-        </Card>
-      </Grid>
-    </Stack>
-  </Container>
-</Section>
-
-  <Section>
-    <Container size="lg">
-      <Stack space="var(--spacing-lg)">
-        <p>Astro Frontend System</p>
-
-        <h1>Build professional landing pages faster.</h1>
-
-        <p>
-          A reusable Astro template with media optimization, design tokens,
-          local fonts, SVG icons, layout primitives and production-ready structure.
-        </p>
-
-        <Cluster gap="var(--spacing-md)">
-          <Button>Get started</Button>
-          <Button variant="secondary">View components</Button>
-        </Cluster>
-      </Stack>
-
-<form class="contact-form" action="#" method="post">
-  <FormGroup gap="lg">
-    <FormField>
-      <Label for="name" required>Name</Label>
-      <Input id="name" name="name" required autocomplete="name" />
-    </FormField>
-
-    <FormField>
-      <Label for="email" required>Email</Label>
-      <Input
-        id="email"
-        name="email"
-        type="email"
-        required
-        autocomplete="email"
-        describedby="email-hint"
-      />
-      <FieldHint id="email-hint">
-        We will reply to this address.
-      </FieldHint>
-    </FormField>
-
-    <FormField>
-      <Label for="message" required>Message</Label>
-      <Textarea id="message" name="message" required rows={6} />
-    </FormField>
-
-    <Checkbox id="privacy" name="privacy" required>
-      I accept the privacy policy.
-    </Checkbox>
-
-    <Button type="submit">
-      Send message
-    </Button>
-  </FormGroup>
-</form>
-
-    </Container>
-  </Section>
-
-  <Container size="xl">
-    <Split ratio="text-media" gap="2xl">
-      <Stack space="lg">
-        <Tag variant="primary">Astro Frontend System</Tag>
-
-        <h1>Build landing pages faster.</h1>
-
-        <p>
-          Reusable Astro components, design tokens, local fonts,
-          optimized media and clean SCSS architecture.
-        </p>
-
-        <Cluster gap="md">
-          <Button>Get started</Button>
-          <Link href="/components">View components</Link>
-        </Cluster>
-      </Stack>
-
-      <Img
-        src={heroImage}
-        alt="Astro landing page preview"
-        class="image--rounded image--shadow"
-      />
-    </Split>
-  </Container>
-</Section>
-
-
-
+  <FAQ
+    eyebrow="Questions"
+    title="How this builder should be used."
+    description="A short overview of the intended workflow for future projects."
+    items={faqItems}
+    accordionVariant="default"
+  />
 
 </BaseLayout>
