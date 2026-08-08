@@ -39,24 +39,4 @@
     color: var(--color-text-inverse);
     background: var(--color-background-inverse);
   }
-
-  @include mq(md) {
-
-  .section--spacing-sm {
-    padding-block: var(--spacing-3xl);
-  }
-
-  .section--spacing-md {
-    padding-block: var(--spacing-4xl);
-  }
-
-  .section--spacing-lg {
-    padding-block: var(--spacing-5xl);
-  }
-
-  .section--spacing-xl {
-    padding-block: calc(var(--spacing-5xl) * 1.25);
-  }
-
-  }
 }

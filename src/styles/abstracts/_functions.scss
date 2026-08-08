@@ -1,7 +1,7 @@
 @use "sass:math";
 
 @function rem($px, $base: 16) {
-  @if unit($px) == "px" {
+  @if math.unit($px) == "px" {
     $px: math.div($px, 1px);
   }
 

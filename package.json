@@ -1,32 +1,51 @@
 {
-  "name": "first-project",
+  "name": "astro-builder",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.2",
+  "engines": {
+    "node": ">=24.16.0 <25",
+    "npm": ">=11"
+  },
   "scripts": {
+    "preinstall": "node scripts/check-node-version.js",
     "dev": "astro dev",
+    "start": "node ./dist/server/entry.mjs",
     "tokens": "tsx src/design-system/utils/cssVars.ts",
     "build-icons": "node scripts/build-icons.js",
     "build:fonts": "node scripts/build-fonts.js",
     "build:fonts:latin": "node scripts/build-fonts.js latin",
     "build:fonts:cyrillic": "node scripts/build-fonts.js cyrillic",
     "build:fonts:all": "node scripts/build-fonts.js all",
-    "build:system":"npm run tokens && npm run build-icons && npm run build:fonts:latin",
+    "build:system": "npm run tokens && npm run build-icons && npm run build:fonts:latin",
     "build": "npm run build:system && astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "check": "astro check",
     "lint:scss": "stylelint \"src/**/*.scss\"",
-    "lint:js": "eslint ."
+    "lint:js": "eslint .",
+    "lint": "npm run lint:scss && npm run lint:js",
+    "validate": "npm run lint && npm run check && npm run build"
   },
   "dependencies": {
-    "astro": "^5.16.15"
+    "@astrojs/node": "^11.0.3",
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^7.1.6",
+    "resend": "^6.18.1"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
+    "eslint-plugin-astro": "^3.0.1",
     "fs-extra": "^11.3.3",
+    "globals": "^17.9.0",
     "sass": "^1.97.3",
+    "stylelint": "^17.14.1",
+    "stylelint-config-standard-scss": "^17.0.0",
     "svgo": "^4.0.0",
     "svgstore": "^3.0.1",
-    "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.65.0"
   }
 }

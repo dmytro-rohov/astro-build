@@ -24,7 +24,6 @@ export function validateContactForm(formData: FormData): ContactValidationResult
     email: getStringValue(formData, "email"),
     subject: getStringValue(formData, "subject"),
     message: getStringValue(formData, "message"),
-    privacy: formData.get("privacy") === "on",
     website: getStringValue(formData, "website"),
   };
 
@@ -76,13 +75,6 @@ export function validateContactForm(formData: FormData): ContactValidationResult
     errors.push({
       field: "message",
       message: "Message must be at least 10 characters.",
-    });
-  }
-
-  if (!data.privacy) {
-    errors.push({
-      field: "privacy",
-      message: "Privacy policy must be accepted.",
     });
   }
 

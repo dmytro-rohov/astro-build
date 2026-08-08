@@ -1,9 +1,15 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"],
-   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+  "exclude": ["dist", "node_modules"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@styles/*": ["src/styles/*"],
+      "@scripts/*": ["scripts/*"],
+      "@assets/*": ["src/assets/*"]
+    }
   }
 }

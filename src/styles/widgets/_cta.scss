@@ -9,7 +9,6 @@
 
   .cta__box--boxed {
     padding: var(--spacing-2xl);
-
     background:
       radial-gradient(
         circle at top left,
@@ -17,7 +16,6 @@
         transparent 22rem
       ),
       var(--color-background-surface);
-
     border: 1px solid var(--color-border-default);
     border-radius: var(--radius-2xl);
     box-shadow: var(--elevation-card);
@@ -48,9 +46,7 @@
 
   .cta__description {
     margin: 0;
-
     color: var(--color-text-secondary);
-
     font-size: var(--font-size-lg);
     line-height: var(--line-height-relaxed);
   }
@@ -71,7 +67,6 @@
         transparent 22rem
       ),
       color-mix(in srgb, var(--color-background-inverse) 92%, var(--color-background-primary));
-
     border-color: var(--color-border-inverse);
   }
 

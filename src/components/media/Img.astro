@@ -1,19 +1,15 @@
 ---
 import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
 
 export interface ImgProps {
   src: ImageMetadata | string;
   alt?: string;
-
   kind?: "content" | "decorative";
-
   priority?: "auto" | "high";
-
   sizes?: string;
   widths?: number[];
-  formats?: ("avif" | "webp" | "jpeg" | "png")[];
-
-  class?: string;
+  format?: "avif" | "webp" | "png" | "jpg";  class?: string;
   style?: string;
 }
 
@@ -24,7 +20,7 @@ const {
   priority = "auto",
   sizes = "(min-width: 1024px) 960px, 100vw",
   widths = [320, 640, 960, 1280],
-  formats = ["avif", "webp"],
+  format = "webp",
   class: className,
   style,
 } = Astro.props;
@@ -47,7 +43,7 @@ const fetchpriority = priority === "high" ? "high" : "auto";
   decoding="async"
   widths={widths}
   sizes={sizes}
-  formats={formats}
+  format={format}
   class:list={["image", className]}
   style={style}
 />

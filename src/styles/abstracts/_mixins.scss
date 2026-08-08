@@ -6,7 +6,7 @@
     @error "Unknown breakpoint: #{$size}. Available: #{map.keys($breakpoints)}";
   }
 
-  @media (min-width: map.get($breakpoints, $size)) {
+  @media (max-width: map.get($breakpoints, $size)) {
     @content;
   }
 }

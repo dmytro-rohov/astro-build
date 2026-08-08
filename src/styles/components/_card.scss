@@ -1,13 +1,10 @@
 @layer components {
   .card {
     display: block;
-
     color: var(--color-text-primary);
     background: var(--color-background-surface);
-
     border: 1px solid transparent;
     border-radius: var(--radius-lg);
-
     transition:
       border-color var(--motion-duration-fast) var(--motion-easing-standard),
       background-color var(--motion-duration-fast) var(--motion-easing-standard),

@@ -4,7 +4,6 @@
     inset-block-start: -100%;
     inset-inline-start: var(--spacing-md);
     z-index: var(--z-index-toast);
-
     padding: var(--spacing-sm) var(--spacing-md);
     color: var(--color-text-inverse);
     background: var(--color-background-inverse);
@@ -19,14 +18,11 @@
     position: absolute;
     width: 1px;
     height: 1px;
-
     padding: 0;
     margin: -1px;
-
     overflow: hidden;
-    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
     white-space: nowrap;
-
     border: 0;
   }
 }
@@ -44,12 +40,12 @@
     pointer-events: none;
   }
 
-  [aria-current="page"] {
-    font-weight: var(--font-weight-semibold);
-  }
+  // [aria-current="page"] {
+  //   font-weight: var(--font-weight-semibold);
+  // }
 
   [aria-invalid="true"] {
-    border-color: var(--color-feedback-error);
+    border-color: var(--color-feedback-error-500);
   }
 
   [aria-busy="true"] {

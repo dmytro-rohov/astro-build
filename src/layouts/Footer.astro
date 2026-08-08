@@ -10,6 +10,7 @@ export type FooterLink = {
   label: string;
   href: string;
   external?: boolean;
+  analyticsLabel?: string;
 };
 
 export type FooterLinkGroup = {
@@ -29,6 +30,9 @@ export interface Props {
   description?: string;
   groups?: FooterLinkGroup[];
   socialLinks?: SocialLink[];
+  phone?: string;
+  phoneHref?: string;
+  email?: string;
   copyright?: string;
   class?: string;
 }

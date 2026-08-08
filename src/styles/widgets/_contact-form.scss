@@ -5,9 +5,7 @@
 
   .contact-form-section__eyebrow {
     margin: 0;
-
     color: var(--color-action-primary);
-
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-semibold);
     line-height: var(--line-height-normal);
@@ -27,9 +25,7 @@
 
   .contact-form-section__description {
     margin: 0;
-
     color: var(--color-text-secondary);
-
     font-size: var(--font-size-lg);
     line-height: var(--line-height-relaxed);
   }
@@ -41,9 +37,7 @@
 
   .contact-form-section__info-title {
     margin: 0;
-
     color: var(--color-text-primary);
-
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-semibold);
     line-height: var(--line-height-snug);
@@ -52,10 +46,8 @@
   .contact-form-section__info-list {
     display: grid;
     gap: var(--spacing-md);
-
     padding: 0;
     margin: 0;
-
     list-style: none;
   }
 
@@ -66,7 +58,6 @@
 
   .contact-form-section__info-label {
     color: var(--color-text-muted);
-
     font-size: var(--font-size-sm);
     line-height: var(--line-height-normal);
   }
@@ -88,10 +79,8 @@
   .contact-form__honeypot {
     position: absolute;
     inset-inline-start: -9999px;
-
     width: 1px;
     height: 1px;
-
     overflow: hidden;
   }
 
@@ -102,7 +91,6 @@
   .contact-form__status {
     min-height: 1.5em;
     margin: 0;
-
     font-size: var(--font-size-sm);
     line-height: var(--line-height-normal);
   }

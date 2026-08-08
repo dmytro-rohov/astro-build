@@ -1,0 +1,37 @@
+# Dependencies
+node_modules
+
+# Build output and Astro cache
+dist
+.astro
+
+# Git
+.git
+.gitignore
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Docker files not needed inside the image
+Dockerfile
+compose.yaml
+docker-compose.yml
+
+# Editor and system files
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+npm-debug.log*
+coverage
+.cache
+tmp
+temp
+
+# Local documentation and backups
+*.patch

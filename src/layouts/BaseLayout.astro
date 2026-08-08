@@ -1,70 +1,104 @@
 ---
 import Header from "@/layouts/Header.astro";
 import Footer from "@/layouts/Footer.astro";
+import CookieConsent from "@/components/CookieConsent.astro";
 import "@/styles/main.scss";
 
 export interface Props {
   title?: string;
   description?: string;
+  canonicalPath?: string;
+  image?: string;
+  imageAlt?: string;
+  robots?: string;
+  pageType?: "website" | "profile";
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  showHeader?: boolean;
+  showFooter?: boolean;
+  keywords?: string;
   lang?: string;
+  author?: string;
 }
 
 const {
-  title = "Astro Landing",
+  title = "Astro Builder",
   description = "Professional landing page built with Astro.",
   lang = "en",
+  image = "/og-cover.jpg",
+  imageAlt = "Portfolio Marii Drotianko, UI/UX and graphic designer",
+  canonicalPath = Astro.url.pathname,
+  robots = "index, follow",
+  pageType = "website",
+  jsonLd,
+  showHeader = true,
+  showFooter = true,
+  keywords = "portfolio page, web designer, UI/UX, figma, adobe",
+  author = "Mariia Drotianko",
 } = Astro.props;
+
+const siteUrl = Astro.site ?? Astro.url.origin;
+const canonicalUrl = new URL(canonicalPath, siteUrl);
+const socialImageUrl = new URL(image, siteUrl);
+const ogType = pageType === "profile" ? "profile" : "website";
+
 ---
 
 <!doctype html>
 <html lang={lang}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
     <meta name="generator" content={Astro.generator} />
-
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
-
+    <meta name="author" content={author} />
+    <meta name="keywords" content={keywords} />
+    <meta name="theme-color" content="#ed3578" />
+    
+    <link rel="canonical" href={canonicalUrl.toString()} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    
     <title>{title}</title>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType}/>
+    <meta property="og:site_name"content="Mariia Drotianko Portfolio"/>
+    <meta property="og:title" content={title}/>
+    <meta property="og:description" content={description}/>
+    <meta property="og:url" content={canonicalUrl}/>
+    <meta property="og:image" content={socialImageUrl}/>
+    <meta property="og:image:alt" content={imageAlt}/>
+    <meta property="og:locale" content={lang === "pl" ? "pl_PL" : "en_US"}
+    />
+
+    <!-- Twitter/X -->
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content={title}/>
+    <meta name="twitter:description" content={description}/>
+    <meta name="twitter:image" content={socialImageUrl}/>
+    <meta name="twitter:image:alt" content={imageAlt}/>
+
+    {
+      jsonLd && (
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify(jsonLd)}
+        />
+      )
+    }
   </head>
 
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
-
-    <Header
-      cta={{
-        label: "Contact",
-        href: "/contact",
-      }}
-    />
-
+    {showHeader && <Header />}
     <main id="main-content">
       <slot />
     </main>
-
-    <Footer
-    brandLabel="Mytko Studio"
-    description="Frontend development, landing pages and clean web systems."
-    groups={[
-      {
-        title: "Pages",
-        links: [
-          { label: "Home", href: "/" },
-          { label: "Projects", href: "/#projects" },
-          { label: "Contact", href: "/contact" },
-        ],
-      },
-      {
-        title: "Social",
-        links: [
-          { label: "GitHub", href: "https://github.com", external: true },
-          { label: "LinkedIn", href: "https://linkedin.com", external: true },
-        ],
-      },
-    ]}
-/>
-
+    {showFooter && <Footer />}
+    <CookieConsent />
+    <script>
+      import "@scripts/reveal";
+    </script>
   </body>
 </html>

@@ -3,7 +3,6 @@ export type ContactFormData = {
   email: string;
   subject?: string;
   message: string;
-  privacy: boolean;
   website?: string;
 };
 

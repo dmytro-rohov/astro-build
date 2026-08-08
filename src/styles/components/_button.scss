@@ -4,20 +4,16 @@
     align-items: center;
     justify-content: center;
     gap: var(--spacing-sm);
-
     border: 1px solid transparent;
     border-radius: var(--radius-md);
-
     font-family: inherit;
     font-weight: var(--font-weight-semibold);
     line-height: var(--line-height-none);
     text-align: center;
     text-decoration: none;
     white-space: nowrap;
-
     cursor: pointer;
     user-select: none;
-
     transition:
       background-color var(--motion-duration-fast) var(--motion-easing-standard),
       border-color var(--motion-duration-fast) var(--motion-easing-standard),

@@ -1,10 +1,8 @@
 @use "./abstracts/functions" as *;
 @use "./abstracts/mixins";
 @use "./abstracts/variables";
-
 @use "./abstracts/tokens";
 @use "./abstracts/fonts";
-
 @use "./base/reset";
 @use "./base/base";
 @use "./base/typography";
@@ -42,7 +40,6 @@
 @use "./components/form/checkbox";
 @use "./components/form/radio";
 @use "./components/form/switch";
-
 @use "./state/animation";
 @use "./state/state";
 
@@ -59,6 +56,4 @@
 @use "./widgets/accordion";
 @use "./widgets/faq";
 @use "./widgets/contact-form";
-
-
 @layer reset, tokens, base, layout, components, widgets, utilities, state;

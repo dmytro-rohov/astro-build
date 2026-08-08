@@ -1,6 +1,6 @@
 import type { APIContext } from "astro";
 import { validateContactForm } from "@/lib/contact/validateContactForm";
-import { sendContactMessage } from "@/lib/contact/sendContactForm";
+import { sendContactMessage } from "@/lib/contact/sendContactMessage";
 import { createContactResponse } from "@/lib/contact/createContactResponse";
 
 export const prerender = false;

@@ -1,0 +1,37 @@
+name: astro-app
+
+services:
+  app:
+    container_name: astro-app
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    image: astro-app:local
+
+    env_file:
+      - ./.env
+
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 4321
+
+    ports:
+      - "127.0.0.1:4322:4321"
+
+    restart: unless-stopped
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:4321/').then(r => { if (!r.ok) process.exit(1) }).catch(() => process.exit(1))"
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
