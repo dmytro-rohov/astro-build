@@ -84,9 +84,16 @@ const scssLines = Object.keys(flatTokens).map((key, index, arr) => {
   return `  "${key}": var(--${key})${comma}`;
 });
 
+const spacingKeys = Object.keys(tokens.spacing)
+  .map((key) => `"${key}"`)
+  .join(", ");
+
 const scssMap = `$tokens: (
 ${scssLines.join("\n")}
 );
+
+// Spacing token names, used to generate layout modifier classes.
+$spacing-keys: (${spacingKeys});
 `;
 
 const typeLines = Object.keys(flatTokens)

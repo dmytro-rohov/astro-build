@@ -1,10 +1,12 @@
 ---
+import type { SpaceToken } from "@/design-system/tokens/core/spacing";
+
 type SplitTag = "div" | "section" | "article";
 
 export interface Props {
   as?: SplitTag;
   ratio?: "equal" | "text-media" | "media-text" | "sidebar";
-  gap?: "md" | "lg" | "xl" | "2xl" | string;
+  gap?: SpaceToken;
   align?: "start" | "center" | "end" | "stretch";
   reverse?: boolean;
   class?: string;
@@ -20,11 +22,6 @@ const {
   ...restProps
 } = Astro.props;
 
-const tokenGap = gap.startsWith("var(")
-  ? gap
-  : gap.includes("rem") || gap.includes("px")
-    ? gap
-    : `var(--spacing-${gap})`;
 ---
 
 <Tag
@@ -34,9 +31,9 @@ const tokenGap = gap.startsWith("var(")
     `split--${ratio}`,
     `split--align-${align}`,
     reverse && "split--reverse",
+    `split--gap-${gap}`,
     className,
   ]}
-  style={`--split-gap: ${tokenGap};`}
 >
   <slot />
 </Tag>

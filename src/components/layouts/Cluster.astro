@@ -1,9 +1,11 @@
 ---
+import type { SpaceToken } from "@/design-system/tokens/core/spacing";
+
 type ClusterTag = "div" | "nav" | "ul" | "ol";
 
 export interface Props {
   as?: ClusterTag;
-  gap?: "xs" | "sm" | "md" | "lg" | "xl" | string;
+  gap?: SpaceToken;
   align?: "start" | "center" | "end" | "stretch";
   justify?: "start" | "center" | "end" | "between";
   class?: string;
@@ -18,11 +20,6 @@ const {
   ...restProps
 } = Astro.props;
 
-const tokenGap = gap.startsWith("var(")
-  ? gap
-  : gap.includes("rem") || gap.includes("px")
-    ? gap
-    : `var(--spacing-${gap})`;
 ---
 
 <Tag
@@ -31,9 +28,9 @@ const tokenGap = gap.startsWith("var(")
     "cluster",
     `cluster--align-${align}`,
     `cluster--justify-${justify}`,
+    `cluster--gap-${gap}`,
     className,
   ]}
-  style={`--cluster-gap: ${tokenGap};`}
 >
   <slot />
 </Tag>

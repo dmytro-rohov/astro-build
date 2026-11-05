@@ -1,3 +1,4 @@
+@use "../abstracts/tokens" as tokens;
 @use "../abstracts/mixins" as *;
 
 @layer layout {
@@ -15,5 +16,28 @@
     .sidebar--left {
       grid-template-columns: minmax(0, var(--sidebar-width, 20rem)) minmax(0, 1fr);
     }
+  }
+}
+
+@layer layout {
+  // One modifier per spacing token, e.g. .sidebar--gap-md
+  @each $key in tokens.$spacing-keys {
+    .sidebar--gap-#{$key} {
+      --sidebar-gap: var(--spacing-#{$key});
+    }
+  }
+}
+
+@layer layout {
+  .sidebar--width-sm {
+    --sidebar-width: 16rem;
+  }
+
+  .sidebar--width-md {
+    --sidebar-width: 20rem;
+  }
+
+  .sidebar--width-lg {
+    --sidebar-width: 24rem;
   }
 }

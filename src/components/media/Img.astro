@@ -9,8 +9,8 @@ export interface ImgProps {
   priority?: "auto" | "high";
   sizes?: string;
   widths?: number[];
-  format?: "avif" | "webp" | "png" | "jpg";  class?: string;
-  style?: string;
+  format?: "avif" | "webp" | "png" | "jpg";
+  class?: string;
 }
 
 const {
@@ -22,7 +22,6 @@ const {
   widths = [320, 640, 960, 1280],
   format = "webp",
   class: className,
-  style,
 } = Astro.props;
 
 // === Guardrails ===
@@ -45,5 +44,4 @@ const fetchpriority = priority === "high" ? "high" : "auto";
   sizes={sizes}
   format={format}
   class:list={["image", className]}
-  style={style}
 />

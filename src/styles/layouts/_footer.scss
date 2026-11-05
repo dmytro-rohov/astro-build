@@ -113,6 +113,22 @@
     gap: var(--spacing-md);
   }
 
+  .site-footer__contact {
+    display: grid;
+    gap: var(--spacing-xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--font-size-sm);
+  }
+
+  .site-footer__contact-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--color-text-muted);
+  }
+
   .site-footer__cookie-settings {
     align-self: flex-start;
     padding: 0;

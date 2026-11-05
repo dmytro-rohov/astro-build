@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { optimize } from "svgo";
+import { loadConfig, optimize } from "svgo";
 import svgstore from "svgstore";
 
 const RAW_DIR = "src/assets/icons/raw";
@@ -70,6 +70,9 @@ function addViewBoxIfMissing(svg, file) {
 ensureDir(OUTPUT_DIR);
 cleanOldSprite();
 
+// optimize() does not read config files by itself.
+const svgoConfig = await loadConfig(path.resolve("svgo.config.js"));
+
 if (!fs.existsSync(RAW_DIR)) {
   console.error(`Raw icons directory does not exist: ${RAW_DIR}`);
   process.exit(1);
@@ -77,6 +80,8 @@ if (!fs.existsSync(RAW_DIR)) {
 
 const sprites = svgstore({
   inline: true,
+  // Keep drawing attributes set on the root <svg> (stroke icons rely on them).
+  copyAttrs: ["fill", "stroke", "stroke-width", "stroke-linecap", "stroke-linejoin"],
 });
 
 const files = fs
@@ -96,8 +101,8 @@ files.forEach((file) => {
   const svgWithViewBox = addViewBoxIfMissing(rawSvg, file);
 
   const result = optimize(svgWithViewBox, {
+    ...svgoConfig,
     path: filePath,
-    configFile: path.resolve("svgo.config.js"),
   });
 
   const name = path.basename(file, ".svg");

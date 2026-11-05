@@ -1,3 +1,4 @@
+@use "../abstracts/tokens" as tokens;
 @use "../abstracts/mixins" as *;
 
 @layer layout {
@@ -48,6 +49,15 @@
 
     .grid--cols-4 {
       grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+}
+
+@layer layout {
+  // One modifier per spacing token, e.g. .grid--gap-md
+  @each $key in tokens.$spacing-keys {
+    .grid--gap-#{$key} {
+      --grid-gap: var(--spacing-#{$key});
     }
   }
 }

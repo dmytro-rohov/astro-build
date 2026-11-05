@@ -49,6 +49,11 @@ export default defineConfig({
     },
   },
 
+  // No Markdown code blocks in the starter; Shiki's inline styles conflict with CSP.
+  markdown: {
+    syntaxHighlight: false,
+  },
+
   integrations: [
     sitemap({
       filter: (page) => {
@@ -62,5 +67,25 @@ export default defineConfig({
   security: {
     checkOrigin: true,
     allowedDomains,
+
+    // Content Security Policy. Astro adds hashes for its own scripts and styles,
+    // so inline code needs no 'unsafe-inline'. Google hosts are needed only
+    // after the visitor accepts analytics.
+    csp: {
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com",
+        "connect-src 'self' https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com",
+        "font-src 'self'",
+        "manifest-src 'self'",
+        "object-src 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+        "frame-ancestors 'none'",
+      ],
+      scriptDirective: {
+        resources: ["'self'", "https://www.googletagmanager.com"],
+      },
+    },
   },
 });

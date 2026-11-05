@@ -56,6 +56,38 @@ export const siteConfig = {
     imageHeight: 630,
   },
 
+  /**
+   * Business data for structured data (JSON-LD) on every page.
+   * Empty fields are left out of the output.
+   */
+  organization: {
+    /**
+     * Schema.org type: "Organization", "LocalBusiness" or a more specific
+     * LocalBusiness type, e.g. "Restaurant", "BeautySalon", "Dentist", "LegalService".
+     */
+    type: "Organization",
+    /** Defaults to `name` when empty. */
+    name: "",
+    /** Square raster logo, at least 112×112 px. */
+    logo: "/icons/icon-512.png",
+    email: "",
+    phone: "",
+    address: {
+      street: "",
+      city: "",
+      postalCode: "",
+      region: "",
+      /** ISO 3166-1 alpha-2, e.g. "PL". */
+      country: "",
+    },
+    /** Opening hours in schema.org format, e.g. "Mo-Fr 09:00-17:00". */
+    openingHours: [] as string[],
+    /** e.g. "$$" or "100-300 PLN". */
+    priceRange: "",
+    /** Profiles on other sites: Facebook, Instagram, LinkedIn, Google Maps… */
+    sameAs: [] as string[],
+  },
+
   header: {
     nav: [
       { label: t.nav.home, href: "/" },

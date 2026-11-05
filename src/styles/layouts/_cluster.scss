@@ -1,3 +1,5 @@
+@use "../abstracts/tokens" as tokens;
+
 @layer layout {
   .cluster {
     display: flex;
@@ -35,5 +37,14 @@
 
   .cluster--justify-between {
     justify-content: space-between;
+  }
+}
+
+@layer layout {
+  // One modifier per spacing token, e.g. .cluster--gap-md
+  @each $key in tokens.$spacing-keys {
+    .cluster--gap-#{$key} {
+      --cluster-gap: var(--spacing-#{$key});
+    }
   }
 }
