@@ -114,6 +114,30 @@ SITE_DIR=sites/_demo npm run dev              # dev server for one site
 
 `src/config/site.ts` is now a compatibility layer computed from site.json — do not put content there.
 
+### Theme: archetypes, colors, fonts
+
+```json
+"theme": { "archetype": "energetic", "accent": "#e4572e", "colorScheme": "light", "fontPair": "space-grotesk+inter" }
+```
+
+- **Archetypes** (`src/design-system/archetypes/`): `default` (v2 look), `minimal`, `elegant`,
+  `bold`, `warm`, `premium-dark`, `corporate`, `energetic`. An archetype sets the neutral
+  scale, default accent, background tint, font pair, radius, button shape (square / rounded /
+  pill), image style (sharp / rounded / shadow / border), card style, spacing density,
+  heading style (weight, case, tracking) and default section tones.
+- **Accent**: the whole palette (light and dark) is generated in OKLCH from one color.
+  When the client's color fails WCAG AA it is darkened or lightened (same hue) and the change
+  is reported in the build output and `src/design-system/theme.generated.json`.
+- **Manual overrides** (`theme.overrides.light|dark`, e.g. `"action.primary"`) are an exception
+  and must pass contrast as they are — otherwise the build stops.
+- **Fonts**: 12 pairs of OFL variable fonts (`src/design-system/fonts/library.ts`) from
+  `@fontsource-variable/*`. Only the chosen pair is shipped (latin, latin-ext, plus cyrillic for
+  Cyrillic languages) with metric-matched fallbacks and `public/fonts/LICENSES.txt`.
+  A pair without the language's script (e.g. no Cyrillic for `uk`) stops the build with
+  a list of suitable pairs.
+- **Inverse sections** use the opposite scheme's palette, so everything inside keeps its contrast.
+- `npm run build:system` generates tokens and fonts for `SITE_DIR`; the output is not committed.
+
 ### Assets and images
 
 Images are referenced as `"asset:<id>"` and described in `assets/assets.json`:

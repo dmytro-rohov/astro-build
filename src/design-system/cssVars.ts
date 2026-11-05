@@ -126,6 +126,19 @@ export type CssToken =
   | "letter-spacing-tighter"
   | "letter-spacing-tight"
   | "letter-spacing-normal"
-  | "letter-spacing-wide";
+  | "letter-spacing-wide"
+  | "radius-control"
+  | "radius-card"
+  | "radius-button"
+  | "radius-image"
+  | "image-shadow"
+  | "image-border"
+  | "card-shadow"
+  | "card-shadow-hover"
+  | "card-border-color"
+  | "space-scale"
+  | "heading-weight"
+  | "heading-transform"
+  | "heading-tracking";
 
 export type CssVar = `var(--${CssToken})`;

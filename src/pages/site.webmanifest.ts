@@ -1,6 +1,6 @@
 import { siteConfig } from "@/config/site";
 import { dir, lang } from "@/i18n";
-import { semanticColors } from "@/design-system/tokens/semantic/color-semantic";
+import { siteTheme } from "@/site/theme";
 
 export const prerender = true;
 
@@ -13,8 +13,8 @@ export function GET() {
     dir,
     start_url: "/",
     display: "browser",
-    theme_color: semanticColors.action.primary,
-    background_color: semanticColors.background.primary,
+    theme_color: siteTheme.light.action.primary,
+    background_color: siteTheme.colorScheme === "dark" ? siteTheme.dark.background.primary : siteTheme.light.background.primary,
     icons: [
       { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
       { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },

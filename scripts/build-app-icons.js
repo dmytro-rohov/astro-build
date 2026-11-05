@@ -20,13 +20,17 @@
 import fs from "fs";
 import path from "path";
 import * as fontkit from "fontkit";
+import fontverter from "fontverter";
 import sharp from "sharp";
 
 const SITE_DIR = path.resolve(process.env.SITE_DIR || "sites/_demo");
 const ICONS_DIR = "public/icons";
 const GENERATED = "src/design-system/appIcons.generated.ts";
-const FONT_BOLD = "src/assets/fonts/raw/inter-bold.woff2";
-const FONT_REGULAR = "src/assets/fonts/raw/inter-regular.woff2";
+// Inter variable font (latin) from the font library; bold is a variation of it.
+const FONT_FILE = "node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2";
+// fontkit cannot apply variations to WOFF2, so the font is converted to TrueType first.
+const fontData = await fontverter.convert(fs.readFileSync(FONT_FILE), "truetype");
+const loadFont = (weight) => fontkit.create(fontData).getVariation({ wght: weight });
 
 // Defaults match the default theme (semantic action.primary / background.inverse).
 const DEFAULT_ACCENT = "#2563eb";
@@ -106,7 +110,7 @@ function wrap(font, text, size, maxWidth, maxLines) {
 }
 
 function monogramSvg() {
-  const font = fontkit.create(fs.readFileSync(FONT_BOLD));
+  const font = loadFont(700);
   const letter = (name.trim()[0] ?? "S").toUpperCase();
   const size = 300;
   const { d, width } = textPath(font, letter, 0, 0, size);
@@ -184,8 +188,8 @@ async function buildOgImage() {
     return false;
   }
 
-  const bold = fontkit.create(fs.readFileSync(FONT_BOLD));
-  const regular = fontkit.create(fs.readFileSync(FONT_REGULAR));
+  const bold = loadFont(700);
+  const regular = loadFont(400);
 
   const left = 96;
   const maxWidth = 1200 - left * 2;

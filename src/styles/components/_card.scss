@@ -4,7 +4,7 @@
     color: var(--color-text-primary);
     background: var(--color-background-surface);
     border: 1px solid transparent;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-card);
     transition:
       border-color var(--motion-duration-fast) var(--motion-easing-standard),
       background-color var(--motion-duration-fast) var(--motion-easing-standard),
@@ -20,13 +20,14 @@
     border-color: var(--color-border-strong);
   }
 
+  // Shadow or thin border, depending on the archetype.
   .card--elevated {
-    border-color: transparent;
-    box-shadow: var(--elevation-card);
+    border-color: var(--card-border-color);
+    box-shadow: var(--card-shadow);
   }
 
   .card--elevated:hover {
-    box-shadow: var(--elevation-card-hover);
+    box-shadow: var(--card-shadow-hover);
   }
 
   .card--ghost {

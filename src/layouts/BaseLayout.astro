@@ -5,8 +5,7 @@ import CookieConsent from "@/components/CookieConsent.astro";
 import { siteConfig } from "@/config/site";
 import { isNoindexPath } from "@/config/indexing";
 import { dir, ogLocale, pageTitle, t } from "@/i18n";
-import { tokens } from "@/design-system/tokens";
-import { semanticColorsDark } from "@/design-system/tokens/semantic/color-semantic";
+import { siteTheme } from "@/site/theme";
 import { fontPreloads } from "@/design-system/fonts.generated";
 import { hasSvgFavicon } from "@/design-system/appIcons.generated";
 import {
@@ -123,11 +122,11 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
     <meta name="color-scheme" content={colorSchemeMeta} />
     {colorScheme === "auto" ? (
       <>
-        <meta name="theme-color" media="(prefers-color-scheme: light)" content={tokens.color.action.primary} />
-        <meta name="theme-color" media="(prefers-color-scheme: dark)" content={semanticColorsDark.action.primary} />
+        <meta name="theme-color" media="(prefers-color-scheme: light)" content={siteTheme.light.action.primary} />
+        <meta name="theme-color" media="(prefers-color-scheme: dark)" content={siteTheme.dark.action.primary} />
       </>
     ) : (
-      <meta name="theme-color" content={colorScheme === "dark" ? semanticColorsDark.action.primary : tokens.color.action.primary} />
+      <meta name="theme-color" content={colorScheme === "dark" ? siteTheme.dark.action.primary : siteTheme.light.action.primary} />
     )}
     
     {isIndexable && <link rel="canonical" href={canonicalUrl.toString()} />}

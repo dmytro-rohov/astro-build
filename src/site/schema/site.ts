@@ -4,6 +4,9 @@
  */
 import { z } from "zod";
 import { ENGINE_RANGE_PATTERN, ENGINE_VERSION, satisfiesEngine } from "../engine";
+import { ARCHETYPE_IDS } from "../../design-system/archetypes";
+import { fontPairs, type FontPairId } from "../../design-system/fonts/library";
+import { OVERRIDABLE_KEYS } from "../../design-system/theme";
 import { layoutTypes, sectionTypes } from "../registry";
 import { Action, field, HttpsUrl, Id, imageSlot, Slug, text, type ImageSlot } from "./fields";
 
@@ -100,11 +103,22 @@ const PageSchema = z.object({
   sections: z.array(SectionSchema).min(1).max(20),
 });
 
+const Hex = z.string().regex(/^#[0-9a-fA-F]{6}$/, "Hex color, e.g. #e4572e.").transform((value) => value.toLowerCase());
+
+const ColorOverrides = z.partialRecord(z.enum(OVERRIDABLE_KEYS), Hex);
+
 const ThemeSchema = z.object({
-  archetype: z.enum(["default"]).default("default").describe("Style preset."),
-  colorScheme: z.enum(["light", "dark", "auto"]).default("light"),
-  accent: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Hex color, e.g. #e4572e.").optional().describe("Brand accent color."),
-  fontPair: z.enum(["inter"]).default("inter").describe("Heading + body font pair."),
+  archetype: z.enum(ARCHETYPE_IDS).default("default").describe("Style preset: colors, fonts, shapes, spacing, section tones."),
+  colorScheme: z.enum(["light", "dark", "auto"]).optional().describe("Defaults to the archetype's scheme."),
+  accent: Hex.optional().describe("Brand accent color; adjusted automatically when it fails WCAG AA."),
+  fontPair: z
+    .enum(Object.keys(fontPairs) as [FontPairId, ...FontPairId[]])
+    .optional()
+    .describe("Heading + body font pair; defaults to the archetype's pair."),
+  overrides: z
+    .object({ light: ColorOverrides.optional(), dark: ColorOverrides.optional() })
+    .optional()
+    .describe("Exceptional manual color tokens; must pass WCAG AA as they are (no auto-adjust)."),
 });
 
 const NavigationSchema = z.object({
@@ -151,7 +165,7 @@ export const SiteSchema = z
         .default({}),
     }),
     business: BusinessSchema,
-    theme: ThemeSchema.default({ archetype: "default", colorScheme: "light", fontPair: "inter" }),
+    theme: ThemeSchema.default({ archetype: "default" }),
     analytics: z
       .object({
         gaId: z.string().regex(/^G-[A-Z0-9]{4,}$/, "GA4 Measurement ID, e.g. G-ABC123XYZ.").optional(),

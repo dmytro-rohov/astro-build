@@ -3,6 +3,7 @@ import ContactForm from "@/components/widgets/ContactForm.astro";
 import { site } from "virtual:site";
 import { t } from "@/i18n";
 import type { SectionOf } from "@/site/types";
+import { toneFor } from "@/site/theme";
 
 export interface Props {
   section: SectionOf<"contact">;
@@ -34,7 +35,7 @@ const contactInfo = content.showDetails
   title={content.title}
   description={content.description}
   contactInfo={contactInfo}
-  tone={props.tone}
+  tone={toneFor("contact", props.tone)}
   action="/api/contact"
   method="post"
   privacyHref="/privacy"

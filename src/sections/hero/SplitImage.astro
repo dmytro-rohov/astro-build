@@ -2,6 +2,7 @@
 import Hero from "@/components/widgets/Hero.astro";
 import { getAsset } from "@/site/assets";
 import type { SectionOf } from "@/site/types";
+import { toneFor } from "@/site/theme";
 
 export interface Props {
   section: SectionOf<"hero">;
@@ -25,5 +26,5 @@ const image = content.image ? getAsset(content.image) : undefined;
   imageAlt={image?.alt}
   imageFocal={image?.focal}
   align={props.align}
-  tone={props.tone}
+  tone={toneFor("hero", props.tone)}
 />

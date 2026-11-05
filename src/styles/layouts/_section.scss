@@ -10,19 +10,19 @@
   }
 
   .section--spacing-sm {
-    padding-block: var(--spacing-2xl);
+    padding-block: calc(var(--spacing-2xl) * var(--space-scale));
   }
 
   .section--spacing-md {
-    padding-block: var(--spacing-3xl);
+    padding-block: calc(var(--spacing-3xl) * var(--space-scale));
   }
 
   .section--spacing-lg {
-    padding-block: var(--spacing-4xl);
+    padding-block: calc(var(--spacing-4xl) * var(--space-scale));
   }
 
   .section--spacing-xl {
-    padding-block: var(--spacing-5xl);
+    padding-block: calc(var(--spacing-5xl) * var(--space-scale));
   }
 
   .section--tone-default {
@@ -35,8 +35,10 @@
     background: var(--color-background-muted);
   }
 
+  // Inverse sections get the opposite scheme's tokens (see _tokens.scss),
+  // so their own primary colors are already the inverted ones.
   .section--tone-inverse {
-    color: var(--color-text-inverse);
-    background: var(--color-background-inverse);
+    color: var(--color-text-primary);
+    background: var(--color-background-primary);
   }
 }
