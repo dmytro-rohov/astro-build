@@ -1,9 +1,13 @@
 /**
- * Google Analytics 4. Set PUBLIC_GA_MEASUREMENT_ID in .env (e.g. G-ABC123XYZ).
+ * Google Analytics 4, from site.json `analytics.gaId` (PUBLIC_GA_MEASUREMENT_ID
+ * in the environment overrides it, e.g. for test builds).
  * Without a valid ID analytics is disabled and the cookie banner is not shown,
  * because the site then sets no optional cookies.
+ * Imports only "virtual:site/analytics", so it is safe in browser scripts.
  */
-const measurementId = (import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? "").trim();
+import { gaId } from "virtual:site/analytics";
+
+const measurementId = gaId.trim();
 
 export const ANALYTICS_CONFIG = {
   measurementId,

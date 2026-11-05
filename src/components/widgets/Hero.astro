@@ -33,6 +33,8 @@ export interface Props {
 
   align?: "left" | "center";
   tone?: "default" | "muted" | "inverse";
+  /** Heading level of the section title: h1 for the first section of a page. */
+  headingLevel?: "h1" | "h2";
   class?: string;
 }
 
@@ -46,9 +48,12 @@ const {
   imageAlt = "",
   align = "left",
   tone = "default",
+  headingLevel = "h1",
   class: className,
   ...restProps
 } = Astro.props;
+
+const Heading = headingLevel;
 
 const hasImage = Boolean(image);
 const hasActions = Boolean(primaryAction || secondaryAction);
@@ -82,7 +87,7 @@ const layoutProps = hasImage
         )}
 
         <Stack space="md">
-          <h1 class="hero__title">{title}</h1>
+          <Heading class="hero__title">{title}</Heading>
 
           {description && (
             <p class="hero__description">

@@ -46,6 +46,8 @@ export default {
     nameLabel: "Ім’я",
     emailLabel: "Електронна пошта",
     emailHint: "Ми використаємо цю адресу лише для відповіді на ваше повідомлення.",
+    phoneLabel: "Телефон",
+    addressLabel: "Адреса",
     subjectLabel: "Тема",
     messageLabel: "Повідомлення",
     honeypotLabel: "Вебсайт",

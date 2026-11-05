@@ -52,6 +52,8 @@ export const en = {
     nameLabel: "Name",
     emailLabel: "Email",
     emailHint: "We will use this email only to reply to your message.",
+    phoneLabel: "Phone",
+    addressLabel: "Address",
     subjectLabel: "Subject",
     messageLabel: "Message",
     honeypotLabel: "Website",

@@ -16,7 +16,7 @@
  *
  * Usage: node scripts/build-fonts.js [auto|latin|cyrillic|all]
  *   auto (default) — latin + latin-ext, plus cyrillic when the site language
- *                    (`const lang` in src/config/site.ts) uses Cyrillic script.
+ *                    (`lang` in SITE_DIR/site.json) uses Cyrillic script.
  */
 import crypto from "crypto";
 import fs from "fs";
@@ -76,10 +76,16 @@ if (!["auto", "latin", "cyrillic", "all"].includes(mode)) {
   process.exit(1);
 }
 
-/** Reads `const lang = "…"` from site.ts (the file itself needs Vite to run). */
+/** Site language from SITE_DIR/site.json (validated later by the Astro build). */
 function readSiteLanguage() {
-  const source = fs.readFileSync("src/config/site.ts", "utf8");
-  return source.match(/^const lang = "([^"]+)";/m)?.[1] ?? "en";
+  const siteFile = path.resolve(process.env.SITE_DIR || "sites/_demo", "site.json");
+
+  try {
+    return JSON.parse(fs.readFileSync(siteFile, "utf8")).lang ?? "en";
+  } catch {
+    console.warn(`Could not read ${siteFile}; building fonts for "en".`);
+    return "en";
+  }
 }
 
 const siteLanguage = readSiteLanguage();
