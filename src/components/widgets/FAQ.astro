@@ -15,11 +15,13 @@ export interface Props {
   description?: string;
   items: AccordionItem[];
 
-  tone?: "default" | "muted" | "inverse";
+  tone?: "default" | "muted" | "inverse" | "accent";
   align?: "left" | "center";
   accordionVariant?: "default" | "boxed" | "minimal";
   /** Adds FAQPage structured data (JSON-LD). Use it for one FAQ per page. */
   structuredData?: boolean;
+  /** Heading level of the section title: h1 for the first section of a page. */
+  headingLevel?: "h1" | "h2";
   class?: string;
 }
 
@@ -32,9 +34,12 @@ const {
   align = "center",
   accordionVariant = "default",
   structuredData = true,
+  headingLevel = "h2",
   class: className,
   ...restProps
 } = Astro.props;
+
+const Heading = headingLevel;
 
 const faqJsonLd = structuredData
   ? serializeJsonLd(faqSchema(items.map((item) => ({ question: item.title, answer: item.content }))))
@@ -61,9 +66,9 @@ const faqJsonLd = structuredData
           </Tag>
         )}
 
-        <h2 class="faq__title">
+        <Heading class="faq__title">
           {title}
-        </h2>
+        </Heading>
 
         {description && (
           <p class="faq__description">

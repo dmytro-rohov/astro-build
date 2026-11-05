@@ -24,8 +24,10 @@ export interface Props {
   items: FeatureItem[];
 
   columns?: "2" | "3" | "4" | "auto";
-  tone?: "default" | "muted" | "inverse";
+  tone?: "default" | "muted" | "inverse" | "accent";
   align?: "left" | "center";
+  /** Heading level of the section title: h1 for the first section of a page. */
+  headingLevel?: "h1" | "h2";
   class?: string;
 }
 
@@ -37,9 +39,12 @@ const {
   columns = "3",
   tone = "muted",
   align = "center",
+  headingLevel = "h2",
   class: className,
   ...restProps
 } = Astro.props;
+
+const Heading = headingLevel;
 ---
 
 <Section
@@ -62,9 +67,9 @@ const {
           </Tag>
         )}
 
-        <h2 class="feature-grid__title">
+        <Heading class="feature-grid__title">
           {title}
-        </h2>
+        </Heading>
 
         {description && (
           <p class="feature-grid__description">

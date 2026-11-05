@@ -41,7 +41,11 @@ export interface Props {
   method?: "post";
   submitLabel?: string;
   privacyHref?: string;
-  tone?: "default" | "muted" | "inverse";
+  tone?: "default" | "muted" | "inverse" | "accent";
+  /** Extra hidden fields sent with the form (e.g. siteId for the form service). */
+  hiddenFields?: Record<string, string>;
+  /** split: text + details beside the form; centered: one narrow column. */
+  layout?: "split" | "centered";
   class?: string;
 }
 
@@ -62,11 +66,17 @@ const {
   submitLabel = m.submit,
   privacyHref = "/privacy",
   tone = "default",
+  layout = "split",
+  hiddenFields = {},
   class: className,
   ...restProps
 } = Astro.props;
 
 const hasContactInfo = contactInfo.length > 0;
+const Layout = layout === "split" ? Split : Stack;
+const layoutProps = layout === "split"
+  ? ({ ratio: "sidebar", gap: "2xl", align: "start" } as const)
+  : ({ space: "xl" } as const);
 const Heading = headingLevel;
 const SubHeading = headingLevel === "h1" ? "h2" : "h3";
 ---
@@ -81,8 +91,8 @@ const SubHeading = headingLevel === "h1" ? "h2" : "h3";
     className,
   ]}
 >
-  <Container size="lg">
-    <Split ratio="sidebar" gap="2xl" align="start">
+  <Container size={layout === "split" ? "lg" : "sm"}>
+    <Layout {...layoutProps} class:list={[layout === "centered" && "contact-form-section--centered"]}>
       <Stack class="contact-form-section__content" space="lg">
         <Stack space="md">
           {eyebrow && (
@@ -217,6 +227,10 @@ const SubHeading = headingLevel === "h1" ? "h2" : "h3";
               <FieldError id="contact-message-error" class="contact-form__error" data-error-for="message" />
             </FormField>
 
+            {Object.entries(hiddenFields).map(([name, value]) => (
+              <input type="hidden" name={name} value={value} />
+            ))}
+
             <div class="contact-form__honeypot" aria-hidden="true">
               <Label for="contact-website">
                 {m.honeypotLabel}
@@ -256,7 +270,7 @@ const SubHeading = headingLevel === "h1" ? "h2" : "h3";
           </FormGroup>
         </form>
       </Card>
-    </Split>
+    </Layout>
   </Container>
 </Section>
 

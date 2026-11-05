@@ -1,0 +1,38 @@
+{
+  "hero": {
+    "file": "hero.jpg",
+    "alt": "Abstrakcyjna kompozycja w kolorach szkoły — płynne linie jak ruch w tańcu",
+    "focal": {
+      "x": 60,
+      "y": 45
+    }
+  },
+  "about": {
+    "file": "about.jpg",
+    "alt": "Abstrakcyjna kompozycja w odcieniach różu i śliwki"
+  },
+  "g-1": {
+    "file": "g-1.jpg",
+    "alt": "Grafika: zajęcia salsy"
+  },
+  "g-2": {
+    "file": "g-2.jpg",
+    "alt": "Grafika: lekcja baletu dla dorosłych"
+  },
+  "g-3": {
+    "file": "g-3.jpg",
+    "alt": "Grafika: pokaz na koniec semestru"
+  },
+  "g-4": {
+    "file": "g-4.jpg",
+    "alt": "Grafika: zajęcia hip-hopu dla dzieci"
+  },
+  "g-5": {
+    "file": "g-5.jpg",
+    "alt": "Grafika: próba pierwszego tańca"
+  },
+  "g-6": {
+    "file": "g-6.jpg",
+    "alt": "Grafika: wieczorek taneczny w sali"
+  }
+}

@@ -17,11 +17,13 @@
     object-fit: contain;
   }
 
+  // Look set by the archetype (theme.imageStyle): radius, shadow and frame.
   .image--rounded {
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-image);
   }
 
   .image--shadow {
-    box-shadow: var(--elevation-card);
+    border: var(--image-border);
+    box-shadow: var(--image-shadow);
   }
 }

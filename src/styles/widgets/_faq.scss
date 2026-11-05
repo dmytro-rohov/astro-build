@@ -33,11 +33,4 @@
     margin-inline: auto;
   }
 
-  .faq--tone-inverse .faq__description {
-    color: color-mix(
-      in srgb,
-      var(--color-text-inverse) 78%,
-      transparent
-    );
-  }
 }

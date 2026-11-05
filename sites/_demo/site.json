@@ -1,0 +1,234 @@
+{
+  "$schema": "../../dist-catalog/site.schema.json",
+  "schemaVersion": 1,
+  "engine": "^3.0.0",
+  "siteId": "demo",
+  "lang": "en",
+  "meta": {
+    "name": "Astro Starter",
+    "description": "Reusable Astro frontend system for building professional landing pages and small websites faster.",
+    "icon": "asset:icon",
+    "seo": {
+      "imageAlt": "Astro Starter preview"
+    }
+  },
+  "business": {
+    "type": "Organization",
+    "email": "hello@example.com"
+  },
+  "theme": {
+    "archetype": "default",
+    "colorScheme": "light",
+    "fontPair": "inter"
+  },
+  "layout": {
+    "navbar": {
+      "variant": "simple",
+      "props": {
+        "sticky": true
+      },
+      "content": {}
+    },
+    "footer": {
+      "variant": "columns",
+      "props": {},
+      "content": {
+        "description": "Reusable Astro frontend system for professional landing pages.",
+        "groups": [
+          {
+            "title": "Product",
+            "links": [
+              {
+                "label": "Features",
+                "href": "/#features"
+              },
+              {
+                "label": "Contact",
+                "href": "/contact"
+              }
+            ]
+          },
+          {
+            "title": "Legal",
+            "links": [
+              {
+                "label": "Privacy policy",
+                "href": "/privacy"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "navigation": {
+    "auto": false,
+    "items": [
+      {
+        "label": "Home",
+        "href": "/"
+      },
+      {
+        "label": "Features",
+        "href": "/#features"
+      },
+      {
+        "label": "Contact",
+        "href": "/contact"
+      }
+    ]
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "/",
+      "title": "Astro Starter",
+      "sections": [
+        {
+          "id": "hero",
+          "type": "hero",
+          "variant": "split-image",
+          "props": {},
+          "content": {
+            "eyebrow": "Astro Frontend System",
+            "title": "Build landing pages faster.",
+            "description": "Reusable Astro components, design tokens, optimized media, local fonts and clean SCSS architecture.",
+            "primaryAction": {
+              "label": "Get started",
+              "href": "/#features"
+            },
+            "secondaryAction": {
+              "label": "See the FAQ",
+              "href": "/#faq"
+            },
+            "image": "asset:hero"
+          }
+        },
+        {
+          "id": "features",
+          "type": "features",
+          "variant": "cards-grid",
+          "props": {
+            "tone": "muted",
+            "columns": "3"
+          },
+          "content": {
+            "eyebrow": "System overview",
+            "title": "Everything you need to start a professional landing page.",
+            "description": "Astro Starter gives you a consistent foundation instead of rebuilding the same setup from scratch for every project.",
+            "items": [
+              {
+                "id": "tokens",
+                "eyebrow": "Core",
+                "title": "Design tokens",
+                "description": "Stable token names for colors, spacing, typography, radius, shadows and motion. Change values per project without rewriting components."
+              },
+              {
+                "id": "layout",
+                "eyebrow": "Layout",
+                "title": "Layout primitives",
+                "description": "Compose pages with Container, Section, Stack, Cluster, Grid, Split and Sidebar instead of writing layout CSS from zero."
+              },
+              {
+                "id": "media",
+                "eyebrow": "Media",
+                "title": "Optimized media",
+                "description": "Reusable media components for images, pictures, figures and SVG sprite icons."
+              },
+              {
+                "id": "ui",
+                "eyebrow": "UI",
+                "title": "Reusable components",
+                "description": "Button, Link, Card, Tag, Divider, Accordion and form primitives prepared for landing page development."
+              },
+              {
+                "id": "widgets",
+                "eyebrow": "Widgets",
+                "title": "Ready sections",
+                "description": "Use ready-made widgets like Hero, FeatureGrid, CTA, FAQ and ContactForm to build pages faster."
+              },
+              {
+                "id": "backend",
+                "eyebrow": "Backend",
+                "title": "Contact form workflow",
+                "description": "A backend-ready ContactForm with Astro API route, validation and console delivery for development."
+              }
+            ]
+          }
+        },
+        {
+          "id": "start",
+          "type": "cta",
+          "variant": "boxed",
+          "props": {},
+          "content": {
+            "eyebrow": "Ready to use",
+            "title": "Start from a stronger base.",
+            "description": "Use ready widgets for common pages or compose your own custom sections from small, predictable primitives.",
+            "primaryAction": {
+              "label": "Contact us",
+              "href": "/contact"
+            },
+            "secondaryAction": {
+              "label": "Test contact form",
+              "href": "/contact"
+            }
+          }
+        },
+        {
+          "id": "faq",
+          "type": "faq",
+          "variant": "accordion",
+          "props": {
+            "style": "default",
+            "openFirst": true
+          },
+          "content": {
+            "eyebrow": "Questions",
+            "title": "How this builder should be used.",
+            "description": "A short overview of the intended workflow for future projects.",
+            "items": [
+              {
+                "id": "what-is-it",
+                "question": "What is Astro Starter?",
+                "answer": "Astro Starter is a reusable frontend system for building landing pages and small websites faster with Astro, SCSS, design tokens and ready-made widgets."
+              },
+              {
+                "id": "tokens-per-project",
+                "question": "Do I need to recreate design tokens for every project?",
+                "answer": "No. Keep token names stable and change their values to match the brand of each project."
+              },
+              {
+                "id": "custom-sections",
+                "question": "Can I build custom sections?",
+                "answer": "Yes. Use the ready widgets for common cases or compose custom sections manually from layout, UI and media primitives."
+              },
+              {
+                "id": "contact-backend",
+                "question": "Is ContactForm backend-ready?",
+                "answer": "Yes. It can post to an Astro API route and use console delivery during development. Email delivery can be added later through a provider."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "contact",
+      "slug": "/contact",
+      "title": "Contact",
+      "description": "Get in touch using the contact form. We reply to every message as soon as possible.",
+      "sections": [
+        {
+          "id": "contact-form",
+          "type": "contact",
+          "variant": "form-split",
+          "props": {},
+          "content": {
+            "showDetails": true
+          }
+        }
+      ]
+    }
+  ]
+}

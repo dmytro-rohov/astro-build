@@ -1,7 +1,10 @@
 ---
 export type AccordionItem = {
   title: string;
+  /** Plain text answer. */
   content: string;
+  /** Pre-rendered, sanitized HTML (richtext-lite); used instead of `content`. */
+  contentHtml?: string;
   open?: boolean;
 };
 
@@ -38,7 +41,7 @@ const {
       </summary>
 
       <div class="accordion__content">
-        <p>{item.content}</p>
+        {item.contentHtml ? <Fragment set:html={item.contentHtml} /> : <p>{item.content}</p>}
       </div>
     </details>
   ))}

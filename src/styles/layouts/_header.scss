@@ -18,6 +18,7 @@
   .site-header__inner {
     display: flex;
     align-items: center;
+    padding-block: var(--spacing-xs);
     justify-content: space-between;
     gap: var(--spacing-lg);
     min-height: 4rem;
@@ -34,5 +35,44 @@
 
   .site-header__brand:hover {
     color: var(--color-action-primary);
+  }
+
+  .site-header__brand {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  // Logo image: fixed height, natural width.
+  .logo {
+    display: block;
+    width: auto;
+    max-width: 12rem;
+    object-fit: contain;
+  }
+
+  .logo--header {
+    height: 2.5rem;
+  }
+
+  .logo--footer {
+    height: 3rem;
+  }
+
+  // Text logo when the site has no logo file.
+  .logo-text {
+    font-family: var(--font-family-heading);
+  }
+
+  // Long business names: at most two lines in the header, never squeezing the menu button.
+  .site-header__brand {
+    min-width: 0;
+  }
+
+  .site-header__brand .logo-text {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
   }
 }

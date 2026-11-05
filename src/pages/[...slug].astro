@@ -1,0 +1,36 @@
+---
+/**
+ * Every page of the site comes from site.json (pages[]). Engine pages
+ * (privacy, contact results, 404/500, API) live next to this file.
+ */
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SectionRenderer from "@/site/SectionRenderer.astro";
+import { site } from "virtual:site";
+import type { Page } from "@/site/schema/site";
+import { ogImageFor } from "@/site/og";
+
+export function getStaticPaths() {
+  return site.pages.map((page) => ({
+    params: { slug: page.slug === "/" ? undefined : page.slug.slice(1) },
+    props: { page },
+  }));
+}
+
+interface Props {
+  page: Page;
+}
+
+const { page } = Astro.props;
+const isHome = page.slug === "/";
+const image = await ogImageFor(page);
+---
+
+<BaseLayout
+  title={page.title}
+  titleIsFull={isHome}
+  description={page.description}
+  image={image}
+  robots={page.seo.noindex ? "noindex, follow" : "index, follow, max-image-preview:large"}
+>
+  <SectionRenderer sections={page.sections} />
+</BaseLayout>

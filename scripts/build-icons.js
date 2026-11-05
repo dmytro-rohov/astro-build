@@ -130,6 +130,9 @@ fs.writeFileSync(
 /* Source: scripts/build-icons.js */
 
 export const spriteUrl = "/${path.relative("public", outputPath)}";
+
+/** Icon names available in the sprite (used by the site.json schema). */
+export const iconNames = ${JSON.stringify(files.map((file) => path.basename(file, ".svg")))} as const;
 `,
 );
 

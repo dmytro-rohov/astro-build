@@ -1,7 +1,21 @@
+/**
+ * Generates design tokens for the site in SITE_DIR:
+ * - src/styles/abstracts/_tokens.scss — CSS custom properties: light (:root),
+ *   dark ([data-theme="dark"] and prefers-color-scheme), inverse sections
+ *   (the opposite scheme's palette), archetype shape tokens, font stacks
+ * - src/design-system/cssVars.ts — union type of token names
+ * - src/design-system/theme.generated.json — resolved theme (for build reports)
+ *
+ * Colors come from the archetype and site.json theme; failing contrast stops here.
+ * Usage: SITE_DIR=sites/_demo tsx src/design-system/utils/cssVars.ts
+ */
 import fs from "fs";
 import path from "path";
+import { loadSite, resolveSiteDir, SiteValidationError } from "../../site/loader";
+import { fontPairs, fontStack } from "../fonts/library";
+import { accentPalette, resolveTheme, type SemanticPalette } from "../theme";
+import { shapeTokens } from "../theme/shape";
 import { tokens } from "../tokens/index";
-import { semanticColorsDark } from "../tokens/semantic/color-semantic";
 
 type TokenValue = string | number;
 interface TokenObject {
@@ -12,24 +26,14 @@ function toKebab(str: string) {
   return str.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
 }
 
-function flatten(
-  obj: TokenObject,
-  prefix = ""
-): Record<string, TokenValue> {
+function flatten(obj: TokenObject, prefix = ""): Record<string, TokenValue> {
   const result: Record<string, TokenValue> = {};
 
   for (const [key, value] of Object.entries(obj)) {
     const kebabKey = toKebab(key);
+    const newKey = prefix ? `${prefix}-${kebabKey}` : kebabKey;
 
-    const newKey = prefix
-      ? `${prefix}-${kebabKey}`
-      : kebabKey;
-
-    if (
-      typeof value === "object" &&
-      value !== null &&
-      !Array.isArray(value)
-    ) {
+    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
       Object.assign(result, flatten(value as TokenObject, newKey));
     } else {
       result[newKey] = value as TokenValue;
@@ -39,79 +43,141 @@ function flatten(
   return result;
 }
 
-const flatTokens = flatten(tokens as TokenObject);
-const flatDarkColors = flatten({ color: semanticColorsDark } as TokenObject);
+let site;
 
-const outputDir = path.resolve("src/styles/abstracts");
-const cssVarsOutput = path.join(outputDir, "_tokens.scss");
-const tsTypesOutput = path.resolve("src/design-system/cssVars.ts");
+try {
+  ({ site } = loadSite(resolveSiteDir()));
+} catch (error) {
+  if (error instanceof SiteValidationError) {
+    console.error(`✖ ${resolveSiteDir()}\n${error.message}`);
+    process.exit(1);
+  }
 
-fs.mkdirSync(outputDir, { recursive: true });
+  throw error;
+}
 
-const cssLines = Object.entries(flatTokens).map(
-  ([key, value]) => `  --${key}: ${value};`
-);
+const theme = resolveTheme(site.theme);
+const pair = fontPairs[theme.fontPair];
 
-const darkCssLines = Object.entries(flatDarkColors).map(
-  ([key, value]) => `  --${key}: ${value};`
-);
+const allTokens = {
+  ...tokens,
+  color: { ...theme.light, primitive: tokens.color.primitive },
+  fontFamily: { ...tokens.fontFamily, base: fontStack(pair.body), heading: fontStack(pair.heading) },
+};
 
-// Dark scheme: forced with data-theme="dark", or automatic when
-// the page has no data-theme and the system prefers dark.
+const flatTokens = { ...flatten(allTokens as unknown as TokenObject), ...shapeTokens(theme.archetype) };
+const colorVars = (palette: SemanticPalette) => flatten({ color: palette } as unknown as TokenObject);
+
+const lines = (values: Record<string, TokenValue>, indent = "  ") =>
+  Object.entries(values)
+    .map(([key, value]) => `${indent}--${key}: ${value};`)
+    .join("\n");
+
+// Inverse sections use the OTHER scheme's palette, so headings, links, cards
+// and buttons inside them keep the contrast that was checked for that scheme.
 const css = `/* AUTO-GENERATED FILE – DO NOT EDIT */
-/* Source: src/design-system/utils/cssVars.ts */
+/* Source: src/design-system/utils/cssVars.ts · site: ${site.siteId} · archetype: ${theme.archetypeId} */
 
 :root {
   color-scheme: light;
-${cssLines.join("\n")}
+${lines(flatTokens)}
+}
+
+:root .section--tone-inverse {
+  color-scheme: dark;
+${lines(colorVars(theme.dark))}
+}
+
+:root .section--tone-accent {
+${lines(colorVars(accentPalette(theme.light)))}
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-${darkCssLines.join("\n")}
+${lines(colorVars(theme.dark))}
+}
+
+:root[data-theme="dark"] .section--tone-accent {
+${lines(colorVars(accentPalette(theme.dark)))}
+}
+
+:root[data-theme="dark"] .section--tone-inverse {
+  color-scheme: light;
+${lines(colorVars(theme.light))}
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
     color-scheme: dark;
-${darkCssLines.map((line) => `  ${line}`).join("\n")}
+${lines(colorVars(theme.dark), "    ")}
+  }
+
+  :root:not([data-theme]) .section--tone-inverse {
+    color-scheme: light;
+${lines(colorVars(theme.light), "    ")}
+  }
+
+  :root:not([data-theme]) .section--tone-accent {
+${lines(colorVars(accentPalette(theme.dark)), "    ")}
   }
 }
-`;
 
-const scssLines = Object.keys(flatTokens).map((key, index, arr) => {
-  const comma = index === arr.length - 1 ? "" : ",";
-  return `  "${key}": var(--${key})${comma}`;
-});
+/* Cover hero: always the dark palette (light text over a dark photo overlay), also in dark sites. */
+:root .section.s-hero--cover-image {
+  color-scheme: dark;
+${lines(colorVars(theme.dark))}
+}
+`;
 
 const spacingKeys = Object.keys(tokens.spacing)
   .map((key) => `"${key}"`)
   .join(", ");
 
 const scssMap = `$tokens: (
-${scssLines.join("\n")}
+${Object.keys(flatTokens)
+  .map((key) => `  "${key}": var(--${key})`)
+  .join(",\n")}
 );
 
 // Spacing token names, used to generate layout modifier classes.
 $spacing-keys: (${spacingKeys});
 `;
 
-const typeLines = Object.keys(flatTokens)
-  .map((token) => `  | "${token}"`)
-  .join("\n");
-
 const tsTypes = `/* AUTO-GENERATED FILE – DO NOT EDIT */
 /* Source: src/design-system/utils/cssVars.ts */
 
 export type CssToken =
-${typeLines};
+${Object.keys(flatTokens)
+  .map((token) => `  | "${token}"`)
+  .join("\n")};
 
 export type CssVar = \`var(--\${CssToken})\`;
 `;
 
-fs.writeFileSync(cssVarsOutput, `${css}\n${scssMap}`);
-fs.writeFileSync(tsTypesOutput, tsTypes);
+const outputDir = path.resolve("src/styles/abstracts");
+fs.mkdirSync(outputDir, { recursive: true });
+fs.writeFileSync(path.join(outputDir, "_tokens.scss"), `${css}\n${scssMap}`);
+fs.writeFileSync(path.resolve("src/design-system/cssVars.ts"), tsTypes);
+fs.writeFileSync(
+  path.resolve("src/design-system/theme.generated.json"),
+  `${JSON.stringify(
+    {
+      siteId: site.siteId,
+      archetype: theme.archetypeId,
+      colorScheme: theme.colorScheme,
+      fontPair: theme.fontPair,
+      accent: theme.accent,
+      adjustments: theme.adjustments,
+    },
+    null,
+    2,
+  )}\n`,
+);
 
-console.log("✅ Tokens generated");
-console.log(`Generated SCSS: ${cssVarsOutput}`);
-console.log(`Generated TS types: ${tsTypesOutput}`);
+for (const adjustment of theme.adjustments) {
+  console.warn(
+    `⚠ Accent ${adjustment.from} adjusted to ${adjustment.to} (${adjustment.scheme} scheme) to meet WCAG AA contrast.`,
+  );
+}
+
+console.log(`✅ Tokens generated for "${site.siteId}" (archetype ${theme.archetypeId}, fonts ${theme.fontPair}).`);

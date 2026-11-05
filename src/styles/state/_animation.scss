@@ -9,83 +9,6 @@
       transform var(--motion-duration-fast) var(--motion-easing-standard);
   }
 
-  /*
-   * Scroll reveal.
-   *
-   * Elements are hidden only when JavaScript is available:
-   * scripts/reveal.ts adds the .has-reveal-js class.
-   */
-  :where(.has-reveal-js) [data-reveal] {
-    --reveal-x: 0;
-    --reveal-y: 2.5rem;
-    --reveal-scale: 1;
-    --reveal-delay: 0ms;
-    --reveal-duration: 1500ms;
-
-    opacity: 0;
-    filter: blur(0.25rem);
-    transform:
-      translate3d(var(--reveal-x), var(--reveal-y), 0)
-      scale(var(--reveal-scale));
-  transition:
-    opacity var(--reveal-duration) ease-out,
-    filter var(--reveal-duration) ease-out,
-    transform var(--reveal-duration) cubic-bezier(0.16, 1, 0.3, 1);
-    transition-delay: var(--reveal-delay);
-    will-change: opacity, transform, filter;
-  }
-
-  .has-reveal-js [data-reveal].is-revealed {
-    opacity: 1;
-    filter: blur(0);
-    transform:
-      translate3d(0, 0, 0)
-      scale(1);
-    will-change: auto;
-  }
-
-  [data-reveal="fade"] {
-    --reveal-x: 0;
-    --reveal-y: 0;
-  }
-
-  [data-reveal="up"] {
-    --reveal-x: 0;
-    --reveal-y: 2.5rem;
-  }
-
-  [data-reveal="down"] {
-    --reveal-x: 0;
-    --reveal-y: -2.5rem;
-  }
-
-  [data-reveal="left"] {
-    --reveal-x: -6rem;
-    --reveal-y: 0;
-  }
-
-  [data-reveal="right"] {
-    --reveal-x: 6rem;
-    --reveal-y: 0;
-  }
-
-  [data-reveal="scale"] {
-    --reveal-x: 0;
-    --reveal-y: 1.5rem;
-    --reveal-scale: 0.94;
-  }
-
-  /*
-   * Large decorative words appear more slowly.
-   */
-  [data-reveal="background-word"] {
-    --reveal-x: 0;
-    --reveal-y: 0.25rem;
-    --reveal-duration: 2200ms;
-
-    filter: blur(0.5rem);
-  }
-
   .hover-lift {
     transition:
       box-shadow 300ms var(--motion-easing-emphasized),
@@ -106,15 +29,6 @@
 }
 
 @layer state {
-  @media (prefers-reduced-motion: reduce) {
-    .has-reveal-js [data-reveal] {
-      opacity: 1;
-      filter: none;
-      transform: none;
-      transition: none;
-    }
-  }
-
   @media (hover: none) {
     .hover-lift:hover,
     .hover-scale:hover {

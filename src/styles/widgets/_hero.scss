@@ -30,7 +30,7 @@
       var(--font-size-7xl)
     );
     line-height: var(--line-height-none);
-    letter-spacing: var(--letter-spacing-tighter);
+    letter-spacing: calc(var(--heading-tracking) - 0.02em);
   }
 
   .hero__description {
@@ -72,12 +72,4 @@
     object-fit: cover;
   }
 
-  .hero--tone-inverse .hero__description,
-  .section--tone-inverse .hero__description {
-    color: color-mix(
-      in srgb,
-      var(--color-text-inverse) 78%,
-      transparent
-    );
-  }
 }

@@ -65,12 +65,4 @@
     line-height: var(--line-height-relaxed);
   }
 
-  .feature-grid--tone-inverse .feature-grid__description,
-  .feature-grid--tone-inverse .feature-grid__item-description {
-    color: color-mix(
-      in srgb,
-      var(--color-text-inverse) 76%,
-      transparent
-    );
-  }
 }

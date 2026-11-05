@@ -13,6 +13,28 @@ export const en = {
     titleTemplate: "{title} | {siteName}",
   },
 
+  days: {
+    mo: { short: "Mon", long: "Monday" },
+    tu: { short: "Tue", long: "Tuesday" },
+    we: { short: "Wed", long: "Wednesday" },
+    th: { short: "Thu", long: "Thursday" },
+    fr: { short: "Fri", long: "Friday" },
+    sa: { short: "Sat", long: "Saturday" },
+    su: { short: "Sun", long: "Sunday" },
+  },
+
+  sections: {
+    hoursTitle: "Opening hours",
+    closed: "Closed",
+    address: "Address",
+    phone: "Phone",
+    email: "Email",
+    openInMaps: "Open in maps",
+    popularPlan: "Most popular",
+    rating: "Rating: {value} out of 5",
+    contactBar: "Contact details",
+  },
+
   common: {
     skipToContent: "Skip to content",
     backToHome: "Back to home page",
@@ -52,6 +74,8 @@ export const en = {
     nameLabel: "Name",
     emailLabel: "Email",
     emailHint: "We will use this email only to reply to your message.",
+    phoneLabel: "Phone",
+    addressLabel: "Address",
     subjectLabel: "Subject",
     messageLabel: "Message",
     honeypotLabel: "Website",
@@ -106,11 +130,22 @@ export const en = {
     privacy: {
       title: "Privacy policy",
       heading: "Privacy policy",
-      placeholder:
-        "This is a placeholder privacy policy. Replace it with project-specific legal content before production deployment.",
+      description: "How {name} processes personal data and uses cookies.",
+      controllerHeading: "Data controller",
+      controllerText: "The controller of your personal data is {name}{address}.",
+      contactText: "For any questions about your data, write to {email}.",
+      dataHeading: "What data we process",
+      dataText: "When you use the contact form we process your name, email address, the subject and content of your message. Our hosting provider also records technical data (IP address, date and time of the request) for security reasons.",
+      purposeHeading: "Purpose and legal basis",
+      purposeText: "We use the data to reply to your message and to keep the website secure — our legitimate interest (Art. 6(1)(f) GDPR) and taking steps at your request before entering into a contract (Art. 6(1)(b) GDPR).",
+      retentionHeading: "How long we keep the data",
+      retentionText: "Messages are kept for as long as needed to handle your request, and then for up to 12 months in case of follow-up questions. Server logs are kept for up to 30 days.",
+      rightsHeading: "Your rights",
+      rightsText: "You have the right to access, rectify, erase and restrict the processing of your data, to object to processing, to data portability and to lodge a complaint with the data protection authority.",
       cookiesHeading: "Cookies and analytics",
-      cookiesText:
-        "Optional analytics cookies are used only after you give consent. You can change or withdraw your consent at any time.",
+      cookiesText: "Optional analytics cookies (Google Analytics) are used only after you give consent. You can change or withdraw your consent at any time.",
+      noCookiesText: "This website does not use analytics or advertising cookies. A small entry in your browser storage may remember your cookie choice.",
+      updated: "Last updated: {date}",
     },
     contactSent: {
       title: "Message sent",

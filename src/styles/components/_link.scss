@@ -22,6 +22,12 @@
     cursor: pointer;
   }
 
+  // Links inside running text are underlined, not only colored (WCAG 1.4.1).
+  :where(p, li, dd, td, label) > .link {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
   .link--muted {
     color: var(--color-text-muted);
   }

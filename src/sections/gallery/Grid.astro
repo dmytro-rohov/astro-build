@@ -1,0 +1,48 @@
+---
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"gallery">;
+  headingLevel: "h1" | "h2";
+  variant?: "grid" | "mosaic";
+}
+
+const { section, headingLevel, variant = "grid" } = Astro.props;
+const { content, props } = section;
+// A mosaic needs a large photo plus at least two beside it; fewer photos fall back to the grid.
+const layout = variant === "mosaic" && content.items.length >= 3 ? "mosaic" : "grid";
+---
+
+<SectionShell id={section.id} type="gallery" variant={variant} tone={props.tone} spacing={props.spacing} width="xl">
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <ul class:list={["s-gallery__list", `s-gallery__list--${layout}`]}>
+      {content.items.map((item, index) => {
+        const photo = getAsset(item.image);
+        const large = layout === "mosaic" && index === 0;
+        return (
+          <li class:list={["s-gallery__item", large && "s-gallery__item--large"]}>
+            <figure class="s-gallery__figure">
+              <Img
+                src={photo.image}
+                alt={photo.alt}
+                kind={photo.alt ? "content" : "decorative"}
+                aspect={[4, 3]}
+                focal={photo.focal}
+                sizes={large ? "(min-width: 1024px) 60vw, 100vw" : "(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw"}
+                widths={large ? [640, 960, 1280] : [400, 640, 800]}
+                class="s-gallery__image"
+              />
+              {item.caption && <figcaption class="s-gallery__caption">{item.caption}</figcaption>}
+            </figure>
+          </li>
+        );
+      })}
+    </ul>
+  </Stack>
+</SectionShell>

@@ -7,8 +7,11 @@
     border: 1px solid transparent;
     border-radius: var(--radius-pill);
     font-weight: var(--font-weight-medium);
-    line-height: var(--line-height-none);
-    white-space: nowrap;
+
+    // Labels from site.json can be long: wrap instead of overflowing.
+    max-width: 100%;
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
   }
 
   .tag--sm {

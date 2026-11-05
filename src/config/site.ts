@@ -1,10 +1,13 @@
 /**
- * Site configuration — the single place to change per-project content.
+ * siteConfig — compatibility layer computed from site.json (virtual:site).
  *
- * Site URL is not set here. It comes from the SITE_URL environment
- * variable (see .env.example) and is available as Astro.site.
+ * All content lives in SITE_DIR/site.json. This module only reshapes it for the
+ * layouts, SEO and JSON-LD code that existed in v2, so they keep working
+ * unchanged. Do not put content here.
  */
+import { site } from "virtual:site";
 import { getDictionary } from "@/i18n/dictionaries";
+import { resolveTheme } from "@/design-system/theme";
 
 export type SiteLink = {
   label: string;
@@ -25,96 +28,73 @@ export type SiteSocialLink = {
 
 export type SiteColorScheme = "light" | "dark" | "auto";
 
-/**
- * Site language — the ONE place that decides the language of all UI texts.
- * Any code with a file in src/i18n/dictionaries/ works, e.g. "pl", "en", "uk".
- * To add a new language, copy en.ts to <code>.ts and translate it.
- */
-const lang = "en";
+const t = getDictionary(site.lang);
 
-const t = getDictionary(lang);
+/** Pages shown in the menu, in order, as links. */
+function pageLinks(): SiteLink[] {
+  return site.pages
+    .map((page, index) => ({ page, index }))
+    .filter(({ page }) => page.nav.show)
+    .sort((a, b) => (a.page.nav.order ?? a.index) - (b.page.nav.order ?? b.index))
+    .map(({ page }) => ({ label: page.nav.label ?? page.title, href: page.slug }));
+}
+
+const nav: SiteLink[] = site.navigation.auto ? pageLinks() : (site.navigation.items ?? []);
+
+const footerContent = site.layout.footer.content;
+
+const footerGroups: SiteLinkGroup[] = footerContent.groups ?? [
+  { title: site.meta.name, links: pageLinks() },
+  { title: t.footer.legal, links: [{ label: t.footer.privacyPolicy, href: "/privacy" }] },
+];
+
+const { business } = site;
 
 export const siteConfig = {
-  name: "Astro Starter",
-  description: "Professional landing page built with Astro.",
-
-  lang,
+  name: site.meta.name,
+  description: site.meta.description,
+  lang: site.lang,
 
   author: "",
   keywords: [] as string[],
 
-  /**
-   * "light" | "dark" — always use that color scheme.
-   * "auto" — follow the visitor's system preference.
-   */
-  colorScheme: "light" as SiteColorScheme,
+  colorScheme: resolveTheme(site.theme).colorScheme as SiteColorScheme,
 
   seo: {
     image: "/og-cover.jpg",
-    imageAlt: "Astro Starter preview",
+    imageAlt: site.meta.seo.imageAlt ?? site.meta.name,
     imageWidth: 1200,
     imageHeight: 630,
   },
 
-  /**
-   * Business data for structured data (JSON-LD) on every page.
-   * Empty fields are left out of the output.
-   */
   organization: {
-    /**
-     * Schema.org type: "Organization", "LocalBusiness" or a more specific
-     * LocalBusiness type, e.g. "Restaurant", "BeautySalon", "Dentist", "LegalService".
-     */
-    type: "Organization",
-    /** Defaults to `name` when empty. */
-    name: "",
-    /** Square raster logo, at least 112×112 px. */
+    type: business.type,
+    name: business.name ?? "",
     logo: "/icons/icon-512.png",
-    email: "",
-    phone: "",
+    email: business.email ?? "",
+    phone: business.phone ?? "",
     address: {
-      street: "",
-      city: "",
-      postalCode: "",
-      region: "",
-      /** ISO 3166-1 alpha-2, e.g. "PL". */
-      country: "",
+      street: business.address?.street ?? "",
+      city: business.address?.city ?? "",
+      postalCode: business.address?.postalCode ?? "",
+      region: business.address?.region ?? "",
+      country: business.address?.country ?? "",
     },
-    /** Opening hours in schema.org format, e.g. "Mo-Fr 09:00-17:00". */
-    openingHours: [] as string[],
-    /** e.g. "$$" or "100-300 PLN". */
-    priceRange: "",
-    /** Profiles on other sites: Facebook, Instagram, LinkedIn, Google Maps… */
-    sameAs: [] as string[],
+    hours: business.hours,
+    priceRange: business.priceRange ?? "",
+    sameAs: business.sameAs,
   },
 
   header: {
-    nav: [
-      { label: t.nav.home, href: "/" },
-      { label: t.nav.features, href: "/#features" },
-      { label: t.nav.components, href: "/playground" },
-      { label: t.nav.contact, href: "/contact" },
-    ] as SiteLink[],
-    cta: undefined as SiteLink | undefined,
+    nav,
+    cta: site.layout.navbar.content.cta as SiteLink | undefined,
+    sticky: site.layout.navbar.props.sticky ?? true,
   },
 
   footer: {
-    description: "Reusable Astro frontend system for professional landing pages.",
-    groups: [
-      {
-        title: t.footer.product,
-        links: [
-          { label: t.nav.features, href: "/#features" },
-          { label: t.nav.components, href: "/playground" },
-          { label: t.nav.contact, href: "/contact" },
-        ],
-      },
-      {
-        title: t.footer.legal,
-        links: [{ label: t.footer.privacyPolicy, href: "/privacy" }],
-      },
-    ] as SiteLinkGroup[],
-    socialLinks: [] as SiteSocialLink[],
+    description: footerContent.description ?? "",
+    groups: footerGroups,
+    socialLinks: (footerContent.socialLinks ?? []) as SiteSocialLink[],
   },
 };
 

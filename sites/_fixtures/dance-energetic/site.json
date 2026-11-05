@@ -1,0 +1,535 @@
+{
+  "$schema": "../../../dist-catalog/site.schema.json",
+  "schemaVersion": 1,
+  "engine": "^3.0.0",
+  "siteId": "dance-energetic",
+  "lang": "pl",
+  "meta": {
+    "name": "Szkoła Tańca Pas de Deux",
+    "description": "Szkoła tańca w centrum Krakowa: salsa, bachata, balet dla dorosłych, pierwszy taniec i zajęcia dla dzieci. Pierwsza lekcja za darmo.",
+    "url": "https://pasdedeux.example",
+    "seo": {
+      "imageAlt": "Szkoła Tańca Pas de Deux w Krakowie"
+    }
+  },
+  "business": {
+    "type": "DanceSchool",
+    "name": "Pas de Deux Szkoła Tańca",
+    "email": "kontakt@pasdedeux.example",
+    "phone": "+48 12 345 67 89",
+    "address": {
+      "street": "ul. Długa 42",
+      "city": "Kraków",
+      "postalCode": "31-146",
+      "country": "PL"
+    },
+    "hours": [
+      {
+        "days": [
+          "mo",
+          "tu",
+          "we",
+          "th",
+          "fr"
+        ],
+        "opens": "16:00",
+        "closes": "22:00"
+      },
+      {
+        "days": [
+          "sa"
+        ],
+        "opens": "10:00",
+        "closes": "15:00"
+      },
+      {
+        "days": [
+          "su"
+        ],
+        "closed": true
+      }
+    ],
+    "priceRange": "45–480 zł"
+  },
+  "theme": {
+    "archetype": "energetic",
+    "accent": "#9b3d6b"
+  },
+  "layout": {
+    "navbar": {
+      "variant": "topbar",
+      "props": {
+        "sticky": true
+      },
+      "content": {
+        "cta": {
+          "label": "Lekcja próbna",
+          "href": "/kontakt"
+        }
+      }
+    },
+    "footer": {
+      "variant": "centered",
+      "props": {},
+      "content": {
+        "description": "Szkoła tańca dla dorosłych i dzieci w centrum Krakowa. Małe grupy, cierpliwi instruktorzy, dobra atmosfera.",
+        "groups": [
+          {
+            "title": "Szkoła",
+            "links": [
+              {
+                "label": "Zajęcia",
+                "href": "/zajecia"
+              },
+              {
+                "label": "Cennik",
+                "href": "/cennik"
+              },
+              {
+                "label": "Kontakt",
+                "href": "/kontakt"
+              }
+            ]
+          },
+          {
+            "title": "Informacje",
+            "links": [
+              {
+                "label": "Pytania i odpowiedzi",
+                "href": "/cennik#pytania"
+              },
+              {
+                "label": "Polityka prywatności",
+                "href": "/privacy"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "navigation": {
+    "auto": true
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "/",
+      "title": "Szkoła Tańca Pas de Deux — Kraków",
+      "description": "Szkoła tańca w centrum Krakowa: salsa, bachata, balet dla dorosłych, pierwszy taniec i zajęcia dla dzieci. Pierwsza lekcja za darmo.",
+      "nav": {
+        "label": "Start",
+        "order": 0
+      },
+      "sections": [
+        {
+          "id": "start",
+          "type": "hero",
+          "variant": "cover-image",
+          "props": {},
+          "content": {
+            "eyebrow": "Szkoła tańca w Krakowie",
+            "title": "Taniec, który daje radość od pierwszego kroku",
+            "description": "Salsa, bachata, balet dla dorosłych i pierwszy taniec weselny. Małe grupy, cierpliwi instruktorzy i przestronna sala przy ul. Długiej.",
+            "primaryAction": {
+              "label": "Umów lekcję próbną",
+              "href": "/kontakt"
+            },
+            "secondaryAction": {
+              "label": "Zobacz zajęcia",
+              "href": "/zajecia"
+            },
+            "image": "asset:hero"
+          }
+        },
+        {
+          "id": "o-nas",
+          "type": "about",
+          "variant": "centered",
+          "props": {},
+          "content": {
+            "eyebrow": "O nas",
+            "title": "Uczymy tańczyć dorosłych i dzieci od 2009 roku",
+            "body": "Pas de Deux założyli **Anna i Michał Wronowie** — para taneczna z dwudziestoletnim stażem scenicznym. Od początku stawiamy na małe grupy i atmosferę, w której nikt nie boi się pomylić kroku.\n\nPrzychodzą do nas osoby, które nigdy nie tańczyły, i pary przygotowujące się do ślubu. Jeśli nie wiesz, od czego zacząć, [umów bezpłatną konsultację](/kontakt).",
+            "image": "asset:about",
+            "highlights": [
+              {
+                "id": "lata",
+                "value": "15 lat",
+                "label": "na parkiecie w Krakowie"
+              },
+              {
+                "id": "grupy",
+                "value": "12 osób",
+                "label": "maksymalnie w grupie"
+              },
+              {
+                "id": "style",
+                "value": "9 stylów",
+                "label": "tańca w grafiku"
+              }
+            ],
+            "action": {
+              "label": "Zobacz grafik zajęć",
+              "href": "/zajecia"
+            }
+          }
+        },
+        {
+          "id": "dlaczego-my",
+          "type": "features",
+          "variant": "cards-grid",
+          "props": {
+            "columns": "4"
+          },
+          "content": {
+            "eyebrow": "Dlaczego my",
+            "title": "Dobra szkoła tańca to coś więcej niż kroki",
+            "description": "Dbamy o to, żeby każda lekcja była przyjemnością — niezależnie od tego, czy tańczysz od tygodnia, czy od lat.",
+            "items": [
+              {
+                "id": "proba",
+                "eyebrow": "Na start",
+                "title": "Lekcja próbna za darmo",
+                "description": "Przyjdź na pierwsze zajęcia bez zobowiązań i sprawdź, czy styl i grupa są dla Ciebie.",
+                "icon": "star"
+              },
+              {
+                "id": "godziny",
+                "eyebrow": "Grafik",
+                "title": "Wieczory i soboty",
+                "description": "Zajęcia od 17:00 do 22:00 w tygodniu i przedpołudniami w soboty — po pracy i po szkole.",
+                "icon": "clock"
+              },
+              {
+                "id": "partner",
+                "eyebrow": "Bez stresu",
+                "title": "Bez partnera? Żaden problem",
+                "description": "W zajęciach w parach rotujemy partnerów, więc możesz przyjść sam lub sama.",
+                "icon": "check"
+              },
+              {
+                "id": "centrum",
+                "eyebrow": "Lokalizacja",
+                "title": "Sala w samym centrum",
+                "description": "Pięć minut pieszo od Rynku, przystanek tramwajowy Plac Inwalidów tuż obok.",
+                "icon": "map-pin"
+              }
+            ]
+          }
+        },
+        {
+          "id": "opinie",
+          "type": "testimonials",
+          "variant": "cards",
+          "props": {},
+          "content": {
+            "eyebrow": "Opinie",
+            "title": "Co mówią nasi kursanci",
+            "items": [
+              {
+                "id": "kasia",
+                "quote": "Przyszłam bez żadnego doświadczenia i po trzech miesiącach tańczę salsę na imprezach. Anna tłumaczy wszystko tak, że nawet ja łapię rytm.",
+                "author": "Katarzyna M.",
+                "role": "salsa, grupa początkująca",
+                "rating": 5
+              },
+              {
+                "id": "tomek",
+                "quote": "Pierwszy taniec przygotowaliśmy w pięć lekcji. Goście do dziś pytają, gdzie się uczyliśmy — polecamy każdej parze młodej.",
+                "author": "Tomasz i Ola",
+                "role": "pierwszy taniec",
+                "rating": 5
+              },
+              {
+                "id": "ewa",
+                "quote": "Balet dla dorosłych to moja godzina dla siebie w tygodniu. Świetna atmosfera, nikt nikogo nie ocenia.",
+                "author": "Ewa K.",
+                "role": "balet dla dorosłych",
+                "rating": 5
+              }
+            ]
+          }
+        },
+        {
+          "id": "zapisy",
+          "type": "cta",
+          "variant": "banner",
+          "props": {},
+          "content": {
+            "eyebrow": "Zapisy trwają",
+            "title": "Pierwsza lekcja jest na nasz koszt",
+            "description": "Napisz lub zadzwoń, a dobierzemy grupę do Twojego poziomu i grafiku. Nowe grupy startują co miesiąc.",
+            "primaryAction": {
+              "label": "Umów lekcję próbną",
+              "href": "/kontakt"
+            },
+            "secondaryAction": {
+              "label": "Sprawdź cennik",
+              "href": "/cennik"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "zajecia",
+      "slug": "/zajecia",
+      "title": "Zajęcia taneczne",
+      "description": "Salsa, bachata, balet dla dorosłych, pierwszy taniec, hip-hop i zajęcia dla dzieci — grafik i opis stylów w Szkole Tańca Pas de Deux.",
+      "nav": {
+        "label": "Zajęcia",
+        "order": 1
+      },
+      "sections": [
+        {
+          "id": "style",
+          "type": "services",
+          "variant": "price-list",
+          "props": {},
+          "content": {
+            "eyebrow": "Zajęcia",
+            "title": "Wybierz styl dla siebie",
+            "description": "Każdy kurs ma grupę początkującą i średniozaawansowaną. Nie wiesz, który styl wybrać? Przyjdź na lekcję próbną.",
+            "items": [
+              {
+                "id": "salsa",
+                "title": "Salsa kubańska",
+                "description": "Energiczny taniec w parach i w kole (rueda). Najlepszy wybór na początek przygody z tańcem.",
+                "price": "od 180 zł / mies.",
+                "icon": "star"
+              },
+              {
+                "id": "bachata",
+                "title": "Bachata",
+                "description": "Zmysłowy taniec z Dominikany. Uczymy prowadzenia i podążania krok po kroku.",
+                "price": "od 180 zł / mies.",
+                "icon": "star"
+              },
+              {
+                "id": "balet",
+                "title": "Balet dla dorosłych",
+                "description": "Technika, postawa i rozciąganie przy drążku. Bez wymagań — wystarczą wygodne ubrania.",
+                "price": "od 200 zł / mies.",
+                "icon": "check"
+              },
+              {
+                "id": "pierwszy-taniec",
+                "title": "Pierwszy taniec",
+                "description": "Indywidualne lekcje dla par młodych, z choreografią do wybranej piosenki.",
+                "price": "480 zł / 5 lekcji",
+                "icon": "check"
+              },
+              {
+                "id": "hip-hop",
+                "title": "Hip-hop dla dzieci",
+                "description": "Zajęcia dla dzieci od 7 do 12 lat: rytm, koordynacja i mnóstwo zabawy.",
+                "price": "160 zł / mies.",
+                "icon": "blocks"
+              },
+              {
+                "id": "zumba",
+                "title": "Zumba",
+                "description": "Taneczny trening cardio przy muzyce latino. Spalasz kalorie i nie myślisz o tym.",
+                "price": "45 zł / wejście",
+                "icon": "clock"
+              }
+            ]
+          }
+        },
+        {
+          "id": "galeria",
+          "type": "gallery",
+          "variant": "grid",
+          "props": {},
+          "content": {
+            "eyebrow": "Galeria",
+            "title": "Z życia szkoły",
+            "description": "Zajęcia, pokazy na koniec semestru i wieczorki taneczne, na które zapraszamy wszystkich kursantów.",
+            "items": [
+              {
+                "id": "g1",
+                "image": "asset:g-1",
+                "caption": "Salsa — grupa średniozaawansowana"
+              },
+              {
+                "id": "g2",
+                "image": "asset:g-2",
+                "caption": "Balet dla dorosłych przy drążku"
+              },
+              {
+                "id": "g3",
+                "image": "asset:g-3",
+                "caption": "Pokaz na koniec semestru"
+              },
+              {
+                "id": "g4",
+                "image": "asset:g-4",
+                "caption": "Hip-hop dla dzieci"
+              },
+              {
+                "id": "g5",
+                "image": "asset:g-5",
+                "caption": "Próba pierwszego tańca"
+              },
+              {
+                "id": "g6",
+                "image": "asset:g-6",
+                "caption": "Wieczorek taneczny w sali głównej"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "cennik",
+      "slug": "/cennik",
+      "title": "Cennik i karnety",
+      "description": "Ceny zajęć w Szkole Tańca Pas de Deux: pojedyncze wejścia, karnety miesięczne i pakiety lekcji pierwszego tańca dla par młodych.",
+      "nav": {
+        "label": "Cennik",
+        "order": 2
+      },
+      "sections": [
+        {
+          "id": "karnety",
+          "type": "pricing",
+          "variant": "compact",
+          "props": {},
+          "content": {
+            "eyebrow": "Cennik",
+            "title": "Karnety i ceny",
+            "description": "Płacisz za miesiąc lub za pojedyncze zajęcia. Karnet możesz zawiesić na czas urlopu.",
+            "plans": [
+              {
+                "id": "wejscie",
+                "name": "Pojedyncze wejście",
+                "price": "45 zł",
+                "period": "za lekcję",
+                "description": "Dla osób, które chcą tańczyć od czasu do czasu.",
+                "features": [
+                  "Dowolny styl z grafiku",
+                  "Ważne 30 dni od zakupu"
+                ],
+                "action": {
+                  "label": "Zapisz się",
+                  "href": "/kontakt"
+                }
+              },
+              {
+                "id": "miesieczny",
+                "name": "Karnet miesięczny",
+                "price": "180 zł",
+                "period": "miesięcznie",
+                "description": "Najczęściej wybierany — jeden styl, stała grupa.",
+                "features": [
+                  "8 lekcji w miesiącu",
+                  "Stała grupa i instruktor",
+                  "Wieczorki taneczne gratis",
+                  "Możliwość zawieszenia"
+                ],
+                "action": {
+                  "label": "Wybieram karnet",
+                  "href": "/kontakt"
+                },
+                "highlighted": true
+              },
+              {
+                "id": "slub",
+                "name": "Pierwszy taniec",
+                "price": "480 zł",
+                "period": "5 lekcji",
+                "description": "Indywidualne zajęcia dla par młodych.",
+                "features": [
+                  "Choreografia do Waszej piosenki",
+                  "Nagranie wideo do ćwiczeń",
+                  "Terminy dopasowane do Was"
+                ],
+                "action": {
+                  "label": "Zapytaj o termin",
+                  "href": "/kontakt"
+                }
+              }
+            ],
+            "note": "Rodzeństwo, pary i studenci otrzymują 10% rabatu na karnety miesięczne. Ceny zawierają VAT."
+          }
+        },
+        {
+          "id": "pytania",
+          "type": "faq",
+          "variant": "two-column",
+          "props": {},
+          "content": {
+            "eyebrow": "FAQ",
+            "title": "Najczęstsze pytania",
+            "items": [
+              {
+                "id": "partner",
+                "question": "Czy muszę przyjść z partnerem?",
+                "answer": "Nie. W zajęciach w parach **rotujemy partnerów**, więc większość kursantów przychodzi sama."
+              },
+              {
+                "id": "stroj",
+                "question": "W co się ubrać na pierwsze zajęcia?",
+                "answer": "Wystarczą wygodne ubrania i obuwie na płaskiej, gładkiej podeszwie. Na balet — skarpetki lub baletki."
+              },
+              {
+                "id": "wiek",
+                "question": "Czy jest górna granica wieku?",
+                "answer": "Nie ma. Najstarsza kursantka grupy baletowej ma 68 lat i jest naszą inspiracją."
+              },
+              {
+                "id": "nieobecnosc",
+                "question": "Co, jeśli opuszczę zajęcia?",
+                "answer": "Lekcję możesz odrobić w innej grupie na tym samym poziomie w ciągu miesiąca."
+              },
+              {
+                "id": "platnosc",
+                "question": "Jak mogę zapłacić?",
+                "answer": "Gotówką lub kartą w recepcji albo przelewem. Szczegóły podamy po [zapisie](/kontakt)."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "kontakt",
+      "slug": "/kontakt",
+      "title": "Kontakt i zapisy",
+      "description": "Zapisz się na lekcję próbną w Szkole Tańca Pas de Deux. Adres: ul. Długa 42, Kraków. Telefon, e-mail i godziny otwarcia recepcji.",
+      "nav": {
+        "label": "Kontakt",
+        "order": 3
+      },
+      "sections": [
+        {
+          "id": "formularz",
+          "type": "contact",
+          "variant": "form-centered",
+          "props": {},
+          "content": {
+            "eyebrow": "Kontakt",
+            "title": "Zapisz się lub zadaj pytanie",
+            "description": "Napisz, jaki styl Cię interesuje i kiedy możesz przychodzić. Odpowiadamy w ciągu jednego dnia roboczego.",
+            "showDetails": true
+          }
+        },
+        {
+          "id": "dojazd",
+          "type": "hours-location",
+          "variant": "compact",
+          "props": {},
+          "content": {
+            "eyebrow": "Dojazd",
+            "title": "Godziny otwarcia i dojazd",
+            "description": "Sala znajduje się na pierwszym piętrze, wejście od podwórza. Najbliższy przystanek: Plac Inwalidów.",
+            "mapUrl": "https://www.openstreetmap.org/search?query=D%C5%82uga%2042%20Krak%C3%B3w",
+            "showPhone": true
+          }
+        }
+      ]
+    }
+  ]
+}

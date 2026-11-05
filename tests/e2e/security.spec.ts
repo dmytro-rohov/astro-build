@@ -40,8 +40,8 @@ test("hashed assets, fonts and the icon sprite are cached as immutable", async (
     await page.locator('link[rel="preload"][as="font"]').getAttribute("href"),
   ];
 
-  await page.goto("/playground");
-  const sprite = await page.locator("svg use").first().getAttribute("href");
+  // Footer contact icons come from the sprite.
+  const sprite = await page.locator("footer svg use").first().getAttribute("href");
   urls.push(sprite!.split("#")[0]);
 
   for (const url of urls) {
@@ -56,7 +56,7 @@ test("on-demand image endpoint is disabled", async ({ request }) => {
 });
 
 test("no inline style attributes (blocked by CSP)", async ({ page }) => {
-  for (const path of ["/", "/contact", "/playground"]) {
+  for (const path of ["/", "/contact", "/privacy"]) {
     await page.goto(path);
     const inline = await page.locator("[style]").evaluateAll((elements) =>
       elements.map((element) => element.tagName + "." + element.className),

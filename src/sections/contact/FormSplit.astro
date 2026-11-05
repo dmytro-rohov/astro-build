@@ -1,0 +1,50 @@
+---
+import ContactForm from "@/components/widgets/ContactForm.astro";
+import { site } from "virtual:site";
+import { t } from "@/i18n";
+import type { SectionOf } from "@/site/types";
+import { toneFor } from "@/site/theme";
+
+export interface Props {
+  section: SectionOf<"contact">;
+  headingLevel: "h1" | "h2";
+  layout?: "split" | "centered";
+}
+
+const { section, headingLevel, layout = "split" } = Astro.props;
+const { content, props } = section;
+const { business } = site;
+
+// Local mode posts to this site's /api/contact; remote mode to the form service.
+const remote = site.contact.mode === "remote" ? site.contact : undefined;
+const action = remote ? remote.endpoint : "/api/contact";
+const hiddenFields: Record<string, string> = remote ? { siteId: site.siteId, lang: site.lang } : {};
+
+// Contact details always come from business (one source of truth).
+const address = [business.address?.street, [business.address?.postalCode, business.address?.city].filter(Boolean).join(" ")]
+  .filter(Boolean)
+  .join(", ");
+
+const contactInfo = content.showDetails
+  ? [
+      business.email && { label: t.contactForm.emailLabel, value: business.email, href: `mailto:${business.email}` },
+      business.phone && { label: t.contactForm.phoneLabel, value: business.phone, href: `tel:${business.phone.replace(/[^\d+]/g, "")}` },
+      address && { label: t.contactForm.addressLabel, value: address },
+    ].filter((item): item is { label: string; value: string; href?: string } => Boolean(item))
+  : [];
+---
+
+<ContactForm
+  id={section.id}
+  headingLevel={headingLevel}
+  layout={layout}
+  eyebrow={content.eyebrow}
+  title={content.title}
+  description={content.description}
+  contactInfo={contactInfo}
+  tone={toneFor("contact", props.tone)}
+  action={action}
+  hiddenFields={hiddenFields}
+  method="post"
+  privacyHref="/privacy"
+/>

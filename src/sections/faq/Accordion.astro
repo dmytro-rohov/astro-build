@@ -1,0 +1,33 @@
+---
+import FAQ from "@/components/widgets/FAQ.astro";
+import { renderRichTextLite, richTextLiteToPlain } from "@/site/richtext";
+import type { VariantOf } from "@/site/types";
+import { toneFor } from "@/site/theme";
+
+export interface Props {
+  section: VariantOf<"faq", "accordion">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+
+const items = content.items.map((item, index) => ({
+  title: item.question,
+  content: richTextLiteToPlain(item.answer),
+  contentHtml: renderRichTextLite(item.answer),
+  open: props.openFirst === true && index === 0,
+}));
+---
+
+<FAQ
+  id={section.id}
+  headingLevel={headingLevel}
+  eyebrow={content.eyebrow}
+  title={content.title}
+  description={content.description}
+  items={items}
+  accordionVariant={props.style}
+  tone={toneFor("faq", props.tone)}
+  align={props.align}
+/>

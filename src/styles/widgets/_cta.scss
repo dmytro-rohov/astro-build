@@ -66,15 +66,8 @@
         color-mix(in srgb, var(--color-action-primary) 22%, transparent),
         transparent 22rem
       ),
-      color-mix(in srgb, var(--color-background-inverse) 92%, var(--color-background-primary));
-    border-color: var(--color-border-inverse);
+      color-mix(in srgb, var(--color-background-primary) 92%, var(--color-text-primary));
+    border-color: var(--color-border-default);
   }
 
-  .cta--tone-inverse .cta__description {
-    color: color-mix(
-      in srgb,
-      var(--color-text-inverse) 78%,
-      transparent
-    );
-  }
 }

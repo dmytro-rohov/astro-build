@@ -1,0 +1,57 @@
+---
+/** Hours table and address block shared by the hours-location variants. */
+import Button from "@/components/ui/Button.astro";
+import Link from "@/components/ui/Link.astro";
+import { site } from "virtual:site";
+import { t } from "@/i18n";
+import { hoursRows } from "@/site/hours";
+
+export interface Props {
+  part: "hours" | "address";
+  mapUrl?: string;
+  showPhone: boolean;
+  headingLevel: "h2" | "h3";
+}
+
+const { part, mapUrl, showPhone, headingLevel } = Astro.props;
+const { business } = site;
+const Heading = headingLevel;
+const rows = hoursRows(business.hours, t);
+const address = business.address;
+const hasAddress = Boolean(address?.street || address?.city);
+---
+
+{part === "hours" && rows.length > 0 && (
+  <div class="s-hours">
+    <Heading class="s-hours__title">{t.sections.hoursTitle}</Heading>
+    <table class="s-hours__table">
+      <tbody>
+        {rows.map((row) => (
+          <tr class:list={["s-hours__row", row.closed && "s-hours__row--closed"]}>
+            <th scope="row"><abbr title={row.daysLong}>{row.days}</abbr></th>
+            <td>{row.value}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+
+{part === "address" && (hasAddress || (showPhone && business.phone)) && (
+  <div class="s-location">
+    <Heading class="s-location__title">{t.sections.address}</Heading>
+    {hasAddress && (
+      <address class="s-location__address">
+        {address?.street && <span>{address.street}</span>}
+        {(address?.postalCode || address?.city) && <span>{[address?.postalCode, address?.city].filter(Boolean).join(" ")}</span>}
+      </address>
+    )}
+    {showPhone && business.phone && (
+      <p class="s-location__phone">
+        <span class="s-location__label">{t.sections.phone}: </span>
+        <Link href={`tel:${business.phone.replace(/[^\d+]/g, "")}`}>{business.phone}</Link>
+      </p>
+    )}
+    {mapUrl && <div><Button href={mapUrl} variant="secondary" size="sm">{t.sections.openInMaps}</Button></div>}
+  </div>
+)}

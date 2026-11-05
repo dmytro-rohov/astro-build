@@ -2,7 +2,18 @@
 
 @layer layout {
   .section {
+    // Vertical rhythm shrinks on small screens (96–128px paddings are for desktops).
+    --section-fluid: 0.55;
+
     position: relative;
+
+    @include mq(md) {
+      --section-fluid: 0.75;
+    }
+
+    @include mq(lg) {
+      --section-fluid: 1;
+    }
   }
 
   .section--spacing-none {
@@ -10,19 +21,19 @@
   }
 
   .section--spacing-sm {
-    padding-block: var(--spacing-2xl);
+    padding-block: calc(var(--spacing-2xl) * var(--space-scale) * var(--section-fluid));
   }
 
   .section--spacing-md {
-    padding-block: var(--spacing-3xl);
+    padding-block: calc(var(--spacing-3xl) * var(--space-scale) * var(--section-fluid));
   }
 
   .section--spacing-lg {
-    padding-block: var(--spacing-4xl);
+    padding-block: calc(var(--spacing-4xl) * var(--space-scale) * var(--section-fluid));
   }
 
   .section--spacing-xl {
-    padding-block: var(--spacing-5xl);
+    padding-block: calc(var(--spacing-5xl) * var(--space-scale) * var(--section-fluid));
   }
 
   .section--tone-default {
@@ -35,8 +46,16 @@
     background: var(--color-background-muted);
   }
 
+  // Inverse sections get the opposite scheme's tokens (see _tokens.scss),
+  // so their own primary colors are already the inverted ones.
   .section--tone-inverse {
-    color: var(--color-text-inverse);
-    background: var(--color-background-inverse);
+    color: var(--color-text-primary);
+    background: var(--color-background-primary);
+  }
+
+  // Accent sections re-scope the tokens the same way (brand color background).
+  .section--tone-accent {
+    color: var(--color-text-primary);
+    background: var(--color-background-primary);
   }
 }

@@ -30,3 +30,21 @@ src/styles/*.css.map
 playwright-report/
 test-results/
 .lighthouseci/
+
+# generated per site at build time (npm run build:system, from SITE_DIR)
+public/fonts/
+public/favicon.ico
+public/favicon.svg
+public/og-cover.jpg
+public/icons/*.png
+src/styles/abstracts/_fonts.scss
+src/design-system/fonts.generated.ts
+src/design-system/appIcons.generated.ts
+src/styles/abstracts/_tokens.scss
+src/design-system/theme.generated.json
+.generated/
+dist-catalog/
+dist-gallery/
+
+# site:migrate backups
+sites/**/site.v*.backup.json

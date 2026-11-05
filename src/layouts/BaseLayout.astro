@@ -5,8 +5,7 @@ import CookieConsent from "@/components/CookieConsent.astro";
 import { siteConfig } from "@/config/site";
 import { isNoindexPath } from "@/config/indexing";
 import { dir, ogLocale, pageTitle, t } from "@/i18n";
-import { tokens } from "@/design-system/tokens";
-import { semanticColorsDark } from "@/design-system/tokens/semantic/color-semantic";
+import { siteTheme } from "@/site/theme";
 import { fontPreloads } from "@/design-system/fonts.generated";
 import { hasSvgFavicon } from "@/design-system/appIcons.generated";
 import {
@@ -22,6 +21,8 @@ import "@/styles/main.scss";
 
 export interface Props {
   title?: string;
+  /** Use `title` as is, without the "{title} | {site name}" template (home page). */
+  titleIsFull?: boolean;
   description?: string;
   canonicalPath?: string;
   image?: string;
@@ -46,6 +47,7 @@ export interface Props {
 
 const {
   title,
+  titleIsFull = false,
   description = siteConfig.description,
   image = siteConfig.seo.image,
   imageAlt = siteConfig.seo.imageAlt,
@@ -65,10 +67,11 @@ const canonicalUrl = new URL(canonicalPath, siteUrl);
 const socialImageUrl = new URL(image, siteUrl);
 const ogType = pageType === "profile" ? "profile" : "website";
 
-const fullTitle = pageTitle(title);
+const fullTitle = titleIsFull && title ? title : pageTitle(title);
 const robots = isNoindexPath(Astro.url.pathname) ? "noindex, follow" : robotsProp;
 const lang = siteConfig.lang;
-const isDefaultImage = image === siteConfig.seo.image;
+// Every Open Graph image is 1200×630 (generated or cropped at build time).
+const isDefaultImage = true;
 
 // Structured data: one @graph per page.
 const isHome = canonicalUrl.pathname === "/";
@@ -119,11 +122,11 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
     <meta name="color-scheme" content={colorSchemeMeta} />
     {colorScheme === "auto" ? (
       <>
-        <meta name="theme-color" media="(prefers-color-scheme: light)" content={tokens.color.action.primary} />
-        <meta name="theme-color" media="(prefers-color-scheme: dark)" content={semanticColorsDark.action.primary} />
+        <meta name="theme-color" media="(prefers-color-scheme: light)" content={siteTheme.light.action.primary} />
+        <meta name="theme-color" media="(prefers-color-scheme: dark)" content={siteTheme.dark.action.primary} />
       </>
     ) : (
-      <meta name="theme-color" content={colorScheme === "dark" ? semanticColorsDark.action.primary : tokens.color.action.primary} />
+      <meta name="theme-color" content={colorScheme === "dark" ? siteTheme.dark.action.primary : siteTheme.light.action.primary} />
     )}
     
     {isIndexable && <link rel="canonical" href={canonicalUrl.toString()} />}
@@ -178,8 +181,5 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
     </main>
     {showFooter && <Footer />}
     <CookieConsent />
-    <script>
-      import "@scripts/reveal";
-    </script>
   </body>
 </html>

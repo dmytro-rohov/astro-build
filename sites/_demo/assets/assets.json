@@ -1,0 +1,10 @@
+{
+  "hero": {
+    "file": "hero.jpg",
+    "alt": "Preview of a modern landing page"
+  },
+  "icon": {
+    "file": "icon.png",
+    "alt": ""
+  }
+}

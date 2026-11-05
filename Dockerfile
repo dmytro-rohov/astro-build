@@ -25,8 +25,12 @@ RUN npm ci --include=dev
 # --------------------------------------------------
 FROM dependencies AS build
 
+# Site to build: a directory with site.json (inside the build context).
+ARG SITE_DIR=sites/_demo
+ENV SITE_DIR=$SITE_DIR
 # Public site URL is baked into the build (canonical, sitemap, Open Graph).
-ARG SITE_URL=http://localhost:4321
+# When empty, meta.url from site.json is used.
+ARG SITE_URL=
 ENV SITE_URL=$SITE_URL
 # PUBLIC_* variables are inlined into client code at build time.
 ARG PUBLIC_GA_MEASUREMENT_ID=

@@ -1,0 +1,45 @@
+---
+/**
+ * Common wrapper of every section variant: anchor id, tone (section props or
+ * the archetype default), vertical spacing and the container width.
+ */
+import Section from "@/components/layouts/Section.astro";
+import Container from "@/components/layouts/Container.astro";
+import { toneFor } from "@/site/theme";
+
+export interface Props {
+  id: string;
+  type: string;
+  variant: string;
+  tone?: "default" | "muted" | "inverse" | "accent";
+  spacing?: "sm" | "md" | "lg" | "xl";
+  /** Default spacing of the variant when the section does not set one. */
+  defaultSpacing?: "sm" | "md" | "lg" | "xl";
+  width?: "sm" | "md" | "lg" | "xl";
+  class?: string;
+}
+
+const {
+  id,
+  type,
+  variant,
+  tone,
+  spacing,
+  defaultSpacing = "lg",
+  width = "lg",
+  class: className,
+} = Astro.props;
+---
+
+<Section
+  id={id}
+  spacing={spacing ?? defaultSpacing}
+  tone={toneFor(type, tone) ?? "default"}
+  class:list={["s", `s-${type}`, `s-${type}--${variant}`, className]}
+  data-section-type={type}
+  data-section-variant={variant}
+>
+  <Container size={width}>
+    <slot />
+  </Container>
+</Section>

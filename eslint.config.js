@@ -8,6 +8,9 @@ export default [
     ignores: [
       "dist/**",
       "playwright-report/**",
+      ".generated/**",
+      "dist-catalog/**",
+      "dist-gallery/**",
       "test-results/**",
       ".lighthouseci/**",
       "node_modules/**",
@@ -54,6 +57,14 @@ export default [
     "no-undef": "off",
   },
 },
+
+  // Unit tests deliberately edit raw site.json objects to break them.
+  {
+    files: ["tests/unit/**/*.ts"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
 
   // Lighthouse CI loads its config with require(), so it stays CommonJS.
   {

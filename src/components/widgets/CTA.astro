@@ -24,8 +24,10 @@ export interface Props {
   secondaryAction?: CTAAction;
 
   align?: "left" | "center";
-  tone?: "default" | "muted" | "inverse"
+  tone?: "default" | "muted" | "inverse" | "accent"
   boxed?: boolean;
+  /** Heading level of the section title: h1 for the first section of a page. */
+  headingLevel?: "h1" | "h2";
   class?: string;
 }
 
@@ -38,9 +40,12 @@ const {
   align = "center",
   tone = "default",
   boxed = true,
+  headingLevel = "h2",
   class: className,
   ...restProps
 } = Astro.props;
+
+const Heading = headingLevel;
 
 const hasAction = Boolean(primaryAction || secondaryAction);
 ---
@@ -67,9 +72,9 @@ const hasAction = Boolean(primaryAction || secondaryAction);
       )}
 
       <Stack space="md">
-        <h2 class="cta__title">
+        <Heading class="cta__title">
           {title}
-        </h2>
+        </Heading>
 
         {description && (
           <p class="cta__description">

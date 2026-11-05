@@ -7,6 +7,10 @@
     color: var(--color-text-primary);
     background: var(--color-background-primary);
     text-rendering: optimizelegibility;
+
+    // Very long words (names, addresses, AI text) break only when they do not fit,
+    // so they never push a grid or card wider than the screen.
+    overflow-wrap: anywhere;
   }
 
   h1,
@@ -16,9 +20,11 @@
   h5,
   h6 {
     font-family: var(--font-family-heading);
-    font-weight: var(--font-weight-bold, 700);
+    font-weight: var(--heading-weight);
     line-height: var(--line-height-tight, 1.1);
-    letter-spacing: var(--letter-spacing-tight, -0.02em);
+    letter-spacing: var(--heading-tracking);
+    text-transform: var(--heading-transform);
+    hyphens: auto;
     color: var(--color-text-primary);
   }
 
