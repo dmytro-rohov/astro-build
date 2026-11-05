@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
+import { focalToPosition } from "@/site/focal";
 
 export interface ImgProps {
   /** Local image imported from src/assets (gives Astro its size for srcset). */
@@ -11,6 +12,10 @@ export interface ImgProps {
   sizes?: string;
   widths?: number[];
   format?: "avif" | "webp" | "png" | "jpg";
+  /** Crop to these proportions (width, height) at build time, e.g. [4, 3]. */
+  aspect?: readonly [number, number];
+  /** Focal point kept visible when cropping, in % (default 50/50). */
+  focal?: { x: number; y: number };
   class?: string;
 }
 
@@ -22,8 +27,27 @@ const {
   sizes = "(min-width: 1024px) 960px, 100vw",
   widths = [320, 640, 960, 1280],
   format = "webp",
+  aspect,
+  focal,
   class: className,
 } = Astro.props;
+
+// Cropping happens in the image service (sharp) — no CSS or inline styles needed.
+const crop = aspect
+  ? (() => {
+      const width = Math.min(src.width, Math.floor((src.height * aspect[0]) / aspect[1]));
+      return {
+        width,
+        height: Math.round((width * aspect[1]) / aspect[0]),
+        fit: "cover" as const,
+        position: focalToPosition(focal),
+      };
+    })()
+  : undefined;
+
+// Never upscale: drop srcset widths larger than the (cropped) source.
+const maxWidth = crop?.width ?? src.width;
+const usableWidths = [...new Set([...widths.filter((width: number) => width < maxWidth), maxWidth])];
 
 // === Guardrails ===
 if (import.meta.env.DEV && kind === "content" && !alt) {
@@ -41,8 +65,9 @@ const fetchpriority = priority === "high" ? "high" : "auto";
   loading={loading}
   fetchpriority={fetchpriority}
   decoding="async"
-  widths={widths}
+  widths={usableWidths}
   sizes={sizes}
   format={format}
+  {...crop}
   class:list={["image", className]}
 />

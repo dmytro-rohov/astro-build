@@ -2,9 +2,9 @@
 import Container from "@/components/layouts/Container.astro";
 import Navbar, { type NavItem, type NavAction } from "@/components/widgets/Navbar.astro";
 import { siteConfig } from "@/config/site";
+import Logo from "@/components/media/Logo.astro";
 
 export interface Props {
-  brandLabel?: string;
   brandHref?: string;
   navItems?: NavItem[];
   cta?: NavAction;
@@ -13,7 +13,6 @@ export interface Props {
 }
 
 const {
-  brandLabel = siteConfig.name,
   brandHref = "/",
   navItems = siteConfig.header.nav,
   cta = siteConfig.header.cta,
@@ -34,7 +33,7 @@ const {
   <Container size="xl">
     <div class="site-header__inner">
       <a class="site-header__brand" href={brandHref}>
-        {brandLabel}
+        <Logo size="header" />
       </a>
 
       <Navbar items={navItems} cta={cta} />

@@ -15,7 +15,12 @@ export function writeSite(site: unknown, assets?: Record<string, { file: string;
   if (assets) {
     fs.mkdirSync(path.join(dir, "assets"));
     fs.writeFileSync(path.join(dir, "assets", "assets.json"), JSON.stringify(assets));
-    for (const file of files) fs.writeFileSync(path.join(dir, "assets", file), "x");
+    // Real demo images where they exist, so size checks work; placeholders otherwise.
+    for (const file of files) {
+      const source = path.resolve("sites/_demo/assets", file);
+      if (fs.existsSync(source)) fs.copyFileSync(source, path.join(dir, "assets", file));
+      else fs.writeFileSync(path.join(dir, "assets", file), "x");
+    }
   }
 
   return dir;

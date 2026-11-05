@@ -72,6 +72,15 @@ test("robots.txt, sitemap and manifest", async ({ request }) => {
   }
 });
 
+test("Open Graph image is served", async ({ page, request }) => {
+  await page.goto("/");
+  const url = await page.locator('meta[property="og:image"]').getAttribute("content");
+  const response = await request.get(new URL(url!).pathname);
+
+  expect(response.status()).toBe(200);
+  expect(response.headers()["content-type"]).toMatch(/^image\//);
+});
+
 test("#features anchor exists and only the current page is marked in the menu", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#features")).toHaveCount(1);

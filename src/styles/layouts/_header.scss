@@ -35,4 +35,30 @@
   .site-header__brand:hover {
     color: var(--color-action-primary);
   }
+
+  .site-header__brand {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  // Logo image: fixed height, natural width.
+  .logo {
+    display: block;
+    width: auto;
+    max-width: 12rem;
+    object-fit: contain;
+  }
+
+  .logo--header {
+    height: 2.5rem;
+  }
+
+  .logo--footer {
+    height: 3rem;
+  }
+
+  // Text logo when the site has no logo file.
+  .logo-text {
+    font-family: var(--font-family-heading);
+  }
 }
