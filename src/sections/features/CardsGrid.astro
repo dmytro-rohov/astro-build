@@ -1,6 +1,7 @@
 ---
 import FeatureGrid from "@/components/widgets/FeatureGrid.astro";
 import type { SectionOf } from "@/site/types";
+import { toneFor } from "@/site/theme";
 
 export interface Props {
   section: SectionOf<"features">;
@@ -19,6 +20,6 @@ const { content, props } = section;
   description={content.description}
   items={content.items}
   columns={props.columns}
-  tone={props.tone}
+  tone={toneFor("features", props.tone)}
   align={props.align}
 />

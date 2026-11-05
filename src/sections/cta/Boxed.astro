@@ -1,6 +1,7 @@
 ---
 import CTA from "@/components/widgets/CTA.astro";
 import type { SectionOf } from "@/site/types";
+import { toneFor } from "@/site/theme";
 
 export interface Props {
   section: SectionOf<"cta">;
@@ -20,6 +21,6 @@ const { content, props } = section;
   primaryAction={content.primaryAction}
   secondaryAction={content.secondaryAction}
   align={props.align}
-  tone={props.tone}
+  tone={toneFor("cta", props.tone)}
   boxed
 />

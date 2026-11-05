@@ -105,6 +105,29 @@ describe("site-wide rules", () => {
   });
 });
 
+describe("theme", () => {
+  test("unknown archetype", () => {
+    expect(issuesFor((site) => (site.theme = { archetype: "rainbow" }))[0]).toMatch(/^theme\.archetype: /);
+  });
+
+  test("font pair without the language's script", () => {
+    const issues = issuesFor((site) => {
+      site.lang = "uk";
+      site.theme = { archetype: "warm" };
+    });
+    expect(issues[0]).toMatch(/^theme\.fontPair: "fraunces\+work-sans" .* no cyrillic glyphs needed for lang "uk"\. Use one of: .*inter/);
+  });
+
+  test("manual override must pass contrast", () => {
+    const issues = issuesFor((site) => (site.theme = { archetype: "minimal", overrides: { light: { "text.muted": "#bbbbbb" } } }));
+    expect(issues.some((issue) => /^theme\.overrides\.light: text\.muted #bbbbbb on background\.\w+ .* has contrast/.test(issue))).toBe(true);
+  });
+
+  test("an accent with poor contrast is accepted (adjusted at build)", () => {
+    expect(issuesFor((site) => (site.theme = { archetype: "energetic", accent: "#FDE047" }))).toEqual([]);
+  });
+});
+
 describe("assets", () => {
   test("unknown asset reference", () => {
     expect(issuesFor((site) => (heroSection(site).content.image = "asset:missing"))).toContain(

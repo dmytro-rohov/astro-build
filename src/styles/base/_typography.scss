@@ -16,9 +16,10 @@
   h5,
   h6 {
     font-family: var(--font-family-heading);
-    font-weight: var(--font-weight-bold, 700);
+    font-weight: var(--heading-weight);
     line-height: var(--line-height-tight, 1.1);
-    letter-spacing: var(--letter-spacing-tight, -0.02em);
+    letter-spacing: var(--heading-tracking);
+    text-transform: var(--heading-transform);
     color: var(--color-text-primary);
   }
 

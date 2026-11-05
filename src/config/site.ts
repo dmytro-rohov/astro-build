@@ -7,6 +7,7 @@
  */
 import { site } from "virtual:site";
 import { getDictionary } from "@/i18n/dictionaries";
+import { resolveTheme } from "@/design-system/theme";
 
 export type SiteLink = {
   label: string;
@@ -57,7 +58,7 @@ export const siteConfig = {
   author: "",
   keywords: [] as string[],
 
-  colorScheme: site.theme.colorScheme as SiteColorScheme,
+  colorScheme: resolveTheme(site.theme).colorScheme as SiteColorScheme,
 
   seo: {
     image: "/og-cover.jpg",

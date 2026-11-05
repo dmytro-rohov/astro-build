@@ -2,6 +2,7 @@
 import FAQ from "@/components/widgets/FAQ.astro";
 import { renderRichTextLite, richTextLiteToPlain } from "@/site/richtext";
 import type { SectionOf } from "@/site/types";
+import { toneFor } from "@/site/theme";
 
 export interface Props {
   section: SectionOf<"faq">;
@@ -27,6 +28,6 @@ const items = content.items.map((item, index) => ({
   description={content.description}
   items={items}
   accordionVariant={props.style}
-  tone={props.tone}
+  tone={toneFor("faq", props.tone)}
   align={props.align}
 />

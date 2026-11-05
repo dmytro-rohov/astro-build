@@ -12,6 +12,8 @@ import type { ImageSlot } from "./schema/fields";
 import { AssetsSchema, type Assets } from "./schema/assets";
 import { META_IMAGE_SLOTS, SiteSchema, type Site } from "./schema/site";
 import { findImageSlots, valuesAt } from "./schema/slots";
+import { fontFamilies, fontPairs, pairScripts, scriptsForLanguage } from "../design-system/fonts/library";
+import { checkContrast, resolveTheme } from "../design-system/theme";
 
 export const DEFAULT_SITE_DIR = "sites/_demo";
 
@@ -197,6 +199,27 @@ export function loadSite(dir = resolveSiteDir()): LoadedSite {
 
   if (!issues.length) {
     issues.push(...checkImageSlots(site, assets, dir));
+  }
+
+  // Fonts must cover the language's script (e.g. Cyrillic for "uk").
+  const theme = resolveTheme(site.theme);
+  const missingScripts = scriptsForLanguage(site.lang).filter((script) => !pairScripts(theme.fontPair).includes(script));
+
+  if (missingScripts.length) {
+    const pair = fontPairs[theme.fontPair];
+    const suitable = Object.keys(fontPairs).filter((id) =>
+      scriptsForLanguage(site.lang).every((script) => pairScripts(id as keyof typeof fontPairs).includes(script)),
+    );
+    issues.push(
+      `theme.fontPair: "${theme.fontPair}" (${fontFamilies[pair.heading].family} + ${fontFamilies[pair.body].family}) has no ${missingScripts.join(", ")} glyphs needed for lang "${site.lang}". Use one of: ${suitable.join(", ")}.`,
+    );
+  }
+
+  // Generated colors are adjusted automatically; manual overrides must pass as they are.
+  for (const failure of checkContrast(theme)) {
+    issues.push(
+      `theme.overrides.${failure.scheme}: ${failure.foreground} on ${failure.background} has contrast ${failure.ratio}:1, WCAG AA needs ${failure.required}:1.`,
+    );
   }
 
   if (issues.length) {
