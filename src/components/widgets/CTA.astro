@@ -78,25 +78,21 @@ const hasAction = Boolean(primaryAction || secondaryAction);
 
       {hasAction && (
         <Cluster class="cta__actions" gap="md" justify={align === "center" ? "center" : "start"}>
-          {primaryAction && primaryAction.href ? (
-            <a class="button button--primary button--lg" href={primaryAction.href}>
+          {primaryAction && (
+            <Button href={primaryAction.href} size="lg">
               {primaryAction.label}
-            </a>
-          ) : primaryAction ? (
-              <Button size="lg">
-                {primaryAction.label}
-              </Button>
-            ) : null}
+            </Button>
+          )}
 
-            {secondaryAction && secondaryAction.href ? (
-              <Link href={secondaryAction.href}>
-                {secondaryAction.label}
-              </Link>
-            ) : secondaryAction ? (
-              <Button variant="secondary" size="lg">
-                {secondaryAction.label}
-              </Button>
-            ) : null}
+          {secondaryAction && secondaryAction.href ? (
+            <Link href={secondaryAction.href}>
+              {secondaryAction.label}
+            </Link>
+          ) : secondaryAction ? (
+            <Button variant="secondary" size="lg">
+              {secondaryAction.label}
+            </Button>
+          ) : null}
 
         </Cluster>
       )}

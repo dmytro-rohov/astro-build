@@ -49,6 +49,12 @@ const {
 
 const hasImage = Boolean(image);
 const hasActions = Boolean(primaryAction || secondaryAction);
+
+// With an image the content sits next to the media; without one it is a single column.
+const Layout = hasImage ? Split : Stack;
+const layoutProps = hasImage
+  ? { ratio: "text-media", gap: "2xl", align: "center" } as const
+  : { space: "lg" } as const;
 ---
 
 <Section
@@ -56,68 +62,15 @@ const hasActions = Boolean(primaryAction || secondaryAction);
   spacing="xl"
   tone={tone}
   class:list={[
-  "hero",
-  `hero--align-${align}`,
-  `hero--tone-${tone}`,
-  hasImage && "hero--with-media",
-  className,
+    "hero",
+    `hero--align-${align}`,
+    `hero--tone-${tone}`,
+    hasImage && "hero--with-media",
+    className,
   ]}
 >
   <Container size="xl">
-    {hasImage ? (
-      <Split ratio="text-media" gap="2xl" align="center">
-        <Stack class="hero__content" space="lg">
-          {eyebrow && (
-            <Tag variant="primary" class="hero__eyebrow">
-              {eyebrow}
-            </Tag>
-          )}
-
-          <Stack space="md">
-            <h1 class="hero__title">{title}</h1>
-
-            {description && (
-              <p class="hero__description">
-                {description}
-              </p>
-            )}
-          </Stack>
-
-          {hasActions && (
-            <Cluster class="hero__actions" gap="md">
-              {primaryAction && primaryAction.href ? (
-                <a
-                  class="button button--primary button--lg"
-                  href={primaryAction.href}
-                >
-                  {primaryAction.label}
-                </a>
-              ) : primaryAction ? (
-                <Button size="lg">
-                  {primaryAction.label}
-                </Button>
-              ) : null}
-
-              {secondaryAction && (
-                <Link href={secondaryAction.href}>
-                  {secondaryAction.label}
-                </Link>
-              )}
-            </Cluster>
-          )}
-        </Stack>
-
-        <div class="hero__media">
-          <Img
-            src={image}
-            alt={imageAlt}
-            kind={imageAlt ? "content" : "decorative"}
-            priority="high"
-            class="hero__image image--rounded image--shadow"
-          />
-        </div>
-      </Split>
-    ) : (
+    <Layout {...layoutProps}>
       <Stack class="hero__content" space="lg">
         {eyebrow && (
           <Tag variant="primary" class="hero__eyebrow">
@@ -137,18 +90,11 @@ const hasActions = Boolean(primaryAction || secondaryAction);
 
         {hasActions && (
           <Cluster class="hero__actions" gap="md">
-            {primaryAction && primaryAction.href ? (
-              <a
-                class="button button--primary button--lg"
-                href={primaryAction.href}
-              >
-                {primaryAction.label}
-              </a>
-            ) : primaryAction ? (
-              <Button size="lg">
+            {primaryAction && (
+              <Button href={primaryAction.href} size="lg">
                 {primaryAction.label}
               </Button>
-            ) : null}
+            )}
 
             {secondaryAction && (
               <Link href={secondaryAction.href}>
@@ -158,6 +104,18 @@ const hasActions = Boolean(primaryAction || secondaryAction);
           </Cluster>
         )}
       </Stack>
-    )}
+
+      {hasImage && (
+        <div class="hero__media">
+          <Img
+            src={image}
+            alt={imageAlt}
+            kind={imageAlt ? "content" : "decorative"}
+            priority="high"
+            class="hero__image image--rounded image--shadow"
+          />
+        </div>
+      )}
+    </Layout>
   </Container>
 </Section>

@@ -2,6 +2,9 @@
 export interface Props {
   variant?: "primary" | "secondary" | "ghost" | "danger";
   size?: "sm" | "md" | "lg";
+  /** When set, renders a link styled as a button. */
+  href?: string;
+  external?: boolean;
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
   class?: string;
@@ -10,23 +13,44 @@ export interface Props {
 const {
   variant = "primary",
   size = "md",
+  href,
+  external = false,
   disabled = false,
   type = "button",
   class: className,
   ...restProps
 } = Astro.props;
+
+const classList = [
+  "button",
+  `button--${variant}`,
+  `button--${size}`,
+  className,
+];
+
+const isExternal =
+  external ||
+  Boolean(href?.startsWith("http://") || href?.startsWith("https://"));
 ---
 
-<button
-  {...restProps}
-  class:list={[
-    "button",
-    `button--${variant}`,
-    `button--${size}`,
-    className,
-  ]}
-  disabled={disabled}
-  type={type}
->
-  <slot />
-</button>
+{href ? (
+  <a
+    {...restProps}
+    class:list={classList}
+    href={disabled ? undefined : href}
+    target={isExternal ? "_blank" : undefined}
+    rel={isExternal ? "noopener noreferrer" : undefined}
+    aria-disabled={disabled ? "true" : undefined}
+  >
+    <slot />
+  </a>
+) : (
+  <button
+    {...restProps}
+    class:list={classList}
+    disabled={disabled}
+    type={type}
+  >
+    <slot />
+  </button>
+)}

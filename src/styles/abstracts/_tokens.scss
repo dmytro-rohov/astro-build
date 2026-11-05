@@ -2,6 +2,7 @@
 /* Source: src/design-system/utils/cssVars.ts */
 
 :root {
+  color-scheme: light;
   --color-text-primary: #111827;
   --color-text-secondary: #4b5563;
   --color-text-muted: #6b7280;
@@ -117,6 +118,60 @@
   --letter-spacing-tight: -0.02em;
   --letter-spacing-normal: 0;
   --letter-spacing-wide: 0.02em;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d1d5db;
+  --color-text-muted: #9ca3af;
+  --color-text-inverse: #111827;
+  --color-background-primary: #111827;
+  --color-background-secondary: #1f2937;
+  --color-background-muted: #1f2937;
+  --color-background-surface: #1f2937;
+  --color-background-inverse: #f9fafb;
+  --color-border-default: #374151;
+  --color-border-strong: #6b7280;
+  --color-border-inverse: rgb(0 0 0 / 0.16);
+  --color-action-primary: #3b82f6;
+  --color-action-primary-hover: #2563eb;
+  --color-action-primary-text: #111827;
+  --color-action-secondary: #1f2937;
+  --color-action-secondary-hover: #374151;
+  --color-action-secondary-text: #f9fafb;
+  --color-focus-ring: #3b82f6;
+  --color-feedback-success: #22c55e;
+  --color-feedback-error: #ef4444;
+  --color-feedback-warning: #f59e0b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --color-text-primary: #f9fafb;
+    --color-text-secondary: #d1d5db;
+    --color-text-muted: #9ca3af;
+    --color-text-inverse: #111827;
+    --color-background-primary: #111827;
+    --color-background-secondary: #1f2937;
+    --color-background-muted: #1f2937;
+    --color-background-surface: #1f2937;
+    --color-background-inverse: #f9fafb;
+    --color-border-default: #374151;
+    --color-border-strong: #6b7280;
+    --color-border-inverse: rgb(0 0 0 / 0.16);
+    --color-action-primary: #3b82f6;
+    --color-action-primary-hover: #2563eb;
+    --color-action-primary-text: #111827;
+    --color-action-secondary: #1f2937;
+    --color-action-secondary-hover: #374151;
+    --color-action-secondary-text: #f9fafb;
+    --color-focus-ring: #3b82f6;
+    --color-feedback-success: #22c55e;
+    --color-feedback-error: #ef4444;
+    --color-feedback-warning: #f59e0b;
+  }
 }
 
 $tokens: (

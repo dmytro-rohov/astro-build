@@ -1,9 +1,12 @@
 import fs from "fs";
 import path from "path";
 import { tokens } from "../tokens/index";
+import { semanticColorsDark } from "../tokens/semantic/color-semantic";
 
 type TokenValue = string | number;
-type TokenObject = Record<string, TokenValue | TokenObject>;
+interface TokenObject {
+  [key: string]: TokenValue | TokenObject;
+}
 
 function toKebab(str: string) {
   return str.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
@@ -37,6 +40,7 @@ function flatten(
 }
 
 const flatTokens = flatten(tokens as TokenObject);
+const flatDarkColors = flatten({ color: semanticColorsDark } as TokenObject);
 
 const outputDir = path.resolve("src/styles/abstracts");
 const cssVarsOutput = path.join(outputDir, "_tokens.scss");
@@ -48,11 +52,30 @@ const cssLines = Object.entries(flatTokens).map(
   ([key, value]) => `  --${key}: ${value};`
 );
 
+const darkCssLines = Object.entries(flatDarkColors).map(
+  ([key, value]) => `  --${key}: ${value};`
+);
+
+// Dark scheme: forced with data-theme="dark", or automatic when
+// the page has no data-theme and the system prefers dark.
 const css = `/* AUTO-GENERATED FILE – DO NOT EDIT */
 /* Source: src/design-system/utils/cssVars.ts */
 
 :root {
+  color-scheme: light;
 ${cssLines.join("\n")}
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+${darkCssLines.join("\n")}
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+${darkCssLines.map((line) => `  ${line}`).join("\n")}
+  }
 }
 `;
 

@@ -1,10 +1,29 @@
 // @ts-check
 import { defineConfig } from "astro/config";
+import { loadEnv } from "vite";
 import node from "@astrojs/node";
 import sitemap from "@astrojs/sitemap";
 
+const { SITE_URL = "http://localhost:4321" } = loadEnv(
+  process.env.NODE_ENV ?? "development",
+  process.cwd(),
+  "",
+);
+
+const siteUrl = new URL(SITE_URL);
+const protocol = siteUrl.protocol.replace(":", "");
+const hostname = siteUrl.hostname.replace(/^www\./, "");
+const isLocalhost = ["localhost", "127.0.0.1"].includes(hostname);
+
+const allowedDomains = isLocalhost
+  ? [{ protocol, hostname }]
+  : [
+      { protocol, hostname },
+      { protocol, hostname: `www.${hostname}` },
+    ];
+
 export default defineConfig({
-  site: "https://domain-name.pl",
+  site: siteUrl.origin,
   output: "server",
 
   adapter: node({
@@ -37,15 +56,6 @@ export default defineConfig({
 
   security: {
     checkOrigin: true,
-    allowedDomains: [
-      {
-        protocol: "https",
-        hostname: "domain-name.pl",
-      },
-      {
-        protocol: "https",
-        hostname: "www.domain-name.pl",
-      },
-    ],
+    allowedDomains,
   },
 });

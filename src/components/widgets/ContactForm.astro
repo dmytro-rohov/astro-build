@@ -258,7 +258,7 @@ const hasContactInfo = contactInfo.length > 0;
       });
     };
 
-    const setFieldError = (field, message) => {
+    const setFieldError = (field: string, message: string) => {
       const error = form.querySelector(`[data-error-for="${field}"]`);
       const input = form.querySelector(`[name="${field}"]`);
 
@@ -298,7 +298,7 @@ const hasContactInfo = contactInfo.length > 0;
 
         if (!response.ok || !result.success) {
           if (Array.isArray(result.errors)) {
-            result.errors.forEach((error) => {
+            result.errors.forEach((error: { field: string; message: string }) => {
               setFieldError(error.field, error.message);
             });
           }

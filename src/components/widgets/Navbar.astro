@@ -1,5 +1,6 @@
 ---
 import Link from "@/components/ui/Link.astro";
+import Button from "@/components/ui/Button.astro";
 
 export type NavItem = {
   label: string;
@@ -89,14 +90,14 @@ function isActiveLink(href: string) {
     </ul>
 
     {cta && (
-      <a
-        class="button button--primary button--sm navbar__cta"
+      <Button
         href={cta.href}
-        target={cta.external ? "_blank" : undefined}
-        rel={cta.external ? "noopener noreferrer" : undefined}
+        external={cta.external}
+        size="sm"
+        class="navbar__cta"
       >
         {cta.label}
-      </a>
+      </Button>
     )}
   </div>
 </nav>

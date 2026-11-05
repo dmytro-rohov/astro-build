@@ -2,6 +2,7 @@ import { Resend } from "resend";
 import type { ContactFormData } from "../contact.types";
 import { createContactEmailHtml } from "../templates/createContactEmailHtml";
 import { createContactEmailText } from "../templates/createContactEmailText";
+import { siteConfig } from "@/config/site";
 
 export async function sendToResend(data: ContactFormData) {
   const apiKey = process.env.RESEND_API_KEY;
@@ -23,8 +24,8 @@ export async function sendToResend(data: ContactFormData) {
   const resend = new Resend(apiKey);
 
   const subject = data.subject
-    ? `Portfolio contact: ${data.subject}`
-    : `Portfolio contact from ${data.name}`;
+    ? `${siteConfig.name} contact: ${data.subject}`
+    : `${siteConfig.name} contact from ${data.name}`;
 
   const { error } = await resend.emails.send({
     from: fromEmail,

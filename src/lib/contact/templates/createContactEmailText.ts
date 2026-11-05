@@ -1,8 +1,9 @@
 import type { ContactFormData } from "../contact.types";
+import { siteConfig } from "@/config/site";
 
 export function createContactEmailText(data: ContactFormData) {
   return [
-    "New portfolio message",
+    `New message from ${siteConfig.name}`,
     "",
     `Name: ${data.name}`,
     `Email: ${data.email}`,

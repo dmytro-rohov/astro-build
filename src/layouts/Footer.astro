@@ -5,6 +5,7 @@ import Cluster from "@/components/layouts/Cluster.astro";
 import Link from "@/components/ui/Link.astro";
 import Divider from "@/components/ui/Divider.astro";
 import Icon from "@/components/media/Icon.astro";
+import { siteConfig } from "@/config/site";
 
 export type FooterLink = {
   label: string;
@@ -39,30 +40,12 @@ export interface Props {
 
 const year = new Date().getFullYear();
 
-const defaultGroups: FooterLinkGroup[] = [
-  {
-    title: "Product",
-    links: [
-      { label: "Features", href: "/#features" },
-      { label: "Components", href: "/playground" },
-      { label: "Contact", href: "/contact" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { label: "Documentation", href: "/playground" },
-      { label: "GitHub", href: "https://github.com/dmytro-rohov", external: true },
-    ],
-  },
-];
-
 const {
-  brandLabel = "Astro System",
+  brandLabel = siteConfig.name,
   brandHref = "/",
-  description = "Reusable Astro frontend system for professional landing pages.",
-  groups = defaultGroups,
-  socialLinks = [],
+  description = siteConfig.footer.description,
+  groups = siteConfig.footer.groups,
+  socialLinks = siteConfig.footer.socialLinks,
   copyright = `© ${year} ${brandLabel}. All rights reserved.`,
   class: className,
   ...restProps

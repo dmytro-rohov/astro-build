@@ -1,4 +1,4 @@
-# Astro Builder V1
+# Astro Starter V2
 
 Reusable Astro starter for building landing pages and small websites faster.
 
@@ -32,13 +32,21 @@ src/
 │  ├─ form/
 │  ├─ layouts/
 │  ├─ media/
-│  ├─ site/
 │  ├─ ui/
 │  └─ widgets/
+│
+├─ config/
+│  ├─ analytics.ts
+│  └─ site.ts
 │
 ├─ design-system/
 │  ├─ tokens/
 │  └─ utils/
+│
+├─ layouts/
+│  ├─ BaseLayout.astro
+│  ├─ Header.astro
+│  └─ Footer.astro
 │
 ├─ lib/
 │  └─ contact/
@@ -57,7 +65,30 @@ src/
    ├─ layouts/
    ├─ state/
    └─ widgets/
+
+scripts/   - build scripts (tokens, icons, fonts) and client scripts
+public/    - static files (fonts, icon sprite, og-cover.jpg)
 ```
+
+---
+
+## Project Configuration
+
+Per-project content lives in one file: `src/config/site.ts`.
+
+- `name`, `description` — default page title, meta description, Open Graph site name
+- `lang`, `locale` — HTML `lang` and `og:locale`
+- `author`, `keywords` — optional meta tags (empty = not rendered)
+- `colorScheme` — `"light"`, `"dark"` or `"auto"` (follows system preference)
+- `seo.image`, `seo.imageAlt` — default Open Graph image
+- `header.nav`, `header.cta` — main navigation
+- `footer` — footer description, link groups, social links
+
+The public site URL is **not** stored in code. Set `SITE_URL` in `.env`
+(and as a Docker build arg). It is used for `Astro.site`, canonical links,
+sitemap, Open Graph URLs and `security.allowedDomains` (`www.` is added automatically).
+
+Replace `public/og-cover.jpg` (1200×630) with the project cover.
 
 ---
 
@@ -76,6 +107,15 @@ The project uses design tokens as the source of truth for:
 - z-index
 
 Tokens are generated into SCSS custom properties and used across the whole project.
+
+Semantic colors exist in two schemes with the same token names:
+
+- `semanticColors` — light
+- `semanticColorsDark` — dark
+
+Both live in `src/design-system/tokens/semantic/color-semantic.ts`.
+`npm run tokens` generates `:root` (light), `:root[data-theme="dark"]` and an automatic
+`prefers-color-scheme: dark` block. Components only use semantic tokens, so they work in both schemes.
 
 ---
 
@@ -104,7 +144,6 @@ Available UI primitives:
 - `Card`
 - `Tag`
 - `Divider`
-- `Accordion`
 
 ---
 
@@ -149,10 +188,17 @@ Available page widgets:
 - `FAQ`
 - `ContactForm`
 - `Navbar`
-- `SiteHeader`
-- `SiteFooter`
+- `Accordion`
 
 Widgets are larger reusable page sections built from smaller primitives.
+
+Site layouts (`src/layouts/`): `BaseLayout`, `Header`, `Footer`.
+
+`Button` renders a `<button>` by default and a link styled as a button when `href` is set:
+
+```astro
+<Button href="/contact" size="lg">Contact</Button>
+```
 
 ---
 
@@ -175,7 +221,7 @@ validateContactForm.ts
   ↓
 sendContactMessage.ts
   ↓
-console delivery / future email provider
+console delivery / Resend
 ```
 
 In development mode, the contact form can log submissions to the terminal.
@@ -201,10 +247,11 @@ not in the browser console.
 Create `.env` from `.env.example`.
 
 ```env
+SITE_URL=http://localhost:4321
 CONTACT_DELIVERY_MODE=console
 ```
 
-Future email delivery can use variables such as:
+Email delivery through Resend:
 
 ```env
 CONTACT_DELIVERY_MODE=resend
@@ -252,6 +299,12 @@ Useful pages:
 npm run build
 ```
 
+Run lint, type check and build together:
+
+```bash
+npm run validate
+```
+
 Preview production build:
 
 ```bash
@@ -281,6 +334,8 @@ npm run build
 
 ## Adding a New Icon
 
+The icon name is the SVG file name without `.svg`.
+
 1. Add raw SVG to:
 
 ```txt
@@ -300,7 +355,7 @@ npm run build-icons
 import Icon from "@/components/media/Icon.astro";
 ---
 
-<Icon name="github" />
+<Icon name="ic-burger" />
 ```
 
 ---

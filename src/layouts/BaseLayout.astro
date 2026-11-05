@@ -2,6 +2,8 @@
 import Header from "@/layouts/Header.astro";
 import Footer from "@/layouts/Footer.astro";
 import CookieConsent from "@/components/CookieConsent.astro";
+import { siteConfig } from "@/config/site";
+import { tokens } from "@/design-system/tokens";
 import "@/styles/main.scss";
 
 export interface Props {
@@ -21,19 +23,19 @@ export interface Props {
 }
 
 const {
-  title = "Astro Builder",
-  description = "Professional landing page built with Astro.",
-  lang = "en",
-  image = "/og-cover.jpg",
-  imageAlt = "Portfolio Marii Drotianko, UI/UX and graphic designer",
+  title = siteConfig.name,
+  description = siteConfig.description,
+  lang = siteConfig.lang,
+  image = siteConfig.seo.image,
+  imageAlt = siteConfig.seo.imageAlt,
   canonicalPath = Astro.url.pathname,
   robots = "index, follow",
   pageType = "website",
   jsonLd,
   showHeader = true,
   showFooter = true,
-  keywords = "portfolio page, web designer, UI/UX, figma, adobe",
-  author = "Mariia Drotianko",
+  keywords = siteConfig.keywords.join(", "),
+  author = siteConfig.author,
 } = Astro.props;
 
 const siteUrl = Astro.site ?? Astro.url.origin;
@@ -41,19 +43,24 @@ const canonicalUrl = new URL(canonicalPath, siteUrl);
 const socialImageUrl = new URL(image, siteUrl);
 const ogType = pageType === "profile" ? "profile" : "website";
 
+const { colorScheme } = siteConfig;
+const dataTheme = colorScheme === "auto" ? undefined : colorScheme;
+const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
+
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} data-theme={dataTheme}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="robots" content={robots} />
     <meta name="generator" content={Astro.generator} />
-    <meta name="author" content={author} />
-    <meta name="keywords" content={keywords} />
-    <meta name="theme-color" content="#ed3578" />
+    {author && <meta name="author" content={author} />}
+    {keywords && <meta name="keywords" content={keywords} />}
+    <meta name="color-scheme" content={colorSchemeMeta} />
+    <meta name="theme-color" content={tokens.color.action.primary} />
     
     <link rel="canonical" href={canonicalUrl.toString()} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -62,14 +69,13 @@ const ogType = pageType === "profile" ? "profile" : "website";
 
     <!-- Open Graph -->
     <meta property="og:type" content={ogType}/>
-    <meta property="og:site_name"content="Mariia Drotianko Portfolio"/>
+    <meta property="og:site_name" content={siteConfig.name}/>
     <meta property="og:title" content={title}/>
     <meta property="og:description" content={description}/>
     <meta property="og:url" content={canonicalUrl}/>
     <meta property="og:image" content={socialImageUrl}/>
     <meta property="og:image:alt" content={imageAlt}/>
-    <meta property="og:locale" content={lang === "pl" ? "pl_PL" : "en_US"}
-    />
+    <meta property="og:locale" content={siteConfig.locale}/>
 
     <!-- Twitter/X -->
     <meta name="twitter:card" content="summary_large_image"/>
@@ -90,7 +96,7 @@ const ogType = pageType === "profile" ? "profile" : "website";
   </head>
 
   <body>
-    <a class="skip-link" href="#main-content">Skip to content</a>
+    <a class="skip-link" href="#main-content">{siteConfig.labels.skipToContent}</a>
     {showHeader && <Header />}
     <main id="main-content">
       <slot />

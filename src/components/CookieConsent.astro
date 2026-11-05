@@ -23,7 +23,7 @@ import { ANALYTICS_CONFIG } from "@/config/analytics";
         id="cookie-consent-description"
         class="cookie-consent__description"
       >
-        We use optional Google Analytics cookies to understand how visitors use this portfolio. Analytics stays disabled unless        you accept it.
+        We use optional Google Analytics cookies to understand how visitors use this website. Analytics stays disabled unless you accept it.
       </p>
 
       <a
@@ -183,7 +183,7 @@ import { ANALYTICS_CONFIG } from "@/config/analytics";
 
   .cookie-consent {
     position: fixed;
-    z-index: 1000;
+    z-index: var(--z-index-toast);
     right: clamp(1rem, 3vw, 2rem);
     bottom: clamp(1rem, 3vw, 2rem);
     justify-self: flex-end;
@@ -191,9 +191,9 @@ import { ANALYTICS_CONFIG } from "@/config/analytics";
     max-width: 46rem;
     padding: clamp(1.25rem, 3vw, 2rem);
     border: 1px solid currentColor;
-    background: var(--color-background-dark-pink, #17040c);
-    color: var(--color-text-primary, #fff);
-    box-shadow: var(--shadow-exist);
+    background: var(--color-background-inverse);
+    color: var(--color-text-inverse);
+    box-shadow: var(--shadow-lg);
   }
 
   .cookie-consent[hidden] {
@@ -246,8 +246,8 @@ import { ANALYTICS_CONFIG } from "@/config/analytics";
   }
 
   .cookie-consent__button--primary {
-    background: var(--color-text-primary, #fff);
-    color: var(--color-background-primary, #17040c);
+    background: var(--color-text-inverse);
+    color: var(--color-background-inverse);
   }
 
   .cookie-consent__button--secondary {

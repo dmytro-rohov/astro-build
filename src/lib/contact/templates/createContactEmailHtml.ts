@@ -1,4 +1,5 @@
 import type { ContactFormData } from "../contact.types";
+import { siteConfig } from "@/config/site";
 
 function escapeHtml(value: string) {
   return value
@@ -15,7 +16,7 @@ export function createContactEmailHtml(data: ContactFormData) {
   return `
     <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #111;">
       <h1 style="font-size: 24px; margin: 0 0 16px;">
-        New portfolio message
+        New message from ${escapeHtml(siteConfig.name)}
       </h1>
 
       <p><strong>Name:</strong> ${escapeHtml(data.name)}</p>

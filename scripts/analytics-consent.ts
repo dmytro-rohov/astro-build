@@ -15,8 +15,8 @@ declare global {
   }
 }
 
-const CONSENT_EVENT = "madebymary:analytics-consent-change";
-const OPEN_SETTINGS_EVENT = "madebymary:open-cookie-settings";
+const CONSENT_EVENT = "site:analytics-consent-change";
+const OPEN_SETTINGS_EVENT = "site:open-cookie-settings";
 
 let analyticsLoadPromise: Promise<void> | null = null;
 
@@ -74,7 +74,9 @@ function initializeDataLayer(): void {
   window.dataLayer = window.dataLayer ?? [];
 
   if (typeof window.gtag !== "function") {
-    window.gtag = function gtag(..._args: unknown[]): void {
+    // gtag.js expects the native `arguments` object, not a rest array.
+    window.gtag = function gtag(): void {
+      // eslint-disable-next-line prefer-rest-params
       window.dataLayer.push(arguments);
     };
   }
