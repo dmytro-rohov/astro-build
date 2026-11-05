@@ -7,7 +7,7 @@
 import type { FontPairId } from "../fonts/library";
 import type { NeutralName } from "../theme/neutrals";
 
-export type SectionTone = "default" | "muted" | "inverse";
+export type SectionTone = "default" | "muted" | "inverse" | "accent";
 
 export type Archetype = {
   label: string;

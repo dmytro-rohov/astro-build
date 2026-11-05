@@ -15,5 +15,15 @@ export const navbar = defineLayoutType({
       uses: ["cta"],
       props: z.object({ sticky: z.boolean().optional().describe("Keep the header visible while scrolling.") }),
     },
+    centered: {
+      description: "Logo centered on top, links centered below it (wide screens); menu button on phones.",
+      uses: ["cta"],
+      props: z.object({ sticky: z.boolean().optional().describe("Keep the header visible while scrolling.") }),
+    },
+    topbar: {
+      description: "Thin bar with phone and email above the simple header — for local services.",
+      uses: ["cta"],
+      props: z.object({ sticky: z.boolean().optional().describe("Keep the header visible while scrolling.") }),
+    },
   },
 });

@@ -1,0 +1,45 @@
+---
+/**
+ * Photo behind the text. The section uses the inverse palette and a strong
+ * overlay (82 % of the background color), so light text keeps ≥ 4.5:1 even on
+ * a white photo.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Actions from "@/sections/_shared/Actions.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"hero">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const image = content.image ? getAsset(content.image) : undefined;
+const align = props.align ?? "left";
+---
+
+<SectionShell
+  id={section.id}
+  type="hero"
+  variant="cover-image"
+  tone="inverse"
+  spacing={props.spacing}
+  defaultSpacing="xl"
+  width="lg"
+  class:list={[image && "s-hero-cover--with-image"]}
+>
+  {image && (
+    <div class="s-hero-cover__media" aria-hidden="true">
+      <Img src={image.image} alt="" kind="decorative" priority="high" sizes="100vw" widths={[640, 960, 1280, 1920]} aspect={[4, 3]} focal={image.focal} class="s-hero-cover__image" />
+    </div>
+  )}
+  <Stack space="xl" class:list={["s-hero-cover__content", `s-hero-cover__content--${align}`]}>
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={align} class="s-hero__header" />
+    <Actions primary={content.primaryAction} secondary={content.secondaryAction} align={align} />
+  </Stack>
+</SectionShell>

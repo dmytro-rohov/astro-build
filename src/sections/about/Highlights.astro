@@ -1,0 +1,18 @@
+---
+/** Short facts (value + label), e.g. "15 lat" / "doświadczenia". */
+export interface Props {
+  items: { id: string; value: string; label: string }[];
+  align?: "left" | "center";
+}
+
+const { items, align = "left" } = Astro.props;
+---
+
+<dl class:list={["s-highlights", `s-highlights--${align}`]}>
+  {items.map((item) => (
+    <div class="s-highlights__item">
+      <dt class="s-highlights__label">{item.label}</dt>
+      <dd class="s-highlights__value">{item.value}</dd>
+    </div>
+  ))}
+</dl>

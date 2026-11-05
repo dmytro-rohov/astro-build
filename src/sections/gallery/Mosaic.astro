@@ -1,0 +1,13 @@
+---
+import Grid from "@/sections/gallery/Grid.astro";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"gallery">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+---
+
+<Grid section={section} headingLevel={headingLevel} variant="mosaic" />

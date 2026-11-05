@@ -1,0 +1,13 @@
+---
+import Plans from "@/sections/pricing/Plans.astro";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"pricing">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+---
+
+<Plans section={section} headingLevel={headingLevel} variant="compact" />

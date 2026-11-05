@@ -185,6 +185,31 @@ export function resolveTheme(input: ThemeInput = {}): ResolvedTheme {
   };
 }
 
+/**
+ * Palette for "accent" sections: the brand color becomes the background and
+ * the accent's text color (checked ≥ 4.5:1) is used for all text and controls.
+ */
+export function accentPalette(palette: SemanticPalette): SemanticPalette {
+  const background = palette.action.primary;
+  const ink = palette.action.primaryText;
+
+  return {
+    text: { primary: ink, secondary: ink, muted: ink, inverse: background },
+    background: { primary: background, secondary: background, muted: background, surface: background, inverse: ink },
+    border: { default: mix(background, ink, 0.35), strong: mix(background, ink, 0.6), control: ink, inverse: palette.border.inverse },
+    action: {
+      primary: ink,
+      primaryHover: mix(ink, background, 0.12),
+      primaryText: background,
+      secondary: background,
+      secondaryHover: mix(background, ink, 0.12),
+      secondaryText: ink,
+    },
+    focus: { ring: ink },
+    feedback: { success: ink, error: ink, warning: ink },
+  };
+}
+
 export type ContrastFailure = { scheme: "light" | "dark"; foreground: string; background: string; ratio: number; required: number };
 
 /** Every text/background/UI pair the components use, with its WCAG AA minimum. */

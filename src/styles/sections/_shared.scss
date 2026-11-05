@@ -1,0 +1,48 @@
+@layer widgets {
+  .s-header {
+    max-width: 46rem;
+  }
+
+  .s-header--center {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .s-header--center .s-header__eyebrow {
+    margin-inline: auto;
+  }
+
+  .s-header__title {
+    font-size: clamp(var(--font-size-2xl), 4vw, var(--font-size-4xl));
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  .s-header__description {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .s-richtext {
+    display: grid;
+    gap: var(--spacing-md);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+    overflow-wrap: anywhere;
+  }
+
+  .s-richtext strong {
+    color: var(--color-text-primary);
+  }
+
+  .s-richtext a {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  // Long words from AI content must never overflow their box.
+  .s :where(h1, h2, h3, p, li, blockquote, figcaption, dd, dt, td, th) {
+    overflow-wrap: anywhere;
+  }
+}

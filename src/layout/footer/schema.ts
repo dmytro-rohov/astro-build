@@ -32,5 +32,13 @@ export const footer = defineLayoutType({
       description: "Brand block and link columns, contact details, copyright row with legal links.",
       uses: ["description", "groups", "socialLinks"],
     },
+    simple: {
+      description: "One compact row: logo, all links inline, copyright below.",
+      uses: ["socialLinks"],
+    },
+    centered: {
+      description: "Everything centered: logo, description, social icons, links, copyright.",
+      uses: ["description", "socialLinks"],
+    },
   },
 });

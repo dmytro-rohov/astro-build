@@ -1,0 +1,56 @@
+---
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Button from "@/components/ui/Button.astro";
+import Icon from "@/components/media/Icon.astro";
+import { t } from "@/i18n";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"pricing">;
+  headingLevel: "h1" | "h2";
+  variant: "cards" | "compact";
+}
+
+const { section, headingLevel, variant } = Astro.props;
+const { content, props } = section;
+const PlanHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="pricing" variant={variant} tone={props.tone} spacing={props.spacing} width={variant === "compact" ? "md" : "lg"}>
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <ul class:list={["s-plans", `s-plans--${variant}`, `s-plans--count-${content.plans.length}`]}>
+      {content.plans.map((plan) => (
+        <li class:list={["s-plan", plan.highlighted && variant === "cards" && "s-plan--highlighted"]}>
+          {plan.highlighted && variant === "cards" && <p class="s-plan__badge">{t.sections.popularPlan}</p>}
+          <div class="s-plan__head">
+            <PlanHeading class="s-plan__name">{plan.name}</PlanHeading>
+            {plan.description && <p class="s-plan__description">{plan.description}</p>}
+          </div>
+          <p class="s-plan__price">
+            <span class="s-plan__amount">{plan.price}</span>
+            {plan.period && <span class="s-plan__period">{plan.period}</span>}
+          </p>
+          {plan.features.length > 0 && (
+            <ul class="s-plan__features">
+              {plan.features.map((feature) => (
+                <li class="s-plan__feature">
+                  <Icon name="check" size="1rem" class="s-plan__check" />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {plan.action && (
+            <div class="s-plan__action">
+              <Button href={plan.action.href} variant={plan.highlighted ? "primary" : "secondary"}>{plan.action.label}</Button>
+            </div>
+          )}
+        </li>
+      ))}
+    </ul>
+    {content.note && <p class="s-plans__note">{content.note}</p>}
+  </Stack>
+</SectionShell>

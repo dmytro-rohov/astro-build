@@ -1,0 +1,29 @@
+---
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Actions from "@/sections/_shared/Actions.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"hero">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+---
+
+<SectionShell id={section.id} type="hero" variant="centered" tone={props.tone} spacing={props.spacing} defaultSpacing="xl" width="md">
+  <Stack space="xl" class="s-hero-centered">
+    <SectionHeader
+      eyebrow={content.eyebrow}
+      title={content.title}
+      description={content.description}
+      headingLevel={headingLevel}
+      align="center"
+      class="s-hero__header"
+    />
+    <Actions primary={content.primaryAction} secondary={content.secondaryAction} align="center" />
+  </Stack>
+</SectionShell>

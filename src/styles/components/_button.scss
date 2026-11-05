@@ -8,10 +8,14 @@
     border-radius: var(--radius-button);
     font-family: inherit;
     font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-none);
+    max-width: 100%;
+    line-height: var(--line-height-snug);
     text-align: center;
     text-decoration: none;
-    white-space: nowrap;
+
+    // Long labels wrap (balanced) instead of overflowing on phones.
+    text-wrap: balance;
+    overflow-wrap: anywhere;
     cursor: pointer;
     user-select: none;
     transition:

@@ -1,0 +1,16 @@
+---
+import Icon from "@/components/media/Icon.astro";
+import { format, t } from "@/i18n";
+
+export interface Props {
+  rating: number;
+}
+
+const { rating } = Astro.props;
+---
+
+<p class="s-stars" role="img" aria-label={format(t.sections.rating, { value: rating })}>
+  {[1, 2, 3, 4, 5].map((star) => (
+    <Icon name="star" size="1rem" class:list={["s-stars__star", star <= rating && "s-stars__star--on"]} />
+  ))}
+</p>

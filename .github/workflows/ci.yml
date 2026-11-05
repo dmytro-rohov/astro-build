@@ -64,3 +64,26 @@ jobs:
       # Builds the image and checks HSTS, contact form safety, GA debug mode and caching.
       - name: Build and test the image
         run: bash scripts/docker-smoke.sh
+
+  catalog:
+    name: Section catalog boundaries (8 archetypes)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      # Every variant with min and max content: no overflow at 320/768/1440 px, axe clean.
+      - name: Catalog in every archetype
+        run: npm run test:catalog

@@ -42,3 +42,4 @@ src/design-system/fonts.generated.ts
 src/design-system/appIcons.generated.ts
 src/styles/abstracts/_tokens.scss
 src/design-system/theme.generated.json
+.generated/

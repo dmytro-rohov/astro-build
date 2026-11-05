@@ -111,23 +111,6 @@
     width: 100%;
   }
 
-  .contact-form-section--tone-inverse .contact-form-section__description {
-    color: color-mix(
-      in srgb,
-      var(--color-text-inverse) 78%,
-      transparent
-    );
-  }
 
-  .contact-form-section--tone-inverse .contact-form-section__info-title {
-    color: var(--color-text-inverse);
-  }
 
-  .contact-form-section--tone-inverse .contact-form-section__info-label {
-    color: color-mix(
-      in srgb,
-      var(--color-text-inverse) 66%,
-      transparent
-    );
-  }
 }

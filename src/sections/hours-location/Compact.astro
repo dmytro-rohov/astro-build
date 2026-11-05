@@ -1,0 +1,24 @@
+---
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import Details from "@/sections/hours-location/Details.astro";
+import { t } from "@/i18n";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"hours-location">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const Heading = headingLevel;
+const inner = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="hours-location" variant="compact" tone={props.tone} spacing={props.spacing} defaultSpacing="md">
+  <Heading class="visually-hidden">{content.title ?? t.sections.hoursTitle}</Heading>
+  <div class="s-hours-location__band">
+    <Details part="hours" showPhone={content.showPhone} headingLevel={inner} />
+    <Details part="address" mapUrl={content.mapUrl} showPhone={content.showPhone} headingLevel={inner} />
+  </div>
+</SectionShell>

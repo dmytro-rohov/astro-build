@@ -38,9 +38,18 @@ export const hero = defineSectionType({
       description: "Hero image, cropped to 4:3 around the focal point; at least 960px wide.",
     }),
   }),
+  accentTone: true,
   variants: {
     "split-image": {
       description: "Text on the left, image on the right; single column on phones. Without an image the text is full width.",
+      uses: ["eyebrow", "description", "primaryAction", "secondaryAction", "image"],
+    },
+    centered: {
+      description: "Large centered headline and actions, no image. Calm and typographic.",
+      uses: ["eyebrow", "description", "primaryAction", "secondaryAction"],
+    },
+    "cover-image": {
+      description: "Full-width photo behind the text with a dark overlay — bold and atmospheric. Needs an image.",
       uses: ["eyebrow", "description", "primaryAction", "secondaryAction", "image"],
     },
   },

@@ -80,7 +80,7 @@ export const siteConfig = {
       region: business.address?.region ?? "",
       country: business.address?.country ?? "",
     },
-    openingHours: business.openingHours,
+    hours: business.hours,
     priceRange: business.priceRange ?? "",
     sameAs: business.sameAs,
   },

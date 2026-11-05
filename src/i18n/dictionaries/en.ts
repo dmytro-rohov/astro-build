@@ -13,6 +13,28 @@ export const en = {
     titleTemplate: "{title} | {siteName}",
   },
 
+  days: {
+    mo: { short: "Mon", long: "Monday" },
+    tu: { short: "Tue", long: "Tuesday" },
+    we: { short: "Wed", long: "Wednesday" },
+    th: { short: "Thu", long: "Thursday" },
+    fr: { short: "Fri", long: "Friday" },
+    sa: { short: "Sat", long: "Saturday" },
+    su: { short: "Sun", long: "Sunday" },
+  },
+
+  sections: {
+    hoursTitle: "Opening hours",
+    closed: "Closed",
+    address: "Address",
+    phone: "Phone",
+    email: "Email",
+    openInMaps: "Open in maps",
+    popularPlan: "Most popular",
+    rating: "Rating: {value} out of 5",
+    contactBar: "Contact details",
+  },
+
   common: {
     skipToContent: "Skip to content",
     backToHome: "Back to home page",

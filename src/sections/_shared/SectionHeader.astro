@@ -1,0 +1,25 @@
+---
+/** Eyebrow + title (h1 for the first section of a page, else h2) + description. */
+import Stack from "@/components/layouts/Stack.astro";
+import Tag from "@/components/ui/Tag.astro";
+
+export interface Props {
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+  headingLevel: "h1" | "h2";
+  align?: "left" | "center";
+  class?: string;
+}
+
+const { eyebrow, title, description, headingLevel, align = "left", class: className } = Astro.props;
+const Heading = headingLevel;
+---
+
+{(eyebrow || title || description) && (
+  <Stack space="md" class:list={["s-header", `s-header--${align}`, className]}>
+    {eyebrow && <Tag variant="primary" class="s-header__eyebrow">{eyebrow}</Tag>}
+    {title && <Heading class="s-header__title">{title}</Heading>}
+    {description && <p class="s-header__description">{description}</p>}
+  </Stack>
+)}

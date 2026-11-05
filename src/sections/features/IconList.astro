@@ -1,0 +1,33 @@
+---
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Icon from "@/components/media/Icon.astro";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"features">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const ItemHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="features" variant="icon-list" tone={props.tone} spacing={props.spacing}>
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
+    <ul class="s-icon-list">
+      {content.items.map((item) => (
+        <li class="s-icon-list__item">
+          <span class="s-icon-list__icon" aria-hidden="true"><Icon name={item.icon ?? "check"} size="1.25rem" /></span>
+          <div class="s-icon-list__text">
+            <ItemHeading class="s-icon-list__title">{item.title}</ItemHeading>
+            <p class="s-icon-list__description">{item.description}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </Stack>
+</SectionShell>

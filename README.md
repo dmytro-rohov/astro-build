@@ -114,6 +114,37 @@ SITE_DIR=sites/_demo npm run dev              # dev server for one site
 
 `src/config/site.ts` is now a compatibility layer computed from site.json — do not put content there.
 
+### Section catalog
+
+| Type | Variants |
+|---|---|
+| `hero` | `split-image`, `centered`, `cover-image` (photo behind text, accent tone allowed) |
+| `about` | `image-side`, `centered` |
+| `services` | `cards`, `price-list` |
+| `features` | `cards-grid`, `icon-list` |
+| `testimonials` | `cards`, `spotlight` |
+| `gallery` | `grid`, `mosaic` |
+| `pricing` | `cards`, `compact` |
+| `faq` | `accordion`, `two-column` (both publish FAQPage JSON-LD) |
+| `cta` | `boxed`, `banner` |
+| `contact` | `form-split`, `form-centered` (details from `business`) |
+| `hours-location` | `card`, `compact` (hours, address, phone from `business`) |
+| layout `navbar` | `simple`, `centered`, `topbar` (phone/email bar) |
+| layout `footer` | `columns`, `simple`, `centered` |
+
+Common section props: `tone` (`default`, `muted`, `inverse`; `accent` for hero, about, cta),
+`spacing`, `align`. Without `tone` the archetype default for the type is used.
+
+**Adding a variant:** add it to `variants` in `src/sections/<type>/schema.ts` (description,
+used optional fields, own props), create `src/sections/<type>/<Variant>.astro` with
+`SectionShell` + `SectionHeader`, register it in `src/site/components.ts` and add styles in
+`src/styles/sections/`. Content stays the type's content — never add variant-only content fields.
+
+**Boundary tests:** `scripts/site/make-catalog.ts` generates a site from the schemas with every
+variant twice — minimum and maximum content (every field at its limit, long Polish words).
+`npm run test:catalog` builds it in all 8 archetypes (rotating navbar/footer variants and
+pl/en/uk) and checks that nothing overflows at 320/768/1440 px and that axe passes.
+
 ### Theme: archetypes, colors, fonts
 
 ```json

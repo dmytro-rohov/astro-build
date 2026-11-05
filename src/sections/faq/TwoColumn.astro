@@ -1,0 +1,35 @@
+---
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import RichText from "@/sections/_shared/RichText.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import { faqSchema, serializeJsonLd } from "@/lib/seo/schema";
+import { richTextLiteToPlain } from "@/site/richtext";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"faq">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const QuestionHeading = headingLevel === "h1" ? "h2" : "h3";
+const jsonLd = serializeJsonLd(faqSchema(content.items.map((item) => ({ question: item.question, answer: richTextLiteToPlain(item.answer) }))));
+---
+
+<SectionShell id={section.id} type="faq" variant="two-column" tone={props.tone} spacing={props.spacing}>
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
+    <ul class="s-faq-columns">
+      {content.items.map((item) => (
+        <li class="s-faq-columns__item">
+          <QuestionHeading class="s-faq-columns__question">{item.question}</QuestionHeading>
+          <RichText text={item.answer} />
+        </li>
+      ))}
+    </ul>
+  </Stack>
+</SectionShell>
+
+<script is:inline type="application/ld+json" set:html={jsonLd} />

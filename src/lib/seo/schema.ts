@@ -4,6 +4,7 @@
  */
 import { siteConfig } from "@/config/site";
 import { lang } from "@/i18n";
+import { openingHoursSpecification } from "@/site/hours";
 
 type JsonLdNode = Record<string, unknown>;
 
@@ -75,7 +76,7 @@ export function organizationSchema(siteUrl: URL | string): JsonLdNode {
           addressCountry: address.country,
         }
       : undefined,
-    openingHours: org.openingHours,
+    openingHoursSpecification: openingHoursSpecification(org.hours),
     priceRange: org.priceRange,
     sameAs: org.sameAs,
   });

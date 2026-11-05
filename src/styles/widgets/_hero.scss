@@ -72,12 +72,4 @@
     object-fit: cover;
   }
 
-  .hero--tone-inverse .hero__description,
-  .section--tone-inverse .hero__description {
-    color: color-mix(
-      in srgb,
-      var(--color-text-inverse) 78%,
-      transparent
-    );
-  }
 }
