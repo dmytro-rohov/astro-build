@@ -94,10 +94,19 @@ sites/<site>/
 ```
 
 ```bash
-npm run site:validate -- --site sites/_demo   # validate only, readable errors
-npm run site:build -- --site sites/_demo      # full build into ./dist
-SITE_DIR=sites/_demo npm run dev              # dev server for one site
+npm run site:validate -- --site <dir>               # schema, contrast, fonts, assets — no build
+npm run site:build -- --site <dir> [--out <dir>]    # full build (default ./dist)
+npm run site:preview -- --site <dir> [--port 4321]  # dev server with live reload
+npm run site:screenshot -- --site <dir> [--out <dir>]  # desktop + mobile PNG of every page
+npm run site:report -- --site <dir> [--out <dir>]   # build + axe + Lighthouse + screenshots → report.json
 ```
+
+`site:report` writes `<out>/report.json` for the orchestrator (default out:
+`.generated/sites/<siteId>`): engine and schema version, validation issues and warnings
+(legal review of the privacy template, missing data, accent adjustments), resolved theme,
+per page axe violations, Lighthouse scores and screenshot paths, and the quality gates
+(`build`, `a11y`, `lighthouse` ≥ 90/95/95/95). Exit code 1 when a gate fails; an invalid
+site still gets a report with the readable issues.
 
 - Schemas (Zod) in `src/site/schema/` and `src/sections/<type>/schema.ts` are the single
   source of truth for TS types, validation and (later) the JSON Schema for AI.

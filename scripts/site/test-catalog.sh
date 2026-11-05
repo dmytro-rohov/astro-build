@@ -24,7 +24,7 @@ for index in "${!ARCHETYPES[@]}"; do
   echo "▶ catalog: archetype=$archetype navbar=$navbar footer=$footer lang=$lang"
   npx tsx scripts/site/make-catalog.ts --out "$dir" --archetype "$archetype" --navbar "$navbar" --footer "$footer" --lang "$lang" >/dev/null \
     || { failed+=("$archetype (generator)"); continue; }
-  CATALOG=1 SITE_DIR="$dir" npx playwright test catalog --project=desktop || failed+=("$archetype")
+  SITE_SMOKE=1 SITE_DIR="$dir" npx playwright test site.spec --project=desktop || failed+=("$archetype")
 done
 
 if [ ${#failed[@]} -gt 0 ]; then

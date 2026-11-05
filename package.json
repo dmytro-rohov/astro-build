@@ -33,7 +33,10 @@
     "site:build": "tsx scripts/site/build.ts",
     "test:broken-site": "bash scripts/site/check-broken.sh",
     "test:catalog": "bash scripts/site/test-catalog.sh",
-    "test:remote": "bash scripts/site/test-remote.sh"
+    "test:remote": "bash scripts/site/test-remote.sh",
+    "site:preview": "tsx scripts/site/preview.ts",
+    "site:screenshot": "tsx scripts/site/screenshot.ts",
+    "site:report": "tsx scripts/site/report.ts"
   },
   "dependencies": {
     "@astrojs/node": "^11.0.3",
@@ -62,12 +65,14 @@
     "@fontsource-variable/work-sans": "^5.3.0",
     "@lhci/cli": "^0.16.0",
     "@playwright/test": "1.64.1",
+    "chrome-launcher": "0.13.4",
     "eslint": "^10.8.0",
     "eslint-plugin-astro": "^3.0.1",
     "fontkit": "^2.0.4",
     "fs-extra": "^11.3.3",
     "globals": "^17.9.0",
     "image-size": "^2.0.4",
+    "lighthouse": "13.6.0",
     "sass": "^1.97.3",
     "sharp": "^0.35.3",
     "stylelint": "^17.14.1",
