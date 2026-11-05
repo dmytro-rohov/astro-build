@@ -121,6 +121,12 @@ ${lines(colorVars(theme.light), "    ")}
 ${lines(colorVars(accentPalette(theme.dark)), "    ")}
   }
 }
+
+/* Cover hero: always the dark palette (light text over a dark photo overlay), also in dark sites. */
+:root .section.s-hero--cover-image {
+  color-scheme: dark;
+${lines(colorVars(theme.dark))}
+}
 `;
 
 const spacingKeys = Object.keys(tokens.spacing)

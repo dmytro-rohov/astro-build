@@ -327,7 +327,8 @@
   }
 
   // ---------- gallery ----------
-  .s-gallery {
+  // The list has its own block name: .s-gallery / .s-gallery--<variant> are on the <section>.
+  .s-gallery__list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
     gap: var(--spacing-md);
@@ -356,7 +357,7 @@
   }
 
   @include mq(lg) {
-    .s-gallery--mosaic {
+    .s-gallery__list--mosaic {
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 

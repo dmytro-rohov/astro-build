@@ -45,6 +45,14 @@ for (const archetype of archetypes) {
         await page.goto(server.url + sitePage.slug);
         await page.evaluate((value) => (document.documentElement.dataset.theme = value), scheme);
         await page.evaluate(() => document.fonts.ready);
+        await page.evaluate(async () => {
+          for (let y = 0; y < document.documentElement.scrollHeight; y += window.innerHeight / 2) {
+            window.scrollTo(0, y);
+            await new Promise((resolve) => setTimeout(resolve, 60));
+          }
+          window.scrollTo(0, 0);
+          await Promise.all([...document.images].map((image) => image.decode().catch(() => undefined)));
+        });
         await page.waitForTimeout(250);
 
         for (const section of sitePage.sections) {

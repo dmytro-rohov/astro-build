@@ -34,6 +34,7 @@
     "test:broken-site": "bash scripts/site/check-broken.sh",
     "test:catalog": "bash scripts/site/test-catalog.sh",
     "test:remote": "bash scripts/site/test-remote.sh",
+    "test:fixtures": "bash scripts/site/test-fixtures.sh",
     "site:preview": "tsx scripts/site/preview.ts",
     "site:screenshot": "tsx scripts/site/screenshot.ts",
     "site:report": "tsx scripts/site/report.ts",

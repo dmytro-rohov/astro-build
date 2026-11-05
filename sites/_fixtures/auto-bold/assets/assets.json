@@ -1,0 +1,14 @@
+{
+  "hero": {
+    "file": "hero.jpg",
+    "alt": "Abstrakcyjna grafika w barwach warsztatu — stalowy granat i pomarańcz",
+    "focal": {
+      "x": 55,
+      "y": 50
+    }
+  },
+  "about": {
+    "file": "about.jpg",
+    "alt": "Abstrakcyjna kompozycja geometryczna w odcieniach granatu"
+  }
+}

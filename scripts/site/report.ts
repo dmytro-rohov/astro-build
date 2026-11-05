@@ -115,12 +115,17 @@ if (buildOk) {
 
       try {
         for (const page of pages) {
-          const result = await lighthouse(server.url + page.slug, {
-            port: chrome.port,
-            output: "json",
-            logLevel: "error",
-            onlyCategories: ["performance", "accessibility", "best-practices", "seo"],
-          });
+          // A run that errors (e.g. NO_FCP in a cold headless Chrome) has null scores — retry once.
+          let result;
+          for (let attempt = 0; attempt < 2; attempt++) {
+            result = await lighthouse(server.url + page.slug, {
+              port: chrome.port,
+              output: "json",
+              logLevel: "error",
+              onlyCategories: ["performance", "accessibility", "best-practices", "seo"],
+            });
+            if (!result?.lhr.runtimeError && result?.lhr.categories.performance?.score != null) break;
+          }
           const categories = result?.lhr.categories ?? {};
           page.lighthouse = {
             performance: categories.performance?.score ?? 0,

@@ -1,0 +1,403 @@
+{
+  "$schema": "../../../dist-catalog/site.schema.json",
+  "schemaVersion": 1,
+  "engine": "^3.0.0",
+  "siteId": "auto-bold",
+  "lang": "pl",
+  "meta": {
+    "name": "AutoSerwis Kowalczyk",
+    "description": "Niezależny warsztat samochodowy w Poznaniu: diagnostyka, mechanika, hamulce, klimatyzacja i opony. Kosztorys przed naprawą i rok gwarancji.",
+    "url": "https://autoserwis-kowalczyk.example",
+    "seo": {
+      "imageAlt": "AutoSerwis Kowalczyk — warsztat samochodowy w Poznaniu"
+    }
+  },
+  "business": {
+    "type": "AutoRepair",
+    "email": "warsztat@autoserwis-kowalczyk.example",
+    "phone": "+48 61 222 33 44",
+    "address": {
+      "street": "ul. Głogowska 210",
+      "city": "Poznań",
+      "postalCode": "60-104",
+      "country": "PL"
+    },
+    "hours": [
+      {
+        "days": [
+          "mo",
+          "tu",
+          "we",
+          "th",
+          "fr"
+        ],
+        "opens": "07:30",
+        "closes": "17:30"
+      },
+      {
+        "days": [
+          "sa"
+        ],
+        "opens": "08:00",
+        "closes": "13:00"
+      },
+      {
+        "days": [
+          "su"
+        ],
+        "closed": true
+      }
+    ],
+    "priceRange": "$$"
+  },
+  "theme": {
+    "archetype": "bold",
+    "accent": "#e05a1c"
+  },
+  "layout": {
+    "navbar": {
+      "variant": "simple",
+      "props": {
+        "sticky": true
+      },
+      "content": {
+        "cta": {
+          "label": "Umów wizytę",
+          "href": "/#kontakt"
+        }
+      }
+    },
+    "footer": {
+      "variant": "simple",
+      "props": {},
+      "content": {
+        "description": "Rodzinny warsztat samochodowy na poznańskim Łazarzu. Naprawiamy auta osobowe i dostawcze wszystkich marek.",
+        "groups": [
+          {
+            "title": "Warsztat",
+            "links": [
+              {
+                "label": "Usługi i ceny",
+                "href": "/#uslugi"
+              },
+              {
+                "label": "O warsztacie",
+                "href": "/#o-warsztacie"
+              },
+              {
+                "label": "Opinie",
+                "href": "/#opinie"
+              }
+            ]
+          },
+          {
+            "title": "Kontakt",
+            "links": [
+              {
+                "label": "Umów wizytę",
+                "href": "/#kontakt"
+              },
+              {
+                "label": "Dojazd",
+                "href": "/#dojazd"
+              },
+              {
+                "label": "Polityka prywatności",
+                "href": "/privacy"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "navigation": {
+    "auto": false,
+    "items": [
+      {
+        "label": "Usługi",
+        "href": "/#uslugi"
+      },
+      {
+        "label": "O warsztacie",
+        "href": "/#o-warsztacie"
+      },
+      {
+        "label": "Opinie",
+        "href": "/#opinie"
+      },
+      {
+        "label": "Kontakt",
+        "href": "/#kontakt"
+      }
+    ]
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "/",
+      "title": "AutoSerwis Kowalczyk — warsztat samochodowy Poznań",
+      "description": "Niezależny warsztat samochodowy w Poznaniu: diagnostyka, mechanika, hamulce, klimatyzacja i opony. Kosztorys przed naprawą i rok gwarancji.",
+      "sections": [
+        {
+          "id": "start",
+          "type": "hero",
+          "variant": "cover-image",
+          "props": {},
+          "content": {
+            "eyebrow": "Warsztat samochodowy · Poznań Łazarz",
+            "title": "Naprawiamy auta tak, jakby były nasze",
+            "description": "Diagnostyka, mechanika, hamulce i klimatyzacja dla aut wszystkich marek. Zawsze najpierw kosztorys, potem naprawa — bez niespodzianek na fakturze.",
+            "primaryAction": {
+              "label": "Umów wizytę",
+              "href": "/#kontakt"
+            },
+            "secondaryAction": {
+              "label": "Cennik usług",
+              "href": "/#uslugi"
+            },
+            "image": "asset:hero"
+          }
+        },
+        {
+          "id": "zalety",
+          "type": "features",
+          "variant": "icon-list",
+          "props": {},
+          "content": {
+            "eyebrow": "Dlaczego my",
+            "title": "Uczciwie, szybko i z gwarancją",
+            "items": [
+              {
+                "id": "kosztorys",
+                "eyebrow": "Przejrzyście",
+                "title": "Kosztorys przed naprawą",
+                "description": "Dzwonimy z wyceną, zanim zaczniemy. Bez Twojej zgody nie wymienimy żadnej części.",
+                "icon": "check"
+              },
+              {
+                "id": "gwarancja",
+                "eyebrow": "Spokój",
+                "title": "12 miesięcy gwarancji",
+                "description": "Na części i robociznę. Jeśli coś będzie nie tak — poprawimy bez dyskusji.",
+                "icon": "star"
+              },
+              {
+                "id": "termin",
+                "eyebrow": "Szybko",
+                "title": "Termin w 48 godzin",
+                "description": "Na większość napraw mechanicznych przyjmujemy auto w ciągu dwóch dni roboczych.",
+                "icon": "clock"
+              },
+              {
+                "id": "zastepcze",
+                "eyebrow": "Wygodnie",
+                "title": "Auto zastępcze",
+                "description": "Przy dłuższych naprawach pożyczymy Ci samochód, żebyś nie stał w miejscu.",
+                "icon": "arrow-right"
+              }
+            ]
+          }
+        },
+        {
+          "id": "uslugi",
+          "type": "services",
+          "variant": "price-list",
+          "props": {},
+          "content": {
+            "eyebrow": "Usługi",
+            "title": "Usługi i orientacyjne ceny",
+            "description": "Ceny robocizny dla aut osobowych. Dokładną wycenę z częściami podamy po oględzinach.",
+            "items": [
+              {
+                "id": "diagnostyka",
+                "title": "Diagnostyka komputerowa",
+                "description": "Odczyt i kasowanie błędów, test czujników i układów elektronicznych.",
+                "price": "od 120 zł",
+                "icon": "code"
+              },
+              {
+                "id": "olej",
+                "title": "Wymiana oleju i filtrów",
+                "description": "Olej dobrany do normy producenta, filtry oleju, powietrza i kabinowy.",
+                "price": "od 90 zł",
+                "icon": "check"
+              },
+              {
+                "id": "hamulce",
+                "title": "Układ hamulcowy",
+                "description": "Klocki, tarcze, płyn hamulcowy i przewody. Test skuteczności na rolkach.",
+                "price": "od 150 zł",
+                "icon": "check"
+              },
+              {
+                "id": "klimatyzacja",
+                "title": "Serwis klimatyzacji",
+                "description": "Odgrzybianie, uzupełnienie czynnika i kontrola szczelności układu.",
+                "price": "od 199 zł",
+                "icon": "clock"
+              },
+              {
+                "id": "opony",
+                "title": "Opony i wyważanie",
+                "description": "Wymiana sezonowa, wyważanie, naprawa i przechowalnia opon.",
+                "price": "od 100 zł",
+                "icon": "grid"
+              },
+              {
+                "id": "przeglad",
+                "title": "Przegląd przed zakupem",
+                "description": "Sprawdzimy używane auto, zanim je kupisz: lakier, zawieszenie, silnik i elektronika.",
+                "price": "250 zł",
+                "icon": "star"
+              }
+            ]
+          }
+        },
+        {
+          "id": "o-warsztacie",
+          "type": "about",
+          "variant": "centered",
+          "props": {},
+          "content": {
+            "eyebrow": "O warsztacie",
+            "title": "Rodzinny warsztat z 25-letnim doświadczeniem",
+            "body": "Warsztat prowadzi **Marek Kowalczyk** razem z synem Piotrem. Zaczynaliśmy w jednym boksie na Łazarzu, dziś mamy cztery stanowiska i stałych klientów, którzy przyjeżdżają do nas od lat.\n\nNaprawiamy samochody osobowe i dostawcze do 3,5 t. Używamy części OE lub zamienników renomowanych producentów — zawsze do wyboru, z ceną podaną przed naprawą.",
+            "image": "asset:about",
+            "highlights": [
+              {
+                "id": "lata",
+                "value": "25 lat",
+                "label": "doświadczenia"
+              },
+              {
+                "id": "stanowiska",
+                "value": "4",
+                "label": "stanowiska naprawcze"
+              },
+              {
+                "id": "auta",
+                "value": "12 000+",
+                "label": "naprawionych samochodów"
+              }
+            ],
+            "action": {
+              "label": "Umów wizytę",
+              "href": "/#kontakt"
+            }
+          }
+        },
+        {
+          "id": "opinie",
+          "type": "testimonials",
+          "variant": "spotlight",
+          "props": {},
+          "content": {
+            "eyebrow": "Opinie",
+            "title": "Klienci o nas",
+            "description": "Średnia ocena 4,9 na podstawie opinii klientów z ostatnich dwóch lat.",
+            "items": [
+              {
+                "id": "andrzej",
+                "quote": "Inny warsztat wycenił naprawę na 3000 zł. Tutaj okazało się, że wystarczy wymienić czujnik za 300 zł. Uczciwość, której szukałem.",
+                "author": "Andrzej W.",
+                "role": "Skoda Octavia",
+                "rating": 5
+              },
+              {
+                "id": "monika",
+                "quote": "Szybki termin, auto zastępcze i telefon z wyceną przed naprawą. Tak powinien działać każdy serwis.",
+                "author": "Monika R.",
+                "role": "Toyota Yaris",
+                "rating": 5
+              },
+              {
+                "id": "firma",
+                "quote": "Serwisujemy tu całą flotę pięciu dostawczaków. Terminy zawsze dotrzymane, faktury jasne.",
+                "author": "Paweł S.",
+                "role": "firma kurierska",
+                "rating": 5
+              }
+            ]
+          }
+        },
+        {
+          "id": "faq",
+          "type": "faq",
+          "variant": "two-column",
+          "props": {},
+          "content": {
+            "eyebrow": "FAQ",
+            "title": "Pytania przed wizytą",
+            "items": [
+              {
+                "id": "rezerwacja",
+                "question": "Czy muszę umawiać się wcześniej?",
+                "answer": "Na diagnostykę i drobne naprawy często przyjmujemy od ręki, ale **najlepiej zadzwonić** lub zostawić wiadomość w formularzu."
+              },
+              {
+                "id": "czesci",
+                "question": "Czy mogę przywieźć własne części?",
+                "answer": "Tak, ale wtedy gwarancja obejmuje tylko robociznę. Chętnie doradzimy, które zamienniki warto wybrać."
+              },
+              {
+                "id": "czas",
+                "question": "Ile trwa wymiana klocków hamulcowych?",
+                "answer": "Zwykle około godziny. Możesz poczekać na miejscu — mamy kawę i Wi-Fi."
+              },
+              {
+                "id": "platnosc",
+                "question": "Jakie formy płatności akceptujecie?",
+                "answer": "Gotówkę, karty i BLIK. Firmom wystawiamy faktury z odroczonym terminem płatności."
+              }
+            ]
+          }
+        },
+        {
+          "id": "termin",
+          "type": "cta",
+          "variant": "boxed",
+          "props": {},
+          "content": {
+            "eyebrow": "Wolne terminy w tym tygodniu",
+            "title": "Coś stuka, piszczy albo świeci się kontrolka?",
+            "description": "Zadzwoń lub napisz — powiemy, czy możesz jeszcze jeździć, i zaproponujemy najbliższy termin.",
+            "primaryAction": {
+              "label": "Zadzwoń do nas",
+              "href": "tel:+48612223344"
+            },
+            "secondaryAction": {
+              "label": "Napisz wiadomość",
+              "href": "/#kontakt"
+            }
+          }
+        },
+        {
+          "id": "dojazd",
+          "type": "hours-location",
+          "variant": "compact",
+          "props": {},
+          "content": {
+            "eyebrow": "Dojazd",
+            "title": "Godziny otwarcia",
+            "description": "Wjazd od ul. Głogowskiej, parking dla klientów przed warsztatem.",
+            "mapUrl": "https://www.openstreetmap.org/search?query=G%C5%82ogowska%20210%20Pozna%C5%84",
+            "showPhone": true
+          }
+        },
+        {
+          "id": "kontakt",
+          "type": "contact",
+          "variant": "form-centered",
+          "props": {},
+          "content": {
+            "eyebrow": "Kontakt",
+            "title": "Umów wizytę",
+            "description": "Podaj markę, model i rok auta oraz opisz problem. Oddzwonimy z terminem i wstępną wyceną.",
+            "showDetails": true
+          }
+        }
+      ]
+    }
+  ]
+}

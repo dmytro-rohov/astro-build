@@ -29,6 +29,15 @@ export async function takeScreenshots(context: SiteContext, baseUrl: string) {
         await tab.route(/googletagmanager\.com|google-analytics\.com/, (route) => route.abort());
         await tab.goto(baseUrl + page.slug, { waitUntil: "networkidle" });
         await tab.evaluate(() => document.fonts.ready);
+        // Lazy images below the fold load only when scrolled into view: scroll through the page first.
+        await tab.evaluate(async () => {
+          for (let y = 0; y < document.documentElement.scrollHeight; y += window.innerHeight / 2) {
+            window.scrollTo(0, y);
+            await new Promise((resolve) => setTimeout(resolve, 60));
+          }
+          window.scrollTo(0, 0);
+          await Promise.all([...document.images].map((image) => image.decode().catch(() => undefined)));
+        });
         // The cookie banner is not part of the design review.
         await tab.locator("[data-consent-reject]").click({ timeout: 1000 }).catch(() => {});
 

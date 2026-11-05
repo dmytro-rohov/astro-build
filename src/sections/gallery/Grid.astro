@@ -19,7 +19,7 @@ const { content, props } = section;
 <SectionShell id={section.id} type="gallery" variant={variant} tone={props.tone} spacing={props.spacing} width="xl">
   <Stack space="xl">
     <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
-    <ul class:list={["s-gallery", `s-gallery--${variant}`]}>
+    <ul class:list={["s-gallery__list", `s-gallery__list--${variant}`]}>
       {content.items.map((item, index) => {
         const photo = getAsset(item.image);
         const large = variant === "mosaic" && index === 0;
