@@ -122,6 +122,24 @@ site still gets a report with the readable issues.
 
 `src/config/site.ts` is now a compatibility layer computed from site.json — do not put content there.
 
+### Schema versions and migrations
+
+Every site.json declares `schemaVersion` (the format) and `engine` (a semver range of the
+starter it needs). The engine reads exactly one `schemaVersion` (`SCHEMA_VERSION` in
+`src/site/schema/site.ts`, currently `1`):
+
+- an **older** site stops with `schemaVersion: 1 is older than 2. Run npm run site:migrate…`,
+- a **newer** site stops with `…is newer than this engine supports` — update the starter.
+
+```bash
+npm run site:migrate -- --site sites/<client>            # keeps site.v<N>.backup.json
+npm run site:migrate -- --site sites/<client> --dry-run  # prints the result only
+```
+
+A breaking schema change bumps `SCHEMA_VERSION` and adds a pure migration function
+(`src/site/migrations/v<N>-to-v<N+1>.ts`, registered in `src/site/migrations/index.ts`);
+the migrated site is validated like any build.
+
 ### Section catalog
 
 | Type | Variants |

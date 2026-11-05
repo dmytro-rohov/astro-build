@@ -45,3 +45,6 @@ src/design-system/theme.generated.json
 .generated/
 dist-catalog/
 dist-gallery/
+
+# site:migrate backups
+sites/**/site.v*.backup.json
