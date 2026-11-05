@@ -10,6 +10,7 @@ import {
 } from "./src/config/indexing.ts";
 import { loadSite, resolveSiteDir, SiteValidationError } from "./src/site/loader.ts";
 import { siteVitePlugin } from "./src/site/vite-plugin.ts";
+import { cspForSite } from "./src/site/csp.ts";
 
 const env = loadEnv(process.env.NODE_ENV ?? "development", process.cwd(), "");
 
@@ -39,6 +40,10 @@ for (const page of siteData.pages) {
 }
 
 const siteUrl = new URL(env.SITE_URL || siteData.meta.url || "http://localhost:4321");
+
+// Analytics: site.json analytics.gaId; PUBLIC_GA_MEASUREMENT_ID overrides it (test builds).
+const gaId = env.PUBLIC_GA_MEASUREMENT_ID || siteData.analytics.gaId || "";
+const csp = cspForSite(siteData, gaId);
 const protocol = siteUrl.protocol.replace(":", "");
 const hostname = siteUrl.hostname.replace(/^www\./, "");
 const isLocalhost = ["localhost", "127.0.0.1"].includes(hostname);
@@ -65,7 +70,7 @@ export default defineConfig({
   }),
 
   vite: {
-    plugins: [siteVitePlugin(siteDir)],
+    plugins: [siteVitePlugin(siteDir, { gaId })],
     server: {
       // SITE_DIR may live outside the project (client sites repository).
       fs: { allow: [process.cwd(), siteDir] },
@@ -102,24 +107,12 @@ export default defineConfig({
     checkOrigin: true,
     allowedDomains,
 
-    // Content Security Policy. Astro adds hashes for its own scripts and styles,
-    // so inline code needs no 'unsafe-inline'. Google hosts are needed only
-    // after the visitor accepts analytics.
+    // Content Security Policy from site.json (src/site/csp.ts). Astro adds hashes
+    // for its own scripts and styles, so inline code needs no 'unsafe-inline'.
     csp: {
-      directives: [
-        "default-src 'self'",
-        "img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com",
-        "connect-src 'self' https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com",
-        "font-src 'self'",
-        "manifest-src 'self'",
-        "object-src 'none'",
-        "base-uri 'self'",
-        "form-action 'self'",
-        // frame-ancestors is not used: prerendered pages get the policy in a <meta>
-        // tag, where browsers ignore it. Framing is blocked by X-Frame-Options instead.
-      ],
+      directives: csp.directives,
       scriptDirective: {
-        resources: ["'self'", "https://www.googletagmanager.com"],
+        resources: csp.scriptResources,
       },
     },
   },

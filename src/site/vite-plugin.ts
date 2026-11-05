@@ -11,7 +11,7 @@ import { loadSite } from "./loader";
 const SITE_ID = "virtual:site";
 const ANALYTICS_ID = "virtual:site/analytics";
 
-export function siteVitePlugin(siteDir: string): Plugin {
+export function siteVitePlugin(siteDir: string, options: { gaId: string }): Plugin {
   const resolved = (id: string) => `\0${id}`;
 
   return {
@@ -32,9 +32,8 @@ export function siteVitePlugin(siteDir: string): Plugin {
       const { site, assets } = loadSite(siteDir);
 
       if (id === resolved(ANALYTICS_ID)) {
-        // Env override keeps test and preview builds independent of site.json.
-        const gaId = process.env.PUBLIC_GA_MEASUREMENT_ID || site.analytics.gaId || "";
-        return `export const gaId = ${JSON.stringify(gaId)};`;
+        // Resolved in astro.config (env/.env override, then site.json), same as the CSP.
+        return `export const gaId = ${JSON.stringify(options.gaId)};`;
       }
 
       return [
