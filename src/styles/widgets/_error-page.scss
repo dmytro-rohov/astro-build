@@ -1,0 +1,8 @@
+@layer widgets {
+  .error-page__code {
+    color: var(--color-action-primary);
+    font-size: var(--font-size-6xl);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-none);
+  }
+}

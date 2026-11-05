@@ -6,6 +6,8 @@ import Link from "@/components/ui/Link.astro";
 import Divider from "@/components/ui/Divider.astro";
 import Icon from "@/components/media/Icon.astro";
 import { siteConfig } from "@/config/site";
+import { ANALYTICS_CONFIG } from "@/config/analytics";
+import { format, t } from "@/i18n";
 
 export type FooterLink = {
   label: string;
@@ -46,7 +48,7 @@ const {
   description = siteConfig.footer.description,
   groups = siteConfig.footer.groups,
   socialLinks = siteConfig.footer.socialLinks,
-  copyright = `© ${year} ${brandLabel}. All rights reserved.`,
+  copyright = format(t.footer.copyright, { year, siteName: brandLabel }),
   class: className,
   ...restProps
 } = Astro.props;
@@ -126,6 +128,16 @@ const {
         <p class="site-footer__copyright">
           {copyright}
         </p>
+
+        {ANALYTICS_CONFIG.enabled && (
+          <button
+            type="button"
+            class="site-footer__cookie-settings"
+            data-cookie-settings
+          >
+            {t.footer.cookieSettings}
+          </button>
+        )}
       </div>
     </Stack>
   </Container>

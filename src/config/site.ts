@@ -4,6 +4,7 @@
  * Site URL is not set here. It comes from the SITE_URL environment
  * variable (see .env.example) and is available as Astro.site.
  */
+import { getDictionary } from "@/i18n/dictionaries";
 
 export type SiteLink = {
   label: string;
@@ -24,14 +25,20 @@ export type SiteSocialLink = {
 
 export type SiteColorScheme = "light" | "dark" | "auto";
 
+/**
+ * Site language — the ONE place that decides the language of all UI texts.
+ * Any code with a file in src/i18n/dictionaries/ works, e.g. "pl", "en", "uk".
+ * To add a new language, copy en.ts to <code>.ts and translate it.
+ */
+const lang = "en";
+
+const t = getDictionary(lang);
+
 export const siteConfig = {
   name: "Astro Starter",
   description: "Professional landing page built with Astro.",
 
-  /** HTML lang attribute, e.g. "en", "pl". */
-  lang: "en",
-  /** Open Graph locale, e.g. "en_US", "pl_PL". */
-  locale: "en_US",
+  lang,
 
   author: "",
   keywords: [] as string[],
@@ -45,18 +52,16 @@ export const siteConfig = {
   seo: {
     image: "/og-cover.jpg",
     imageAlt: "Astro Starter preview",
-  },
-
-  labels: {
-    skipToContent: "Skip to content",
+    imageWidth: 1200,
+    imageHeight: 630,
   },
 
   header: {
     nav: [
-      { label: "Home", href: "/" },
-      { label: "Features", href: "/#features" },
-      { label: "Components", href: "/playground" },
-      { label: "Contact", href: "/contact" },
+      { label: t.nav.home, href: "/" },
+      { label: t.nav.features, href: "/#features" },
+      { label: t.nav.components, href: "/playground" },
+      { label: t.nav.contact, href: "/contact" },
     ] as SiteLink[],
     cta: undefined as SiteLink | undefined,
   },
@@ -65,16 +70,16 @@ export const siteConfig = {
     description: "Reusable Astro frontend system for professional landing pages.",
     groups: [
       {
-        title: "Product",
+        title: t.footer.product,
         links: [
-          { label: "Features", href: "/#features" },
-          { label: "Components", href: "/playground" },
-          { label: "Contact", href: "/contact" },
+          { label: t.nav.features, href: "/#features" },
+          { label: t.nav.components, href: "/playground" },
+          { label: t.nav.contact, href: "/contact" },
         ],
       },
       {
-        title: "Legal",
-        links: [{ label: "Privacy policy", href: "/privacy" }],
+        title: t.footer.legal,
+        links: [{ label: t.footer.privacyPolicy, href: "/privacy" }],
       },
     ] as SiteLinkGroup[],
     socialLinks: [] as SiteSocialLink[],

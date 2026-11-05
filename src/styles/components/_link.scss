@@ -15,6 +15,13 @@
     text-decoration: underline;
   }
 
+  button.link {
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+
   .link--muted {
     color: var(--color-text-muted);
   }

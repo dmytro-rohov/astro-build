@@ -3,6 +3,11 @@ import { defineConfig } from "astro/config";
 import { loadEnv } from "vite";
 import node from "@astrojs/node";
 import sitemap from "@astrojs/sitemap";
+import {
+  noindexPaths,
+  normalizePath,
+  sitemapExcludedPaths,
+} from "./src/config/indexing.ts";
 
 const { SITE_URL = "http://localhost:4321" } = loadEnv(
   process.env.NODE_ENV ?? "development",
@@ -25,6 +30,8 @@ const allowedDomains = isLocalhost
 export default defineConfig({
   site: siteUrl.origin,
   output: "server",
+  // One URL form everywhere: canonical, sitemap and links have no trailing slash.
+  trailingSlash: "never",
 
   adapter: node({
     mode: "standalone",
@@ -45,11 +52,9 @@ export default defineConfig({
   integrations: [
     sitemap({
       filter: (page) => {
-        const pathname = new URL(page).pathname;
+        const pathname = normalizePath(new URL(page).pathname);
 
-        return ![
-          "/privacy",
-        ].includes(pathname);
+        return ![...noindexPaths, ...sitemapExcludedPaths].includes(pathname);
       },
     }),
   ],

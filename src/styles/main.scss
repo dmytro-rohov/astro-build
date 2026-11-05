@@ -56,4 +56,5 @@
 @use "./widgets/accordion";
 @use "./widgets/faq";
 @use "./widgets/contact-form";
+@use "./widgets/error-page";
 @layer reset, tokens, base, layout, components, widgets, utilities, state;

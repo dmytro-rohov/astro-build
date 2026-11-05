@@ -17,6 +17,11 @@ import Input from "@/components/form/Input.astro";
 import Textarea from "@/components/form/Textarea.astro";
 import Checkbox from "@/components/form/Checkbox.astro";
 
+import { CONTACT_LIMITS } from "@/lib/contact/limits";
+import { t } from "@/i18n";
+
+const m = t.contactForm;
+
 export type ContactInfoItem = {
   label: string;
   value: string;
@@ -24,8 +29,12 @@ export type ContactInfoItem = {
 };
 
 export interface Props {
+  /** Section id, used as an anchor (e.g. /#features). */
+  id?: string;
   eyebrow?: string;
   title?: string;
+  /** Use "h1" when the form is the main section of the page (e.g. /contact). */
+  headingLevel?: "h1" | "h2";
   description?: string;
   contactInfo?: ContactInfoItem[];
   action?: string;
@@ -37,19 +46,20 @@ export interface Props {
 }
 
 const {
-  eyebrow = "Contact",
-  title = "Let’s build something together.",
-  description = "Send a message and I will get back to you as soon as possible.",
+  eyebrow = m.eyebrow,
+  title = m.title,
+  headingLevel = "h2",
+  description = m.description,
   contactInfo = [
     {
-      label: "Email",
+      label: m.emailLabel,
       value: "hello@example.com",
       href: "mailto:hello@example.com",
     },
   ],
   action = "/api/contact",
   method = "post",
-  submitLabel = "Send message",
+  submitLabel = m.submit,
   privacyHref = "/privacy",
   tone = "default",
   class: className,
@@ -57,6 +67,8 @@ const {
 } = Astro.props;
 
 const hasContactInfo = contactInfo.length > 0;
+const Heading = headingLevel;
+const SubHeading = headingLevel === "h1" ? "h2" : "h3";
 ---
 
 <Section
@@ -79,9 +91,9 @@ const hasContactInfo = contactInfo.length > 0;
             </p>
           )}
 
-          <h2 class="contact-form-section__title">
+          <Heading class="contact-form-section__title">
             {title}
-          </h2>
+          </Heading>
 
           {description && (
             <p class="contact-form-section__description">
@@ -92,9 +104,9 @@ const hasContactInfo = contactInfo.length > 0;
 
         {hasContactInfo && (
           <div class="contact-form-section__info">
-            <h3 class="contact-form-section__info-title">
-              Contact details
-            </h3>
+            <SubHeading class="contact-form-section__info-title">
+              {m.detailsTitle}
+            </SubHeading>
 
             <ul class="contact-form-section__info-list">
               {contactInfo.map((item) => (
@@ -125,11 +137,15 @@ const hasContactInfo = contactInfo.length > 0;
           action={action}
           method={method}
           data-contact-form
+          data-msg-sending={m.sending}
+          data-msg-success={m.success}
+          data-msg-correct-fields={m.correctFields}
+          data-msg-generic-error={m.genericError}
         >
           <FormGroup gap="lg">
             <FormField>
               <Label for="contact-name" required>
-                Name
+                {m.nameLabel}
               </Label>
 
               <Input
@@ -137,6 +153,7 @@ const hasContactInfo = contactInfo.length > 0;
                 name="name"
                 type="text"
                 autocomplete="name"
+                maxlength={CONTACT_LIMITS.nameMax}
                 required
                 describedby="contact-name-error"
               />
@@ -146,7 +163,7 @@ const hasContactInfo = contactInfo.length > 0;
 
             <FormField>
               <Label for="contact-email" required>
-                Email
+                {m.emailLabel}
               </Label>
 
               <Input
@@ -154,12 +171,13 @@ const hasContactInfo = contactInfo.length > 0;
                 name="email"
                 type="email"
                 autocomplete="email"
+                maxlength={CONTACT_LIMITS.emailMax}
                 required
                 describedby="contact-email-hint contact-email-error"
               />
 
               <FieldHint id="contact-email-hint">
-                I will use this email only to reply to your message.
+                {m.emailHint}
               </FieldHint>
 
               <FieldError id="contact-email-error" class="contact-form__error" data-error-for="email" />
@@ -167,7 +185,7 @@ const hasContactInfo = contactInfo.length > 0;
 
             <FormField>
               <Label for="contact-subject">
-                Subject
+                {m.subjectLabel}
               </Label>
 
               <Input
@@ -175,18 +193,23 @@ const hasContactInfo = contactInfo.length > 0;
                 name="subject"
                 type="text"
                 autocomplete="off"
+                maxlength={CONTACT_LIMITS.subjectMax}
+                describedby="contact-subject-error"
               />
+
+              <FieldError id="contact-subject-error" class="contact-form__error" data-error-for="subject" />
             </FormField>
 
             <FormField>
               <Label for="contact-message" required>
-                Message
+                {m.messageLabel}
               </Label>
 
               <Textarea
                 id="contact-message"
                 name="message"
                 rows={6}
+                maxlength={CONTACT_LIMITS.messageMax}
                 required
                 describedby="contact-message-error"
               />
@@ -196,7 +219,7 @@ const hasContactInfo = contactInfo.length > 0;
 
             <div class="contact-form__honeypot" aria-hidden="true">
               <Label for="contact-website">
-                Website
+                {m.honeypotLabel}
               </Label>
 
               <Input
@@ -215,11 +238,11 @@ const hasContactInfo = contactInfo.length > 0;
                 required
                 describedby="contact-privacy-error"
               >
-                I accept the{" "}
+                {m.privacyBefore}{" "}
                 <Link href={privacyHref}>
-                  privacy policy
+                  {m.privacyLink}
                 </Link>
-                .
+                {m.privacyAfter}
               </Checkbox>
 
               <FieldError id="contact-privacy-error" class="contact-form__error" data-error-for="privacy" />
@@ -246,6 +269,7 @@ const hasContactInfo = contactInfo.length > 0;
     }
 
     const status = form.querySelector("[data-contact-status]");
+    const messages = form.dataset;
     const submit = form.querySelector('button[type="submit"]');
 
     const clearErrors = () => {
@@ -277,7 +301,7 @@ const hasContactInfo = contactInfo.length > 0;
       clearErrors();
 
       if (status) {
-        status.textContent = "Sending message...";
+        status.textContent = messages.msgSending ?? "";
         status.setAttribute("data-state", "pending");
       }
 
@@ -304,7 +328,7 @@ const hasContactInfo = contactInfo.length > 0;
           }
 
           if (status) {
-            status.textContent = result.message || "Please correct the form.";
+            status.textContent = result.message || messages.msgCorrectFields || "";
             status.setAttribute("data-state", "error");
           }
 
@@ -314,14 +338,14 @@ const hasContactInfo = contactInfo.length > 0;
         form.reset();
 
         if (status) {
-          status.textContent = result.message || "Message sent successfully.";
+          status.textContent = result.message || messages.msgSuccess || "";
           status.setAttribute("data-state", "success");
         }
       } catch (error) {
         console.error(error);
 
         if (status) {
-          status.textContent = "Something went wrong. Please try again later.";
+          status.textContent = messages.msgGenericError ?? "";
           status.setAttribute("data-state", "error");
         }
       } finally {

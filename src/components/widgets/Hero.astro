@@ -11,6 +11,8 @@ import Link from "@/components/ui/Link.astro";
 import Img from "@/components/media/Img.astro";
 
 export interface Props {
+  /** Section id, used as an anchor (e.g. /#features). */
+  id?: string;
   eyebrow?: string;
   title: string;
   description?: string;

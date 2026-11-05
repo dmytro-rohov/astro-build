@@ -2,10 +2,14 @@ import type { APIContext } from "astro";
 import { validateContactForm } from "@/lib/contact/validateContactForm";
 import { sendContactMessage } from "@/lib/contact/sendContactMessage";
 import { createContactResponse } from "@/lib/contact/createContactResponse";
+import { getClientId, isRateLimited } from "@/lib/contact/rateLimit";
+import { t } from "@/i18n";
 
 export const prerender = false;
-    
-export async function POST({ request }: APIContext) {
+
+const messages = t.contactForm;
+
+export async function POST({ request, clientAddress }: APIContext) {
   try {
     const contentType = request.headers.get("content-type") ?? "";
 
@@ -13,9 +17,19 @@ export async function POST({ request }: APIContext) {
       return createContactResponse(
         {
           success: false,
-          message: "Invalid form submission.",
+          message: messages.invalidSubmission,
         },
         400
+      );
+    }
+
+    if (isRateLimited(getClientId(request, clientAddress))) {
+      return createContactResponse(
+        {
+          success: false,
+          message: messages.rateLimited,
+        },
+        429
       );
     }
 
@@ -27,7 +41,7 @@ export async function POST({ request }: APIContext) {
       return createContactResponse(
         {
           success: false,
-          message: "Please correct the highlighted fields.",
+          message: messages.correctFields,
           errors: validation.errors,
         },
         400
@@ -38,7 +52,7 @@ export async function POST({ request }: APIContext) {
 
     return createContactResponse({
       success: true,
-      message: "Your message has been sent successfully.",
+      message: messages.success,
     });
   } catch (error) {
     console.error("Contact form error:", error);
@@ -46,7 +60,7 @@ export async function POST({ request }: APIContext) {
     return createContactResponse(
       {
         success: false,
-        message: "Something went wrong. Please try again later.",
+        message: messages.genericError,
       },
       500
     );
@@ -57,7 +71,7 @@ export async function GET() {
   return createContactResponse(
     {
       success: false,
-      message: "Method not allowed.",
+      message: messages.methodNotAllowed,
     },
     405
   );

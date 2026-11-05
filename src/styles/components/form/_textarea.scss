@@ -5,7 +5,7 @@
     padding: var(--spacing-md);
     color: var(--color-text-primary);
     background: var(--color-background-primary);
-    border: 1px solid var(--color-border-default);
+    border: 1px solid var(--color-border-control);
     border-radius: var(--radius-md);
     font: inherit;
     font-size: var(--font-size-base);
@@ -22,7 +22,7 @@
   }
 
   .textarea:hover {
-    border-color: var(--color-border-strong);
+    border-color: var(--color-text-secondary);
   }
 
   .textarea:focus {

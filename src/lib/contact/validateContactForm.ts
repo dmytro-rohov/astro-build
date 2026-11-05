@@ -3,6 +3,10 @@ import type {
   ContactValidationError,
   ContactValidationResult,
 } from "./contact.types";
+import { CONTACT_LIMITS as L } from "./limits";
+import { format, t } from "@/i18n";
+
+const e = t.contactForm.errors;
 
 function getStringValue(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -27,55 +31,48 @@ export function validateContactForm(formData: FormData): ContactValidationResult
     website: getStringValue(formData, "website"),
   };
 
+  const privacyAccepted = formData.get("privacy") !== null;
+
   const errors: ContactValidationError[] = [];
 
+  const add = (field: ContactValidationError["field"], message: string) => {
+    errors.push({ field, message });
+  };
+
   if (data.website) {
-    errors.push({
-      field: "form",
-      message: "Spam detected.",
-    });
+    add("form", e.spam);
   }
 
   if (!data.name) {
-    errors.push({
-      field: "name",
-      message: "Name is required.",
-    });
-  }
-
-  if (data.name && data.name.length < 2) {
-    errors.push({
-      field: "name",
-      message: "Name must be at least 2 characters.",
-    });
+    add("name", e.nameRequired);
+  } else if (data.name.length < L.nameMin) {
+    add("name", format(e.nameTooShort, { min: L.nameMin }));
+  } else if (data.name.length > L.nameMax) {
+    add("name", format(e.nameTooLong, { max: L.nameMax }));
   }
 
   if (!data.email) {
-    errors.push({
-      field: "email",
-      message: "Email is required.",
-    });
+    add("email", e.emailRequired);
+  } else if (data.email.length > L.emailMax) {
+    add("email", format(e.emailTooLong, { max: L.emailMax }));
+  } else if (!isValidEmail(data.email)) {
+    add("email", e.emailInvalid);
   }
 
-  if (data.email && !isValidEmail(data.email)) {
-    errors.push({
-      field: "email",
-      message: "Enter a valid email address.",
-    });
+  if (data.subject && data.subject.length > L.subjectMax) {
+    add("subject", format(e.subjectTooLong, { max: L.subjectMax }));
   }
 
   if (!data.message) {
-    errors.push({
-      field: "message",
-      message: "Message is required.",
-    });
+    add("message", e.messageRequired);
+  } else if (data.message.length < L.messageMin) {
+    add("message", format(e.messageTooShort, { min: L.messageMin }));
+  } else if (data.message.length > L.messageMax) {
+    add("message", format(e.messageTooLong, { max: L.messageMax }));
   }
 
-  if (data.message && data.message.length < 10) {
-    errors.push({
-      field: "message",
-      message: "Message must be at least 10 characters.",
-    });
+  if (!privacyAccepted) {
+    add("privacy", e.privacyRequired);
   }
 
   if (errors.length > 0) {

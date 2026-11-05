@@ -7,7 +7,7 @@ export type ContactFormData = {
 };
 
 export type ContactValidationError = {
-  field: keyof ContactFormData | "form";
+  field: keyof ContactFormData | "privacy" | "form";
   message: string;
 };
 

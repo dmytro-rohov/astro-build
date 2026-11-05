@@ -1,15 +1,16 @@
 import type { ContactFormData } from "../contact.types";
 import { siteConfig } from "@/config/site";
+import { format, t } from "@/i18n";
 
 export function createContactEmailText(data: ContactFormData) {
   return [
-    `New message from ${siteConfig.name}`,
+    format(t.email.heading, { siteName: siteConfig.name }),
     "",
-    `Name: ${data.name}`,
-    `Email: ${data.email}`,
-    `Subject: ${data.subject || "No subject"}`,
+    `${t.email.name}: ${data.name}`,
+    `${t.email.email}: ${data.email}`,
+    `${t.email.subject}: ${data.subject || t.email.noSubject}`,
     "",
-    "Message:",
+    `${t.email.message}:`,
     data.message,
   ].join("\n");
 }

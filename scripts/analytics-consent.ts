@@ -124,12 +124,12 @@ export function loadGoogleAnalytics(): Promise<void> {
   analyticsLoadPromise = new Promise((resolve, reject) => {
     const { measurementId } = ANALYTICS_CONFIG;
 
-    if (!measurementId.startsWith("G-")) {
+    if (!ANALYTICS_CONFIG.enabled) {
       analyticsLoadPromise = null;
 
       reject(
         new Error(
-          "Invalid GA4 Measurement ID. Expected an identifier beginning with G-.",
+          "Analytics is disabled. Set PUBLIC_GA_MEASUREMENT_ID (G-…) in .env.",
         ),
       );
 

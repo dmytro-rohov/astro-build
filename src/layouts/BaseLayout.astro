@@ -3,6 +3,8 @@ import Header from "@/layouts/Header.astro";
 import Footer from "@/layouts/Footer.astro";
 import CookieConsent from "@/components/CookieConsent.astro";
 import { siteConfig } from "@/config/site";
+import { isNoindexPath } from "@/config/indexing";
+import { dir, ogLocale, pageTitle, t } from "@/i18n";
 import { tokens } from "@/design-system/tokens";
 import "@/styles/main.scss";
 
@@ -18,18 +20,16 @@ export interface Props {
   showHeader?: boolean;
   showFooter?: boolean;
   keywords?: string;
-  lang?: string;
   author?: string;
 }
 
 const {
-  title = siteConfig.name,
+  title,
   description = siteConfig.description,
-  lang = siteConfig.lang,
   image = siteConfig.seo.image,
   imageAlt = siteConfig.seo.imageAlt,
   canonicalPath = Astro.url.pathname,
-  robots = "index, follow",
+  robots: robotsProp = "index, follow",
   pageType = "website",
   jsonLd,
   showHeader = true,
@@ -43,6 +43,11 @@ const canonicalUrl = new URL(canonicalPath, siteUrl);
 const socialImageUrl = new URL(image, siteUrl);
 const ogType = pageType === "profile" ? "profile" : "website";
 
+const fullTitle = pageTitle(title);
+const robots = isNoindexPath(Astro.url.pathname) ? "noindex, follow" : robotsProp;
+const lang = siteConfig.lang;
+const isDefaultImage = image === siteConfig.seo.image;
+
 const { colorScheme } = siteConfig;
 const dataTheme = colorScheme === "auto" ? undefined : colorScheme;
 const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
@@ -50,7 +55,7 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
 ---
 
 <!doctype html>
-<html lang={lang} data-theme={dataTheme}>
+<html lang={lang} dir={dir} data-theme={dataTheme}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -65,21 +70,28 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
     <link rel="canonical" href={canonicalUrl.toString()} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     
-    <title>{title}</title>
+    <title>{fullTitle}</title>
 
     <!-- Open Graph -->
     <meta property="og:type" content={ogType}/>
     <meta property="og:site_name" content={siteConfig.name}/>
-    <meta property="og:title" content={title}/>
+    <meta property="og:title" content={fullTitle}/>
     <meta property="og:description" content={description}/>
     <meta property="og:url" content={canonicalUrl}/>
     <meta property="og:image" content={socialImageUrl}/>
     <meta property="og:image:alt" content={imageAlt}/>
-    <meta property="og:locale" content={siteConfig.locale}/>
+    {isDefaultImage && (
+      <>
+        <meta property="og:image:width" content={String(siteConfig.seo.imageWidth)}/>
+        <meta property="og:image:height" content={String(siteConfig.seo.imageHeight)}/>
+        <meta property="og:image:type" content="image/jpeg"/>
+      </>
+    )}
+    <meta property="og:locale" content={ogLocale}/>
 
     <!-- Twitter/X -->
     <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:title" content={title}/>
+    <meta name="twitter:title" content={fullTitle}/>
     <meta name="twitter:description" content={description}/>
     <meta name="twitter:image" content={socialImageUrl}/>
     <meta name="twitter:image:alt" content={imageAlt}/>
@@ -96,7 +108,7 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
   </head>
 
   <body>
-    <a class="skip-link" href="#main-content">{siteConfig.labels.skipToContent}</a>
+    <a class="skip-link" href="#main-content">{t.common.skipToContent}</a>
     {showHeader && <Header />}
     <main id="main-content">
       <slot />
