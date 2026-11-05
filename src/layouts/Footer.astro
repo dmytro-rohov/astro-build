@@ -59,6 +59,10 @@ const {
 } = Astro.props;
 
 const variant = site.layout.footer.variant;
+const businessAddress = site.business.address;
+const address = [businessAddress?.street, [businessAddress?.postalCode, businessAddress?.city].filter(Boolean).join(" ")]
+  .filter(Boolean)
+  .join(", ");
 const allLinks = groups.flatMap((group) => group.links);
 ---
 
@@ -111,8 +115,14 @@ const allLinks = groups.flatMap((group) => group.links);
             </p>
           )}
 
-          {(phone || email) && (
+          {(phone || email || address) && (
             <ul class="site-footer__contact">
+              {address && (
+                <li class="site-footer__contact-item">
+                  <Icon name="map-pin" />
+                  <span>{address}</span>
+                </li>
+              )}
               {phone && (
                 <li class="site-footer__contact-item">
                   <Icon name="phone" />

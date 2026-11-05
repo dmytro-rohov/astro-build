@@ -124,11 +124,22 @@ export default {
     privacy: {
       title: "Polityka prywatności",
       heading: "Polityka prywatności",
-      placeholder:
-        "To jest przykładowa polityka prywatności. Przed wdrożeniem produkcyjnym zastąp ją treścią przygotowaną dla projektu.",
+      description: "Jak {name} przetwarza dane osobowe i korzysta z plików cookie.",
+      controllerHeading: "Administrator danych",
+      controllerText: "Administratorem Twoich danych osobowych jest {name}{address}.",
+      contactText: "W sprawach dotyczących danych osobowych napisz na adres {email}.",
+      dataHeading: "Jakie dane przetwarzamy",
+      dataText: "Gdy korzystasz z formularza kontaktowego, przetwarzamy Twoje imię i nazwisko, adres e-mail, temat i treść wiadomości. Dostawca hostingu zapisuje też dane techniczne (adres IP, datę i godzinę zapytania) w celach bezpieczeństwa.",
+      purposeHeading: "Cel i podstawa prawna",
+      purposeText: "Dane wykorzystujemy, aby odpowiedzieć na Twoją wiadomość i zapewnić bezpieczeństwo strony — na podstawie naszego prawnie uzasadnionego interesu (art. 6 ust. 1 lit. f RODO) oraz działań na Twoje żądanie przed zawarciem umowy (art. 6 ust. 1 lit. b RODO).",
+      retentionHeading: "Jak długo przechowujemy dane",
+      retentionText: "Wiadomości przechowujemy przez czas potrzebny do obsługi zapytania, a następnie do 12 miesięcy na wypadek dalszych pytań. Logi serwera przechowujemy do 30 dni.",
+      rightsHeading: "Twoje prawa",
+      rightsText: "Masz prawo dostępu do danych, ich sprostowania, usunięcia i ograniczenia przetwarzania, prawo sprzeciwu, przenoszenia danych oraz wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych.",
       cookiesHeading: "Pliki cookie i analityka",
-      cookiesText:
-        "Opcjonalne analityczne pliki cookie są używane wyłącznie po wyrażeniu zgody. Zgodę możesz w każdej chwili zmienić lub wycofać.",
+      cookiesText: "Opcjonalne analityczne pliki cookie (Google Analytics) są używane wyłącznie po wyrażeniu zgody. Zgodę możesz w każdej chwili zmienić lub wycofać.",
+      noCookiesText: "Ta strona nie używa analitycznych ani reklamowych plików cookie. Niewielki wpis w pamięci przeglądarki może zapamiętać Twój wybór dotyczący plików cookie.",
+      updated: "Ostatnia aktualizacja: {date}",
     },
     contactSent: {
       title: "Wiadomość wysłana",
