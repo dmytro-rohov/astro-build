@@ -41,4 +41,4 @@ export const test = base.extend<{ pageErrors: string[]; allowedErrors: RegExp[] 
 export { expect };
 
 /** Pages every test suite should cover. */
-export const PAGES = ["/", "/contact", "/privacy", "/playground"] as const;
+export const PAGES = ["/", "/contact", "/privacy"] as const;

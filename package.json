@@ -36,7 +36,9 @@
     "test:remote": "bash scripts/site/test-remote.sh",
     "site:preview": "tsx scripts/site/preview.ts",
     "site:screenshot": "tsx scripts/site/screenshot.ts",
-    "site:report": "tsx scripts/site/report.ts"
+    "site:report": "tsx scripts/site/report.ts",
+    "catalog": "tsx scripts/site/catalog.ts",
+    "gallery": "tsx scripts/site/gallery.ts"
   },
   "dependencies": {
     "@astrojs/node": "^11.0.3",

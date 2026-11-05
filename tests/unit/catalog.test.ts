@@ -3,6 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { expect, test } from "vitest";
+import { ARCHETYPE_IDS } from "../../src/design-system/archetypes";
 import { sectionTypes } from "../../src/site/registry";
 
 test("the generated catalog covers every variant with min and max content and validates", () => {
@@ -19,4 +20,27 @@ test("the generated catalog covers every variant with min and max content and va
       expect(ids.has(`${type.type}-${variant}-max`), `${type.type}/${variant} max`).toBe(true);
     }
   }
+}, 60_000);
+
+test("catalog.json describes every section, variant and archetype; the LLM schema has no regex patterns", () => {
+  const out = fs.mkdtempSync(path.join(os.tmpdir(), "ai-catalog-"));
+  execFileSync("npx", ["tsx", "scripts/site/catalog.ts", "--out", out], { stdio: "pipe" });
+
+  const catalog = JSON.parse(fs.readFileSync(path.join(out, "catalog.json"), "utf8"));
+  const llm = fs.readFileSync(path.join(out, "site.schema.llm.json"), "utf8");
+  const full = JSON.parse(fs.readFileSync(path.join(out, "site.schema.json"), "utf8"));
+
+  for (const type of sectionTypes) {
+    const entry = catalog.sections.find((section: { type: string }) => section.type === type.type);
+    expect(entry, type.type).toBeDefined();
+    expect(entry.variants.map((variant: { id: string }) => variant.id)).toEqual(Object.keys(type.variants));
+    expect(entry.content.length, `${type.type} content fields`).toBeGreaterThan(0);
+  }
+
+  expect(catalog.archetypes.map((archetype: { id: string }) => archetype.id)).toEqual(ARCHETYPE_IDS);
+  expect(catalog.fontPairs.length).toBeGreaterThan(0);
+  expect(catalog.icons.length).toBeGreaterThan(0);
+  expect(full.properties.pages).toBeDefined();
+  expect(llm).not.toMatch(/"pattern"/);
+  expect(llm).toMatch(/max \d+ characters/);
 }, 60_000);
