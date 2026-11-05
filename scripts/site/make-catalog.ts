@@ -16,6 +16,7 @@ import sharp from "sharp";
 import { z } from "zod";
 import { layoutTypes, sectionTypes } from "../../src/site/registry";
 import { loadSite, SiteValidationError } from "../../src/site/loader";
+import { ONE_PER_PAGE } from "../../src/site/schema/site";
 import type { FieldMeta, ImageSlot } from "../../src/site/schema/fields";
 import { getFlag } from "./args";
 
@@ -104,7 +105,8 @@ function example(schema: z.ZodType, mode: Mode, key: string, index = 0): unknown
     const min = schema.minLength ?? 1;
     const max = schema.maxLength ?? 120;
 
-    if (key === "href" || key === "mapUrl") return linkFor(key);
+    if (key === "mapUrl") return linkFor(key);
+    if (key === "href") return schema.safeParse("/").success ? "/" : "https://example.com/";
     if (key === "id") return `${mode}-${++idCounter}`;
     if (meta.editor?.fieldType === "richtext-lite") return richTextOf(max, mode);
 
@@ -151,21 +153,38 @@ function example(schema: z.ZodType, mode: Mode, key: string, index = 0): unknown
   throw new Error(`make-catalog: unsupported schema type "${def.type}" at "${key}"`);
 }
 
-const pages = sectionTypes.map((type) => ({
-  id: type.type,
-  slug: type.type === "hero" ? "/" : `/${type.type}`,
-  title: type.label,
-  nav: { show: true, label: type.type },
-  sections: Object.keys(type.variants).flatMap((variant) =>
-    (["min", "max"] as const).map((mode) => ({
-      id: `${type.type}-${variant}-${mode}`,
-      type: type.type,
-      variant,
-      props: {},
-      content: example(type.content, mode, "content"),
-    })),
-  ),
-}));
+const ONE_PER_PAGE_TYPES: readonly string[] = ONE_PER_PAGE;
+
+const sectionsOf = (type: (typeof sectionTypes)[number]) =>
+  Object.keys(type.variants).flatMap((variant) =>
+    (["min", "max"] as const).map((mode) => {
+      const definition = (type.variants as Record<string, { props?: z.ZodType }>)[variant];
+      return {
+        id: `${type.type}-${variant}-${mode}`,
+        type: type.type,
+        variant,
+        // MAX also sets every variant prop (last option, toggles on), so props get rendered too.
+        props: mode === "max" && definition.props ? example(definition.props, "max", "props") : {},
+        content: example(type.content, mode, "content"),
+      };
+    }),
+  );
+
+// Types allowed once per page (contact, faq): instance N goes onto the N-th
+// page after the home page (pages are limited to 12, so no page per instance).
+const pages = sectionTypes
+  .filter((type) => !ONE_PER_PAGE_TYPES.includes(type.type))
+  .map((type) => ({
+    id: type.type,
+    slug: type.type === "hero" ? "/" : `/${type.type}`,
+    title: type.label,
+    nav: { show: true, label: type.type },
+    sections: sectionsOf(type),
+  }));
+
+for (const type of sectionTypes.filter((type) => ONE_PER_PAGE_TYPES.includes(type.type))) {
+  sectionsOf(type).forEach((section, index) => pages[index + 1].sections.push(section));
+}
 
 const site = {
   schemaVersion: 1,
@@ -190,7 +209,7 @@ const site = {
   theme: { archetype },
   layout: {
     navbar: { variant: navbar, props: {}, content: example(layoutTypes.navbar.content, "max", "content") },
-    footer: { variant: footer, props: {}, content: {} },
+    footer: { variant: footer, props: {}, content: example(layoutTypes.footer.content, "max", "content") },
   },
   navigation: { auto: true },
   pages,

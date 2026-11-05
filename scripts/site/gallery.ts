@@ -51,7 +51,9 @@ for (const archetype of archetypes) {
             await new Promise((resolve) => setTimeout(resolve, 60));
           }
           window.scrollTo(0, 0);
-          await Promise.all([...document.images].map((image) => image.decode().catch(() => undefined)));
+          // decode() never settles for an image that was not requested — cap the wait.
+          const loaded = Promise.all([...document.images].map((image) => image.decode().catch(() => undefined)));
+          await Promise.race([loaded, new Promise((resolve) => setTimeout(resolve, 3000))]);
         });
         await page.waitForTimeout(250);
 

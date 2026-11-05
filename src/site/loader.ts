@@ -9,6 +9,7 @@ import { imageSize } from "image-size";
 import type { z } from "zod";
 import { schemaVersionProblem } from "./migrations";
 import { sectionTypes } from "./registry";
+import { SPOTLIGHT_ITEMS } from "../sections/testimonials/schema";
 import type { ImageSlot } from "./schema/fields";
 import { AssetsSchema, type Assets } from "./schema/assets";
 import { META_IMAGE_SLOTS, SiteSchema, type Site } from "./schema/site";
@@ -238,8 +239,16 @@ export function loadSite(dir = resolveSiteDir()): LoadedSite {
     "privacy: the privacy policy is generated from a template — have it reviewed (controller, legal bases, retention) before launch.",
     ...(site.business.email ? [] : ["business.email: no public email — the privacy policy and contact sections show no email address."]),
     ...(site.meta.url || process.env.SITE_URL ? [] : ["meta.url: not set — canonical links and the sitemap use http://localhost:4321."]),
-    ...theme.adjustments.map(
-      (adjustment) => `theme.accent: ${adjustment.from} was adjusted to ${adjustment.to} (${adjustment.scheme} scheme) to meet WCAG AA.`,
+    // Only the schemes the site can show (both for "auto").
+    ...theme.adjustments
+      .filter((adjustment) => theme.colorScheme === "auto" || adjustment.scheme === theme.colorScheme)
+      .map((adjustment) => `theme.accent: ${adjustment.from} was adjusted to ${adjustment.to} (${adjustment.scheme} scheme) to meet WCAG AA.`),
+    ...site.pages.flatMap((page, pageIndex) =>
+      page.sections.flatMap((section, sectionIndex) =>
+        section.type === "testimonials" && section.variant === "spotlight" && section.content.items.length > SPOTLIGHT_ITEMS
+          ? [`pages[${pageIndex}].sections[${sectionIndex}]: the "spotlight" variant shows the first ${SPOTLIGHT_ITEMS} of ${section.content.items.length} testimonials — use "cards" to show all.`]
+          : [],
+      ),
     ),
   ];
 

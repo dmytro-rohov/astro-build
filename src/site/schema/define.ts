@@ -11,7 +11,7 @@ import { Id } from "./fields";
 export const SECTION_TONES = ["default", "muted", "inverse", "accent"] as const;
 
 /** Props every section accepts. */
-export const CommonSectionProps = z.object({
+export const CommonSectionProps = z.strictObject({
   tone: z.enum(SECTION_TONES).optional().describe("Background tone of the section."),
   spacing: z.enum(["sm", "md", "lg", "xl"]).optional().describe("Vertical padding of the section."),
   align: z.enum(["left", "center"]).optional().describe("Text alignment where the variant supports it."),
@@ -74,7 +74,7 @@ function variantObject(
     ...(definition.props?.shape ?? {}),
   }).strict();
 
-  return z.object({
+  return z.strictObject({
     ...base,
     variant: z.literal(variant).describe(definition.description),
     props: props.default({}),

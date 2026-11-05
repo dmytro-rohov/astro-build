@@ -1,5 +1,9 @@
 ---
-import Icon from "@/components/media/Icon.astro";
+/**
+ * Rating stars. Inline SVG instead of the sprite: a <use> can't fill the sprite
+ * symbol (its fill="none" wins inside the shadow tree), so filled stars need
+ * their own path.
+ */
 import { format, t } from "@/i18n";
 
 export interface Props {
@@ -7,10 +11,13 @@ export interface Props {
 }
 
 const { rating } = Astro.props;
+const STAR = "m12 3.5 2.6 5.3 5.9.9-4.25 4.1 1 5.8L12 16.9l-5.25 2.7 1-5.8L3.5 9.7l5.9-.9z";
 ---
 
 <p class="s-stars" role="img" aria-label={format(t.sections.rating, { value: rating })}>
   {[1, 2, 3, 4, 5].map((star) => (
-    <Icon name="star" size="1rem" class:list={["s-stars__star", star <= rating && "s-stars__star--on"]} />
+    <svg class:list={["s-stars__star", star <= rating && "s-stars__star--on"]} viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+      <path d={STAR} fill={star <= rating ? "currentColor" : "none"} stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+    </svg>
   ))}
 </p>

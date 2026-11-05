@@ -62,4 +62,17 @@
   .logo-text {
     font-family: var(--font-family-heading);
   }
+
+  // Long business names: at most two lines in the header, never squeezing the menu button.
+  .site-header__brand {
+    min-width: 0;
+  }
+
+  .site-header__brand .logo-text {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
 }

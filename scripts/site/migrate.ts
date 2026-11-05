@@ -13,7 +13,19 @@ import { getFlag } from "./args";
 
 const dir = resolveSiteDir(getFlag("site"));
 const file = path.join(dir, "site.json");
-const raw = JSON.parse(fs.readFileSync(file, "utf8")) as RawSite;
+if (!fs.existsSync(file)) {
+  console.error(`✖ ${dir}\nFile not found: ${file}`);
+  process.exit(1);
+}
+
+let raw: RawSite;
+
+try {
+  raw = JSON.parse(fs.readFileSync(file, "utf8")) as RawSite;
+} catch (error) {
+  console.error(`✖ ${file}: not valid JSON: ${(error as Error).message}`);
+  process.exit(1);
+}
 const from = schemaVersionOf(raw);
 
 if (from === SCHEMA_VERSION) {

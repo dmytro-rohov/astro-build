@@ -290,13 +290,14 @@
     color: var(--color-text-muted);
   }
 
-  .s-stars__star--on {
-    color: var(--color-action-primary);
+  .s-stars__star {
+    flex: none;
+    width: 1rem;
+    height: 1rem;
   }
 
-  .s-stars__star--on :where(svg),
   .s-stars__star--on {
-    fill: currentcolor;
+    color: var(--color-action-primary);
   }
 
   .s-spotlight {
@@ -602,6 +603,13 @@
     padding-block: var(--spacing-xs);
     margin: 0;
     list-style: none;
+  }
+
+  // Phones: only the phone number (a long email would wrap); the email is in the footer.
+  @include mq-down(sm) {
+    .site-header__contact-secondary {
+      display: none;
+    }
   }
 
   @include mq(md) {

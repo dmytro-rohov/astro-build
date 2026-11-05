@@ -1,6 +1,19 @@
 import { describe, expect, test } from "vitest";
 import { HttpsUrl, Id, SafeUrl, Slug, richTextLite, text } from "../../src/site/schema/fields";
 
+test("site paths cannot escape to another host with a backslash (QA F1)", () => {
+  for (const url of ["/\\evil.example/login", "/\\/evil.example", "/a b"]) {
+    expect(SafeUrl.safeParse(url).success, url).toBe(false);
+  }
+});
+
+test("text rejects control and bidi-override characters (QA F6)", () => {
+  expect(text(40).safeParse("ev\u202eil").success).toBe(false);
+  expect(text(40).safeParse("a\u0000b").success).toBe(false);
+  expect(richTextLite(40).safeParse("**a**\u200b").success).toBe(false);
+  expect(text(40).safeParse("Zażółć gęślą jaźń 👩‍🍳").success).toBe(true);
+});
+
 describe("SafeUrl", () => {
   test.each(["https://example.com", "mailto:a@b.pl", "tel:+48600100200", "/contact", "/#features", "#faq", "/a/b?x=1"])(
     "accepts %s",

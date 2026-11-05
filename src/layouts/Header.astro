@@ -42,7 +42,7 @@ const { phone, email } = site.business;
       <Container size="xl">
         <ul class="site-header__contact" aria-label={t.sections.contactBar}>
           {phone && <li><Link href={`tel:${phone.replace(/[^\d+]/g, "")}`} variant="muted">{phone}</Link></li>}
-          {email && <li><Link href={`mailto:${email}`} variant="muted">{email}</Link></li>}
+          {email && <li class:list={[phone && "site-header__contact-secondary"]}><Link href={`mailto:${email}`} variant="muted">{email}</Link></li>}
         </ul>
       </Container>
     </div>

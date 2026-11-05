@@ -3,7 +3,7 @@ import { iconNames } from "../../design-system/sprite.generated";
 import { defineSectionType } from "../../site/schema/define";
 import { Action, field, Id, imageSlot, listWithIds, multilineText, text } from "../../site/schema/fields";
 
-const Service = z.object({
+const Service = z.strictObject({
   id: Id,
   title: field(text(60), { label: "Nazwa", fieldType: "text", description: "Service name." }),
   description: field(multilineText(240).optional(), { label: "Opis", fieldType: "textarea", description: "One or two sentences." }),
@@ -17,7 +17,7 @@ export const services = defineSectionType({
   type: "services",
   label: "Usługi / oferta",
   description: "What the business offers, optionally with prices.",
-  content: z.object({
+  content: z.strictObject({
     eyebrow: field(text(40).optional(), { label: "Nadtytuł", fieldType: "text", description: "Short label above the title." }),
     title: field(text(90), { label: "Tytuł", fieldType: "text", description: "Section headline." }),
     description: field(multilineText(240).optional(), { label: "Opis", fieldType: "textarea", description: "Short intro." }),
@@ -27,7 +27,7 @@ export const services = defineSectionType({
     cards: {
       description: "Cards in a grid with optional photo, icon, price and link.",
       uses: ["eyebrow", "description", "items.description", "items.price", "items.icon", "items.image", "items.action"],
-      props: z.object({ columns: z.enum(["2", "3"]).optional().describe("Columns on wide screens.") }),
+      props: z.strictObject({ columns: z.enum(["2", "3"]).optional().describe("Columns on wide screens.") }),
     },
     "price-list": {
       description: "Menu-style list: name and description on the left, price on the right.",

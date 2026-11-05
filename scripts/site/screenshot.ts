@@ -36,7 +36,9 @@ export async function takeScreenshots(context: SiteContext, baseUrl: string) {
             await new Promise((resolve) => setTimeout(resolve, 60));
           }
           window.scrollTo(0, 0);
-          await Promise.all([...document.images].map((image) => image.decode().catch(() => undefined)));
+          // decode() never settles for an image that was not requested — cap the wait.
+          const loaded = Promise.all([...document.images].map((image) => image.decode().catch(() => undefined)));
+          await Promise.race([loaded, new Promise((resolve) => setTimeout(resolve, 3000))]);
         });
         // The cookie banner is not part of the design review.
         await tab.locator("[data-consent-reject]").click({ timeout: 1000 }).catch(() => {});
