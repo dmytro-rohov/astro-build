@@ -43,10 +43,6 @@
                 "href": "/#features"
               },
               {
-                "label": "Components",
-                "href": "/playground"
-              },
-              {
                 "label": "Contact",
                 "href": "/contact"
               }
@@ -77,10 +73,6 @@
         "href": "/#features"
       },
       {
-        "label": "Components",
-        "href": "/playground"
-      },
-      {
         "label": "Contact",
         "href": "/contact"
       }
@@ -106,8 +98,8 @@
               "href": "/#features"
             },
             "secondaryAction": {
-              "label": "View components",
-              "href": "/playground"
+              "label": "See the FAQ",
+              "href": "/#faq"
             },
             "image": "asset:hero"
           }
@@ -174,8 +166,8 @@
             "title": "Start from a stronger base.",
             "description": "Use ready widgets for common pages or compose your own custom sections from small, predictable primitives.",
             "primaryAction": {
-              "label": "Open playground",
-              "href": "/playground"
+              "label": "Contact us",
+              "href": "/contact"
             },
             "secondaryAction": {
               "label": "Test contact form",

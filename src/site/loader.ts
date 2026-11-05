@@ -7,6 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { imageSize } from "image-size";
 import type { z } from "zod";
+import { schemaVersionProblem } from "./migrations";
 import { sectionTypes } from "./registry";
 import type { ImageSlot } from "./schema/fields";
 import { AssetsSchema, type Assets } from "./schema/assets";
@@ -160,7 +161,12 @@ function availableLanguages(): string[] {
 
 export function loadSite(dir = resolveSiteDir()): LoadedSite {
   const siteFile = path.join(dir, "site.json");
-  const parsed = SiteSchema.safeParse(readJson(siteFile));
+  const raw = readJson(siteFile);
+  const versionProblem = schemaVersionProblem(raw);
+
+  if (versionProblem) throw new SiteValidationError("site.json", [versionProblem]);
+
+  const parsed = SiteSchema.safeParse(raw);
 
   if (!parsed.success) {
     throw new SiteValidationError("site.json", formatIssues(parsed.error.issues));

@@ -8,6 +8,9 @@ export default [
     ignores: [
       "dist/**",
       "playwright-report/**",
+      ".generated/**",
+      "dist-catalog/**",
+      "dist-gallery/**",
       "test-results/**",
       ".lighthouseci/**",
       "node_modules/**",

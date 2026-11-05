@@ -23,7 +23,7 @@ export const META_IMAGE_SLOTS = {
  * Paths the engine owns. Pages in site.json cannot use them (exact match or prefix).
  */
 export const RESERVED_SLUGS = [
-  "/api", "/contact/sent", "/contact/failed", "/privacy", "/playground",
+  "/api", "/contact/sent", "/contact/failed", "/privacy",
   "/404", "/500", "/robots.txt", "/site.webmanifest", "/_astro", "/fonts", "/icons",
 ] as const;
 

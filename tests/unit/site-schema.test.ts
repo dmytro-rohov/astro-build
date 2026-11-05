@@ -78,7 +78,7 @@ describe("site-wide rules", () => {
     expect(issues).toContain('pages[2].slug: Duplicate slug "/contact".');
   });
 
-  test.each(["/privacy", "/api/contact", "/contact/sent", "/playground", "/fonts/x"])("reserved slug %s", (slug) => {
+  test.each(["/privacy", "/api/contact", "/contact/sent", "/404", "/fonts/x"])("reserved slug %s", (slug) => {
     expect(issuesFor((site) => (site.pages[1].slug = slug))).toContain(`pages[1].slug: "${slug}" is reserved by the engine.`);
   });
 

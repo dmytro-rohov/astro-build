@@ -12,7 +12,7 @@ for (const path of PAGES) {
     const description = await page.locator('meta[name="description"]').getAttribute("content");
     expect(description?.length).toBeGreaterThan(10);
 
-    // Canonical only on indexable pages (noindex pages such as /playground have none).
+    // Canonical only on indexable pages (noindex pages such as /contact/sent have none).
     const noindex = /noindex/.test((await page.locator('meta[name="robots"]').getAttribute("content")) ?? "");
     const canonical = page.locator('link[rel="canonical"]');
 
@@ -32,8 +32,8 @@ for (const path of PAGES) {
   });
 }
 
-test("playground is noindex", async ({ page }) => {
-  await page.goto("/playground");
+test("contact result pages are noindex", async ({ page }) => {
+  await page.goto("/contact/sent");
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
 });
 
@@ -61,7 +61,7 @@ test("robots.txt, sitemap and manifest", async ({ request }) => {
 
   const sitemap = await (await request.get("/sitemap-0.xml")).text();
   expect(sitemap).toContain("/contact</loc>");
-  expect(sitemap).not.toContain("/playground");
+  expect(sitemap).not.toContain("/contact/sent");
   expect(sitemap).not.toContain("/privacy");
 
   const manifest = await (await request.get("/site.webmanifest")).json();

@@ -63,7 +63,6 @@ src/
 │  ├─ robots.txt.ts
 │  ├─ index.astro
 │  ├─ contact.astro
-│  ├─ playground.astro
 │  └─ privacy.astro
 │
 └─ styles/
@@ -94,10 +93,19 @@ sites/<site>/
 ```
 
 ```bash
-npm run site:validate -- --site sites/_demo   # validate only, readable errors
-npm run site:build -- --site sites/_demo      # full build into ./dist
-SITE_DIR=sites/_demo npm run dev              # dev server for one site
+npm run site:validate -- --site <dir>               # schema, contrast, fonts, assets — no build
+npm run site:build -- --site <dir> [--out <dir>]    # full build (default ./dist)
+npm run site:preview -- --site <dir> [--port 4321]  # dev server with live reload
+npm run site:screenshot -- --site <dir> [--out <dir>]  # desktop + mobile PNG of every page
+npm run site:report -- --site <dir> [--out <dir>]   # build + axe + Lighthouse + screenshots → report.json
 ```
+
+`site:report` writes `<out>/report.json` for the orchestrator (default out:
+`.generated/sites/<siteId>`): engine and schema version, validation issues and warnings
+(legal review of the privacy template, missing data, accent adjustments), resolved theme,
+per page axe violations, Lighthouse scores and screenshot paths, and the quality gates
+(`build`, `a11y`, `lighthouse` ≥ 90/95/95/95). Exit code 1 when a gate fails; an invalid
+site still gets a report with the readable issues.
 
 - Schemas (Zod) in `src/site/schema/` and `src/sections/<type>/schema.ts` are the single
   source of truth for TS types, validation and (later) the JSON Schema for AI.
@@ -107,28 +115,46 @@ SITE_DIR=sites/_demo npm run dev              # dev server for one site
   anchors; rich text is a small Markdown-like subset (`**bold**`, `*italic*`, `[text](/link)`)
   rendered by the engine, never HTML. Secrets stay in environment variables.
 - Every page comes from `pages[]` (`src/pages/[...slug].astro`); the first section renders
-  the page's only `<h1>`. Engine pages (privacy, playground, contact results, 404/500, API)
+  the page's only `<h1>`. Engine pages (privacy, contact results, 404/500, API)
   use reserved slugs that site.json cannot take.
 - Errors are listed per field, e.g.
   `pages[0].sections[0].content.title: Too big: expected string to have <=80 characters`.
 
 `src/config/site.ts` is now a compatibility layer computed from site.json — do not put content there.
 
+### Schema versions and migrations
+
+Every site.json declares `schemaVersion` (the format) and `engine` (a semver range of the
+starter it needs). The engine reads exactly one `schemaVersion` (`SCHEMA_VERSION` in
+`src/site/schema/site.ts`, currently `1`):
+
+- an **older** site stops with `schemaVersion: 1 is older than 2. Run npm run site:migrate…`,
+- a **newer** site stops with `…is newer than this engine supports` — update the starter.
+
+```bash
+npm run site:migrate -- --site sites/<client>            # keeps site.v<N>.backup.json
+npm run site:migrate -- --site sites/<client> --dry-run  # prints the result only
+```
+
+A breaking schema change bumps `SCHEMA_VERSION` and adds a pure migration function
+(`src/site/migrations/v<N>-to-v<N+1>.ts`, registered in `src/site/migrations/index.ts`);
+the migrated site is validated like any build.
+
 ### Section catalog
 
 | Type | Variants |
 |---|---|
 | `hero` | `split-image`, `centered`, `cover-image` (photo behind text, accent tone allowed) |
-| `about` | `image-side`, `centered` |
+| `about` | `image-side`, `centered`, `highlights` |
 | `services` | `cards`, `price-list` |
 | `features` | `cards-grid`, `icon-list` |
-| `testimonials` | `cards`, `spotlight` |
+| `testimonials` | `cards`, `spotlight`, `stars` |
 | `gallery` | `grid`, `mosaic` |
-| `pricing` | `cards`, `compact` |
+| `pricing` | `plans`, `cards`, `compact` |
 | `faq` | `accordion`, `two-column` (both publish FAQPage JSON-LD) |
 | `cta` | `boxed`, `banner` |
 | `contact` | `form-split`, `form-centered` (details from `business`) |
-| `hours-location` | `card`, `compact` (hours, address, phone from `business`) |
+| `hours-location` | `details`, `card`, `compact` (hours, address, phone from `business`) |
 | layout `navbar` | `simple`, `centered`, `topbar` (phone/email bar) |
 | layout `footer` | `columns`, `simple`, `centered` |
 
@@ -144,6 +170,18 @@ used optional fields, own props), create `src/sections/<type>/<Variant>.astro` w
 variant twice — minimum and maximum content (every field at its limit, long Polish words).
 `npm run test:catalog` builds it in all 8 archetypes (rotating navbar/footer variants and
 pl/en/uk) and checks that nothing overflows at 320/768/1440 px and that axe passes.
+
+**AI catalog:** `npm run catalog` writes `dist-catalog/` — `site.schema.json` (full JSON Schema
+with editor metadata: labels, field types, image slots), `site.schema.llm.json` (the same for
+LLM structured output: limits moved into descriptions, no regex patterns — the result is always
+re-validated with Zod) and `catalog.json` (types, variants with their `uses` and props, content
+fields with limits, archetypes, font pairs, icons, reserved slugs). The orchestrator reads it
+to pick two clearly different designs for one brief.
+
+**Visual gallery:** `npm run gallery [-- --archetypes default,bold]` builds the catalog site in
+each archetype and saves element screenshots of every variant (min/max content, light/dark) to
+`dist-gallery/index.html`, filterable by type, variant, archetype, scheme and content. It is a
+local QA tool (replaces the v2 `/playground` page) and is never deployed.
 
 ### Theme: archetypes, colors, fonts
 
@@ -258,7 +296,7 @@ the page part: `<BaseLayout title="Contact">`.
 - URLs have no trailing slash (`trailingSlash: "never"`) — canonical links and the
   sitemap use the same form; `/contact/` redirects to `/contact`.
 - `src/config/indexing.ts`:
-  - `noindexPaths` — `noindex` meta and left out of the sitemap (e.g. `/playground`)
+  - `noindexPaths` — `noindex` meta and left out of the sitemap (e.g. `/contact/sent`)
   - `sitemapExcludedPaths` — indexable, but not in the sitemap (e.g. `/privacy`)
 - Custom `404` (prerendered) and `500` pages, both `noindex`.
 - Every page has exactly one `<h1>`.
@@ -572,8 +610,7 @@ http://localhost:4321
 Useful pages:
 
 ```txt
-/           - welcome page
-/playground - widget playground
+/           - demo home page
 /contact    - contact form demo
 /privacy    - privacy placeholder
 ```

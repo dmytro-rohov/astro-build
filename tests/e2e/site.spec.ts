@@ -1,23 +1,34 @@
 /**
- * Boundary tests on the generated catalog site (scripts/site/make-catalog.ts):
- * every variant with minimum and maximum content must not overflow its
- * container at phone, tablet and desktop widths, and must pass axe.
- * Runs only when CATALOG=1 (see scripts/site/test-catalog.sh).
+ * Tests for ANY site built from site.json (SITE_DIR): every page loads with one
+ * h1 and valid JSON-LD, nothing overflows at phone/tablet/desktop widths, axe
+ * passes. Used for the generated catalog (every variant with min/max content,
+ * scripts/site/test-catalog.sh) and the fixture sites (scripts/site/test-fixtures.sh).
+ * Runs only when SITE_SMOKE=1.
  */
 import fs from "node:fs";
 import path from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 import { test, expect } from "./fixtures";
 
-const enabled = process.env.CATALOG === "1";
+const enabled = process.env.SITE_SMOKE === "1";
 const siteDir = path.resolve(process.env.SITE_DIR ?? ".generated/catalog");
 const pages: { slug: string }[] = enabled ? JSON.parse(fs.readFileSync(path.join(siteDir, "site.json"), "utf8")).pages : [];
 
-test.describe("catalog boundaries", () => {
-  test.skip(!enabled, "set CATALOG=1 with SITE_DIR pointing at a generated catalog site");
+test.describe(`site ${path.basename(siteDir)}`, () => {
+  test.skip(!enabled, "set SITE_SMOKE=1 with SITE_DIR pointing at a site directory");
   test.use({ viewport: { width: 1440, height: 900 } });
 
   for (const { slug } of pages) {
+    test(`${slug}: loads with one h1 and valid JSON-LD`, async ({ page }) => {
+      const response = await page.goto(slug);
+      expect(response?.status()).toBe(200);
+      await expect(page.locator("h1")).toHaveCount(1);
+
+      for (const block of await page.locator('script[type="application/ld+json"]').allTextContents()) {
+        expect(JSON.parse(block)["@context"]).toBe("https://schema.org");
+      }
+    });
+
     test(`${slug}: nothing overflows at 320, 768 and 1440 px`, async ({ page }) => {
       for (const width of [320, 768, 1440]) {
         await page.setViewportSize({ width, height: 900 });
