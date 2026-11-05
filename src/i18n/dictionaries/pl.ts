@@ -46,6 +46,8 @@ export default {
     nameLabel: "Imię i nazwisko",
     emailLabel: "E-mail",
     emailHint: "Użyjemy tego adresu wyłącznie do odpowiedzi na Twoją wiadomość.",
+    phoneLabel: "Telefon",
+    addressLabel: "Adres",
     subjectLabel: "Temat",
     messageLabel: "Wiadomość",
     honeypotLabel: "Strona internetowa",

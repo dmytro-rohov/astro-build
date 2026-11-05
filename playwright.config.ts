@@ -31,6 +31,8 @@ export default defineConfig({
     timeout: 240_000,
     reuseExistingServer: !process.env.CI,
     env: {
+      // Site under test (default: the demo site).
+      SITE_DIR: process.env.SITE_DIR ?? "sites/_demo",
       PORT: String(PORT),
       HOST: "localhost",
       SITE_URL: BASE_URL,

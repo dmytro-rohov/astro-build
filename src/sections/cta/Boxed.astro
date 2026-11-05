@@ -1,0 +1,25 @@
+---
+import CTA from "@/components/widgets/CTA.astro";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"cta">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+---
+
+<CTA
+  id={section.id}
+  headingLevel={headingLevel}
+  eyebrow={content.eyebrow}
+  title={content.title}
+  description={content.description}
+  primaryAction={content.primaryAction}
+  secondaryAction={content.secondaryAction}
+  align={props.align}
+  tone={props.tone}
+  boxed
+/>

@@ -1,0 +1,28 @@
+---
+import Hero from "@/components/widgets/Hero.astro";
+import { getAsset } from "@/site/assets";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"hero">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const image = content.image ? getAsset(content.image) : undefined;
+---
+
+<Hero
+  id={section.id}
+  headingLevel={headingLevel}
+  eyebrow={content.eyebrow}
+  title={content.title}
+  description={content.description}
+  primaryAction={content.primaryAction}
+  secondaryAction={content.secondaryAction}
+  image={image?.image}
+  imageAlt={image?.alt}
+  align={props.align}
+  tone={props.tone}
+/>

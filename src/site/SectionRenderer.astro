@@ -1,0 +1,24 @@
+---
+/**
+ * Renders the sections of one page from site.json.
+ * The first section gets the page's only <h1>.
+ */
+import { sectionComponents } from "@/site/components";
+import type { Page } from "@/site/schema/site";
+
+export interface Props {
+  sections: Page["sections"];
+}
+
+const { sections } = Astro.props;
+---
+
+{sections.map((section, index) => {
+  const Component = sectionComponents[section.type]?.[section.variant];
+
+  if (!Component) {
+    throw new Error(`[site] No component for section "${section.id}" (${section.type}/${section.variant}).`);
+  }
+
+  return <Component section={section} headingLevel={index === 0 ? "h1" : "h2"} />;
+})}

@@ -80,6 +80,42 @@ public/    - static files (fonts, icon sprite, og-cover.jpg)
 
 ---
 
+## v3: the site comes from `site.json`
+
+Since v3 the engine builds a website from **one data file**. All content and
+configuration live in `SITE_DIR/site.json` (default `sites/_demo`); there is no
+client content in `.astro` files.
+
+```
+sites/<site>/
+  site.json            ← pages, sections, business data, theme, layout
+  assets/assets.json   ← images: { "hero": { "file": "hero.jpg", "alt": "…" } }
+  assets/hero.jpg
+```
+
+```bash
+npm run site:validate -- --site sites/_demo   # validate only, readable errors
+npm run site:build -- --site sites/_demo      # full build into ./dist
+SITE_DIR=sites/_demo npm run dev              # dev server for one site
+```
+
+- Schemas (Zod) in `src/site/schema/` and `src/sections/<type>/schema.ts` are the single
+  source of truth for TS types, validation and (later) the JSON Schema for AI.
+- **Content belongs to the section type**, a variant only adds props and lists the optional
+  fields it shows — switching variants never loses content.
+- `site.json` is untrusted input: links only `https:`, `mailto:`, `tel:`, site paths and
+  anchors; rich text is a small Markdown-like subset (`**bold**`, `*italic*`, `[text](/link)`)
+  rendered by the engine, never HTML. Secrets stay in environment variables.
+- Every page comes from `pages[]` (`src/pages/[...slug].astro`); the first section renders
+  the page's only `<h1>`. Engine pages (privacy, playground, contact results, 404/500, API)
+  use reserved slugs that site.json cannot take.
+- Errors are listed per field, e.g.
+  `pages[0].sections[0].content.title: Too big: expected string to have <=80 characters`.
+
+`src/config/site.ts` is now a compatibility layer computed from site.json — do not put content there.
+
+---
+
 ## Project Configuration
 
 Per-project content lives in one file: `src/config/site.ts`.

@@ -32,6 +32,9 @@ jobs:
       - name: Lint, type check and build
         run: npm run validate
 
+      - name: Invalid site.json stops the build with readable errors
+        run: npm run test:broken-site
+
       # Builds the site with test values and runs the browser tests.
       - name: End-to-end and accessibility tests
         run: npm run test:e2e

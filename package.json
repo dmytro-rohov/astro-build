@@ -1,7 +1,7 @@
 {
   "name": "astro-starter",
   "type": "module",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "engines": {
     "node": ">=24.16.0 <25",
     "npm": ">=11"
@@ -21,19 +21,24 @@
     "lint:scss": "stylelint \"src/**/*.scss\"",
     "lint:js": "eslint .",
     "lint": "npm run lint:scss && npm run lint:js",
-    "validate": "npm run lint && npm run check && npm run build",
+    "validate": "npm run lint && npm run test:unit && npm run check && npm run build",
     "build:app-icons": "node scripts/build-app-icons.js",
     "test:e2e": "playwright test",
     "test:lighthouse": "lhci autorun --config=lighthouserc.cjs",
     "test": "npm run test:e2e && npm run test:lighthouse",
-    "ci": "npm run validate && npm run test",
-    "test:docker": "bash scripts/docker-smoke.sh"
+    "ci": "npm run validate && npm run test:broken-site && npm run test",
+    "test:docker": "bash scripts/docker-smoke.sh",
+    "test:unit": "vitest run",
+    "site:validate": "tsx scripts/site/validate.ts",
+    "site:build": "tsx scripts/site/build.ts",
+    "test:broken-site": "bash scripts/site/check-broken.sh"
   },
   "dependencies": {
     "@astrojs/node": "^11.0.3",
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^7.1.6",
-    "resend": "^6.18.1"
+    "resend": "^6.18.1",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
@@ -55,6 +60,7 @@
     "svgstore": "^3.0.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.65.0"
+    "typescript-eslint": "^8.65.0",
+    "vitest": "^5.1.0"
   }
 }

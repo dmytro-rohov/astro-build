@@ -22,6 +22,8 @@ import "@/styles/main.scss";
 
 export interface Props {
   title?: string;
+  /** Use `title` as is, without the "{title} | {site name}" template (home page). */
+  titleIsFull?: boolean;
   description?: string;
   canonicalPath?: string;
   image?: string;
@@ -46,6 +48,7 @@ export interface Props {
 
 const {
   title,
+  titleIsFull = false,
   description = siteConfig.description,
   image = siteConfig.seo.image,
   imageAlt = siteConfig.seo.imageAlt,
@@ -65,7 +68,7 @@ const canonicalUrl = new URL(canonicalPath, siteUrl);
 const socialImageUrl = new URL(image, siteUrl);
 const ogType = pageType === "profile" ? "profile" : "website";
 
-const fullTitle = pageTitle(title);
+const fullTitle = titleIsFull && title ? title : pageTitle(title);
 const robots = isNoindexPath(Astro.url.pathname) ? "noindex, follow" : robotsProp;
 const lang = siteConfig.lang;
 const isDefaultImage = image === siteConfig.seo.image;

@@ -1,0 +1,24 @@
+---
+import FeatureGrid from "@/components/widgets/FeatureGrid.astro";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"features">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+---
+
+<FeatureGrid
+  id={section.id}
+  headingLevel={headingLevel}
+  eyebrow={content.eyebrow}
+  title={content.title}
+  description={content.description}
+  items={content.items}
+  columns={props.columns}
+  tone={props.tone}
+  align={props.align}
+/>
