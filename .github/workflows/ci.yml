@@ -35,6 +35,9 @@ jobs:
       - name: Invalid site.json stops the build with readable errors
         run: npm run test:broken-site
 
+      - name: Remote contact mode builds a static site
+        run: npm run test:remote
+
       # Builds the site with test values and runs the browser tests.
       - name: End-to-end and accessibility tests
         run: npm run test:e2e
@@ -87,3 +90,34 @@ jobs:
       # Every variant with min and max content: no overflow at 320/768/1440 px, axe clean.
       - name: Catalog in every archetype
         run: npm run test:catalog
+
+  fixtures:
+    name: Fixture sites (3 businesses × 2 designs)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      # Every fixture: validate, build, site tests + axe; three of them: report gates (axe, Lighthouse).
+      - name: Fixture sites
+        run: npm run test:fixtures
+
+      - name: Upload fixture reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fixture-reports
+          path: .generated/fixtures/*/report.json
+          if-no-files-found: ignore

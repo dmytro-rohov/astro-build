@@ -1,87 +1,87 @@
-# Astro Starter V2
+# Astro Starter v3
 
-Reusable Astro starter for building landing pages and small websites faster.
+A website engine for small business sites: one `site.json` (content, business data,
+theme, layout) in, a fast, accessible, secure static site out. Built for an
+orchestrator (Mytko Website Factory) that turns a client brief into two clearly
+different designs from the same content — but just as usable by hand.
 
-The project includes a production-oriented frontend system with design tokens, SCSS architecture, layout primitives, UI components, media components, reusable widgets and a backend-ready contact form.
+- **11 section types, 23 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
+  12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
+- SEO and JSON-LD from business data (opening hours, address, FAQ), GDPR cookie banner,
+  CSP without `unsafe-inline`, contact form — own Node API or any form service
+- CLI for the orchestrator: validate, build, screenshots, `report.json` with axe and
+  Lighthouse gates, AI catalog and JSON Schema, schema migrations
+- Tests on every change: 230 unit tests, Playwright e2e + axe, Lighthouse, a generated
+  min/max catalog in all archetypes, six realistic fixture sites, Docker smoke test
+
+## Quick start
+
+```bash
+nvm use && npm ci
+npm run dev                                                 # demo site (sites/_demo)
+npm run site:preview -- --site sites/_fixtures/cafe-warm   # any other site
+npm run site:report -- --site sites/_fixtures/cafe-warm    # build + quality report
+```
+
+A new site = a new directory with `site.json` and `assets/` (copy a fixture from
+`sites/_fixtures/`). Run `npm run catalog` once to get `dist-catalog/site.schema.json`
+for autocompletion in your editor (`"$schema"` in site.json points to it).
 
 ---
 
 ## Tech Stack
 
-- Astro
-- TypeScript
-- SCSS / Sass
-- Design tokens
-- SVG sprite icons
-- Local font pipeline (pure Node: subset-font + fontkit, no Python)
-- Astro API routes
-- Node adapter ready for VPS deployment
+- Astro 7 (static output; Node adapter only for the local contact API)
+- TypeScript, Zod 4 (schemas → types, validation, JSON Schema)
+- SCSS / Sass with design tokens (OKLCH palettes generated per site)
+- SVG sprite icons, local variable fonts (@fontsource, subset per language)
+- Vitest, Playwright, axe-core, Lighthouse CI
+- Docker + `server.mjs` (security and caching headers) for VPS deployment
 
 ---
 
 ## Project Structure
 
 ```txt
-src/
-├─ assets/
-│  ├─ fonts/
-│  ├─ icons/
-│  ├─ brand/       (app-icon.png — source of all icons)
-│  └─ img/
-│
-├─ components/
-│  ├─ form/
-│  ├─ layouts/
-│  ├─ media/
-│  ├─ ui/
-│  └─ widgets/
-│
-├─ config/
-│  ├─ analytics.ts
-│  └─ site.ts
-│
-├─ design-system/
-│  ├─ tokens/
-│  └─ utils/
-│
-├─ i18n/
-│  ├─ dictionaries/   (en.ts, pl.ts, uk.ts — one file per language)
-│  └─ index.ts
-│
-├─ layouts/
-│  ├─ BaseLayout.astro
-│  ├─ Header.astro
-│  └─ Footer.astro
-│
-├─ lib/
-│  └─ contact/
-│
-├─ pages/
-│  ├─ api/
-│  ├─ 404.astro
-│  ├─ 500.astro
-│  ├─ robots.txt.ts
-│  ├─ index.astro
-│  ├─ contact.astro
-│  └─ privacy.astro
-│
-└─ styles/
-   ├─ abstracts/
-   ├─ base/
-   ├─ components/
-   ├─ layouts/
-   ├─ state/
-   └─ widgets/
+sites/
+├─ _demo/             demo site (default SITE_DIR)
+└─ _fixtures/         six realistic Polish sites: 3 businesses × 2 designs
 
-scripts/   - build scripts (tokens, icons, fonts) and client scripts
-public/    - static files (fonts, icon sprite, og-cover.jpg)
+src/
+├─ site/              the engine: loader, schemas, registry, migrations, CSP, Vite plugin
+│  ├─ schema/         site.json schema (fields, site, assets)
+│  ├─ migrations/     schemaVersion migrations
+│  └─ routes/         contact API (injected in local contact mode)
+├─ sections/<type>/   schema.ts + one .astro per variant (+ _shared)
+├─ layout/            navbar and footer schemas
+├─ design-system/
+│  ├─ archetypes/     8 style presets
+│  ├─ theme/          palette generation, contrast, shape tokens
+│  ├─ fonts/          font families and pairs
+│  ├─ tokens/         core tokens
+│  └─ utils/          tokens → SCSS (per site)
+├─ components/        layout, UI, form, media primitives and widgets
+├─ layouts/           BaseLayout, Header, Footer
+├─ i18n/dictionaries/ one file per language (en, pl, uk)
+├─ lib/contact/       contact form validation and delivery
+├─ pages/             [...slug].astro (all site pages), privacy, contact results, 404/500
+└─ styles/
+
+scripts/
+├─ site/              CLI: validate, build, preview, screenshot, report, migrate,
+│                     catalog, gallery, make-catalog, make-fixtures, test scripts
+└─ build-*.ts|js      per-site system assets: tokens, fonts, icons, app icons, OG image
+
+tests/unit/           Vitest (schemas, theme, fonts, CSP, migrations, catalog…)
+tests/e2e/            Playwright (pages, a11y, cookies, contact, keyboard, security, site.spec)
 ```
 
 ---
 
-## v3: the site comes from `site.json`
+## The site comes from `site.json`
 
-Since v3 the engine builds a website from **one data file**. All content and
+The engine builds a website from **one data file**. All content and
 configuration live in `SITE_DIR/site.json` (default `sites/_demo`); there is no
 client content in `.astro` files.
 
@@ -108,7 +108,7 @@ per page axe violations, Lighthouse scores and screenshot paths, and the quality
 site still gets a report with the readable issues.
 
 - Schemas (Zod) in `src/site/schema/` and `src/sections/<type>/schema.ts` are the single
-  source of truth for TS types, validation and (later) the JSON Schema for AI.
+  source of truth for TS types, validation and the JSON Schema for AI (`npm run catalog`).
 - **Content belongs to the section type**, a variant only adds props and lists the optional
   fields it shows — switching variants never loses content.
 - `site.json` is untrusted input: links only `https:`, `mailto:`, `tel:`, site paths and
@@ -145,16 +145,16 @@ the migrated site is validated like any build.
 | Type | Variants |
 |---|---|
 | `hero` | `split-image`, `centered`, `cover-image` (photo behind text, accent tone allowed) |
-| `about` | `image-side`, `centered`, `highlights` |
+| `about` | `image-side`, `centered` |
 | `services` | `cards`, `price-list` |
 | `features` | `cards-grid`, `icon-list` |
-| `testimonials` | `cards`, `spotlight`, `stars` |
+| `testimonials` | `cards`, `spotlight` |
 | `gallery` | `grid`, `mosaic` |
-| `pricing` | `plans`, `cards`, `compact` |
+| `pricing` | `cards`, `compact` |
 | `faq` | `accordion`, `two-column` (both publish FAQPage JSON-LD) |
 | `cta` | `boxed`, `banner` |
 | `contact` | `form-split`, `form-centered` (details from `business`) |
-| `hours-location` | `details`, `card`, `compact` (hours, address, phone from `business`) |
+| `hours-location` | `card`, `compact` (hours, address, phone from `business`) |
 | layout `navbar` | `simple`, `centered`, `topbar` (phone/email bar) |
 | layout `footer` | `columns`, `simple`, `centered` |
 
@@ -758,84 +758,36 @@ The starter ships the official Inter 4.1 (SIL Open Font License, see
 
 ---
 
-## Creating a New Widget
+## Creating a New Site
 
-Recommended structure:
+1. Copy a fixture: `cp -r sites/_fixtures/cafe-warm sites/<client>`.
+2. Edit `site.json` (`siteId`, `meta`, `business`, `theme`, pages and sections) and put the
+   images in `assets/` with their `alt` text in `assets/assets.json`.
+3. `npm run site:validate -- --site sites/<client>` — every problem is one readable line.
+4. `npm run site:preview -- --site sites/<client>`, then `npm run site:report` before launch.
 
-```txt
-src/components/widgets/NewWidget.astro
-src/styles/widgets/_new-widget.scss
-```
-
-Then import styles in:
-
-```txt
-src/styles/main.scss
-```
-
-Example:
-
-```scss
-@use "./widgets/new-widget";
-```
-
-Widget rules:
-
-- use layout primitives
-- use UI primitives
-- use semantic design tokens
-- accept `class?: string`
-- spread `...restProps`
-- do not import local SCSS inside `.astro`
-- keep widget-specific styles in `src/styles/widgets/`
-
----
-
-## Creating a New Page
-
-Example:
-
-```astro
----
-import BaseLayout from "@/layouts/BaseLayout.astro";
-import Hero from "@/components/widgets/Hero.astro";
-import FeatureGrid from "@/components/widgets/FeatureGrid.astro";
----
-
-<BaseLayout
-  title="Page title"
-  description="Page description"
->
-  <Hero
-    title="Page headline"
-    description="Page intro text"
-  />
-
-  <FeatureGrid
-    title="Features"
-    items={[
-      {
-        title: "Feature one",
-        description: "Feature description.",
-      },
-    ]}
-  />
-</BaseLayout>
-```
+Pages are never written as `.astro` files: add a page to `pages[]`, a section to its
+`sections[]`. New layouts of a section are new **variants** (see "Section catalog");
+components in `src/components/` are the building blocks variants are made of.
 
 ---
 
 ## Testing
 
 ```bash
-npm run validate     # lint, type check, build
-npm run test:e2e     # Playwright: builds with test values and runs browser tests
+npm run validate         # system build, lint, unit tests (Vitest), type check, build
+npm run test:unit        # Vitest only
+npm run test:e2e         # Playwright: builds the demo with test values, browser tests
 npm run test:lighthouse  # Lighthouse CI on the test build (run after test:e2e)
-npm run ci           # validate + e2e + Lighthouse, as in GitHub Actions
-npm run test:docker  # production Docker image smoke test (needs Docker)
+npm run test:broken-site # an invalid site.json stops validation and the build
+npm run test:remote      # contact "remote" mode produces a purely static site
+npm run test:catalog     # generated min/max catalog in all 8 archetypes
+npm run test:fixtures    # the six fixture sites (+ report gates for three of them)
+npm run ci               # validate + broken-site + remote + e2e + Lighthouse
+npm run test:docker      # production Docker image smoke test (needs Docker)
 ```
 
-End-to-end tests (`tests/e2e/`, desktop and mobile Chrome):
+End-to-end tests (`tests/e2e/`, desktop and mobile Chrome, demo site):
 
 - **pages** — status, one `<h1>`, `lang`, title, description, canonical, valid JSON-LD,
   404 page, trailing-slash redirect, `robots.txt`, sitemap, manifest, icons
@@ -849,15 +801,35 @@ End-to-end tests (`tests/e2e/`, desktop and mobile Chrome):
   outside click closes), navigation without JavaScript, visible focus
 - **security** — headers on pages, 404, API and static files, CSP without
   `unsafe-inline`, immutable assets/fonts/sprite, `/_image` disabled, no inline `style`
+- **site** (`SITE_SMOKE=1`, any `SITE_DIR`) — one `<h1>` and valid JSON-LD per page,
+  nothing overflows and no section container collapses at 320/768/1440 px, axe clean;
+  used by the catalog and fixture tests
 
 Every test fails on console errors or CSP violations. Google Analytics requests are
 blocked in tests.
 
-Lighthouse thresholds (`lighthouserc.cjs`): performance ≥ 90, accessibility,
-best practices and SEO ≥ 95.
+### Fixture sites
 
-GitHub Actions (`.github/workflows/ci.yml`) runs `validate`, e2e and Lighthouse on
-every pull request and push to `main`; reports are uploaded when a step fails.
+`sites/_fixtures/` holds six realistic Polish sites — a dance school (4 pages), a car
+repair shop (one page) and a café (2 pages), each in two designs built from **the same
+content**, like the two proposals the orchestrator makes for a brief:
+
+| Site | Archetype | Notes |
+|---|---|---|
+| `dance-elegant` / `dance-energetic` | elegant / energetic | multi-page, local contact API |
+| `auto-corporate` / `auto-bold` | corporate / bold | corporate uses contact mode `remote` (static) |
+| `cafe-warm` / `cafe-premium-dark` | warm / premium-dark | premium-dark is a dark site |
+
+Images are generated abstract compositions (no stock photos or licences). The content
+lives in `scripts/site/make-fixtures.ts`; after changing it run
+`npx tsx scripts/site/make-fixtures.ts` and commit the result.
+
+Lighthouse thresholds (`lighthouserc.cjs` and `site:report`): performance ≥ 90,
+accessibility, best practices and SEO ≥ 95.
+
+GitHub Actions (`.github/workflows/ci.yml`) on every pull request and push to `main`:
+quality (validate, broken site, remote mode, e2e, Lighthouse), Docker smoke test,
+catalog in 8 archetypes and the fixture sites; reports are uploaded as artifacts.
 
 The first run needs Playwright's Chromium: `npx playwright install chromium`.
 
@@ -893,17 +865,19 @@ debug mode, immutable font caching). CI runs it on every pull request.
 
 ## Version
 
-Current version: **V2** (`2.0.0`).
+Current version: **v3** (`3.0.0`), `schemaVersion` 1. The v2 starter is kept on the
+`v2` branch / tag `v2.0.0`.
 
-V2 includes:
+v3 adds to v2:
 
-- design tokens with light and dark color schemes
-- SCSS architecture
-- layout, UI, form and media primitives
-- reusable widgets (Hero, FeatureGrid, CTA, FAQ, ContactForm, Navbar, Accordion)
-- one-switch site language (`siteConfig.lang`) with any number of dictionaries
-- SEO: titles, canonical, Open Graph, Twitter Card, JSON-LD, sitemap, robots.txt, 404/500
-- GDPR-friendly cookie banner with Consent Mode v2 and consent withdrawal
-- ContactForm with server validation, rate limit and Resend delivery
-- Docker deployment
-- automated tests: Playwright e2e, axe-core accessibility, Lighthouse CI, GitHub Actions
+- the site engine: everything from `site.json`, Zod schemas, readable errors, untrusted input
+- section catalog: 11 types, 23 variants, navbar and footer variants, min/max boundary tests
+- themes: 8 archetypes, generated OKLCH palettes with WCAG AA correction, shape tokens,
+  12 font pairs with per-language subsets
+- images: slots with proportions and minimum sizes, focal-point crops, generated app icons
+  and Open Graph image
+- business data → hours table, address, JSON-LD (openingHoursSpecification, FAQPage)
+- contact modes: local Node API or remote form service (static site), CSP built per site
+- orchestrator CLI: validate / build / preview / screenshot / report.json, AI catalog and
+  JSON Schema, visual gallery, schema migrations
+- six fixture sites and CI jobs for the catalog and fixtures

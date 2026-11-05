@@ -1,0 +1,30 @@
+{
+  "hero": {
+    "file": "hero.jpg",
+    "alt": "Abstrakcyjna kompozycja w kolorach kawy i mleka",
+    "focal": {
+      "x": 50,
+      "y": 40
+    }
+  },
+  "about": {
+    "file": "about.jpg",
+    "alt": "Abstrakcyjna grafika w odcieniach palonej kawy"
+  },
+  "g-1": {
+    "file": "g-1.jpg",
+    "alt": "Grafika: espresso z własnej palarni"
+  },
+  "g-2": {
+    "file": "g-2.jpg",
+    "alt": "Grafika: domowe ciasta w witrynie"
+  },
+  "g-3": {
+    "file": "g-3.jpg",
+    "alt": "Grafika: sala z dużymi oknami"
+  },
+  "g-4": {
+    "file": "g-4.jpg",
+    "alt": "Grafika: palenie ziaren kawy"
+  }
+}

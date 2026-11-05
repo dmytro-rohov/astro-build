@@ -2,7 +2,18 @@
 
 @layer layout {
   .section {
+    // Vertical rhythm shrinks on small screens (96–128px paddings are for desktops).
+    --section-fluid: 0.55;
+
     position: relative;
+
+    @include mq(md) {
+      --section-fluid: 0.75;
+    }
+
+    @include mq(lg) {
+      --section-fluid: 1;
+    }
   }
 
   .section--spacing-none {
@@ -10,19 +21,19 @@
   }
 
   .section--spacing-sm {
-    padding-block: calc(var(--spacing-2xl) * var(--space-scale));
+    padding-block: calc(var(--spacing-2xl) * var(--space-scale) * var(--section-fluid));
   }
 
   .section--spacing-md {
-    padding-block: calc(var(--spacing-3xl) * var(--space-scale));
+    padding-block: calc(var(--spacing-3xl) * var(--space-scale) * var(--section-fluid));
   }
 
   .section--spacing-lg {
-    padding-block: calc(var(--spacing-4xl) * var(--space-scale));
+    padding-block: calc(var(--spacing-4xl) * var(--space-scale) * var(--section-fluid));
   }
 
   .section--spacing-xl {
-    padding-block: calc(var(--spacing-5xl) * var(--space-scale));
+    padding-block: calc(var(--spacing-5xl) * var(--space-scale) * var(--section-fluid));
   }
 
   .section--tone-default {

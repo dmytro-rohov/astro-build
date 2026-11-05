@@ -1,0 +1,385 @@
+{
+  "$schema": "../../../dist-catalog/site.schema.json",
+  "schemaVersion": 1,
+  "engine": "^3.0.0",
+  "siteId": "cafe-premium-dark",
+  "lang": "pl",
+  "meta": {
+    "name": "Ziarno i Para",
+    "description": "Kawiarnia specialty przy Rynku we Wrocławiu: kawa z własnej palarni, domowe ciasta i śniadania do 13:00. Wpadnij na espresso albo zostań z laptopem.",
+    "url": "https://ziarnoipara.example",
+    "seo": {
+      "imageAlt": "Kawiarnia Ziarno i Para we Wrocławiu"
+    }
+  },
+  "business": {
+    "type": "CafeOrCoffeeShop",
+    "email": "czesc@ziarnoipara.example",
+    "phone": "+48 71 555 12 34",
+    "address": {
+      "street": "ul. Ruska 19",
+      "city": "Wrocław",
+      "postalCode": "50-079",
+      "country": "PL"
+    },
+    "hours": [
+      {
+        "days": [
+          "mo",
+          "tu",
+          "we",
+          "th",
+          "fr"
+        ],
+        "opens": "07:30",
+        "closes": "19:00"
+      },
+      {
+        "days": [
+          "sa",
+          "su"
+        ],
+        "opens": "09:00",
+        "closes": "20:00"
+      }
+    ],
+    "priceRange": "$"
+  },
+  "theme": {
+    "archetype": "premium-dark",
+    "accent": "#a0623a"
+  },
+  "layout": {
+    "navbar": {
+      "variant": "centered",
+      "props": {
+        "sticky": true
+      },
+      "content": {
+        "cta": {
+          "label": "Zobacz menu",
+          "href": "/menu"
+        }
+      }
+    },
+    "footer": {
+      "variant": "centered",
+      "props": {},
+      "content": {
+        "description": "Kawiarnia i mała palarnia kawy przy ul. Ruskiej we Wrocławiu. Codziennie świeże ciasta i śniadania.",
+        "groups": [
+          {
+            "title": "Kawiarnia",
+            "links": [
+              {
+                "label": "Menu",
+                "href": "/menu"
+              },
+              {
+                "label": "O nas",
+                "href": "/#o-nas"
+              },
+              {
+                "label": "Godziny otwarcia",
+                "href": "/#godziny"
+              }
+            ]
+          },
+          {
+            "title": "Informacje",
+            "links": [
+              {
+                "label": "Rezerwacje i wydarzenia",
+                "href": "/#kontakt"
+              },
+              {
+                "label": "Polityka prywatności",
+                "href": "/privacy"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "navigation": {
+    "auto": true
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "/",
+      "title": "Ziarno i Para — kawiarnia specialty we Wrocławiu",
+      "description": "Kawiarnia specialty przy Rynku we Wrocławiu: kawa z własnej palarni, domowe ciasta i śniadania do 13:00. Wpadnij na espresso albo zostań z laptopem.",
+      "nav": {
+        "label": "Kawiarnia",
+        "order": 0
+      },
+      "sections": [
+        {
+          "id": "start",
+          "type": "hero",
+          "variant": "cover-image",
+          "props": {},
+          "content": {
+            "eyebrow": "Kawiarnia i palarnia · Wrocław",
+            "title": "Kawa palona dwie ulice od Twojej filiżanki",
+            "description": "Ziarna z małych plantacji, palone co tydzień na miejscu. Do tego domowe ciasta, śniadania do 13:00 i duże stoły, przy których dobrze się pracuje.",
+            "primaryAction": {
+              "label": "Zobacz menu",
+              "href": "/menu"
+            },
+            "secondaryAction": {
+              "label": "Godziny otwarcia",
+              "href": "/#godziny"
+            },
+            "image": "asset:hero"
+          }
+        },
+        {
+          "id": "o-nas",
+          "type": "about",
+          "variant": "centered",
+          "props": {},
+          "content": {
+            "eyebrow": "O nas",
+            "title": "Mała palarnia, duża miłość do kawy",
+            "body": "Ziarno i Para otworzyliśmy w 2018 roku w kamienicy przy ul. Ruskiej. **Kawę palimy sami** — w małych partiach, żeby zawsze była świeża i miała swój charakter.\n\nCiasta pieczemy każdego ranka, a śniadania przygotowujemy z produktów od lokalnych dostawców. Ziarna z naszej palarni kupisz też na wynos — zmielimy je pod Twój ekspres.",
+            "image": "asset:about",
+            "highlights": [
+              {
+                "id": "palarnia",
+                "value": "co tydzień",
+                "label": "świeżo palone ziarna"
+              },
+              {
+                "id": "kawy",
+                "value": "6 kaw",
+                "label": "single origin w ofercie"
+              },
+              {
+                "id": "miejsca",
+                "value": "40 miejsc",
+                "label": "w sali i ogródku"
+              }
+            ]
+          }
+        },
+        {
+          "id": "atuty",
+          "type": "features",
+          "variant": "icon-list",
+          "props": {},
+          "content": {
+            "eyebrow": "Dlaczego warto",
+            "title": "Miejsce na szybkie espresso i na długie popołudnie",
+            "items": [
+              {
+                "id": "palarnia",
+                "title": "Własna palarnia",
+                "description": "Palimy w małych partiach i podajemy kawę najwyżej trzy tygodnie po wypaleniu.",
+                "icon": "star"
+              },
+              {
+                "id": "sniadania",
+                "title": "Śniadania do 13:00",
+                "description": "Jajka po turecku, owsianka, kanapki na chlebie na zakwasie — także w wersji wegańskiej.",
+                "icon": "clock"
+              },
+              {
+                "id": "praca",
+                "title": "Dobre miejsce do pracy",
+                "description": "Szybkie Wi-Fi, gniazdka przy stołach i cisza przed południem.",
+                "icon": "code"
+              },
+              {
+                "id": "psy",
+                "title": "Psy mile widziane",
+                "description": "Dla czworonogów zawsze stoi miska z wodą, a czasem znajdzie się też smakołyk.",
+                "icon": "check"
+              }
+            ]
+          }
+        },
+        {
+          "id": "galeria",
+          "type": "gallery",
+          "variant": "grid",
+          "props": {},
+          "content": {
+            "eyebrow": "Galeria",
+            "title": "Zajrzyj do środka",
+            "items": [
+              {
+                "id": "g1",
+                "image": "asset:g-1",
+                "caption": "Espresso z naszej palarni"
+              },
+              {
+                "id": "g2",
+                "image": "asset:g-2",
+                "caption": "Ciasta pieczone każdego ranka"
+              },
+              {
+                "id": "g3",
+                "image": "asset:g-3",
+                "caption": "Sala z widokiem na Ruską"
+              },
+              {
+                "id": "g4",
+                "image": "asset:g-4",
+                "caption": "Palenie ziaren w czwartki"
+              }
+            ]
+          }
+        },
+        {
+          "id": "opinie",
+          "type": "testimonials",
+          "variant": "spotlight",
+          "props": {},
+          "content": {
+            "eyebrow": "Opinie gości",
+            "title": "Wracają do nas codziennie",
+            "items": [
+              {
+                "id": "julia",
+                "quote": "Najlepsze flat white we Wrocławiu i sernik, za którym jeżdżę przez pół miasta. Obsługa pamięta, co zamawiam.",
+                "author": "Julia P.",
+                "role": "stała bywalczyni",
+                "rating": 5
+              },
+              {
+                "id": "marcin",
+                "quote": "Pracuję tu zdalnie dwa razy w tygodniu. Spokojnie, wygodnie, a kawa z drippera to małe dzieło sztuki.",
+                "author": "Marcin L.",
+                "role": "programista",
+                "rating": 5
+              },
+              {
+                "id": "agnieszka",
+                "quote": "Kupuję ziarna na wynos — baristka zawsze doradzi, co pasuje do mojej kawiarki.",
+                "author": "Agnieszka T.",
+                "rating": 5
+              }
+            ]
+          }
+        },
+        {
+          "id": "godziny",
+          "type": "hours-location",
+          "variant": "compact",
+          "props": {},
+          "content": {
+            "eyebrow": "Odwiedź nas",
+            "title": "Godziny otwarcia",
+            "description": "Trzy minuty pieszo od Rynku. Latem zapraszamy do ogródka na podwórzu kamienicy.",
+            "mapUrl": "https://www.openstreetmap.org/search?query=Ruska%2019%20Wroc%C5%82aw",
+            "showPhone": false
+          }
+        },
+        {
+          "id": "kontakt",
+          "type": "contact",
+          "variant": "form-centered",
+          "props": {},
+          "content": {
+            "eyebrow": "Rezerwacje i wydarzenia",
+            "title": "Urodziny, spotkanie, degustacja?",
+            "description": "Na co dzień nie przyjmujemy rezerwacji, ale chętnie przygotujemy salę na Twoje wydarzenie. Napisz, ile osób i kiedy.",
+            "showDetails": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "menu",
+      "slug": "/menu",
+      "title": "Menu",
+      "description": "Menu kawiarni Ziarno i Para: espresso, kawy przelewowe z własnej palarni, herbaty, domowe ciasta i śniadania. Aktualne ceny.",
+      "nav": {
+        "label": "Menu",
+        "order": 1
+      },
+      "sections": [
+        {
+          "id": "napoje",
+          "type": "services",
+          "variant": "cards",
+          "props": {
+            "columns": "2"
+          },
+          "content": {
+            "eyebrow": "Menu",
+            "title": "Kawa, herbata i coś słodkiego",
+            "description": "Mleko roślinne bez dopłaty. Kawy przelewowe przygotowujemy z aktualnie palonych ziaren — zapytaj baristę o dzisiejszy wybór.",
+            "items": [
+              {
+                "id": "espresso",
+                "title": "Espresso",
+                "description": "Nasza mieszanka sezonowa, podwójne shot.",
+                "price": "9 zł"
+              },
+              {
+                "id": "flat-white",
+                "title": "Flat white",
+                "description": "Podwójne espresso z aksamitnym mlekiem.",
+                "price": "15 zł"
+              },
+              {
+                "id": "cappuccino",
+                "title": "Cappuccino",
+                "description": "Klasyka w filiżance 180 ml.",
+                "price": "14 zł"
+              },
+              {
+                "id": "drip",
+                "title": "Kawa z drippera",
+                "description": "Single origin z naszej palarni, metoda V60.",
+                "price": "18 zł"
+              },
+              {
+                "id": "herbata",
+                "title": "Herbata liściasta",
+                "description": "Czarna, zielona lub ziołowa z małych manufaktur.",
+                "price": "12 zł"
+              },
+              {
+                "id": "sernik",
+                "title": "Sernik baskijski",
+                "description": "Pieczony codziennie rano, podawany z sezonowymi owocami.",
+                "price": "16 zł"
+              },
+              {
+                "id": "sniadanie",
+                "title": "Śniadanie dnia",
+                "description": "Codziennie inne, do 13:00. Zapytaj przy barze.",
+                "price": "29 zł"
+              },
+              {
+                "id": "ziarna",
+                "title": "Ziarna na wynos (250 g)",
+                "description": "Zmielimy pod Twój ekspres, kawiarkę lub drip.",
+                "price": "od 45 zł"
+              }
+            ]
+          }
+        },
+        {
+          "id": "wpadnij",
+          "type": "cta",
+          "variant": "banner",
+          "props": {},
+          "content": {
+            "title": "Czekamy z ekspresem gotowym do pracy",
+            "description": "Otwieramy o 7:30 w tygodniu i o 9:00 w weekendy. Ul. Ruska 19, trzy minuty od Rynku.",
+            "primaryAction": {
+              "label": "Jak do nas trafić",
+              "href": "/#godziny"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

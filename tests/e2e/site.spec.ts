@@ -48,6 +48,13 @@ test.describe(`site ${path.basename(siteDir)}`, () => {
 
             const box = container.getBoundingClientRect();
 
+            // A collapsed container (e.g. the section itself turned into a grid) is a layout bug too.
+            const expected = Math.min(section.clientWidth - 64, 560);
+            if (box.width < expected) {
+              found.push(`${section.id}: container is only ${Math.round(box.width)}px wide (expected at least ${expected}px)`);
+              continue;
+            }
+
             for (const element of container.querySelectorAll<HTMLElement>("*")) {
               if (element.closest("[aria-hidden='true'], .visually-hidden, svg")) continue;
 
