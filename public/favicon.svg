@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Placeholder icon. Replace with the project logo mark, then run npm run build:app-icons. -->
-  <rect width="64" height="64" rx="14" fill="#2563eb"/>
-  <rect x="18" y="18" width="28" height="28" rx="6" fill="none" stroke="#ffffff" stroke-width="5"/>
-</svg>

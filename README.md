@@ -486,9 +486,14 @@ official assets.
 
 ## App Icons and Manifest
 
-`public/favicon.svg` is the single source. `npm run build:app-icons`
-(part of `build:system`) generates `favicon.ico`, `icons/apple-touch-icon.png`,
-`icons/icon-192.png` and `icons/icon-512.png`. The 512 px icon is also the
+One source file: `src/assets/brand/app-icon.svg` (preferred) or `app-icon.png`
+(square, at least 512×512, transparent background). `npm run build:app-icons`
+(part of `build:system`) generates `favicon.ico`, `favicon.svg` (SVG source only),
+`icons/icon-32.png`, `icons/icon-192.png`, `icons/icon-512.png` and
+`icons/apple-touch-icon.png` (opaque, background taken from the icon).
+
+The starter ships the Mytko Workflow logo as its icon — replace it with the
+client's logo mark in every project. The 512 px icon is also the
 default logo in structured data. `site.webmanifest` is generated from `siteConfig`.
 
 ---
