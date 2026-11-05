@@ -15,6 +15,11 @@ const { section, headingLevel, layout = "split" } = Astro.props;
 const { content, props } = section;
 const { business } = site;
 
+// Local mode posts to this site's /api/contact; remote mode to the form service.
+const remote = site.contact.mode === "remote" ? site.contact : undefined;
+const action = remote ? remote.endpoint : "/api/contact";
+const hiddenFields: Record<string, string> = remote ? { siteId: site.siteId, lang: site.lang } : {};
+
 // Contact details always come from business (one source of truth).
 const address = [business.address?.street, [business.address?.postalCode, business.address?.city].filter(Boolean).join(" ")]
   .filter(Boolean)
@@ -38,7 +43,8 @@ const contactInfo = content.showDetails
   description={content.description}
   contactInfo={contactInfo}
   tone={toneFor("contact", props.tone)}
-  action="/api/contact"
+  action={action}
+  hiddenFields={hiddenFields}
   method="post"
   privacyHref="/privacy"
 />

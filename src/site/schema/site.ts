@@ -201,7 +201,15 @@ export const SiteSchema = z
         gaId: z.string().regex(/^G-[A-Z0-9]{4,}$/, "GA4 Measurement ID, e.g. G-ABC123XYZ.").optional(),
       })
       .default({}),
-    contact: z.object({ mode: z.literal("local") }).default({ mode: "local" }),
+    contact: z
+      .discriminatedUnion("mode", [
+        z.object({ mode: z.literal("local").describe("Node server with /api/contact (Docker).") }),
+        z.object({
+          mode: z.literal("remote").describe("Static site; the form posts to a shared form service."),
+          endpoint: HttpsUrl.describe("Form service URL (see the contact API contract in the README)."),
+        }),
+      ])
+      .default({ mode: "local" }),
     layout: z.object({
       navbar: layoutTypes.navbar.schema,
       footer: layoutTypes.footer.schema,

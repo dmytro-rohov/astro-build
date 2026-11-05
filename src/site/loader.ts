@@ -22,6 +22,8 @@ export type LoadedSite = {
   dir: string;
   site: Site;
   assets: Assets;
+  /** Non-blocking notes for the build report (legal review, missing data…). */
+  warnings: string[];
 };
 
 export class SiteValidationError extends Error {
@@ -226,5 +228,14 @@ export function loadSite(dir = resolveSiteDir()): LoadedSite {
     throw new SiteValidationError("site.json", issues);
   }
 
-  return { dir, site, assets };
+  const warnings = [
+    "privacy: the privacy policy is generated from a template — have it reviewed (controller, legal bases, retention) before launch.",
+    ...(site.business.email ? [] : ["business.email: no public email — the privacy policy and contact sections show no email address."]),
+    ...(site.meta.url || process.env.SITE_URL ? [] : ["meta.url: not set — canonical links and the sitemap use http://localhost:4321."]),
+    ...theme.adjustments.map(
+      (adjustment) => `theme.accent: ${adjustment.from} was adjusted to ${adjustment.to} (${adjustment.scheme} scheme) to meet WCAG AA.`,
+    ),
+  ];
+
+  return { dir, site, assets, warnings };
 }

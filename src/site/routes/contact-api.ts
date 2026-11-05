@@ -8,6 +8,8 @@ import { t } from "@/i18n";
 
 export const prerender = false;
 
+// Injected as /api/contact by astro.config.mjs only in contact.mode "local".
+
 const messages = t.contactForm;
 
 /**

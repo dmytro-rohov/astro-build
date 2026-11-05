@@ -26,13 +26,14 @@
     "test:e2e": "playwright test",
     "test:lighthouse": "lhci autorun --config=lighthouserc.cjs",
     "test": "npm run test:e2e && npm run test:lighthouse",
-    "ci": "npm run validate && npm run test:broken-site && npm run test",
+    "ci": "npm run validate && npm run test:broken-site && npm run test:remote && npm run test",
     "test:docker": "bash scripts/docker-smoke.sh",
     "test:unit": "vitest run",
     "site:validate": "tsx scripts/site/validate.ts",
     "site:build": "tsx scripts/site/build.ts",
     "test:broken-site": "bash scripts/site/check-broken.sh",
-    "test:catalog": "bash scripts/site/test-catalog.sh"
+    "test:catalog": "bash scripts/site/test-catalog.sh",
+    "test:remote": "bash scripts/site/test-remote.sh"
   },
   "dependencies": {
     "@astrojs/node": "^11.0.3",
