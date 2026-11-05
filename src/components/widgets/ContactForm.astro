@@ -42,6 +42,8 @@ export interface Props {
   submitLabel?: string;
   privacyHref?: string;
   tone?: "default" | "muted" | "inverse" | "accent";
+  /** Extra hidden fields sent with the form (e.g. siteId for the form service). */
+  hiddenFields?: Record<string, string>;
   /** split: text + details beside the form; centered: one narrow column. */
   layout?: "split" | "centered";
   class?: string;
@@ -65,6 +67,7 @@ const {
   privacyHref = "/privacy",
   tone = "default",
   layout = "split",
+  hiddenFields = {},
   class: className,
   ...restProps
 } = Astro.props;
@@ -223,6 +226,10 @@ const SubHeading = headingLevel === "h1" ? "h2" : "h3";
 
               <FieldError id="contact-message-error" class="contact-form__error" data-error-for="message" />
             </FormField>
+
+            {Object.entries(hiddenFields).map(([name, value]) => (
+              <input type="hidden" name={name} value={value} />
+            ))}
 
             <div class="contact-form__honeypot" aria-hidden="true">
               <Label for="contact-website">

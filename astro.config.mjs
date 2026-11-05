@@ -44,6 +44,10 @@ const siteUrl = new URL(env.SITE_URL || siteData.meta.url || "http://localhost:4
 // Analytics: site.json analytics.gaId; PUBLIC_GA_MEASUREMENT_ID overrides it (test builds).
 const gaId = env.PUBLIC_GA_MEASUREMENT_ID || siteData.analytics.gaId || "";
 const csp = cspForSite(siteData, gaId);
+
+// contact.mode "local": Node server with /api/contact. "remote": a purely static
+// site (no adapter) whose form posts to the shared form service.
+const isLocalContact = siteData.contact.mode === "local";
 const protocol = siteUrl.protocol.replace(":", "");
 const hostname = siteUrl.hostname.replace(/^www\./, "");
 const isLocalhost = ["localhost", "127.0.0.1"].includes(hostname);
@@ -65,9 +69,7 @@ export default defineConfig({
   // One URL form everywhere: canonical, sitemap and links have no trailing slash.
   trailingSlash: "never",
 
-  adapter: node({
-    mode: "standalone",
-  }),
+  adapter: isLocalContact ? node({ mode: "standalone" }) : undefined,
 
   vite: {
     plugins: [siteVitePlugin(siteDir, { gaId })],
@@ -94,6 +96,16 @@ export default defineConfig({
   },
 
   integrations: [
+    {
+      name: "mytko-contact-api",
+      hooks: {
+        "astro:config:setup": ({ injectRoute }) => {
+          if (isLocalContact) {
+            injectRoute({ pattern: "/api/contact", entrypoint: "./src/site/routes/contact-api.ts", prerender: false });
+          }
+        },
+      },
+    },
     sitemap({
       filter: (page) => {
         const pathname = normalizePath(new URL(page).pathname);

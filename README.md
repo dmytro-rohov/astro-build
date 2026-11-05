@@ -446,7 +446,7 @@ The backend flow:
 ```txt
 ContactForm.astro
   ↓
-src/pages/api/contact.ts
+src/site/routes/contact-api.ts (injected as /api/contact in contact.mode "local")
   ↓
 validateContactForm.ts
   ↓
@@ -483,6 +483,50 @@ npm run dev
 not in the browser console.
 
 ---
+
+### Contact modes
+
+```json
+"contact": { "mode": "local" }
+"contact": { "mode": "remote", "endpoint": "https://forms.example.com/v1/submit" }
+```
+
+- **local** — the site runs `server.mjs` with `/api/contact` (Docker); mail via Resend.
+- **remote** — a **purely static** build (no Node, no adapter, no `/api/contact`). The form posts
+  to `contact.endpoint`; the CSP allows only that origin (`form-action`, `connect-src`).
+  Serve the output with any static server — `deploy/Caddyfile.example` has the same headers
+  and caching as `server.mjs` (which also serves static builds: `OUT_DIR=<dir> node server.mjs`).
+
+#### Contact API contract (for the shared form service)
+
+`POST <endpoint>` with `multipart/form-data` or `application/x-www-form-urlencoded`:
+
+| Field | Required | Notes |
+|---|---|---|
+| `siteId` | yes | `site.json` siteId — the service maps it to the site's domain and recipient |
+| `lang` | yes | site language, for messages and emails |
+| `name` | yes | 2–100 chars, single line |
+| `email` | yes | valid email, ≤ 254 chars |
+| `subject` | no | ≤ 150 chars, single line |
+| `message` | yes | 10–5000 chars |
+| `privacy` | yes | non-empty (checkbox `on`) |
+| `website` | — | honeypot: when filled, answer like a success and send nothing |
+
+The request comes from the site's origin (`Origin` header): allow it with CORS and reject other origins.
+
+Responses when the request has `Accept: application/json` (the form's JavaScript):
+
+```json
+{ "success": true, "message": "…" }
+{ "success": false, "message": "…", "errors": [{ "field": "email", "message": "…" }] }
+```
+
+Status codes: `200` sent, `400` validation (field errors as above), `429` rate limited,
+`500` delivery failed. Without `Accept: application/json` (no JavaScript) answer
+`303 See Other` to `https://<site domain>/contact/sent` or `/contact/failed` — the domain comes
+from the `siteId` mapping, never from the request (no open redirects).
+
+`npm run test:remote` builds the demo in remote mode and checks all of the above on the site side.
 
 ## Environment Variables
 
