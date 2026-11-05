@@ -11,8 +11,14 @@
  * File naming: <family>-<weight or style name>.<ext>, e.g. inter-regular.woff2,
  * inter-bold.woff2, roboto-500-italic.ttf.
  *
- * Usage: node scripts/build-fonts.js [latin|cyrillic|all]
+ * Output file names contain a content hash (inter-400-latin.1a2b3c4d.woff2),
+ * so the server can cache them for a year.
+ *
+ * Usage: node scripts/build-fonts.js [auto|latin|cyrillic|all]
+ *   auto (default) — latin + latin-ext, plus cyrillic when the site language
+ *                    (`const lang` in src/config/site.ts) uses Cyrillic script.
  */
+import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import subsetFont from "subset-font";
@@ -23,10 +29,28 @@ const OUTPUT_DIR = "public/fonts";
 const SCSS_OUTPUT = "src/styles/abstracts/_fonts.scss";
 const PRELOAD_OUTPUT = "src/design-system/fonts.generated.ts";
 
+// Same ranges as Google Fonts (latin + latin-ext, cyrillic + cyrillic-ext):
+// include typographic quotes „ ” ’, dashes – —, ellipsis …, € and ™.
 const subsets = {
-  latin: "U+0000-00FF,U+0100-017F",
-  cyrillic: "U+0400-04FF,U+0500-052F",
+  latin: [
+    "U+0000-00FF", "U+0131", "U+0152-0153", "U+02BB-02BC", "U+02C6", "U+02DA", "U+02DC",
+    "U+0304", "U+0308", "U+0329", "U+2000-206F", "U+20AC", "U+2122", "U+2191", "U+2193",
+    "U+2212", "U+2215", "U+FEFF", "U+FFFD",
+  ].join(","),
+  // Loaded by the browser only when a page uses these characters (e.g. ą ę ł ż ș).
+  "latin-ext": [
+    "U+0100-02BA", "U+02BD-02C5", "U+02C7-02CC", "U+02CE-02D7", "U+02DD-02FF",
+    "U+1E00-1E9F", "U+1EF2-1EFF", "U+2020", "U+20A0-20AB", "U+20AD-20C0", "U+2113",
+    "U+2C60-2C7F", "U+A720-A7FF",
+  ].join(","),
+  cyrillic: [
+    "U+0301", "U+0400-045F", "U+0490-0491", "U+04B0-04B1", "U+2116",
+    "U+0460-052F", "U+1C80-1C8A", "U+20B4", "U+2DE0-2DFF", "U+A640-A69F", "U+FE2E-FE2F",
+  ].join(","),
 };
+
+// Languages written in Cyrillic script (ISO 639-1).
+const CYRILLIC_LANGUAGES = ["uk", "ru", "be", "bg", "sr", "mk", "kk", "ky", "mn", "tg"];
 
 // Arial metrics, used as the local fallback font. xWidthAvg is the average
 // character width weighted by English letter frequency (as in Capsize).
@@ -44,13 +68,22 @@ const LETTER_WEIGHTS = {
   v: 0.008, w: 0.0193, x: 0.0012, y: 0.0162, z: 0.0006, " ": 0.1818,
 };
 
-const mode = process.argv[2] || "latin";
+const mode = process.argv[2] || "auto";
 
-if (!["latin", "cyrillic", "all"].includes(mode)) {
+if (!["auto", "latin", "cyrillic", "all"].includes(mode)) {
   console.error(`Invalid mode: ${mode}`);
-  console.error(`Use one of: latin, cyrillic, all`);
+  console.error(`Use one of: auto, latin, cyrillic, all`);
   process.exit(1);
 }
+
+/** Reads `const lang = "…"` from site.ts (the file itself needs Vite to run). */
+function readSiteLanguage() {
+  const source = fs.readFileSync("src/config/site.ts", "utf8");
+  return source.match(/^const lang = "([^"]+)";/m)?.[1] ?? "en";
+}
+
+const siteLanguage = readSiteLanguage();
+const usesCyrillic = CYRILLIC_LANGUAGES.includes(siteLanguage.split("-")[0]);
 
 function ensureDir(dir) {
   if (!fs.existsSync(dir)) {
@@ -184,8 +217,18 @@ function getFontFiles() {
 }
 
 function getModesToBuild() {
-  return mode === "all" ? ["latin", "cyrillic"] : [mode];
+  const latin = ["latin", "latin-ext"];
+
+  if (mode === "auto") {
+    return usesCyrillic ? [...latin, "cyrillic"] : latin;
+  }
+
+  // A cyrillic-only build would miss digits, spaces and punctuation.
+  return mode === "latin" ? latin : [...latin, "cyrillic"];
 }
+
+// The regular face of this subset is preloaded: it renders most of the text.
+const primarySubset = usesCyrillic ? "cyrillic" : "latin";
 
 cleanGeneratedFonts();
 
@@ -231,16 +274,18 @@ for (const file of fonts) {
     fallbackFamilies.set(familyName, source);
   }
 
-  for (const [index, subsetName] of modesToBuild.entries()) {
+  for (const subsetName of modesToBuild) {
     const stylePart = style === "italic" ? "-italic" : "";
-    const outputFile = `${familySlug}-${weight}${stylePart}-${subsetName}.woff2`;
-    const outputPath = path.join(OUTPUT_DIR, outputFile);
-
-    console.log(`Generating ${outputFile}`);
 
     const subset = await subsetFont(source, unicodeRangeToText(subsets[subsetName]), {
       targetFormat: "woff2",
     });
+
+    const hash = crypto.createHash("sha256").update(subset).digest("hex").slice(0, 8);
+    const outputFile = `${familySlug}-${weight}${stylePart}-${subsetName}.${hash}.woff2`;
+    const outputPath = path.join(OUTPUT_DIR, outputFile);
+
+    console.log(`Generating ${outputFile}`);
 
     fs.writeFileSync(outputPath, subset);
 
@@ -251,8 +296,7 @@ for (const file of fonts) {
       );
     }
 
-    // Preload only the regular face of the first subset — the text most pages render first.
-    if (index === 0 && weight === 400 && style === "normal") {
+    if (subsetName === primarySubset && weight === 400 && style === "normal") {
       preloads.push(`/fonts/${outputFile}`);
     }
 

@@ -26,7 +26,8 @@ src/
 ├─ assets/
 │  ├─ fonts/
 │  ├─ icons/
-│  └─ images/
+│  ├─ brand/       (app-icon.png — source of all icons)
+│  └─ img/
 │
 ├─ components/
 │  ├─ form/
@@ -102,8 +103,8 @@ Replace `public/og-cover.jpg` (1200×630) with the project cover.
 ## Language
 
 All UI texts (navigation, footer, cookie banner, contact form, validation
-messages, emails, 404/500, privacy page) come from dictionaries in
-`src/i18n/dictionaries/`. The language is chosen in **one place**:
+messages, emails, 404/500, contact result pages, privacy page) come from
+dictionaries in `src/i18n/dictionaries/`. The language is chosen in **one place**:
 
 ```ts
 // src/config/site.ts
@@ -118,6 +119,10 @@ Any language works. The file name is the language code:
 3. Set `lang` in `site.ts`.
 
 No registration is needed — dictionaries are picked up automatically.
+
+Project **content** is not part of the dictionaries and must be written in the
+site language: `name`, `description`, `footer.description`, `seo.imageAlt` and
+`organization` in `site.ts`, plus the page content itself.
 TypeScript checks that every dictionary has the same keys as `en.ts`.
 An unknown `lang` stops the build with a clear error.
 
@@ -151,7 +156,8 @@ the page part: `<BaseLayout title="Contact">`.
 
 ## Structured Data (JSON-LD)
 
-Every page gets one `@graph` built from `siteConfig` (`src/lib/seo/schema.ts`):
+Every page gets one `@graph` built from `siteConfig` (`src/lib/seo/schema.ts`);
+the FAQ widget adds a separate `FAQPage` block:
 
 - `Organization` / `LocalBusiness` — set `siteConfig.organization` (type, address,
   phone, email, opening hours, price range, `sameAs` profiles). Empty fields are skipped.
@@ -169,11 +175,17 @@ Extra nodes (Service, Product, Event…) can be passed with `<BaseLayout jsonLd=
 - Content Security Policy (`security.csp` in `astro.config.mjs`) with hashes for
   Astro's scripts and styles — no `unsafe-inline`. Google Analytics hosts are allowed.
   Not active in `astro dev`; test with `build` + `preview`.
-- `src/middleware.ts` adds `X-Content-Type-Options`, `Referrer-Policy`,
-  `X-Frame-Options`, `Cross-Origin-Opener-Policy`, `Permissions-Policy` and HSTS
-  (for an `https://` `SITE_URL` in production).
-- Hashed assets in `/_astro/` are served with `Cache-Control: immutable` (1 year).
-- Static files are served before middleware — set the same headers in the reverse proxy.
+- `server.mjs` (the production server, also used by Docker and the tests) adds
+  `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`,
+  `Cross-Origin-Opener-Policy`, `Permissions-Policy` and HSTS (for an `https://`
+  `SITE_URL` with `NODE_ENV=production`) to **every** response: pages, the 404 page,
+  static files and the API.
+- Caching: `/_astro/*`, fonts and the icon sprite have content hashes in their names
+  and are served as `immutable` (1 year); favicon, manifest and app icons for 1 day.
+- Pages are prerendered (`output: "static"`), so images are generated at build time
+  and the on-demand `/_image` endpoint is disabled.
+- The reverse proxy should handle HTTPS and compression (gzip/brotli) and must
+  **overwrite** `X-Forwarded-For` — the contact rate limit trusts its first entry.
 
 ---
 
@@ -334,7 +346,12 @@ console delivery / Resend
 
 Server-side checks: required fields, email format, length limits
 (`src/lib/contact/limits.ts`, also used as `maxlength` in the form), privacy
-consent, honeypot and a rate limit of 5 messages per 10 minutes per IP.
+consent, honeypot, line breaks removed from name/subject (email header safety) and
+a rate limit of 5 valid messages per 10 minutes per IP (invalid attempts do not count).
+A filled honeypot gets a normal "sent" answer and nothing is sent.
+
+Without JavaScript the form still works: the browser posts it natively and the
+visitor is redirected to `/contact/sent` or `/contact/failed`.
 
 In development the form logs submissions to the terminal by default.
 In production `CONTACT_DELIVERY_MODE` **must** be set — otherwise the form
@@ -420,10 +437,11 @@ Run lint, type check and build together:
 npm run validate
 ```
 
-Preview production build:
+Run the production build locally (same server as in Docker):
 
 ```bash
-npm run preview
+npm run build
+npm start
 ```
 
 ---
@@ -435,7 +453,8 @@ Before production build, the project can generate system assets:
 ```bash
 npm run tokens
 npm run build-icons
-npm run build:fonts:latin
+npm run build:fonts
+npm run build:app-icons
 ```
 
 Recommended combined script:
@@ -489,7 +508,7 @@ official assets.
 One source file: `src/assets/brand/app-icon.svg` (preferred) or `app-icon.png`
 (square, at least 512×512, transparent background). `npm run build:app-icons`
 (part of `build:system`) generates `favicon.ico`, `favicon.svg` (SVG source only),
-`icons/icon-32.png`, `icons/icon-192.png`, `icons/icon-512.png` and
+`icons/icon-192.png`, `icons/icon-512.png` and
 `icons/apple-touch-icon.png` (opaque, background taken from the icon).
 
 The starter ships the Mytko Workflow logo as its icon — replace it with the
@@ -506,13 +525,17 @@ default logo in structured data. `site.webmanifest` is generated from `siteConfi
 src/assets/fonts/raw/
 ```
 
-2. Run one of:
+2. Run:
 
 ```bash
-npm run build:fonts:latin
-npm run build:fonts:cyrillic
-npm run build:fonts:all
+npm run build:fonts            # auto: latin + latin-ext, plus cyrillic for uk/ru/bg/…
+node scripts/build-fonts.js all  # force all subsets
 ```
+
+Subsets follow Google Fonts: `latin` (incl. „ ” ’ – — … € ™), `latin-ext`
+(Polish, Czech, Romanian… — downloaded only when a page uses these characters) and
+`cyrillic`. The language comes from `const lang` in `site.ts`; the regular face of
+the main script is preloaded.
 
 3. Check generated font files in:
 
@@ -526,7 +549,9 @@ public/fonts/
 src/styles/abstracts/_fonts.scss
 ```
 
-File names: `<family>-<weight or style>.<ext>`, e.g. `inter-regular.woff2`,
+Generated file names contain a content hash (`inter-400-latin.1a2b3c4d.woff2`).
+
+Raw file names: `<family>-<weight or style>.<ext>`, e.g. `inter-regular.woff2`,
 `inter-bold.woff2`, `roboto-500-italic.ttf`.
 
 The script also generates:
@@ -614,7 +639,8 @@ import FeatureGrid from "@/components/widgets/FeatureGrid.astro";
 npm run validate     # lint, type check, build
 npm run test:e2e     # Playwright: builds with test values and runs browser tests
 npm run test:lighthouse  # Lighthouse CI on the test build (run after test:e2e)
-npm run ci           # everything above, as in GitHub Actions
+npm run ci           # validate + e2e + Lighthouse, as in GitHub Actions
+npm run test:docker  # production Docker image smoke test (needs Docker)
 ```
 
 End-to-end tests (`tests/e2e/`, desktop and mobile Chrome):
@@ -624,11 +650,13 @@ End-to-end tests (`tests/e2e/`, desktop and mobile Chrome):
 - **a11y** — axe-core WCAG 2.2 AA on every page, light and dark scheme
 - **cookies** — banner without focus stealing, reject, accept (GA loads only after
   consent), reopening from the footer, equal button weight
-- **contact** — successful send, field errors from the server, consent and length
-  validation, rate limit
-- **keyboard** — skip link, mobile menu with Enter/Escape, visible focus
-- **security** — security headers, CSP without `unsafe-inline`, immutable assets,
-  no inline `style` attributes
+- **contact** — successful send, field errors (focus on the first invalid field),
+  consent and length validation, rate limit, honeypot, header injection, no-JS
+  redirect, `405` with `Allow`
+- **keyboard** — skip link, mobile menu (Enter, Tab into links, Escape returns focus,
+  outside click closes), navigation without JavaScript, visible focus
+- **security** — headers on pages, 404, API and static files, CSP without
+  `unsafe-inline`, immutable assets/fonts/sprite, `/_image` disabled, no inline `style`
 
 Every test fails on console errors or CSP violations. Google Analytics requests are
 blocked in tests.
@@ -653,8 +681,8 @@ Breakpoints: `sm` 640px, `md` 768px, `lg` 1024px, `xl` 1280px, `2xl` 1536px.
 
 ## Deployment Notes
 
-Because this project includes an Astro API route for the contact form, it is not purely static.
-It runs as a Node server (`@astrojs/node`, standalone) inside Docker:
+Pages are static; the contact form API runs on demand. The site is served by
+`server.mjs` (Astro's Node handler plus security and caching headers) inside Docker:
 
 ```bash
 cp .env.example .env   # set SITE_URL, PUBLIC_GA_MEASUREMENT_ID, CONTACT_* values
@@ -663,7 +691,11 @@ docker compose up -d --build
 
 `SITE_URL` and `PUBLIC_GA_MEASUREMENT_ID` are build-time values (passed as build args by
 `compose.yaml`). The container listens on `127.0.0.1:4322` and is meant to sit behind a
-reverse proxy (e.g. Caddy) that handles HTTPS.
+reverse proxy (e.g. Caddy) that handles HTTPS and compression.
+
+`npm run test:docker` builds the image and checks that it really runs in production
+mode (HSTS, contact form refuses to "send" without `CONTACT_DELIVERY_MODE`, no GA
+debug mode, immutable font caching). CI runs it on every pull request.
 
 ---
 

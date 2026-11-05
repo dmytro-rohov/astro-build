@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import { loadConfig, optimize } from "svgo";
@@ -5,8 +6,9 @@ import svgstore from "svgstore";
 
 const RAW_DIR = "src/assets/icons/raw";
 const OUTPUT_DIR = "public/icons";
-const OUTPUT_FILE = "sprite.svg";
-const OUTPUT_PATH = path.join(OUTPUT_DIR, OUTPUT_FILE);
+// The sprite file name contains a content hash (sprite.1a2b3c4d.svg) so the
+// server can cache it for a year; Icon.astro reads the name from SPRITE_MODULE.
+const SPRITE_MODULE = "src/design-system/sprite.generated.ts";
 
 function ensureDir(dir) {
   if (!fs.existsSync(dir)) {
@@ -15,9 +17,11 @@ function ensureDir(dir) {
 }
 
 function cleanOldSprite() {
-  if (fs.existsSync(OUTPUT_PATH)) {
-    fs.unlinkSync(OUTPUT_PATH);
-    console.log(`Removed old sprite: ${OUTPUT_PATH}`);
+  for (const file of fs.readdirSync(OUTPUT_DIR)) {
+    if (!/^sprite(\.[0-9a-f]{8})?\.svg$/.test(file)) continue;
+
+    fs.unlinkSync(path.join(OUTPUT_DIR, file));
+    console.log(`Removed old sprite: ${file}`);
   }
 }
 
@@ -116,6 +120,17 @@ const spriteContent = sprites.toString({
   inline: false,
 });
 
-fs.writeFileSync(OUTPUT_PATH, spriteContent);
+const hash = crypto.createHash("sha256").update(spriteContent).digest("hex").slice(0, 8);
+const outputPath = path.join(OUTPUT_DIR, `sprite.${hash}.svg`);
 
-console.log(`SVG sprite generated successfully: ${OUTPUT_PATH}`);
+fs.writeFileSync(outputPath, spriteContent);
+fs.writeFileSync(
+  SPRITE_MODULE,
+  `/* AUTO-GENERATED FILE – DO NOT EDIT */
+/* Source: scripts/build-icons.js */
+
+export const spriteUrl = "/${path.relative("public", outputPath)}";
+`,
+);
+
+console.log(`SVG sprite generated successfully: ${outputPath}`);

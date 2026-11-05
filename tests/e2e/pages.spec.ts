@@ -1,8 +1,7 @@
 import { test, expect, PAGES } from "./fixtures";
 
 for (const path of PAGES) {
-  test(`${path} renders with valid SEO basics`, async ({ page, pageErrors }) => {
-    void pageErrors;
+  test(`${path} renders with valid SEO basics`, async ({ page }) => {
     const response = await page.goto(path);
 
     expect(response?.status()).toBe(200);
@@ -13,8 +12,15 @@ for (const path of PAGES) {
     const description = await page.locator('meta[name="description"]').getAttribute("content");
     expect(description?.length).toBeGreaterThan(10);
 
-    const canonical = await page.locator('link[rel="canonical"]').getAttribute("href");
-    expect(canonical).toBe(new URL(path, page.url()).toString());
+    // Canonical only on indexable pages (noindex pages such as /playground have none).
+    const noindex = /noindex/.test((await page.locator('meta[name="robots"]').getAttribute("content")) ?? "");
+    const canonical = page.locator('link[rel="canonical"]');
+
+    if (noindex) {
+      await expect(canonical).toHaveCount(0);
+    } else {
+      await expect(canonical).toHaveAttribute("href", new URL(path, page.url()).toString());
+    }
 
     // Every JSON-LD block must be valid JSON with a schema.org context.
     const blocks = await page.locator('script[type="application/ld+json"]').allTextContents();
@@ -34,8 +40,7 @@ test("playground is noindex", async ({ page }) => {
 test.describe("missing page", () => {
   test.use({ allowedErrors: [/status of 404/] });
 
-  test("unknown page returns 404 with noindex", async ({ page, pageErrors }) => {
-  void pageErrors;
+  test("unknown page returns 404 with noindex", async ({ page }) => {
   const response = await page.goto("/this-page-does-not-exist");
 
   expect(response?.status()).toBe(404);

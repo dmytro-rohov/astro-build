@@ -38,6 +38,7 @@
   --color-primitive-gray-600: #4b5563;
   --color-primitive-gray-700: #374151;
   --color-primitive-gray-800: #1f2937;
+  --color-primitive-gray-850: #18212f;
   --color-primitive-gray-900: #111827;
   --color-primitive-blue-400: #60a5fa;
   --color-primitive-blue-500: #3b82f6;
@@ -137,7 +138,7 @@
   --color-text-inverse: #111827;
   --color-background-primary: #111827;
   --color-background-secondary: #1f2937;
-  --color-background-muted: #1f2937;
+  --color-background-muted: #18212f;
   --color-background-surface: #1f2937;
   --color-background-inverse: #f9fafb;
   --color-border-default: #374151;
@@ -165,7 +166,7 @@
     --color-text-inverse: #111827;
     --color-background-primary: #111827;
     --color-background-secondary: #1f2937;
-    --color-background-muted: #1f2937;
+    --color-background-muted: #18212f;
     --color-background-surface: #1f2937;
     --color-background-inverse: #f9fafb;
     --color-border-default: #374151;
@@ -221,6 +222,7 @@ $tokens: (
   "color-primitive-gray-600": var(--color-primitive-gray-600),
   "color-primitive-gray-700": var(--color-primitive-gray-700),
   "color-primitive-gray-800": var(--color-primitive-gray-800),
+  "color-primitive-gray-850": var(--color-primitive-gray-850),
   "color-primitive-gray-900": var(--color-primitive-gray-900),
   "color-primitive-blue-400": var(--color-primitive-blue-400),
   "color-primitive-blue-500": var(--color-primitive-blue-500),

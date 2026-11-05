@@ -3,8 +3,7 @@ import { test, expect } from "./fixtures";
 const STORAGE_KEY = "site-analytics-consent";
 
 test.describe("cookie consent", () => {
-  test("banner shows on first visit without taking focus", async ({ page, pageErrors }) => {
-    void pageErrors;
+  test("banner shows on first visit without taking focus", async ({ page }) => {
     await page.goto("/");
 
     const banner = page.locator("[data-cookie-consent]");
@@ -13,8 +12,7 @@ test.describe("cookie consent", () => {
     await expect(page.locator("script[data-ga-measurement-id]")).toHaveCount(0);
   });
 
-  test("reject stores the choice and does not load analytics", async ({ page, pageErrors }) => {
-    void pageErrors;
+  test("reject stores the choice and does not load analytics", async ({ page }) => {
     await page.goto("/");
     await page.locator("[data-consent-reject]").click();
 
@@ -28,8 +26,7 @@ test.describe("cookie consent", () => {
     await expect(page.locator("[data-cookie-consent]")).toBeHidden();
   });
 
-  test("accept loads analytics only after consent", async ({ page, pageErrors }) => {
-    void pageErrors;
+  test("accept loads analytics only after consent", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("script[data-ga-measurement-id]")).toHaveCount(0);
 
@@ -39,8 +36,7 @@ test.describe("cookie consent", () => {
     await expect(page.locator("script[data-ga-measurement-id]")).toHaveCount(1);
   });
 
-  test("consent can be changed from the footer", async ({ page, pageErrors }) => {
-    void pageErrors;
+  test("consent can be changed from the footer", async ({ page }) => {
     await page.goto("/");
     await page.locator("[data-consent-reject]").click();
 

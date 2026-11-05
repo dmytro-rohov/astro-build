@@ -6,6 +6,7 @@ import { siteConfig } from "@/config/site";
 import { isNoindexPath } from "@/config/indexing";
 import { dir, ogLocale, pageTitle, t } from "@/i18n";
 import { tokens } from "@/design-system/tokens";
+import { semanticColorsDark } from "@/design-system/tokens/semantic/color-semantic";
 import { fontPreloads } from "@/design-system/fonts.generated";
 import { hasSvgFavicon } from "@/design-system/appIcons.generated";
 import {
@@ -116,9 +117,16 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
     {author && <meta name="author" content={author} />}
     {keywords && <meta name="keywords" content={keywords} />}
     <meta name="color-scheme" content={colorSchemeMeta} />
-    <meta name="theme-color" content={tokens.color.action.primary} />
+    {colorScheme === "auto" ? (
+      <>
+        <meta name="theme-color" media="(prefers-color-scheme: light)" content={tokens.color.action.primary} />
+        <meta name="theme-color" media="(prefers-color-scheme: dark)" content={semanticColorsDark.action.primary} />
+      </>
+    ) : (
+      <meta name="theme-color" content={colorScheme === "dark" ? semanticColorsDark.action.primary : tokens.color.action.primary} />
+    )}
     
-    <link rel="canonical" href={canonicalUrl.toString()} />
+    {isIndexable && <link rel="canonical" href={canonicalUrl.toString()} />}
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     {hasSvgFavicon
       ? <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

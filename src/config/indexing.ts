@@ -5,7 +5,7 @@
  */
 
 /** Pages hidden from search engines: `noindex` meta and left out of the sitemap. */
-export const noindexPaths = ["/playground"];
+export const noindexPaths = ["/playground", "/contact/sent", "/contact/failed"];
 
 /** Pages that stay indexable but are left out of the sitemap. */
 export const sitemapExcludedPaths = ["/privacy"];

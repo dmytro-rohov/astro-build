@@ -1,5 +1,5 @@
 {
-  "name": "astro-builder",
+  "name": "astro-starter",
   "type": "module",
   "version": "2.0.0",
   "engines": {
@@ -9,14 +9,11 @@
   "scripts": {
     "preinstall": "node scripts/check-node-version.js",
     "dev": "astro dev",
-    "start": "node ./dist/server/entry.mjs",
+    "start": "node server.mjs",
     "tokens": "tsx src/design-system/utils/cssVars.ts",
     "build-icons": "node scripts/build-icons.js",
     "build:fonts": "node scripts/build-fonts.js",
-    "build:fonts:latin": "node scripts/build-fonts.js latin",
-    "build:fonts:cyrillic": "node scripts/build-fonts.js cyrillic",
-    "build:fonts:all": "node scripts/build-fonts.js all",
-    "build:system": "npm run tokens && npm run build-icons && npm run build:fonts:latin && npm run build:app-icons",
+    "build:system": "npm run tokens && npm run build-icons && npm run build:fonts && npm run build:app-icons",
     "build": "npm run build:system && astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -29,7 +26,8 @@
     "test:e2e": "playwright test",
     "test:lighthouse": "lhci autorun --config=lighthouserc.cjs",
     "test": "npm run test:e2e && npm run test:lighthouse",
-    "ci": "npm run validate && npm run test"
+    "ci": "npm run validate && npm run test",
+    "test:docker": "bash scripts/docker-smoke.sh"
   },
   "dependencies": {
     "@astrojs/node": "^11.0.3",

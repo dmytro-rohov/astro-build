@@ -1,4 +1,6 @@
 ---
+import { spriteUrl } from "@/design-system/sprite.generated";
+
 export interface Props {
   name: string;
   size?: string;
@@ -25,5 +27,5 @@ const isDecorative = !label;
   aria-label={label}
   focusable="false"
 >
-  <use href={`/icons/sprite.svg#${name}`} />
+  <use href={`${spriteUrl}#${name}`} />
 </svg>

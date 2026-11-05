@@ -18,17 +18,30 @@ function getStringValue(formData: FormData, key: string) {
   return value.trim();
 }
 
+/**
+ * Single-line fields (name, subject) end up in email headers:
+ * line breaks and other control characters are replaced with spaces.
+ */
+function getSingleLineValue(formData: FormData, key: string) {
+  // eslint-disable-next-line no-control-regex
+  return getStringValue(formData, key).replace(/[\u0000-\u001f\u007f]+/g, " ").trim();
+}
+
+/** True when the hidden honeypot field was filled in (a bot). */
+export function isHoneypotFilled(formData: FormData) {
+  return getStringValue(formData, "website") !== "";
+}
+
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 export function validateContactForm(formData: FormData): ContactValidationResult {
   const data: ContactFormData = {
-    name: getStringValue(formData, "name"),
+    name: getSingleLineValue(formData, "name"),
     email: getStringValue(formData, "email"),
-    subject: getStringValue(formData, "subject"),
+    subject: getSingleLineValue(formData, "subject"),
     message: getStringValue(formData, "message"),
-    website: getStringValue(formData, "website"),
   };
 
   // An unchecked checkbox is not sent at all; an empty value is not consent either.
@@ -39,10 +52,6 @@ export function validateContactForm(formData: FormData): ContactValidationResult
   const add = (field: ContactValidationError["field"], message: string) => {
     errors.push({ field, message });
   };
-
-  if (data.website) {
-    add("form", e.spam);
-  }
 
   if (!data.name) {
     add("name", e.nameRequired);

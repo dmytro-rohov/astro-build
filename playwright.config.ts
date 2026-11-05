@@ -26,7 +26,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: "npm run build && node ./dist/server/entry.mjs",
+    command: "npm run build && node server.mjs",
     url: BASE_URL,
     timeout: 240_000,
     reuseExistingServer: !process.env.CI,

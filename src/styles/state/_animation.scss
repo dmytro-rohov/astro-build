@@ -12,8 +12,8 @@
   /*
    * Scroll reveal.
    *
-   * Element pozostaje ukryty tylko wtedy, gdy JavaScript jest dostępny.
-   * Klasa .has-reveal-js zostaje dodana przez skrypt.
+   * Elements are hidden only when JavaScript is available:
+   * scripts/reveal.ts adds the .has-reveal-js class.
    */
   :where(.has-reveal-js) [data-reveal] {
     --reveal-x: 0;
@@ -76,7 +76,7 @@
   }
 
   /*
-   * Dekoracyjne ogromne słowa powinny pojawiać się spokojniej.
+   * Large decorative words appear more slowly.
    */
   [data-reveal="background-word"] {
     --reveal-x: 0;

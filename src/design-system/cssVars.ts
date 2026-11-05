@@ -37,6 +37,7 @@ export type CssToken =
   | "color-primitive-gray-600"
   | "color-primitive-gray-700"
   | "color-primitive-gray-800"
+  | "color-primitive-gray-850"
   | "color-primitive-gray-900"
   | "color-primitive-blue-400"
   | "color-primitive-blue-500"
