@@ -1,12 +1,24 @@
 @use "sass:map";
 @use "./variables" as *;
 
+// Mobile-first: styles apply from the breakpoint UP (min-width).
 @mixin mq($size) {
   @if not map.has-key($breakpoints, $size) {
     @error "Unknown breakpoint: #{$size}. Available: #{map.keys($breakpoints)}";
   }
 
-  @media (max-width: map.get($breakpoints, $size)) {
+  @media (min-width: map.get($breakpoints, $size)) {
+    @content;
+  }
+}
+
+// Styles for screens BELOW the breakpoint (max-width), e.g. smaller text on phones.
+@mixin mq-down($size) {
+  @if not map.has-key($breakpoints, $size) {
+    @error "Unknown breakpoint: #{$size}. Available: #{map.keys($breakpoints)}";
+  }
+
+  @media (width < map.get($breakpoints, $size)) {
     @content;
   }
 }

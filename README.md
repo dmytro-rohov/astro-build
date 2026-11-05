@@ -608,6 +608,49 @@ import FeatureGrid from "@/components/widgets/FeatureGrid.astro";
 
 ---
 
+## Testing
+
+```bash
+npm run validate     # lint, type check, build
+npm run test:e2e     # Playwright: builds with test values and runs browser tests
+npm run test:lighthouse  # Lighthouse CI on the test build (run after test:e2e)
+npm run ci           # everything above, as in GitHub Actions
+```
+
+End-to-end tests (`tests/e2e/`, desktop and mobile Chrome):
+
+- **pages** — status, one `<h1>`, `lang`, title, description, canonical, valid JSON-LD,
+  404 page, trailing-slash redirect, `robots.txt`, sitemap, manifest, icons
+- **a11y** — axe-core WCAG 2.2 AA on every page, light and dark scheme
+- **cookies** — banner without focus stealing, reject, accept (GA loads only after
+  consent), reopening from the footer, equal button weight
+- **contact** — successful send, field errors from the server, consent and length
+  validation, rate limit
+- **keyboard** — skip link, mobile menu with Enter/Escape, visible focus
+- **security** — security headers, CSP without `unsafe-inline`, immutable assets,
+  no inline `style` attributes
+
+Every test fails on console errors or CSP violations. Google Analytics requests are
+blocked in tests.
+
+Lighthouse thresholds (`lighthouserc.cjs`): performance ≥ 90, accessibility,
+best practices and SEO ≥ 95.
+
+GitHub Actions (`.github/workflows/ci.yml`) runs `validate`, e2e and Lighthouse on
+every pull request and push to `main`; reports are uploaded when a step fails.
+
+The first run needs Playwright's Chromium: `npx playwright install chromium`.
+
+---
+
+## Breakpoints
+
+`@include mq(md)` is **mobile-first** — styles apply from the breakpoint up
+(`min-width`). Use `@include mq-down(sm)` for styles below a breakpoint.
+Breakpoints: `sm` 640px, `md` 768px, `lg` 1024px, `xl` 1280px, `2xl` 1536px.
+
+---
+
 ## Deployment Notes
 
 Because this project includes an Astro API route for the contact form, it is not purely static.
@@ -626,7 +669,7 @@ reverse proxy (e.g. Caddy) that handles HTTPS.
 
 ## Version
 
-Current version: **V2** (in progress).
+Current version: **V2** (`2.0.0`).
 
 V2 includes:
 
@@ -639,3 +682,4 @@ V2 includes:
 - GDPR-friendly cookie banner with Consent Mode v2 and consent withdrawal
 - ContactForm with server validation, rate limit and Resend delivery
 - Docker deployment
+- automated tests: Playwright e2e, axe-core accessibility, Lighthouse CI, GitHub Actions

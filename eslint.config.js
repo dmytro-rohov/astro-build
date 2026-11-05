@@ -7,6 +7,9 @@ export default [
   {
     ignores: [
       "dist/**",
+      "playwright-report/**",
+      "test-results/**",
+      ".lighthouseci/**",
       "node_modules/**",
       ".astro/**",
       "public/icons/sprite.svg",
@@ -25,6 +28,7 @@ export default [
       "*.config.mjs",
       "astro.config.mjs",
       "scripts/**/*.js",
+      "lighthouserc.cjs",
     ],
 
     languageOptions: {
@@ -49,4 +53,18 @@ export default [
     "no-undef": "off",
   },
 },
+
+  // Lighthouse CI loads its config with require(), so it stays CommonJS.
+  {
+    files: ["**/*.cjs"],
+    languageOptions: {
+      sourceType: "commonjs",
+      globals: {
+        ...globals.node,
+      },
+    },
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
 ];

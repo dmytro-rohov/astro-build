@@ -31,7 +31,8 @@ export function validateContactForm(formData: FormData): ContactValidationResult
     website: getStringValue(formData, "website"),
   };
 
-  const privacyAccepted = formData.get("privacy") !== null;
+  // An unchecked checkbox is not sent at all; an empty value is not consent either.
+  const privacyAccepted = getStringValue(formData, "privacy") !== "";
 
   const errors: ContactValidationError[] = [];
 
