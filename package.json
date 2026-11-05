@@ -1,7 +1,7 @@
 {
   "name": "astro-builder",
   "type": "module",
-  "version": "0.0.2",
+  "version": "2.0.0",
   "engines": {
     "node": ">=24.16.0 <25",
     "npm": ">=11"
@@ -25,7 +25,11 @@
     "lint:js": "eslint .",
     "lint": "npm run lint:scss && npm run lint:js",
     "validate": "npm run lint && npm run check && npm run build",
-    "build:app-icons": "node scripts/build-app-icons.js"
+    "build:app-icons": "node scripts/build-app-icons.js",
+    "test:e2e": "playwright test",
+    "test:lighthouse": "lhci autorun --config=lighthouserc.cjs",
+    "test": "npm run test:e2e && npm run test:lighthouse",
+    "ci": "npm run validate && npm run test"
   },
   "dependencies": {
     "@astrojs/node": "^11.0.3",
@@ -35,7 +39,10 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.14.0",
     "@eslint/js": "^10.0.1",
+    "@lhci/cli": "^0.16.0",
+    "@playwright/test": "1.64.1",
     "eslint": "^10.8.0",
     "eslint-plugin-astro": "^3.0.1",
     "fontkit": "^2.0.4",

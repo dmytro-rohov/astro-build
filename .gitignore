@@ -26,3 +26,7 @@ pnpm-debug.log*
 # css files
 src/styles/*.css
 src/styles/*.css.map
+# test output
+playwright-report/
+test-results/
+.lighthouseci/

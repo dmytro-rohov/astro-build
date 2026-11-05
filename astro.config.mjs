@@ -81,7 +81,8 @@ export default defineConfig({
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self'",
-        "frame-ancestors 'none'",
+        // frame-ancestors is not used: prerendered pages get the policy in a <meta>
+        // tag, where browsers ignore it. Framing is blocked by X-Frame-Options instead.
       ],
       scriptDirective: {
         resources: ["'self'", "https://www.googletagmanager.com"],

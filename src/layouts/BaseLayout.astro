@@ -7,6 +7,7 @@ import { isNoindexPath } from "@/config/indexing";
 import { dir, ogLocale, pageTitle, t } from "@/i18n";
 import { tokens } from "@/design-system/tokens";
 import { fontPreloads } from "@/design-system/fonts.generated";
+import { hasSvgFavicon } from "@/design-system/appIcons.generated";
 import {
   breadcrumbSchema,
   organizationSchema,
@@ -119,7 +120,9 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
     
     <link rel="canonical" href={canonicalUrl.toString()} />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {hasSvgFavicon
+      ? <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      : <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />}
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     {fontPreloads.map((href) => (

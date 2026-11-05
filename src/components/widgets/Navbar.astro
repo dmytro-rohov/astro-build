@@ -41,9 +41,8 @@ function normalizePath(path: string) {
 function isActiveLink(href: string) {
   if (href.startsWith("http")) return false;
   if (href.startsWith("#")) return false;
-  if (href.includes("#")) {
-    return normalizePath(href.split("#")[0] || "/") === normalizePath(currentPath);
-  }
+  // Section links (/#features) point inside a page, not to the current page itself.
+  if (href.includes("#")) return false;
 
   return normalizePath(href) === normalizePath(currentPath);
 }
