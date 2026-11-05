@@ -6,6 +6,16 @@ import { siteConfig } from "@/config/site";
 import { isNoindexPath } from "@/config/indexing";
 import { dir, ogLocale, pageTitle, t } from "@/i18n";
 import { tokens } from "@/design-system/tokens";
+import { fontPreloads } from "@/design-system/fonts.generated";
+import {
+  breadcrumbSchema,
+  organizationSchema,
+  schemaGraph,
+  serializeJsonLd,
+  webPageSchema,
+  websiteSchema,
+  type BreadcrumbItem,
+} from "@/lib/seo/schema";
 import "@/styles/main.scss";
 
 export interface Props {
@@ -16,7 +26,16 @@ export interface Props {
   imageAlt?: string;
   robots?: string;
   pageType?: "website" | "profile";
+  /**
+   * Extra schema.org nodes for this page (e.g. Service, Product, Event).
+   * Organization, WebSite, WebPage and BreadcrumbList are added automatically.
+   */
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  /**
+   * Breadcrumb trail for structured data. Defaults to Home › page title
+   * on subpages. Pass `false` to leave it out.
+   */
+  breadcrumbs?: BreadcrumbItem[] | false;
   showHeader?: boolean;
   showFooter?: boolean;
   keywords?: string;
@@ -32,6 +51,7 @@ const {
   robots: robotsProp = "index, follow",
   pageType = "website",
   jsonLd,
+  breadcrumbs,
   showHeader = true,
   showFooter = true,
   keywords = siteConfig.keywords.join(", "),
@@ -47,6 +67,36 @@ const fullTitle = pageTitle(title);
 const robots = isNoindexPath(Astro.url.pathname) ? "noindex, follow" : robotsProp;
 const lang = siteConfig.lang;
 const isDefaultImage = image === siteConfig.seo.image;
+
+// Structured data: one @graph per page.
+const isHome = canonicalUrl.pathname === "/";
+const isIndexable = !robots.includes("noindex");
+const breadcrumbItems: BreadcrumbItem[] | false =
+  breadcrumbs ?? (isHome ? false : [
+    { name: t.nav.home, path: "/" },
+    { name: title ?? siteConfig.name, path: canonicalUrl.pathname },
+  ]);
+const breadcrumbNode = isIndexable && breadcrumbItems
+  ? breadcrumbSchema(breadcrumbItems, canonicalUrl.toString(), siteUrl)
+  : undefined;
+const extraNodes = jsonLd ? [jsonLd].flat() : [];
+
+const structuredData = schemaGraph([
+  organizationSchema(siteUrl),
+  websiteSchema(siteUrl),
+  ...(isIndexable
+    ? [webPageSchema({
+        url: canonicalUrl.toString(),
+        title: fullTitle,
+        description,
+        image: socialImageUrl.toString(),
+        siteUrl,
+        breadcrumbId: breadcrumbNode?.["@id"] as string | undefined,
+      })]
+    : []),
+  ...(breadcrumbNode ? [breadcrumbNode] : []),
+  ...extraNodes,
+]);
 
 const { colorScheme } = siteConfig;
 const dataTheme = colorScheme === "auto" ? undefined : colorScheme;
@@ -68,7 +118,13 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
     <meta name="theme-color" content={tokens.color.action.primary} />
     
     <link rel="canonical" href={canonicalUrl.toString()} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    {fontPreloads.map((href) => (
+      <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />
+    ))}
     
     <title>{fullTitle}</title>
 
@@ -96,15 +152,11 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
     <meta name="twitter:image" content={socialImageUrl}/>
     <meta name="twitter:image:alt" content={imageAlt}/>
 
-    {
-      jsonLd && (
-        <script
-          is:inline
-          type="application/ld+json"
-          set:html={JSON.stringify(jsonLd)}
-        />
-      )
-    }
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={serializeJsonLd(structuredData)}
+    />
   </head>
 
   <body>

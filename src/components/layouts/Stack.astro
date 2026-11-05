@@ -1,9 +1,11 @@
 ---
+import type { SpaceToken } from "@/design-system/tokens/core/spacing";
+
 type StackTag = "div" | "section" | "article" | "ul" | "ol" | "form";
 
 export interface Props {
   as?: StackTag;
-  space?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | string;
+  space?: SpaceToken;
   class?: string;
 }
 
@@ -14,15 +16,15 @@ const {
   ...restProps
 } = Astro.props;
 
-const tokensSpace = space.startsWith("var(") ? space : space.includes("rem") || space.includes("px") ? space : `var(--spacing-${space})`;
 ---
 
 <Tag
 {...restProps}
 class:list={[
   "stack",
+  `stack--space-${space}`,
   className,
-]} style={`--stack-space: ${tokensSpace};`} >
+]}>
 
 <slot />
 

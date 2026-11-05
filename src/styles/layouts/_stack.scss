@@ -1,3 +1,5 @@
+@use "../abstracts/tokens" as tokens;
+
 @layer layout {
   .stack {
     display: flex;
@@ -13,4 +15,13 @@
   // .stack > * + * {
   //   margin-block-start: var(--stack-space, var(--spacing-md));
   // }
+}
+
+@layer layout {
+  // One modifier per spacing token, e.g. .stack--space-md
+  @each $key in tokens.$spacing-keys {
+    .stack--space-#{$key} {
+      --stack-space: var(--spacing-#{$key});
+    }
+  }
 }

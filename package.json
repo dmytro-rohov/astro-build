@@ -16,7 +16,7 @@
     "build:fonts:latin": "node scripts/build-fonts.js latin",
     "build:fonts:cyrillic": "node scripts/build-fonts.js cyrillic",
     "build:fonts:all": "node scripts/build-fonts.js all",
-    "build:system": "npm run tokens && npm run build-icons && npm run build:fonts:latin",
+    "build:system": "npm run tokens && npm run build-icons && npm run build:fonts:latin && npm run build:app-icons",
     "build": "npm run build:system && astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -24,7 +24,8 @@
     "lint:scss": "stylelint \"src/**/*.scss\"",
     "lint:js": "eslint .",
     "lint": "npm run lint:scss && npm run lint:js",
-    "validate": "npm run lint && npm run check && npm run build"
+    "validate": "npm run lint && npm run check && npm run build",
+    "build:app-icons": "node scripts/build-app-icons.js"
   },
   "dependencies": {
     "@astrojs/node": "^11.0.3",
@@ -37,11 +38,14 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.8.0",
     "eslint-plugin-astro": "^3.0.1",
+    "fontkit": "^2.0.4",
     "fs-extra": "^11.3.3",
     "globals": "^17.9.0",
     "sass": "^1.97.3",
+    "sharp": "^0.35.3",
     "stylelint": "^17.14.1",
     "stylelint-config-standard-scss": "^17.0.0",
+    "subset-font": "^2.9.0",
     "svgo": "^4.0.0",
     "svgstore": "^3.0.1",
     "tsx": "^4.21.0",

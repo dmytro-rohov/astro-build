@@ -1,3 +1,4 @@
+@use "../abstracts/tokens" as tokens;
 @use "../abstracts/mixins" as *;
 
 @layer layout {
@@ -55,6 +56,15 @@
     .split--reverse > :first-child,
     .split--reverse > :last-child {
       order: initial;
+    }
+  }
+}
+
+@layer layout {
+  // One modifier per spacing token, e.g. .split--gap-md
+  @each $key in tokens.$spacing-keys {
+    .split--gap-#{$key} {
+      --split-gap: var(--spacing-#{$key});
     }
   }
 }

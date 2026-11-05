@@ -10,3 +10,6 @@ export const spacing = {
   "4xl": "6rem",   // 96px
   "5xl": "8rem",   // 128px
 } as const;
+
+/** Spacing token name, e.g. "md". Layout primitives accept only these. */
+export type SpaceToken = keyof typeof spacing;

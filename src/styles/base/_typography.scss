@@ -1,6 +1,6 @@
 @layer base {
   body {
-    font-family: var(--font-family-base, "Inter", system-ui, sans-serif);
+    font-family: var(--font-family-base);
     font-size: var(--font-size-base, 1rem);
     font-weight: var(--font-weight-regular, 400);
     line-height: var(--line-height-normal, 1.5);
@@ -15,7 +15,7 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-family-heading, var(--font-family-base, "Inter", system-ui, sans-serif));
+    font-family: var(--font-family-heading);
     font-weight: var(--font-weight-bold, 700);
     line-height: var(--line-height-tight, 1.1);
     letter-spacing: var(--letter-spacing-tight, -0.02em);

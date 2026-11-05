@@ -6,38 +6,6 @@ import FeatureGrid from "@/components/widgets/FeatureGrid.astro";
 import CTA from "@/components/widgets/CTA.astro";
 import FAQ from "@/components/widgets/FAQ.astro";
 
-import { siteConfig } from "@/config/site";
-
-// for SEO
-const siteUrl = Astro.site ?? Astro.url.origin;
-const pageUrl = new URL("/", siteUrl).toString();
-const websiteImageUrl = new URL(
-  siteConfig.seo.image,
-  siteUrl,
-).toString();
-
-const pageJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "@id": `${pageUrl}#webpage`,
-  url: pageUrl,
-  name: siteConfig.name,
-  description: siteConfig.description,
-  image: websiteImageUrl,
-
-  isPartOf: {
-    "@type": "WebSite",
-    "@id": `${siteUrl}#website`,
-    url: siteUrl.toString(),
-    name: siteConfig.name,
-  },
-
-  primaryImageOfPage: {
-    "@type": "ImageObject",
-    url: websiteImageUrl,
-  },
-};
-
 const features = [
   {
     eyebrow: "Core",
@@ -109,7 +77,6 @@ import heroImage from "@/assets/img/photo.jpg";
 <BaseLayout
   canonicalPath="/"
   robots="index, follow, max-image-preview:large"
-  jsonLd={pageJsonLd}
 >
   <Hero
     eyebrow="Astro Frontend System"

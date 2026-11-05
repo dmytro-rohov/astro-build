@@ -48,6 +48,9 @@ const {
   description = siteConfig.footer.description,
   groups = siteConfig.footer.groups,
   socialLinks = siteConfig.footer.socialLinks,
+  phone = siteConfig.organization.phone,
+  phoneHref = phone ? `tel:${phone.replace(/[^\d+]/g, "")}` : undefined,
+  email = siteConfig.organization.email,
   copyright = format(t.footer.copyright, { year, siteName: brandLabel }),
   class: className,
   ...restProps
@@ -73,6 +76,23 @@ const {
             <p class="site-footer__description">
               {description}
             </p>
+          )}
+
+          {(phone || email) && (
+            <ul class="site-footer__contact">
+              {phone && (
+                <li class="site-footer__contact-item">
+                  <Icon name="phone" />
+                  <Link href={phoneHref ?? `tel:${phone}`} variant="muted">{phone}</Link>
+                </li>
+              )}
+              {email && (
+                <li class="site-footer__contact-item">
+                  <Icon name="mail" />
+                  <Link href={`mailto:${email}`} variant="muted">{email}</Link>
+                </li>
+              )}
+            </ul>
           )}
 
           {socialLinks.length > 0 && (

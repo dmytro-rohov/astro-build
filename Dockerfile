@@ -16,19 +16,7 @@ FROM base AS dependencies
 
 ENV NODE_ENV=development
 
-# pyftsubset pochodzi z pakietu fonttools.
-# Instalujemy go tylko w warstwie potrzebnej do buildu.
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
-    python3 \
-    python3-pip \
-  && python3 -m pip install \
-    --no-cache-dir \
-    --break-system-packages \
-    fonttools \
-    brotli \
-  && rm -rf /var/lib/apt/lists/*
-
+# Fonty są budowane w Node (subset-font), więc Python nie jest potrzebny.
 COPY package.json package-lock.json ./
 COPY scripts/check-node-version.js ./scripts/check-node-version.js
 

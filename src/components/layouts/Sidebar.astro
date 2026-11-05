@@ -1,28 +1,26 @@
 ---
+import type { SpaceToken } from "@/design-system/tokens/core/spacing";
+
 type SidebarTag = "aside" | "div" | "section" | "main";
 
 export interface Props {
   as?: SidebarTag;
   side?: "left" | "right";
-  width?: string;
-  gap?: "md" | "lg" | "xl" | "2xl" | string;
+  /** Sidebar column width: sm 16rem, md 20rem, lg 24rem. */
+  width?: "sm" | "md" | "lg";
+  gap?: SpaceToken;
   class?: string;
 }
 
 const {
   as: Tag = "div",
   side = "right",
-  width = "20rem",
+  width = "md",
   gap = "xl",
   class: className,
   ...restProps
 } = Astro.props;
 
-const tokenGap = gap.startsWith("var(")
-  ? gap
-  : gap.includes("rem") || gap.includes("px")
-    ? gap
-    : `var(--spacing-${gap})`;
 ---
 
 <Tag
@@ -30,9 +28,10 @@ const tokenGap = gap.startsWith("var(")
   class:list={[
     "sidebar",
     `sidebar--${side}`,
+    `sidebar--width-${width}`,
+    `sidebar--gap-${gap}`,
     className,
   ]}
-  style={`--sidebar-width: ${width}; --sidebar-gap: ${tokenGap};`}
 >
   <slot />
 </Tag>

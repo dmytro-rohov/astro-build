@@ -5,6 +5,7 @@ import Stack from "@/components/layouts/Stack.astro";
 
 import Tag from "@/components/ui/Tag.astro";
 import Accordion, { type AccordionItem } from "@/components/widgets/Accordion.astro";
+import { faqSchema, serializeJsonLd } from "@/lib/seo/schema";
 
 export interface Props {
   /** Section id, used as an anchor (e.g. /#features). */
@@ -17,6 +18,8 @@ export interface Props {
   tone?: "default" | "muted" | "inverse";
   align?: "left" | "center";
   accordionVariant?: "default" | "boxed" | "minimal";
+  /** Adds FAQPage structured data (JSON-LD). Use it for one FAQ per page. */
+  structuredData?: boolean;
   class?: string;
 }
 
@@ -28,9 +31,14 @@ const {
   tone = "default",
   align = "center",
   accordionVariant = "default",
+  structuredData = true,
   class: className,
   ...restProps
 } = Astro.props;
+
+const faqJsonLd = structuredData
+  ? serializeJsonLd(faqSchema(items.map((item) => ({ question: item.title, answer: item.content }))))
+  : undefined;
 ---
 
 <Section
@@ -72,3 +80,7 @@ const {
     </Stack>
   </Container>
 </Section>
+
+{faqJsonLd && (
+  <script is:inline type="application/ld+json" set:html={faqJsonLd} />
+)}

@@ -13,7 +13,7 @@ The project includes a production-oriented frontend system with design tokens, S
 - SCSS / Sass
 - Design tokens
 - SVG sprite icons
-- Local font pipeline
+- Local font pipeline (pure Node: subset-font + fontkit, no Python)
 - Astro API routes
 - Node adapter ready for VPS deployment
 
@@ -149,6 +149,34 @@ the page part: `<BaseLayout title="Contact">`.
 
 ---
 
+## Structured Data (JSON-LD)
+
+Every page gets one `@graph` built from `siteConfig` (`src/lib/seo/schema.ts`):
+
+- `Organization` / `LocalBusiness` — set `siteConfig.organization` (type, address,
+  phone, email, opening hours, price range, `sameAs` profiles). Empty fields are skipped.
+- `WebSite` and `WebPage` (with language)
+- `BreadcrumbList` — automatic Home › page on subpages; override with
+  `<BaseLayout breadcrumbs={[...]}>` or turn off with `breadcrumbs={false}`
+- `FAQPage` — added by the `FAQ` widget (`structuredData={false}` to turn off)
+
+Extra nodes (Service, Product, Event…) can be passed with `<BaseLayout jsonLd={...}>`.
+
+---
+
+## Security
+
+- Content Security Policy (`security.csp` in `astro.config.mjs`) with hashes for
+  Astro's scripts and styles — no `unsafe-inline`. Google Analytics hosts are allowed.
+  Not active in `astro dev`; test with `build` + `preview`.
+- `src/middleware.ts` adds `X-Content-Type-Options`, `Referrer-Policy`,
+  `X-Frame-Options`, `Cross-Origin-Opener-Policy`, `Permissions-Policy` and HSTS
+  (for an `https://` `SITE_URL` in production).
+- Hashed assets in `/_astro/` are served with `Cache-Control: immutable` (1 year).
+- Static files are served before middleware — set the same headers in the reverse proxy.
+
+---
+
 ## Cookies and Analytics
 
 Google Analytics 4 is enabled only when `PUBLIC_GA_MEASUREMENT_ID` is set
@@ -206,6 +234,12 @@ Available layout primitives:
 - `Sidebar`
 
 These components are used to compose page layouts without rewriting the same CSS repeatedly.
+
+Spacing props (`space`, `gap`) accept **only spacing token names**
+(`"0"`, `"xs"`, `"sm"`, `"md"`, `"lg"`, `"xl"`, `"2xl"` … `"5xl"`) and render a
+modifier class such as `stack--space-md`. Arbitrary values (`"13px"`) are not
+supported on purpose: layouts stay predictable and no inline `style` is needed,
+which keeps the Content Security Policy strict. `Sidebar` width is `"sm" | "md" | "lg"`.
 
 ---
 
@@ -436,8 +470,26 @@ npm run build-icons
 import Icon from "@/components/media/Icon.astro";
 ---
 
-<Icon name="ic-burger" />
+<Icon name="mail" />
 ```
+
+Included icons: `menu`, `close`, `check`, `arrow-right`, `chevron-down`,
+`external-link`, `star`, `grid`, `blocks`, `image`, `code`, `mail`, `phone`,
+`map-pin`, `clock`.
+
+Icon rules (enforced by `svgo.config.js`): 24×24 `viewBox`, every color is turned
+into `currentColor`, so icons follow the text color in light and dark schemes.
+Brand logos (Facebook, Instagram…) are not included — add them from the brand's
+official assets.
+
+---
+
+## App Icons and Manifest
+
+`public/favicon.svg` is the single source. `npm run build:app-icons`
+(part of `build:system`) generates `favicon.ico`, `icons/apple-touch-icon.png`,
+`icons/icon-192.png` and `icons/icon-512.png`. The 512 px icon is also the
+default logo in structured data. `site.webmanifest` is generated from `siteConfig`.
 
 ---
 
@@ -468,6 +520,19 @@ public/fonts/
 ```txt
 src/styles/abstracts/_fonts.scss
 ```
+
+File names: `<family>-<weight or style>.<ext>`, e.g. `inter-regular.woff2`,
+`inter-bold.woff2`, `roboto-500-italic.ttf`.
+
+The script also generates:
+
+- a metric-matched `"<Family> Fallback"` face (local Arial with `size-adjust` and
+  ascent/descent overrides) — add it after the font in the typography tokens to
+  limit layout shift while the web font loads;
+- `src/design-system/fonts.generated.ts` — the regular face is preloaded in `BaseLayout`.
+
+The starter ships the official Inter 4.1 (SIL Open Font License, see
+`src/assets/fonts/raw/inter-LICENSE.txt`).
 
 ---
 
