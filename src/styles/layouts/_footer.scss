@@ -113,6 +113,23 @@
     gap: var(--spacing-md);
   }
 
+  .site-footer__cookie-settings {
+    align-self: flex-start;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-text-muted);
+    font: inherit;
+    font-size: var(--font-size-sm);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+
+  .site-footer__cookie-settings:hover {
+    color: var(--color-text-primary);
+  }
+
   .site-footer__copyright {
     margin: 0;
     color: var(--color-text-muted);

@@ -16,6 +16,8 @@ export type FeatureItem = {
 };
 
 export interface Props {
+  /** Section id, used as an anchor (e.g. /#features). */
+  id?: string;
   eyebrow?: string;
   title: string;
   description?: string;

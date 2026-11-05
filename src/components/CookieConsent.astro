@@ -1,61 +1,67 @@
 ---
 import { ANALYTICS_CONFIG } from "@/config/analytics";
+import { t } from "@/i18n";
 ---
 
-<aside
-  class="cookie-consent"
-  data-cookie-consent
-  data-consent-version={ANALYTICS_CONFIG.consentVersion}
-  aria-labelledby="cookie-consent-title"
-  aria-describedby="cookie-consent-description"
-  hidden
->
-  <div class="cookie-consent__content">
-    <div class="cookie-consent__text">
-      <p
-        id="cookie-consent-title"
-        class="cookie-consent__title"
-      >
-        Optional analytics
-      </p>
+{ANALYTICS_CONFIG.enabled && (
+  <aside
+    class="cookie-consent"
+    data-cookie-consent
+    data-consent-version={ANALYTICS_CONFIG.consentVersion}
+    aria-labelledby="cookie-consent-title"
+    aria-describedby="cookie-consent-description"
+    tabindex="-1"
+    hidden
+  >
+    <div class="cookie-consent__content">
+      <div class="cookie-consent__text">
+        <h2
+          id="cookie-consent-title"
+          class="cookie-consent__title"
+        >
+          {t.cookies.title}
+        </h2>
 
-      <p
-        id="cookie-consent-description"
-        class="cookie-consent__description"
-      >
-        We use optional Google Analytics cookies to understand how visitors use this portfolio. Analytics stays disabled unless        you accept it.
-      </p>
+        <p
+          id="cookie-consent-description"
+          class="cookie-consent__description"
+        >
+          {t.cookies.description}
+        </p>
 
-      <a
-        class="cookie-consent__privacy-link"
-        href="/privacy"
-      >
-        Privacy policy
-      </a>
+        <a
+          class="cookie-consent__privacy-link"
+          href="/privacy"
+        >
+          {t.cookies.privacyLink}
+        </a>
+      </div>
+
+      <!-- Both choices have the same visual weight (GDPR / EDPB guidelines). -->
+      <div class="cookie-consent__actions">
+        <button
+          class="cookie-consent__button"
+          type="button"
+          data-consent-reject
+        >
+          {t.cookies.reject}
+        </button>
+
+        <button
+          class="cookie-consent__button"
+          type="button"
+          data-consent-accept
+        >
+          {t.cookies.accept}
+        </button>
+      </div>
     </div>
-
-    <div class="cookie-consent__actions">
-      <button
-        class="cookie-consent__button cookie-consent__button--secondary"
-        type="button"
-        data-consent-reject
-      >
-        Reject
-      </button>
-
-      <button
-        class="cookie-consent__button cookie-consent__button--primary"
-        type="button"
-        data-consent-accept
-      >
-        Accept analytics
-      </button>
-    </div>
-  </div>
-</aside>
+  </aside>
+)}
 
 <script>
   import {
+    analyticsConsentEvents,
     getAnalyticsConsent,
     loadGoogleAnalytics,
     setAnalyticsConsent,
@@ -78,15 +84,24 @@ import { ANALYTICS_CONFIG } from "@/config/analytics";
     if (rejectButton) {
       rejectButton.disabled = disabled;
     }
-}
-  function showBanner(): void {
+  }
+
+  /**
+   * On page load the banner appears without taking focus, so keyboard and
+   * screen reader users keep their place. Focus moves only when the visitor
+   * opens the settings themselves.
+   */
+  function showBanner({ focus = false } = {}): void {
     if (!banner) {
       return;
     }
 
     setButtonsDisabled(false);
     banner.hidden = false;
-    acceptButton?.focus();
+
+    if (focus) {
+      banner.focus();
+    }
   }
 
   function hideBanner(): void {
@@ -156,6 +171,7 @@ import { ANALYTICS_CONFIG } from "@/config/analytics";
     }
   });
 
+  // "Cookie settings" link in the footer (or any element with data-cookie-settings).
   document.addEventListener("click", (event) => {
     const target = event.target;
 
@@ -163,16 +179,20 @@ import { ANALYTICS_CONFIG } from "@/config/analytics";
       return;
     }
 
-    const settingsButton = target.closest("[data-cookie-settings]");
-
-    if (!settingsButton) {
+    if (!target.closest("[data-cookie-settings]")) {
       return;
     }
 
-    showBanner();
+    showBanner({ focus: true });
   });
 
-  void initializeConsent();
+  window.addEventListener(analyticsConsentEvents.openSettings, () => {
+    showBanner({ focus: true });
+  });
+
+  if (banner) {
+    void initializeConsent();
+  }
 </script>
 
 <style lang="scss">
@@ -183,7 +203,7 @@ import { ANALYTICS_CONFIG } from "@/config/analytics";
 
   .cookie-consent {
     position: fixed;
-    z-index: 1000;
+    z-index: var(--z-index-toast);
     right: clamp(1rem, 3vw, 2rem);
     bottom: clamp(1rem, 3vw, 2rem);
     justify-self: flex-end;
@@ -191,9 +211,18 @@ import { ANALYTICS_CONFIG } from "@/config/analytics";
     max-width: 46rem;
     padding: clamp(1.25rem, 3vw, 2rem);
     border: 1px solid currentColor;
-    background: var(--color-background-dark-pink, #17040c);
-    color: var(--color-text-primary, #fff);
-    box-shadow: var(--shadow-exist);
+    background: var(--color-background-inverse);
+    color: var(--color-text-inverse);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .cookie-consent:focus {
+    outline: none;
+  }
+
+  .cookie-consent:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
   }
 
   .cookie-consent[hidden] {
@@ -208,6 +237,7 @@ import { ANALYTICS_CONFIG } from "@/config/analytics";
 
   .cookie-consent__title {
     margin: 0 0 1rem;
+    color: inherit;
     font-size: 2rem;
     font-weight: 600;
   }
@@ -236,8 +266,15 @@ import { ANALYTICS_CONFIG } from "@/config/analytics";
     min-height: 2.75rem;
     padding: 0.7rem 1rem;
     border: 1px solid currentColor;
+    background: var(--color-text-inverse);
+    color: var(--color-background-inverse);
     font: inherit;
     cursor: pointer;
+  }
+
+  .cookie-consent__button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
   }
 
   .cookie-consent__button:disabled {
@@ -245,15 +282,6 @@ import { ANALYTICS_CONFIG } from "@/config/analytics";
     opacity: 0.65;
   }
 
-  .cookie-consent__button--primary {
-    background: var(--color-text-primary, #fff);
-    color: var(--color-background-primary, #17040c);
-  }
-
-  .cookie-consent__button--secondary {
-    background: transparent;
-    color: inherit;
-  }
 
   @include mq(sm) {
     .cookie-consent__title {

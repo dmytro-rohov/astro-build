@@ -3,20 +3,34 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import Section from "@/components/layouts/Section.astro";
 import Container from "@/components/layouts/Container.astro";
 import Stack from "@/components/layouts/Stack.astro";
+import { ANALYTICS_CONFIG } from "@/config/analytics";
+import { t } from "@/i18n";
+
+const p = t.pages.privacy;
 ---
 
 <BaseLayout
-  title="Privacy Policy | Astro Builder"
-  description="Basic privacy policy placeholder."
+  title={p.title}
+  description={p.title}
 >
   <Section>
     <Container size="md">
-      <Stack space="md">
-        <h1>Privacy Policy</h1>
-        <p>
-          This is a placeholder privacy policy page. Replace it with project-specific
-          legal content before production deployment.
-        </p>
+      <Stack space="lg">
+        <h1>{p.heading}</h1>
+
+        <p>{p.placeholder}</p>
+
+        {ANALYTICS_CONFIG.enabled && (
+          <Stack space="sm">
+            <h2>{p.cookiesHeading}</h2>
+            <p>{p.cookiesText}</p>
+            <p>
+              <button type="button" class="link link--underline" data-cookie-settings>
+                {t.footer.cookieSettings}
+              </button>
+            </p>
+          </Stack>
+        )}
       </Stack>
     </Container>
   </Section>

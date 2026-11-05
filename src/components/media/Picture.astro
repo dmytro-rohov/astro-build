@@ -7,10 +7,12 @@ export interface PictureSource {
   type?: string;
 }
 
-export interface PictureProps extends ImgProps {
+export interface Props extends ImgProps {
   sources?: PictureSource[];
   pictureClass?: string;
 }
+
+export type PictureProps = Props;
 
 const {
   sources = [],

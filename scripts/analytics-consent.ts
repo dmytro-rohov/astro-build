@@ -15,8 +15,8 @@ declare global {
   }
 }
 
-const CONSENT_EVENT = "madebymary:analytics-consent-change";
-const OPEN_SETTINGS_EVENT = "madebymary:open-cookie-settings";
+const CONSENT_EVENT = "site:analytics-consent-change";
+const OPEN_SETTINGS_EVENT = "site:open-cookie-settings";
 
 let analyticsLoadPromise: Promise<void> | null = null;
 
@@ -74,7 +74,9 @@ function initializeDataLayer(): void {
   window.dataLayer = window.dataLayer ?? [];
 
   if (typeof window.gtag !== "function") {
-    window.gtag = function gtag(..._args: unknown[]): void {
+    // gtag.js expects the native `arguments` object, not a rest array.
+    window.gtag = function gtag(): void {
+      // eslint-disable-next-line prefer-rest-params
       window.dataLayer.push(arguments);
     };
   }
@@ -122,12 +124,12 @@ export function loadGoogleAnalytics(): Promise<void> {
   analyticsLoadPromise = new Promise((resolve, reject) => {
     const { measurementId } = ANALYTICS_CONFIG;
 
-    if (!measurementId.startsWith("G-")) {
+    if (!ANALYTICS_CONFIG.enabled) {
       analyticsLoadPromise = null;
 
       reject(
         new Error(
-          "Invalid GA4 Measurement ID. Expected an identifier beginning with G-.",
+          "Analytics is disabled. Set PUBLIC_GA_MEASUREMENT_ID (G-…) in .env.",
         ),
       );
 

@@ -1,4 +1,4 @@
-# Astro Builder V1
+# Astro Starter V2
 
 Reusable Astro starter for building landing pages and small websites faster.
 
@@ -32,19 +32,34 @@ src/
 │  ├─ form/
 │  ├─ layouts/
 │  ├─ media/
-│  ├─ site/
 │  ├─ ui/
 │  └─ widgets/
+│
+├─ config/
+│  ├─ analytics.ts
+│  └─ site.ts
 │
 ├─ design-system/
 │  ├─ tokens/
 │  └─ utils/
+│
+├─ i18n/
+│  ├─ dictionaries/   (en.ts, pl.ts, uk.ts — one file per language)
+│  └─ index.ts
+│
+├─ layouts/
+│  ├─ BaseLayout.astro
+│  ├─ Header.astro
+│  └─ Footer.astro
 │
 ├─ lib/
 │  └─ contact/
 │
 ├─ pages/
 │  ├─ api/
+│  ├─ 404.astro
+│  ├─ 500.astro
+│  ├─ robots.txt.ts
 │  ├─ index.astro
 │  ├─ contact.astro
 │  ├─ playground.astro
@@ -57,7 +72,97 @@ src/
    ├─ layouts/
    ├─ state/
    └─ widgets/
+
+scripts/   - build scripts (tokens, icons, fonts) and client scripts
+public/    - static files (fonts, icon sprite, og-cover.jpg)
 ```
+
+---
+
+## Project Configuration
+
+Per-project content lives in one file: `src/config/site.ts`.
+
+- `lang` — **the one switch for the site language** (see Language below)
+- `name`, `description` — site name (used in titles) and default meta description
+- `author`, `keywords` — optional meta tags (empty = not rendered)
+- `colorScheme` — `"light"`, `"dark"` or `"auto"` (follows system preference)
+- `seo.image`, `seo.imageAlt` — default Open Graph image
+- `header.nav`, `header.cta` — main navigation
+- `footer` — footer description, link groups, social links
+
+The public site URL is **not** stored in code. Set `SITE_URL` in `.env`
+(and as a Docker build arg). It is used for `Astro.site`, canonical links,
+sitemap, Open Graph URLs and `security.allowedDomains` (`www.` is added automatically).
+
+Replace `public/og-cover.jpg` (1200×630) with the project cover.
+
+---
+
+## Language
+
+All UI texts (navigation, footer, cookie banner, contact form, validation
+messages, emails, 404/500, privacy page) come from dictionaries in
+`src/i18n/dictionaries/`. The language is chosen in **one place**:
+
+```ts
+// src/config/site.ts
+const lang = "pl";
+```
+
+Any language works. The file name is the language code:
+
+1. Copy `en.ts` to `<code>.ts` (e.g. `de.ts`, `pt-BR.ts`).
+2. Translate the texts and set `meta.ogLocale` (e.g. `de_DE`) and `meta.dir`
+   (`"rtl"` for Arabic, Hebrew…).
+3. Set `lang` in `site.ts`.
+
+No registration is needed — dictionaries are picked up automatically.
+TypeScript checks that every dictionary has the same keys as `en.ts`.
+An unknown `lang` stops the build with a clear error.
+
+In components use:
+
+```astro
+---
+import { t, format } from "@/i18n";
+---
+<p>{t.footer.cookieSettings}</p>
+<p>{format(t.footer.copyright, { year: 2026, siteName: "Acme" })}</p>
+```
+
+Page titles follow `t.meta.titleTemplate` (`"{title} | {siteName}"`) — pass only
+the page part: `<BaseLayout title="Contact">`.
+
+---
+
+## SEO and Indexing
+
+- `robots.txt` is generated with the sitemap URL; `/api/` is disallowed.
+- URLs have no trailing slash (`trailingSlash: "never"`) — canonical links and the
+  sitemap use the same form; `/contact/` redirects to `/contact`.
+- `src/config/indexing.ts`:
+  - `noindexPaths` — `noindex` meta and left out of the sitemap (e.g. `/playground`)
+  - `sitemapExcludedPaths` — indexable, but not in the sitemap (e.g. `/privacy`)
+- Custom `404` (prerendered) and `500` pages, both `noindex`.
+- Every page has exactly one `<h1>`.
+
+---
+
+## Cookies and Analytics
+
+Google Analytics 4 is enabled only when `PUBLIC_GA_MEASUREMENT_ID` is set
+(build time, also as a Docker build arg). Without it the site sets no optional
+cookies and **no banner is shown**.
+
+With analytics enabled:
+
+- GA loads only after consent; Consent Mode v2 defaults are all `denied`.
+- "Reject" and "Accept" have the same visual weight.
+- The banner does not steal focus on page load.
+- "Cookie settings" in the footer (and on the privacy page) reopens the banner,
+  so consent can be withdrawn at any time. Any element with
+  `data-cookie-settings` does the same.
 
 ---
 
@@ -76,6 +181,15 @@ The project uses design tokens as the source of truth for:
 - z-index
 
 Tokens are generated into SCSS custom properties and used across the whole project.
+
+Semantic colors exist in two schemes with the same token names:
+
+- `semanticColors` — light
+- `semanticColorsDark` — dark
+
+Both live in `src/design-system/tokens/semantic/color-semantic.ts`.
+`npm run tokens` generates `:root` (light), `:root[data-theme="dark"]` and an automatic
+`prefers-color-scheme: dark` block. Components only use semantic tokens, so they work in both schemes.
 
 ---
 
@@ -104,7 +218,6 @@ Available UI primitives:
 - `Card`
 - `Tag`
 - `Divider`
-- `Accordion`
 
 ---
 
@@ -149,10 +262,17 @@ Available page widgets:
 - `FAQ`
 - `ContactForm`
 - `Navbar`
-- `SiteHeader`
-- `SiteFooter`
+- `Accordion`
 
 Widgets are larger reusable page sections built from smaller primitives.
+
+Site layouts (`src/layouts/`): `BaseLayout`, `Header`, `Footer`.
+
+`Button` renders a `<button>` by default and a link styled as a button when `href` is set:
+
+```astro
+<Button href="/contact" size="lg">Contact</Button>
+```
 
 ---
 
@@ -175,10 +295,16 @@ validateContactForm.ts
   ↓
 sendContactMessage.ts
   ↓
-console delivery / future email provider
+console delivery / Resend
 ```
 
-In development mode, the contact form can log submissions to the terminal.
+Server-side checks: required fields, email format, length limits
+(`src/lib/contact/limits.ts`, also used as `maxlength` in the form), privacy
+consent, honeypot and a rate limit of 5 messages per 10 minutes per IP.
+
+In development the form logs submissions to the terminal by default.
+In production `CONTACT_DELIVERY_MODE` **must** be set — otherwise the form
+returns an error instead of silently dropping messages.
 
 Example `.env`:
 
@@ -201,10 +327,12 @@ not in the browser console.
 Create `.env` from `.env.example`.
 
 ```env
+SITE_URL=http://localhost:4321
+PUBLIC_GA_MEASUREMENT_ID=
 CONTACT_DELIVERY_MODE=console
 ```
 
-Future email delivery can use variables such as:
+Email delivery through Resend:
 
 ```env
 CONTACT_DELIVERY_MODE=resend
@@ -252,6 +380,12 @@ Useful pages:
 npm run build
 ```
 
+Run lint, type check and build together:
+
+```bash
+npm run validate
+```
+
 Preview production build:
 
 ```bash
@@ -281,6 +415,8 @@ npm run build
 
 ## Adding a New Icon
 
+The icon name is the SVG file name without `.svg`.
+
 1. Add raw SVG to:
 
 ```txt
@@ -300,7 +436,7 @@ npm run build-icons
 import Icon from "@/components/media/Icon.astro";
 ---
 
-<Icon name="github" />
+<Icon name="ic-burger" />
 ```
 
 ---
@@ -405,67 +541,31 @@ import FeatureGrid from "@/components/widgets/FeatureGrid.astro";
 ## Deployment Notes
 
 Because this project includes an Astro API route for the contact form, it is not purely static.
+It runs as a Node server (`@astrojs/node`, standalone) inside Docker:
 
-For VPS deployment, use the Astro Node adapter:
-
-```js
-import { defineConfig } from "astro/config";
-import node from "@astrojs/node";
-
-export default defineConfig({
-  output: "server",
-  adapter: node({
-    mode: "standalone",
-  }),
-});
+```bash
+cp .env.example .env   # set SITE_URL, PUBLIC_GA_MEASUREMENT_ID, CONTACT_* values
+docker compose up -d --build
 ```
 
-Typical VPS setup:
-
-```txt
-VPS Ubuntu
-↓
-Node.js
-↓
-Astro standalone server
-↓
-PM2 process manager
-↓
-Nginx reverse proxy
-↓
-SSL certificate
-```
+`SITE_URL` and `PUBLIC_GA_MEASUREMENT_ID` are build-time values (passed as build args by
+`compose.yaml`). The container listens on `127.0.0.1:4322` and is meant to sit behind a
+reverse proxy (e.g. Caddy) that handles HTTPS.
 
 ---
 
 ## Version
 
-Current version:
+Current version: **V2** (in progress).
 
-```txt
-V1
-```
+V2 includes:
 
-V1 includes:
-
-- design tokens
+- design tokens with light and dark color schemes
 - SCSS architecture
-- layout primitives
-- UI primitives
-- form primitives
-- media primitives
-- reusable widgets
-- backend-ready ContactForm
-- playground page
-- welcome page
-- contact page
-
-Future improvements:
-
-- email provider integration
-- rate limiting
-- advanced spam protection
-- dark mode
-- animations
-- CMS/blog
-- deployment automation
+- layout, UI, form and media primitives
+- reusable widgets (Hero, FeatureGrid, CTA, FAQ, ContactForm, Navbar, Accordion)
+- one-switch site language (`siteConfig.lang`) with any number of dictionaries
+- SEO: titles, canonical, Open Graph, Twitter Card, JSON-LD, sitemap, robots.txt, 404/500
+- GDPR-friendly cookie banner with Consent Mode v2 and consent withdrawal
+- ContactForm with server validation, rate limit and Resend delivery
+- Docker deployment

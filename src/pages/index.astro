@@ -6,11 +6,13 @@ import FeatureGrid from "@/components/widgets/FeatureGrid.astro";
 import CTA from "@/components/widgets/CTA.astro";
 import FAQ from "@/components/widgets/FAQ.astro";
 
+import { siteConfig } from "@/config/site";
+
 // for SEO
 const siteUrl = Astro.site ?? Astro.url.origin;
 const pageUrl = new URL("/", siteUrl).toString();
 const websiteImageUrl = new URL(
-  "/og-cover.jpg",
+  siteConfig.seo.image,
   siteUrl,
 ).toString();
 
@@ -19,20 +21,20 @@ const pageJsonLd = {
   "@type": "WebPage",
   "@id": `${pageUrl}#webpage`,
   url: pageUrl,
-  name: "Website",
-  description: "Website description.",
+  name: siteConfig.name,
+  description: siteConfig.description,
   image: websiteImageUrl,
 
   isPartOf: {
     "@type": "WebSite",
     "@id": `${siteUrl}#website`,
     url: siteUrl.toString(),
-    name: "Website",
+    name: siteConfig.name,
   },
 
   primaryImageOfPage: {
     "@type": "ImageObject",
-    url: defaultImageUrl,
+    url: websiteImageUrl,
   },
 };
 
@@ -106,10 +108,7 @@ import heroImage from "@/assets/img/photo.jpg";
 
 <BaseLayout
   canonicalPath="/"
-  image="/og-cover.jpg"
-  imageAlt="Image alt text"
   robots="index, follow, max-image-preview:large"
-  pageType="profile"
   jsonLd={pageJsonLd}
 >
   <Hero
@@ -129,6 +128,7 @@ import heroImage from "@/assets/img/photo.jpg";
   />
 
   <FeatureGrid
+    id="features"
     eyebrow="System overview"
     title="Everything you need to start a professional landing page."
     description="Astro Builder gives you a consistent foundation instead of rebuilding the same setup from scratch for every project."

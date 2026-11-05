@@ -4,8 +4,8 @@
     font-size: var(--font-size-base, 1rem);
     font-weight: var(--font-weight-regular, 400);
     line-height: var(--line-height-normal, 1.5);
-    color: var(--color-text-primary, #0f172a);
-    background: var(--color-background-primary, #fff);
+    color: var(--color-text-primary);
+    background: var(--color-background-primary);
     text-rendering: optimizelegibility;
   }
 
@@ -19,7 +19,7 @@
     font-weight: var(--font-weight-bold, 700);
     line-height: var(--line-height-tight, 1.1);
     letter-spacing: var(--letter-spacing-tight, -0.02em);
-    color: var(--color-text-primary, #0f172a);
+    color: var(--color-text-primary);
   }
 
   p {

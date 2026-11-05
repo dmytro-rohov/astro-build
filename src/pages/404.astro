@@ -1,0 +1,33 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layouts/Section.astro";
+import Container from "@/components/layouts/Container.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Button from "@/components/ui/Button.astro";
+import { t } from "@/i18n";
+
+// Prerendered at build time — this also makes the build fail fast
+// when siteConfig.lang has no dictionary.
+export const prerender = true;
+
+const page = t.pages.notFound;
+---
+
+<BaseLayout
+  title={page.title}
+  description={page.description}
+  robots="noindex, follow"
+>
+  <Section spacing="xl">
+    <Container size="md">
+      <Stack space="lg" class="error-page">
+        <p class="error-page__code" aria-hidden="true">404</p>
+        <h1>{page.heading}</h1>
+        <p>{page.description}</p>
+        <div>
+          <Button href="/">{t.common.backToHome}</Button>
+        </div>
+      </Stack>
+    </Container>
+  </Section>
+</BaseLayout>

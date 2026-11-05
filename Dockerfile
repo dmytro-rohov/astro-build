@@ -39,6 +39,13 @@ RUN npm ci
 # --------------------------------------------------
 FROM dependencies AS build
 
+# Publiczny adres strony jest wpisywany do builda (canonical, sitemap, OG).
+ARG SITE_URL=http://localhost:4321
+ENV SITE_URL=$SITE_URL
+# Publiczne zmienne PUBLIC_* są wpisywane do kodu klienta w czasie builda.
+ARG PUBLIC_GA_MEASUREMENT_ID=
+ENV PUBLIC_GA_MEASUREMENT_ID=$PUBLIC_GA_MEASUREMENT_ID
+
 COPY . .
 
 RUN npm run build

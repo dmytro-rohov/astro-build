@@ -7,6 +7,8 @@ import Tag from "@/components/ui/Tag.astro";
 import Accordion, { type AccordionItem } from "@/components/widgets/Accordion.astro";
 
 export interface Props {
+  /** Section id, used as an anchor (e.g. /#features). */
+  id?: string;
   eyebrow?: string;
   title: string;
   description?: string;

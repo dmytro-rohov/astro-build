@@ -5,6 +5,9 @@ import Cluster from "@/components/layouts/Cluster.astro";
 import Link from "@/components/ui/Link.astro";
 import Divider from "@/components/ui/Divider.astro";
 import Icon from "@/components/media/Icon.astro";
+import { siteConfig } from "@/config/site";
+import { ANALYTICS_CONFIG } from "@/config/analytics";
+import { format, t } from "@/i18n";
 
 export type FooterLink = {
   label: string;
@@ -39,31 +42,13 @@ export interface Props {
 
 const year = new Date().getFullYear();
 
-const defaultGroups: FooterLinkGroup[] = [
-  {
-    title: "Product",
-    links: [
-      { label: "Features", href: "/#features" },
-      { label: "Components", href: "/playground" },
-      { label: "Contact", href: "/contact" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { label: "Documentation", href: "/playground" },
-      { label: "GitHub", href: "https://github.com/dmytro-rohov", external: true },
-    ],
-  },
-];
-
 const {
-  brandLabel = "Astro System",
+  brandLabel = siteConfig.name,
   brandHref = "/",
-  description = "Reusable Astro frontend system for professional landing pages.",
-  groups = defaultGroups,
-  socialLinks = [],
-  copyright = `© ${year} ${brandLabel}. All rights reserved.`,
+  description = siteConfig.footer.description,
+  groups = siteConfig.footer.groups,
+  socialLinks = siteConfig.footer.socialLinks,
+  copyright = format(t.footer.copyright, { year, siteName: brandLabel }),
   class: className,
   ...restProps
 } = Astro.props;
@@ -143,6 +128,16 @@ const {
         <p class="site-footer__copyright">
           {copyright}
         </p>
+
+        {ANALYTICS_CONFIG.enabled && (
+          <button
+            type="button"
+            class="site-footer__cookie-settings"
+            data-cookie-settings
+          >
+            {t.footer.cookieSettings}
+          </button>
+        )}
       </div>
     </Stack>
   </Container>
