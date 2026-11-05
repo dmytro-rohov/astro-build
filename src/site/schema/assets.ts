@@ -5,13 +5,14 @@
 import { z } from "zod";
 import { text } from "./fields";
 
-export const AssetEntry = z.object({
+export const AssetEntry = z.strictObject({
   file: z
     .string()
-    .regex(/^[a-z0-9][a-z0-9._-]*\.(jpe?g|png|webp|avif|svg)$/i, "File name inside assets/, e.g. hero.jpg (no folders)."),
+    // Lowercase only: the build resolves files case-sensitively (Hero.JPG would pass here and fail there).
+    .regex(/^[a-z0-9][a-z0-9._-]*\.(jpe?g|png|webp|avif|svg)$/, "Lowercase file name inside assets/, e.g. hero.jpg (no folders, lowercase extension)."),
   alt: text(200, 0).describe('Image description for screen readers; "" only for decorative images.'),
   focal: z
-    .object({
+    .strictObject({
       x: z.number().min(0).max(100),
       y: z.number().min(0).max(100),
     })

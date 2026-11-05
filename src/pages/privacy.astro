@@ -18,7 +18,10 @@ const name = business.name ?? site.meta.name;
 const address = [business.address?.street, [business.address?.postalCode, business.address?.city].filter(Boolean).join(" ")]
   .filter(Boolean)
   .join(", ");
-const updated = new Intl.DateTimeFormat(lang, { dateStyle: "long" }).format(new Date());
+// Only a real change of the policy should move the date: set meta.privacyUpdated.
+const updated = new Intl.DateTimeFormat(lang, { dateStyle: "long" }).format(
+  site.meta.privacyUpdated ? new Date(`${site.meta.privacyUpdated}T12:00:00`) : new Date(),
+);
 ---
 
 <BaseLayout title={p.title} description={format(p.description, { name })}>

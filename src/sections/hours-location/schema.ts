@@ -6,7 +6,7 @@ export const hoursLocation = defineSectionType({
   type: "hours-location",
   label: "Godziny i dojazd",
   description: "Opening hours, address and a map link. Data comes from business (hours, address, phone).",
-  content: z.object({
+  content: z.strictObject({
     eyebrow: field(text(40).optional(), { label: "Nadtytuł", fieldType: "text", description: "Short label above the title." }),
     title: field(text(90).optional(), { label: "Tytuł", fieldType: "text", description: "Headline; a default from the dictionary is used when empty." }),
     description: field(multilineText(240).optional(), { label: "Opis", fieldType: "textarea", description: "e.g. parking or how to find the entrance." }),

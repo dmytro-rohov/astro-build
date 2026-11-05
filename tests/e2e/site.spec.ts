@@ -19,7 +19,7 @@ test.describe(`site ${path.basename(siteDir)}`, () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
   for (const { slug } of pages) {
-    test(`${slug}: loads with one h1 and valid JSON-LD`, async ({ page }) => {
+    test(`${slug}: loads with one h1, valid JSON-LD and unique ids`, async ({ page }) => {
       const response = await page.goto(slug);
       expect(response?.status()).toBe(200);
       await expect(page.locator("h1")).toHaveCount(1);
@@ -27,6 +27,13 @@ test.describe(`site ${path.basename(siteDir)}`, () => {
       for (const block of await page.locator('script[type="application/ld+json"]').allTextContents()) {
         expect(JSON.parse(block)["@context"]).toBe("https://schema.org");
       }
+
+      // Duplicate ids break the skip link, aria-controls and <label for>.
+      const duplicates = await page.evaluate(() => {
+        const ids = [...document.querySelectorAll("[id]")].map((element) => element.id);
+        return [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
+      });
+      expect(duplicates, "duplicate ids").toEqual([]);
     });
 
     test(`${slug}: nothing overflows at 320, 768 and 1440 px`, async ({ page }) => {

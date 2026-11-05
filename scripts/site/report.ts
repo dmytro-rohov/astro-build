@@ -12,7 +12,7 @@
  *   theme: { archetype, colorScheme, fontPair, accent, adjustments[] },
  *   build: { ok, outDir },
  *   pages: [{ id, slug, title, a11y: { violations[] }, lighthouse: { performance, accessibility, bestPractices, seo }, screenshots: { desktop, mobile } }],
- *   gates: { a11y, lighthouse, build }
+ *   gates: { a11y, lighthouse (true | false | "skipped"), build }
  * }
  */
 import fs from "node:fs";
@@ -32,6 +32,7 @@ const THRESHOLDS = { performance: 0.9, accessibility: 0.95, bestPractices: 0.95,
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
 const dir = resolveSiteDir(getFlag("site"));
+const skipLighthouse = process.argv.includes("--no-lighthouse");
 const generatedAt = new Date().toISOString();
 
 let loaded;
@@ -110,7 +111,7 @@ if (buildOk) {
       }
     }
 
-    if (!process.argv.includes("--no-lighthouse")) {
+    if (!skipLighthouse) {
       const chrome = await chromeLauncher.launch({ chromePath: chromium.executablePath(), chromeFlags: ["--headless=new", "--no-sandbox"] });
 
       try {
@@ -143,17 +144,18 @@ if (buildOk) {
   }
 }
 
-const gates = {
+const gates: { build: boolean; a11y: boolean; lighthouse: boolean | "skipped" } = {
   build: buildOk,
   a11y: buildOk && pages.every((page) => (page.a11y?.violations.length ?? 1) === 0),
-  lighthouse:
-    process.argv.includes("--no-lighthouse") ||
-    (buildOk &&
+  lighthouse: skipLighthouse
+    ? "skipped"
+    : buildOk &&
       pages.every((page) =>
         (Object.keys(THRESHOLDS) as (keyof typeof THRESHOLDS)[]).every((key) => (page.lighthouse?.[key] ?? 0) >= THRESHOLDS[key]),
-      )),
+      ),
 };
-const passed = Object.values(gates).every(Boolean);
+// A skipped gate does not fail the report.
+const passed = Object.values(gates).every((gate) => gate !== false);
 
 const reportFile = path.join(context.out, "report.json");
 writeJson(reportFile, {
@@ -171,5 +173,5 @@ writeJson(reportFile, {
   gates,
 });
 
-console.log(`${passed ? "✔" : "✖"} ${loaded.site.siteId}: build ${gates.build ? "ok" : "failed"}, a11y ${gates.a11y ? "ok" : "failed"}, lighthouse ${gates.lighthouse ? "ok" : "failed"} → ${reportFile}`);
+console.log(`${passed ? "✔" : "✖"} ${loaded.site.siteId}: build ${gates.build ? "ok" : "failed"}, a11y ${gates.a11y ? "ok" : "failed"}, lighthouse ${gates.lighthouse === "skipped" ? "skipped" : gates.lighthouse ? "ok" : "failed"} → ${reportFile}`);
 process.exit(passed ? 0 : 1);

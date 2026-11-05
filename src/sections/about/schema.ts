@@ -2,7 +2,7 @@ import { z } from "zod";
 import { defineSectionType } from "../../site/schema/define";
 import { Action, field, Id, imageSlot, listWithIds, richTextLite, text } from "../../site/schema/fields";
 
-const Highlight = z.object({
+const Highlight = z.strictObject({
   id: Id,
   value: field(text(16), { label: "Wartość", fieldType: "text", description: 'Short number or fact, e.g. "15 lat", "2000+".' }),
   label: field(text(48), { label: "Opis", fieldType: "text", description: 'What the value means, e.g. "doświadczenia".' }),
@@ -13,7 +13,7 @@ export const about = defineSectionType({
   label: "O nas",
   description: "Story of the business: who they are, why they do it, what makes them different.",
   accentTone: true,
-  content: z.object({
+  content: z.strictObject({
     eyebrow: field(text(40).optional(), { label: "Nadtytuł", fieldType: "text", description: "Short label above the title." }),
     title: field(text(90), { label: "Tytuł", fieldType: "text", description: "Section headline." }),
     body: field(richTextLite(1500), { label: "Treść", fieldType: "richtext-lite", description: "1–3 short paragraphs (blank line between paragraphs)." }),
@@ -25,7 +25,7 @@ export const about = defineSectionType({
     "image-side": {
       description: "Text next to a portrait photo; facts in a row below the text.",
       uses: ["eyebrow", "image", "highlights", "action"],
-      props: z.object({ imagePosition: z.enum(["left", "right"]).optional().describe("Photo side on wide screens.") }),
+      props: z.strictObject({ imagePosition: z.enum(["left", "right"]).optional().describe("Photo side on wide screens.") }),
     },
     centered: {
       description: "Centered narrow text column with facts in a row — no photo.",

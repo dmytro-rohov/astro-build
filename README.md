@@ -96,15 +96,15 @@ sites/<site>/
 npm run site:validate -- --site <dir>               # schema, contrast, fonts, assets — no build
 npm run site:build -- --site <dir> [--out <dir>]    # full build (default ./dist)
 npm run site:preview -- --site <dir> [--port 4321]  # dev server with live reload
-npm run site:screenshot -- --site <dir> [--out <dir>]  # desktop + mobile PNG of every page
-npm run site:report -- --site <dir> [--out <dir>]   # build + axe + Lighthouse + screenshots → report.json
+npm run site:screenshot -- --site <dir> [--out <dir>] [--no-build]  # desktop + mobile PNG of every page
+npm run site:report -- --site <dir> [--out <dir>] [--no-lighthouse] [--no-screenshots]  # build + axe + Lighthouse + screenshots → report.json
 ```
 
 `site:report` writes `<out>/report.json` for the orchestrator (default out:
 `.generated/sites/<siteId>`): engine and schema version, validation issues and warnings
 (legal review of the privacy template, missing data, accent adjustments), resolved theme,
 per page axe violations, Lighthouse scores and screenshot paths, and the quality gates
-(`build`, `a11y`, `lighthouse` ≥ 90/95/95/95). Exit code 1 when a gate fails; an invalid
+(`build`, `a11y`, `lighthouse` ≥ 90/95/95/95, or `"skipped"` with `--no-lighthouse`). Exit code 1 when a gate fails; an invalid
 site still gets a report with the readable issues.
 
 - Schemas (Zod) in `src/site/schema/` and `src/sections/<type>/schema.ts` are the single
@@ -117,6 +117,13 @@ site still gets a report with the readable issues.
 - Every page comes from `pages[]` (`src/pages/[...slug].astro`); the first section renders
   the page's only `<h1>`. Engine pages (privacy, contact results, 404/500, API)
   use reserved slugs that site.json cannot take.
+- **Strict:** unknown keys are errors (a typo such as `"titel"` never disappears silently);
+  text must not contain control or bidi-override characters; asset file names are lowercase.
+- Section ids are also DOM ids and cannot take the engine's own (`main-content`,
+  `navbar-menu`, `contact-name`…). At most one `contact` and one `faq` section per page.
+  Every `href` to `/#id` or `/page#id` (menu, buttons, footer) must hit a section id.
+- `business.type` is one of the schema.org types listed in `BUSINESS_TYPES`
+  (`src/site/schema/site.ts`, also in `catalog.json`); `meta.url` is an origin without a path.
 - Errors are listed per field, e.g.
   `pages[0].sections[0].content.title: Too big: expected string to have <=80 characters`.
 
@@ -144,7 +151,7 @@ the migrated site is validated like any build.
 
 | Type | Variants |
 |---|---|
-| `hero` | `split-image`, `centered`, `cover-image` (photo behind text, accent tone allowed) |
+| `hero` | `split-image`, `centered`, `cover-image` (photo behind text, always the dark palette) |
 | `about` | `image-side`, `centered` |
 | `services` | `cards`, `price-list` |
 | `features` | `cards-grid`, `icon-list` |
@@ -231,21 +238,18 @@ Images are referenced as `"asset:<id>"` and described in `assets/assets.json`:
 
 ## Project Configuration
 
-Per-project content lives in one file: `src/config/site.ts`.
+Everything a site needs is in `SITE_DIR/site.json` (see "The site comes from
+`site.json`"): `lang`, `meta` (name, description, url, logo, icon, Open Graph image),
+`business`, `theme`, `analytics`, `contact`, `layout` (navbar, footer) and `pages`.
+`src/config/site.ts` is a compatibility layer computed from it — do not edit it.
 
-- `lang` — **the one switch for the site language** (see Language below)
-- `name`, `description` — site name (used in titles) and default meta description
-- `author`, `keywords` — optional meta tags (empty = not rendered)
-- `colorScheme` — `"light"`, `"dark"` or `"auto"` (follows system preference)
-- `seo.image`, `seo.imageAlt` — default Open Graph image
-- `header.nav`, `header.cta` — main navigation
-- `footer` — footer description, link groups, social links
+The public site URL is `meta.url` (origin only, e.g. `https://example.com`); the
+`SITE_URL` environment variable (also a Docker build arg) overrides it. It is used for
+`Astro.site`, canonical links, sitemap, Open Graph URLs and `security.allowedDomains`
+(`www.` is added automatically).
 
-The public site URL is **not** stored in code. Set `SITE_URL` in `.env`
-(and as a Docker build arg). It is used for `Astro.site`, canonical links,
-sitemap, Open Graph URLs and `security.allowedDomains` (`www.` is added automatically).
-
-Replace `public/og-cover.jpg` (1200×630) with the project cover.
+Without `meta.seo.image` the build generates `og-cover.jpg` (1200×630) from the site
+name, description and colors.
 
 ---
 
@@ -253,11 +257,11 @@ Replace `public/og-cover.jpg` (1200×630) with the project cover.
 
 All UI texts (navigation, footer, cookie banner, contact form, validation
 messages, emails, 404/500, contact result pages, privacy page) come from
-dictionaries in `src/i18n/dictionaries/`. The language is chosen in **one place**:
+dictionaries in `src/i18n/dictionaries/`. The language is chosen in **one place** —
+`"lang"` in site.json:
 
-```ts
-// src/config/site.ts
-const lang = "pl";
+```json
+{ "lang": "pl" }
 ```
 
 Any language works. The file name is the language code:
@@ -265,15 +269,13 @@ Any language works. The file name is the language code:
 1. Copy `en.ts` to `<code>.ts` (e.g. `de.ts`, `pt-BR.ts`).
 2. Translate the texts and set `meta.ogLocale` (e.g. `de_DE`) and `meta.dir`
    (`"rtl"` for Arabic, Hebrew…).
-3. Set `lang` in `site.ts`.
+3. Set `"lang"` in site.json.
 
-No registration is needed — dictionaries are picked up automatically.
-
-Project **content** is not part of the dictionaries and must be written in the
-site language: `name`, `description`, `footer.description`, `seo.imageAlt` and
-`organization` in `site.ts`, plus the page content itself.
-TypeScript checks that every dictionary has the same keys as `en.ts`.
-An unknown `lang` stops the build with a clear error.
+No registration is needed — dictionaries are picked up automatically. The site
+**content** in site.json must be written in that language. TypeScript checks that
+every dictionary has the same keys as `en.ts`; an unknown `lang` stops validation
+with a clear error, and a font pair without the language's script (e.g. Cyrillic
+for `uk`) is rejected with a list of suitable pairs.
 
 In components use:
 
@@ -284,9 +286,6 @@ import { t, format } from "@/i18n";
 <p>{t.footer.cookieSettings}</p>
 <p>{format(t.footer.copyright, { year: 2026, siteName: "Acme" })}</p>
 ```
-
-Page titles follow `t.meta.titleTemplate` (`"{title} | {siteName}"`) — pass only
-the page part: `<BaseLayout title="Contact">`.
 
 ---
 
@@ -697,64 +696,36 @@ official assets.
 
 ## App Icons and Manifest
 
-One source file: `src/assets/brand/app-icon.svg` (preferred) or `app-icon.png`
-(square, at least 512×512, transparent background). `npm run build:app-icons`
-(part of `build:system`) generates `favicon.ico`, `favicon.svg` (SVG source only),
-`icons/icon-192.png`, `icons/icon-512.png` and
-`icons/apple-touch-icon.png` (opaque, background taken from the icon).
-
-The starter ships the Mytko Workflow logo as its icon — replace it with the
-client's logo mark in every project. The 512 px icon is also the
-default logo in structured data. `site.webmanifest` is generated from `siteConfig`.
+Source: `meta.icon` in site.json (square SVG or PNG, at least 512×512). Without it the
+build draws a monogram — the first letter of `meta.name` on the accent color.
+`npm run build:app-icons` (part of `build:system`) generates `favicon.ico`,
+`favicon.svg` (SVG sources and monograms), `icons/icon-192.png`, `icons/icon-512.png`
+and `icons/apple-touch-icon.png` (opaque), plus the Open Graph image when
+`meta.seo.image` is not set. The 512 px icon is also the logo in structured data;
+`site.webmanifest` is generated from site.json.
 
 ---
 
-## Adding a New Font
+## Fonts
 
-1. Add raw font files to:
+Fonts come from `@fontsource-variable` packages (SIL Open Font License) — no font
+files are committed. `src/design-system/fonts/library.ts` lists the families and the
+12 pairs; the site picks one with `theme.fontPair` (default: the archetype's pair).
 
-```txt
-src/assets/fonts/raw/
-```
+`npm run build:fonts` (part of `build:system`, `scripts/build-fonts.ts`) copies only
+the families of that pair and only the subsets the language needs — `latin` and
+`latin-ext`, plus `cyrillic` for Cyrillic languages — to `public/fonts/` with a
+content hash in each file name, and generates:
 
-2. Run:
+- `src/styles/abstracts/_fonts.scss` — `@font-face` rules (variable weight range,
+  `unicode-range`) and a metric-matched `"<Family> Fallback"` face per family
+  (local Arial / Times New Roman with `size-adjust` and ascent/descent overrides);
+- `src/design-system/fonts.generated.ts` — the regular face of the main script is preloaded;
+- `public/fonts/LICENSES.txt` — the licenses of the shipped fonts.
 
-```bash
-npm run build:fonts            # auto: latin + latin-ext, plus cyrillic for uk/ru/bg/…
-node scripts/build-fonts.js all  # force all subsets
-```
-
-Subsets follow Google Fonts: `latin` (incl. „ ” ’ – — … € ™), `latin-ext`
-(Polish, Czech, Romanian… — downloaded only when a page uses these characters) and
-`cyrillic`. The language comes from `const lang` in `site.ts`; the regular face of
-the main script is preloaded.
-
-3. Check generated font files in:
-
-```txt
-public/fonts/
-```
-
-4. Check generated `@font-face` rules in:
-
-```txt
-src/styles/abstracts/_fonts.scss
-```
-
-Generated file names contain a content hash (`inter-400-latin.1a2b3c4d.woff2`).
-
-Raw file names: `<family>-<weight or style>.<ext>`, e.g. `inter-regular.woff2`,
-`inter-bold.woff2`, `roboto-500-italic.ttf`.
-
-The script also generates:
-
-- a metric-matched `"<Family> Fallback"` face (local Arial with `size-adjust` and
-  ascent/descent overrides) — add it after the font in the typography tokens to
-  limit layout shift while the web font loads;
-- `src/design-system/fonts.generated.ts` — the regular face is preloaded in `BaseLayout`.
-
-The starter ships the official Inter 4.1 (SIL Open Font License, see
-`src/assets/fonts/raw/inter-LICENSE.txt`).
+**Adding a family:** `npm install @fontsource-variable/<family>`, add it to
+`fontFamilies` (and a pair to `fontPairs`) in `library.ts`, then
+`npm run build:system`. `tests/unit/fonts.test.ts` checks that every pair resolves.
 
 ---
 

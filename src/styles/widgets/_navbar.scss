@@ -19,6 +19,7 @@
     font: inherit;
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
+    white-space: nowrap;
     cursor: pointer;
     transition:
       color var(--motion-duration-fast) var(--motion-easing-standard),

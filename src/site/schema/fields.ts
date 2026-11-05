@@ -24,6 +24,14 @@ export function field<T extends z.ZodType>(schema: T, meta: FieldMeta & { descri
   return schema.describe(description).meta({ editor: { editable: true, ...editor } }) as T;
 }
 
+/**
+ * Control characters (except tab and line breaks), zero-width space, LRM/RLM and
+ * bidi overrides/isolates: invisible, break HTML parsing or spoof text direction.
+ */
+// eslint-disable-next-line no-control-regex -- matching control characters is the point
+const UNSAFE_CHARACTERS = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f\u200b\u200e\u200f\u202a-\u202e\u2066-\u2069]/;
+const UNSAFE_MESSAGE = "Contains invisible control or text-direction characters — remove them.";
+
 /** Plain single-line text with a character limit. Line breaks are not allowed. */
 export const text = (max: number, min = 1) =>
   z
@@ -31,10 +39,17 @@ export const text = (max: number, min = 1) =>
     .trim()
     .min(min)
     .max(max)
-    .refine((value) => !/[\r\n]/.test(value), "Must be a single line (no line breaks).");
+    .refine((value) => !/[\r\n]/.test(value), "Must be a single line (no line breaks).")
+    .refine((value) => !UNSAFE_CHARACTERS.test(value), UNSAFE_MESSAGE);
 
 /** Multi-line plain text with a character limit. */
-export const multilineText = (max: number, min = 1) => z.string().trim().min(min).max(max);
+export const multilineText = (max: number, min = 1) =>
+  z
+    .string()
+    .trim()
+    .min(min)
+    .max(max)
+    .refine((value) => !UNSAFE_CHARACTERS.test(value), UNSAFE_MESSAGE);
 
 /** Stable identifier for pages, sections and list items (also used as HTML id). */
 export const Id = z
@@ -58,7 +73,8 @@ export const SafeUrl = z
   .trim()
   .max(2048)
   .refine((value) => {
-    if (/^\/(?!\/)/.test(value) || /^#[\w-]+$/.test(value)) {
+    // Site path: no "//" or "/\" (browsers read a backslash as a slash → another host), no spaces.
+    if (/^\/(?![/\\])[^\\\s]*$/.test(value) || /^#[\w-]+$/.test(value)) {
       return true;
     }
 
@@ -112,6 +128,7 @@ export const richTextLite = (max: number) =>
     .min(1)
     .max(max)
     .refine((value) => !/[<>]/.test(value), "HTML is not allowed. Use **bold**, *italic* and [text](/link).")
+    .refine((value) => !UNSAFE_CHARACTERS.test(value), UNSAFE_MESSAGE)
     .refine(
       (value) =>
         [...value.matchAll(/\[[^\]]*\]\(((?:[^()\s]|\([^()\s]*\))*)\)/g)].every((match) => SafeUrl.safeParse(match[1]).success),
@@ -119,7 +136,7 @@ export const richTextLite = (max: number) =>
     );
 
 /** Button or link: visible label + safe target. */
-export const Action = z.object({
+export const Action = z.strictObject({
   label: text(30),
   href: SafeUrl,
 });

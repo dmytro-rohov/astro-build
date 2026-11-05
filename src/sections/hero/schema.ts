@@ -6,7 +6,7 @@ export const hero = defineSectionType({
   type: "hero",
   label: "Sekcja powitalna",
   description: "First section of a page: main headline, short pitch and call to action.",
-  content: z.object({
+  content: z.strictObject({
     eyebrow: field(text(40).optional(), {
       label: "Nadtytuł",
       fieldType: "text",

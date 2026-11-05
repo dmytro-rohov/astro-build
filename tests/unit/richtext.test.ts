@@ -24,3 +24,9 @@ test("drops unsafe links but keeps their label", () => {
 test("plain text for meta and JSON-LD", () => {
   expect(richTextLiteToPlain("**A** and [b](/x)\n\nc")).toBe("A and b c");
 });
+
+test("markers inside a link target stay in the href (QA F5)", () => {
+  expect(renderRichTextLite("[star](https://a.example/*b*) **bold [x](/) here**")).toBe(
+    '<p><a class="link" href="https://a.example/*b*" rel="noopener noreferrer" target="_blank">star</a> <strong>bold <a class="link" href="/">x</a> here</strong></p>',
+  );
+});

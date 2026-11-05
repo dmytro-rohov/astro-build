@@ -15,24 +15,29 @@ function escapeHtml(value: string): string {
     .replaceAll("'", "&#039;");
 }
 
+const emphasis = (value: string) => value.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/\*([^*]+)\*/g, "<em>$1</em>");
+
 function renderInline(escaped: string): string {
-  return escaped
-    // Link target may contain one level of parentheses, e.g. /a_(b).
-    .replace(/\[([^\]]+)\]\(((?:[^()\s]|\([^()\s]*\))+)\)/g, (_match, label: string, href: string) => {
-      // href is already HTML-escaped; decode &amp; only for validation.
-      const raw = href.replaceAll("&amp;", "&");
+  // Links are rendered first and replaced by placeholders, so **/* inside a URL
+  // never turn into markup in the href. (Validated text has no U+0000.)
+  const links: string[] = [];
 
-      if (!SafeUrl.safeParse(raw).success) {
-        return label;
-      }
+  const text = escaped.replace(/\[([^\]]+)\]\(((?:[^()\s]|\([^()\s]*\))+)\)/g, (_match, label: string, href: string) => {
+    // href is already HTML-escaped; decode &amp; only for validation.
+    const raw = href.replaceAll("&amp;", "&");
+    let html = emphasis(label);
 
-      const external = /^https:/.test(raw);
-      const rel = external ? ' rel="noopener noreferrer" target="_blank"' : "";
+    if (SafeUrl.safeParse(raw).success) {
+      const rel = /^https:/.test(raw) ? ' rel="noopener noreferrer" target="_blank"' : "";
+      html = `<a class="link" href="${href}"${rel}>${html}</a>`;
+    }
 
-      return `<a class="link" href="${href}"${rel}>${label}</a>`;
-    })
-    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*([^*]+)\*/g, "<em>$1</em>");
+    links.push(html);
+    return `\u0000${links.length - 1}\u0000`;
+  });
+
+  // eslint-disable-next-line no-control-regex -- U+0000 delimits the link placeholders
+  return emphasis(text).replace(/\u0000(\d+)\u0000/g, (_match, index: string) => links[Number(index)]);
 }
 
 /** HTML string for set:html. Paragraphs become <p>, single line breaks <br>. */

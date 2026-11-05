@@ -3,7 +3,7 @@ import { iconNames } from "../../design-system/sprite.generated";
 import { defineSectionType } from "../../site/schema/define";
 import { field, Id, listWithIds, multilineText, text } from "../../site/schema/fields";
 
-const FeatureItem = z.object({
+const FeatureItem = z.strictObject({
   id: Id,
   eyebrow: field(text(24).optional(), { label: "Etykieta", fieldType: "text", description: "Tiny label above the item title." }),
   title: field(text(60), { label: "Tytuł", fieldType: "text", description: "Feature or benefit name." }),
@@ -15,7 +15,7 @@ export const features = defineSectionType({
   type: "features",
   label: "Zalety / funkcje",
   description: "Grid of benefits, features or reasons to choose the business.",
-  content: z.object({
+  content: z.strictObject({
     eyebrow: field(text(40).optional(), { label: "Nadtytuł", fieldType: "text", description: "Short label above the title." }),
     title: field(text(90), { label: "Tytuł sekcji", fieldType: "text", description: "Section headline." }),
     description: field(multilineText(240).optional(), { label: "Opis", fieldType: "textarea", description: "Short intro under the title." }),
@@ -30,7 +30,7 @@ export const features = defineSectionType({
     "cards-grid": {
       description: "Cards in a responsive grid (1 column on phones).",
       uses: ["eyebrow", "description", "items.eyebrow", "items.icon"],
-      props: z.object({
+      props: z.strictObject({
         columns: z.enum(["2", "3", "4"]).optional().describe("Number of columns on wide screens."),
       }),
     },

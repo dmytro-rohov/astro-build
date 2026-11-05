@@ -150,3 +150,60 @@ test("invalid JSON gives a readable error", () => {
     expect((error as SiteValidationError).issues[0]).toMatch(/^Not valid JSON/);
   }
 });
+
+describe("QA hardening", () => {
+  const sectionOfType = (site: Record<string, any>, type: string) =>
+    site.pages.flatMap((page: any) => page.sections).find((section: any) => section.type === type);
+
+  test("unknown keys are errors everywhere", () => {
+    const issues = issuesFor((site) => {
+      site.foo = 1;
+      site.meta.tagline = "x";
+      home(site).titel = "x";
+      heroSection(site).content.subtitle = "x";
+    });
+    expect(issues).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(/Unrecognized key: "foo"/),
+        expect.stringMatching(/^meta: Unrecognized key: "tagline"/),
+        expect.stringMatching(/^pages\[0\]: Unrecognized key: "titel"/),
+        expect.stringMatching(/^pages\[0\]\.sections\[0\]\.content: Unrecognized key: "subtitle"/),
+      ]),
+    );
+  });
+
+  test("section ids cannot take the engine's DOM ids", () => {
+    expect(issuesFor((site) => (heroSection(site).id = "main-content"))).toContain(
+      'pages[0].sections[0].id: Section id "main-content" is used by the engine — choose another.',
+    );
+  });
+
+  test("one contact and one faq section per page", () => {
+    const issues = issuesFor((site) => {
+      const faq = sectionOfType(site, "faq");
+      home(site).sections.push({ ...structuredClone(faq), id: "faq-2" });
+    });
+    expect(issues.some((issue) => issue.endsWith('Only one "faq" section per page.'))).toBe(true);
+  });
+
+  test("anchors in section buttons are checked too, relative to their page", () => {
+    expect(issuesFor((site) => (heroSection(site).content.primaryAction.href = "/#nope"))).toContain(
+      'pages[0].sections[0].content.primaryAction.href: Anchor "#nope" does not match any section id on that page.',
+    );
+    expect(issuesFor((site) => (heroSection(site).content.primaryAction.href = "#faq"))).toEqual([]);
+  });
+
+  test("business.type must be a known schema.org type", () => {
+    expect(issuesFor((site) => (site.business.type = "Spaceship"))[0]).toMatch(/^business\.type:/);
+  });
+
+  test("meta.url is an origin", () => {
+    expect(issuesFor((site) => (site.meta.url = "https://example.com/some/path"))[0]).toMatch(/^meta\.url: Use the site origin only/);
+  });
+
+  test("asset file names are lowercase", () => {
+    const issues = issuesFor(() => {}, { hero: { file: "Hero.JPG", alt: "Hero" }, icon: { file: "icon.png", alt: "" } }, ["Hero.JPG", "icon.png"]);
+    expect(issues[0]).toMatch(/hero\.file: Lowercase file name/);
+  });
+});
+
