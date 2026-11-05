@@ -3,7 +3,8 @@ import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
 
 export interface ImgProps {
-  src: ImageMetadata | string;
+  /** Local image imported from src/assets (gives Astro its size for srcset). */
+  src: ImageMetadata;
   alt?: string;
   kind?: "content" | "decorative";
   priority?: "auto" | "high";

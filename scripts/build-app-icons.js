@@ -6,7 +6,7 @@
  * Outputs:
  * - public/favicon.ico (32×32, PNG inside an ICO container)
  * - public/favicon.svg (only when the source is SVG)
- * - public/icons/icon-32.png, icon-192.png, icon-512.png (manifest, JSON-LD logo)
+ * - public/icons/icon-192.png, icon-512.png (manifest, JSON-LD logo)
  * - public/icons/apple-touch-icon.png (180×180, opaque)
  * - src/design-system/appIcons.generated.ts (which <link> tags BaseLayout renders)
  *
@@ -63,12 +63,12 @@ function pngToIco(png, size) {
 async function sampleBackground() {
   const { data, info } = await render(256).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   const index = (Math.round(info.height / 2) * info.width + Math.round(info.width * 0.1)) * 4;
-  const [r, g, b, a] = data.slice(index, index + 4);
+  const [r, g, b, a] = data.subarray(index, index + 4);
 
   return a > 200 ? { r, g, b, alpha: 1 } : "#ffffff";
 }
 
-for (const size of [32, 192, 512]) {
+for (const size of [192, 512]) {
   const file = path.join(ICONS_DIR, `icon-${size}.png`);
   await render(size).png().toFile(file);
   console.log(`Generated ${file}`);

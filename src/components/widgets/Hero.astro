@@ -27,7 +27,8 @@ export interface Props {
     href: string;
   };
 
-  image?: ImageMetadata | string;
+  /** Local image (import from src/assets). Shown at 4:3 next to the text. */
+  image?: ImageMetadata;
   imageAlt?: string;
 
   align?: "left" | "center";
@@ -114,6 +115,8 @@ const layoutProps = hasImage
             alt={imageAlt}
             kind={imageAlt ? "content" : "decorative"}
             priority="high"
+            sizes="(min-width: 768px) 50vw, 100vw"
+            widths={[480, 720, 960]}
             class="hero__image image--rounded image--shadow"
           />
         </div>

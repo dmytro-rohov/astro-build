@@ -1,0 +1,25 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/layouts/Section.astro";
+import Container from "@/components/layouts/Container.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Button from "@/components/ui/Button.astro";
+import { t } from "@/i18n";
+
+// Shown when a contact form submitted without JavaScript could not be sent.
+const page = t.pages.contactFailed;
+---
+
+<BaseLayout title={page.title} description={page.description}>
+  <Section spacing="xl">
+    <Container size="md">
+      <Stack space="lg">
+        <h1>{page.heading}</h1>
+        <p>{page.description}</p>
+        <div>
+          <Button href="/contact">{page.back}</Button>
+        </div>
+      </Stack>
+    </Container>
+  </Section>
+</BaseLayout>

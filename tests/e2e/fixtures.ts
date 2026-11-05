@@ -9,7 +9,8 @@ export const test = base.extend<{ pageErrors: string[]; allowedErrors: RegExp[] 
   /** Console errors a test expects, e.g. the 404 status of a missing page. */
   allowedErrors: [[], { option: true }],
 
-  pageErrors: async ({ page, allowedErrors }, use) => {
+  // `auto`: runs for every test, even ones that do not mention pageErrors.
+  pageErrors: [async ({ page, allowedErrors }, use) => {
     const errors: string[] = [];
 
     await page.route(/googletagmanager\.com|google-analytics\.com/, (route) =>
@@ -34,7 +35,7 @@ export const test = base.extend<{ pageErrors: string[]; allowedErrors: RegExp[] 
 
     const unexpected = errors.filter((error) => !allowedErrors.some((pattern) => pattern.test(error)));
     expect(unexpected, "page should have no console errors or CSP violations").toEqual([]);
-  },
+  }, { auto: true }],
 });
 
 export { expect };

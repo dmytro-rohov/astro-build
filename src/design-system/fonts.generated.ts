@@ -3,5 +3,5 @@
 
 /** Font files preloaded in BaseLayout. */
 export const fontPreloads: string[] = [
-  "/fonts/inter-400-latin.woff2"
+  "/fonts/inter-400-latin.cb6f89ad.woff2"
 ];

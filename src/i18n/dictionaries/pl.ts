@@ -72,7 +72,6 @@ export default {
       messageTooShort: "Wiadomość musi mieć co najmniej {min} znaków.",
       messageTooLong: "Wiadomość może mieć maksymalnie {max} znaków.",
       privacyRequired: "Musisz zaakceptować politykę prywatności.",
-      spam: "Wykryto spam.",
     },
   },
 
@@ -106,6 +105,17 @@ export default {
       cookiesHeading: "Pliki cookie i analityka",
       cookiesText:
         "Opcjonalne analityczne pliki cookie są używane wyłącznie po wyrażeniu zgody. Zgodę możesz w każdej chwili zmienić lub wycofać.",
+    },
+    contactSent: {
+      title: "Wiadomość wysłana",
+      heading: "Dziękujemy za wiadomość",
+      description: "Otrzymaliśmy Twoją wiadomość i odpowiemy najszybciej, jak to możliwe.",
+    },
+    contactFailed: {
+      title: "Wiadomość nie została wysłana",
+      heading: "Nie udało się wysłać wiadomości",
+      description: "Sprawdź formularz i spróbuj ponownie za kilka minut.",
+      back: "Wróć do formularza kontaktowego",
     },
     contact: {
       title: "Kontakt",

@@ -12,7 +12,7 @@ export default [
       ".lighthouseci/**",
       "node_modules/**",
       ".astro/**",
-      "public/icons/sprite.svg",
+      "public/icons/sprite.*.svg",
       "src/styles/abstracts/_tokens.scss",
       "src/styles/abstracts/_fonts.scss",
     ],
@@ -29,6 +29,7 @@ export default [
       "astro.config.mjs",
       "scripts/**/*.js",
       "lighthouserc.cjs",
+      "server.mjs",
     ],
 
     languageOptions: {

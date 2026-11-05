@@ -113,9 +113,19 @@ function isActiveLink(href: string) {
       return;
     }
 
-    const closeMenu = () => {
+    const isOpen = () => toggle.getAttribute("aria-expanded") === "true";
+
+    const closeMenu = ({ returnFocus = false } = {}) => {
+      if (!isOpen()) {
+        return;
+      }
+
       toggle.setAttribute("aria-expanded", "false");
       navbar.removeAttribute("data-open");
+
+      if (returnFocus) {
+        toggle.focus();
+      }
     };
 
     const openMenu = () => {
@@ -123,28 +133,39 @@ function isActiveLink(href: string) {
       navbar.setAttribute("data-open", "");
     };
 
-    const toggleMenu = () => {
-      const isOpen = toggle.getAttribute("aria-expanded") === "true";
-
-      if (isOpen) {
+    toggle.addEventListener("click", () => {
+      if (isOpen()) {
         closeMenu();
       } else {
         openMenu();
       }
-    };
-
-    toggle.addEventListener("click", toggleMenu);
+    });
 
     menu.addEventListener("click", (event) => {
-      const target = event.target;
-
-      if (target instanceof HTMLAnchorElement) {
+      if (event.target instanceof Element && event.target.closest("a")) {
         closeMenu();
       }
     });
 
+    // Escape closes the menu and returns focus to the toggle,
+    // so focus never stays on a link that is no longer visible.
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
+      if (event.key === "Escape" && isOpen()) {
+        closeMenu({ returnFocus: menu.contains(document.activeElement) });
+      }
+    });
+
+    // Clicking or tabbing outside the navigation closes the menu.
+    document.addEventListener("click", (event) => {
+      if (event.target instanceof Node && !navbar.contains(event.target)) {
+        closeMenu();
+      }
+    });
+
+    navbar.addEventListener("focusout", (event) => {
+      const next = (event as FocusEvent).relatedTarget;
+
+      if (next instanceof Node && !navbar.contains(next)) {
         closeMenu();
       }
     });

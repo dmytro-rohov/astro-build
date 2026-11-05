@@ -67,7 +67,8 @@ export const semanticColorsDark = {
   background: {
     primary: colors.gray[900],
     secondary: colors.gray[800],
-    muted: colors.gray[800],
+    // Muted sections sit between the page and the cards, so cards stand out.
+    muted: colors.gray[850],
     surface: colors.gray[800],
     inverse: colors.gray[50],
   },

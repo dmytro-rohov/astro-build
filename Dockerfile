@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # --------------------------------------------------
-# 1. Wspólna baza Node.js
+# 1. Shared Node.js base
 # --------------------------------------------------
 FROM node:24-bookworm-slim AS base
 
@@ -10,27 +10,25 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # --------------------------------------------------
-# 2. Zależności aplikacji i narzędzia buildowe
+# 2. Dependencies (including dev tools needed for the build)
 # --------------------------------------------------
 FROM base AS dependencies
 
-ENV NODE_ENV=development
-
-# Fonty są budowane w Node (subset-font), więc Python nie jest potrzebny.
 COPY package.json package-lock.json ./
 COPY scripts/check-node-version.js ./scripts/check-node-version.js
 
-RUN npm ci
+# NODE_ENV stays "production"; --include=dev installs the build tools anyway.
+RUN npm ci --include=dev
 
 # --------------------------------------------------
-# 3. Build aplikacji Astro
+# 3. Astro build (production mode)
 # --------------------------------------------------
 FROM dependencies AS build
 
-# Publiczny adres strony jest wpisywany do builda (canonical, sitemap, OG).
+# Public site URL is baked into the build (canonical, sitemap, Open Graph).
 ARG SITE_URL=http://localhost:4321
 ENV SITE_URL=$SITE_URL
-# Publiczne zmienne PUBLIC_* są wpisywane do kodu klienta w czasie builda.
+# PUBLIC_* variables are inlined into client code at build time.
 ARG PUBLIC_GA_MEASUREMENT_ID=
 ENV PUBLIC_GA_MEASUREMENT_ID=$PUBLIC_GA_MEASUREMENT_ID
 
@@ -41,19 +39,23 @@ RUN npm run build
 RUN npm prune --omit=dev
 
 # --------------------------------------------------
-# 4. Minimalny obraz produkcyjny
+# 4. Minimal runtime image
 # --------------------------------------------------
 FROM base AS runtime
 
 ENV HOST=0.0.0.0
 ENV PORT=4321
+# server.mjs sends HSTS when the site is served over https.
+ARG SITE_URL=http://localhost:4321
+ENV SITE_URL=$SITE_URL
 
 USER node
 
 COPY --from=build --chown=node:node /app/package.json ./package.json
 COPY --from=build --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/dist ./dist
+COPY --from=build --chown=node:node /app/server.mjs ./server.mjs
 
 EXPOSE 4321
 
-CMD ["node", "./dist/server/entry.mjs"]
+CMD ["node", "./server.mjs"]

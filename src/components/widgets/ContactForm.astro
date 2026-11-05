@@ -325,6 +325,10 @@ const SubHeading = headingLevel === "h1" ? "h2" : "h3";
             result.errors.forEach((error: { field: string; message: string }) => {
               setFieldError(error.field, error.message);
             });
+
+            // Move focus to the first invalid field so keyboard and screen reader
+            // users land where the problem is.
+            form.querySelector<HTMLElement>("[aria-invalid='true']")?.focus();
           }
 
           if (status) {

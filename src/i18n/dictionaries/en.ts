@@ -78,7 +78,6 @@ export const en = {
       messageTooShort: "Message must be at least {min} characters.",
       messageTooLong: "Message can be at most {max} characters.",
       privacyRequired: "You need to accept the privacy policy.",
-      spam: "Spam detected.",
     },
   },
 
@@ -112,6 +111,17 @@ export const en = {
       cookiesHeading: "Cookies and analytics",
       cookiesText:
         "Optional analytics cookies are used only after you give consent. You can change or withdraw your consent at any time.",
+    },
+    contactSent: {
+      title: "Message sent",
+      heading: "Thank you for your message",
+      description: "We have received your message and will reply as soon as possible.",
+    },
+    contactFailed: {
+      title: "Message not sent",
+      heading: "Your message could not be sent",
+      description: "Please check the form and try again in a few minutes.",
+      back: "Back to the contact form",
     },
     contact: {
       title: "Contact",

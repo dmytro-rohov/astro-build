@@ -75,16 +75,46 @@
     opacity: 0;
     visibility: hidden;
     transform: translateY(-0.25rem);
+
+    // Closing: fade out first, then hide (visibility switches after the fade).
     transition:
       opacity var(--motion-duration-fast) var(--motion-easing-standard),
-      visibility var(--motion-duration-fast) var(--motion-easing-standard),
-      transform var(--motion-duration-fast) var(--motion-easing-standard);
+      transform var(--motion-duration-fast) var(--motion-easing-standard),
+      visibility 0s linear var(--motion-duration-fast);
   }
 
   .navbar[data-open] .navbar__menu {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+
+    // Opening: visible immediately, so links are focusable right after Enter.
+    transition-delay: 0s;
+  }
+
+  // Without JavaScript the toggle cannot work: show the links inline instead.
+  @media (scripting: none) {
+    .navbar__toggle {
+      display: none;
+    }
+
+    .navbar__menu {
+      position: static;
+      min-width: 0;
+      padding: 0;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+    }
+
+    .navbar__list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-xs) var(--spacing-sm);
+    }
   }
 
   .navbar__list {

@@ -49,3 +49,15 @@ jobs:
             playwright-report/
             .lighthouseci/
           retention-days: 7
+
+  docker:
+    name: Docker production smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Builds the image and checks HSTS, contact form safety, GA debug mode and caching.
+      - name: Build and test the image
+        run: bash scripts/docker-smoke.sh

@@ -9,7 +9,7 @@ const PORT = 4331;
 module.exports = {
   ci: {
     collect: {
-      startServerCommand: `node scripts/serve-dist.js ${PORT}`,
+      startServerCommand: `node server.mjs ${PORT}`,
       startServerReadyPattern: "Server listening",
       url: [`http://localhost:${PORT}/`, `http://localhost:${PORT}/contact`],
       numberOfRuns: 1,

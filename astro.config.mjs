@@ -29,7 +29,9 @@ const allowedDomains = isLocalhost
 
 export default defineConfig({
   site: siteUrl.origin,
-  output: "server",
+  // Pages are prerendered at build time (fast, cacheable, images generated once).
+  // Routes with `export const prerender = false` (the contact API) run on demand.
+  output: "static",
   // One URL form everywhere: canonical, sitemap and links have no trailing slash.
   trailingSlash: "never",
 
