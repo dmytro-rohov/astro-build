@@ -114,6 +114,26 @@ SITE_DIR=sites/_demo npm run dev              # dev server for one site
 
 `src/config/site.ts` is now a compatibility layer computed from site.json — do not put content there.
 
+### Assets and images
+
+Images are referenced as `"asset:<id>"` and described in `assets/assets.json`:
+
+```json
+{ "hero": { "file": "hero.jpg", "alt": "Dancers in the studio", "focal": { "x": 50, "y": 30 } } }
+```
+
+- Each image slot declares proportions and a minimum width (e.g. hero 4:3, ≥ 960 px).
+  The image is **cropped at build time** around the focal point; the build stops with a
+  clear error when the image is too small for the slot, or an SVG is used where a photo is needed.
+- `meta.logo` (SVG/PNG) is shown in the header and footer; without it the business name is a
+  text logo in the heading font.
+- `meta.icon` (square, ≥ 512 px) becomes the favicon and app icons; without it a **monogram**
+  (first letter of the name on the accent color) is generated.
+- Open Graph image: `pages[].seo.image` or `meta.seo.image` (cropped to 1200×630); otherwise
+  `og-cover.jpg` is generated from the name, description and colors.
+- Fonts, icons, favicon and `og-cover.jpg` are generated per site by `npm run build:system`
+  (part of `npm run build`) and are not committed.
+
 ---
 
 ## Project Configuration

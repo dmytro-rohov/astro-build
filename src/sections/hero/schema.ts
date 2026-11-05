@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { defineSectionType } from "../../site/schema/define";
-import { Action, AssetRef, field, multilineText, text } from "../../site/schema/fields";
+import { Action, field, imageSlot, multilineText, text } from "../../site/schema/fields";
 
 export const hero = defineSectionType({
   type: "hero",
@@ -32,10 +32,10 @@ export const hero = defineSectionType({
       fieldType: "link",
       description: "Secondary, less prominent link.",
     }),
-    image: field(AssetRef.optional(), {
+    image: field(imageSlot({ aspect: [4, 3], minWidth: 960 }).optional(), {
       label: "Zdjęcie",
       fieldType: "image",
-      description: "Hero image (landscape 4:3).",
+      description: "Hero image, cropped to 4:3 around the focal point; at least 960px wide.",
     }),
   }),
   variants: {

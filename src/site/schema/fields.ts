@@ -85,6 +85,22 @@ export const HttpsUrl = z
 /** Reference to an image in the site's assets/assets.json, e.g. "asset:hero". */
 export const AssetRef = z.string().regex(/^asset:[a-z][a-z0-9-]{0,47}$/, 'Use "asset:<id>", e.g. "asset:hero".');
 
+/** Requirements of an image slot: the image is cropped to `aspect` (focal point aware). */
+export type ImageSlot = {
+  /** Width : height, e.g. [4, 3]. Omit for "any proportions" (logos). */
+  aspect?: readonly [number, number];
+  /** Minimum width in px of the cropped image, so it stays sharp. */
+  minWidth: number;
+  /** Allow SVG files (logos). */
+  svg?: boolean;
+};
+
+/** Asset reference for an image slot; the loader checks size and proportions. */
+export function imageSlot(slot: ImageSlot) {
+  const ratio = slot.aspect ? `${slot.aspect[0]}:${slot.aspect[1]}` : "any";
+  return AssetRef.describe(`Image (cropped to ${ratio}, at least ${slot.minWidth}px wide).`).meta({ imageSlot: slot });
+}
+
 /**
  * Rich text "lite": paragraphs separated by a blank line, **bold**, *italic*
  * and [links](/path). No HTML — any "<" is rejected, and links must be safe.

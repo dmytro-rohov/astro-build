@@ -71,7 +71,8 @@ const ogType = pageType === "profile" ? "profile" : "website";
 const fullTitle = titleIsFull && title ? title : pageTitle(title);
 const robots = isNoindexPath(Astro.url.pathname) ? "noindex, follow" : robotsProp;
 const lang = siteConfig.lang;
-const isDefaultImage = image === siteConfig.seo.image;
+// Every Open Graph image is 1200×630 (generated or cropped at build time).
+const isDefaultImage = true;
 
 // Structured data: one @graph per page.
 const isHome = canonicalUrl.pathname === "/";

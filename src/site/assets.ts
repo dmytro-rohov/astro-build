@@ -17,6 +17,7 @@ const imagesByFile = new Map(
 export type ResolvedAsset = {
   image: ImageMetadata;
   alt: string;
+  focal?: { x: number; y: number };
 };
 
 /** Image + alt for "asset:<id>". The loader has already checked that it exists. */
@@ -29,5 +30,5 @@ export function getAsset(ref: string): ResolvedAsset {
     throw new Error(`[site] Unknown asset "${ref}".`);
   }
 
-  return { image, alt: entry.alt };
+  return { image, alt: entry.alt, focal: entry.focal };
 }

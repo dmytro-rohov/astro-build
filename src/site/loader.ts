@@ -5,9 +5,13 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import { imageSize } from "image-size";
 import type { z } from "zod";
+import { sectionTypes } from "./registry";
+import type { ImageSlot } from "./schema/fields";
 import { AssetsSchema, type Assets } from "./schema/assets";
-import { SiteSchema, type Site } from "./schema/site";
+import { META_IMAGE_SLOTS, SiteSchema, type Site } from "./schema/site";
+import { findImageSlots, valuesAt } from "./schema/slots";
 
 export const DEFAULT_SITE_DIR = "sites/_demo";
 
@@ -72,6 +76,75 @@ function collectAssetRefs(value: unknown, at: string, found: { id: string; at: s
   return found;
 }
 
+const formatPath = (at: (string | number)[]) =>
+  at.reduce<string>((result, key) => (typeof key === "number" ? `${result}[${key}]` : result ? `${result}.${key}` : key), "");
+
+/** Size and proportion checks for every image used in a slot. */
+function checkImageSlots(site: Site, assets: Assets, dir: string): string[] {
+  const issues: string[] = [];
+  const uses: { ref: unknown; slot: ImageSlot; at: (string | number)[] }[] = [];
+
+  uses.push(
+    { ref: site.meta.logo, slot: META_IMAGE_SLOTS.logo, at: ["meta", "logo"] },
+    { ref: site.meta.icon, slot: META_IMAGE_SLOTS.icon, at: ["meta", "icon"] },
+    { ref: site.meta.seo.image, slot: META_IMAGE_SLOTS.ogImage, at: ["meta", "seo", "image"] },
+  );
+
+  site.pages.forEach((page, pageIndex) => {
+    uses.push({ ref: page.seo.image, slot: META_IMAGE_SLOTS.ogImage, at: ["pages", pageIndex, "seo", "image"] });
+
+    page.sections.forEach((section, sectionIndex) => {
+      const type = sectionTypes.find((candidate) => candidate.type === section.type);
+      if (!type) return;
+
+      for (const { path, slot } of findImageSlots(type.content)) {
+        for (const found of valuesAt(section.content, path)) {
+          uses.push({ ref: found.value, slot, at: ["pages", pageIndex, "sections", sectionIndex, "content", ...found.at] });
+        }
+      }
+    });
+  });
+
+  for (const { ref, slot, at } of uses) {
+    if (typeof ref !== "string") continue;
+
+    const entry = assets[ref.replace(/^asset:/, "")];
+    if (!entry) continue; // reported as an unknown asset
+
+    const where = formatPath(at);
+    const isSvg = /\.svg$/i.test(entry.file);
+
+    if (isSvg) {
+      if (!slot.svg) issues.push(`${where}: "${ref}" is an SVG; this slot needs a photo (JPG, PNG, WebP or AVIF).`);
+      continue;
+    }
+
+    let size: { width?: number; height?: number };
+
+    try {
+      size = imageSize(fs.readFileSync(path.join(dir, "assets", entry.file)));
+    } catch {
+      issues.push(`${where}: "${ref}" (${entry.file}) is not a readable image.`);
+      continue;
+    }
+
+    const width = size.width ?? 0;
+    const height = size.height ?? 0;
+
+    // Width left after cropping to the slot's proportions.
+    const croppedWidth = slot.aspect ? Math.min(width, Math.floor((height * slot.aspect[0]) / slot.aspect[1])) : width;
+
+    if (croppedWidth < slot.minWidth) {
+      const ratio = slot.aspect ? ` cropped to ${slot.aspect[0]}:${slot.aspect[1]}` : "";
+      issues.push(
+        `${where}: "${ref}" is ${width}×${height}px; this slot needs at least ${slot.minWidth}px width${ratio} (got ${croppedWidth}px).`,
+      );
+    }
+  }
+
+  return issues;
+}
+
 function availableLanguages(): string[] {
   const dictionaries = path.resolve(process.cwd(), "src/i18n/dictionaries");
 
@@ -120,6 +193,10 @@ export function loadSite(dir = resolveSiteDir()): LoadedSite {
     if (!assets[ref.id]) {
       issues.push(`${ref.at}: unknown asset "asset:${ref.id}" (add it to assets/assets.json).`);
     }
+  }
+
+  if (!issues.length) {
+    issues.push(...checkImageSlots(site, assets, dir));
   }
 
   if (issues.length) {

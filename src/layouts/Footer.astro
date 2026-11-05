@@ -6,6 +6,7 @@ import Link from "@/components/ui/Link.astro";
 import Divider from "@/components/ui/Divider.astro";
 import Icon from "@/components/media/Icon.astro";
 import { siteConfig } from "@/config/site";
+import Logo from "@/components/media/Logo.astro";
 import { ANALYTICS_CONFIG } from "@/config/analytics";
 import { format, t } from "@/i18n";
 
@@ -69,7 +70,7 @@ const {
       <div class="site-footer__main">
         <Stack class="site-footer__brand-block" space="md">
           <a class="site-footer__brand" href={brandHref}>
-            {brandLabel}
+            <Logo size="footer" />
           </a>
 
           {description && (

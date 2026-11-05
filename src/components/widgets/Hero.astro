@@ -29,6 +29,8 @@ export interface Props {
 
   /** Local image (import from src/assets). Shown at 4:3 next to the text. */
   image?: ImageMetadata;
+  /** Focal point kept visible when the image is cropped to 4:3. */
+  imageFocal?: { x: number; y: number };
   imageAlt?: string;
 
   align?: "left" | "center";
@@ -46,6 +48,7 @@ const {
   secondaryAction,
   image,
   imageAlt = "",
+  imageFocal,
   align = "left",
   tone = "default",
   headingLevel = "h1",
@@ -122,6 +125,8 @@ const layoutProps = hasImage
             priority="high"
             sizes="(min-width: 768px) 50vw, 100vw"
             widths={[480, 720, 960]}
+            aspect={[4, 3]}
+            focal={imageFocal}
             class="hero__image image--rounded image--shadow"
           />
         </div>

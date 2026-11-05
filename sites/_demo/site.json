@@ -7,6 +7,7 @@
   "meta": {
     "name": "Astro Starter",
     "description": "Reusable Astro frontend system for building professional landing pages and small websites faster.",
+    "icon": "asset:icon",
     "seo": {
       "imageAlt": "Astro Starter preview"
     }

@@ -5,9 +5,16 @@
 import { z } from "zod";
 import { ENGINE_RANGE_PATTERN, ENGINE_VERSION, satisfiesEngine } from "../engine";
 import { layoutTypes, sectionTypes } from "../registry";
-import { Action, AssetRef, field, HttpsUrl, Id, Slug, text } from "./fields";
+import { Action, field, HttpsUrl, Id, imageSlot, Slug, text, type ImageSlot } from "./fields";
 
 export const SCHEMA_VERSION = 1;
+
+/** Image slots outside sections (checked by the loader like section slots). */
+export const META_IMAGE_SLOTS = {
+  logo: { minWidth: 160, svg: true },
+  icon: { aspect: [1, 1], minWidth: 512, svg: true },
+  ogImage: { aspect: [1200, 630], minWidth: 1200 },
+} as const satisfies Record<string, ImageSlot>;
 
 /**
  * Paths the engine owns. Pages in site.json cannot use them (exact match or prefix).
@@ -86,7 +93,7 @@ const PageSchema = z.object({
     .default({ show: true }),
   seo: z
     .object({
-      image: AssetRef.optional().describe("Open Graph image for this page."),
+      image: imageSlot(META_IMAGE_SLOTS.ogImage).optional().describe("Open Graph image for this page (1200×630)."),
       noindex: z.boolean().default(false),
     })
     .default({ noindex: false }),
@@ -126,9 +133,19 @@ export const SiteSchema = z
         description: "Default meta description, 50–160 characters.",
       }),
       url: HttpsUrl.optional().describe("Public site URL (canonical, sitemap). The SITE_URL env variable overrides it."),
+      logo: field(imageSlot(META_IMAGE_SLOTS.logo).optional(), {
+        label: "Logo",
+        fieldType: "image",
+        description: "Logo (SVG or PNG). Without it the business name is shown in the heading font.",
+      }),
+      icon: field(imageSlot(META_IMAGE_SLOTS.icon).optional(), {
+        label: "Ikona strony",
+        fieldType: "image",
+        description: "Square icon for the browser tab and phones (at least 512×512). Defaults to a monogram.",
+      }),
       seo: z
         .object({
-          image: AssetRef.optional().describe("Default Open Graph image."),
+          image: imageSlot(META_IMAGE_SLOTS.ogImage).optional().describe("Default Open Graph image; generated from name and colors when empty."),
           imageAlt: text(120).optional(),
         })
         .default({}),

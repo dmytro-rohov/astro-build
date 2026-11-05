@@ -8,7 +8,7 @@ function issuesFor(change: (site: Record<string, any>) => void, assets?: Record<
   change(site);
 
   try {
-    loadSite(writeSite(site, assets ?? { hero: { file: "hero.jpg", alt: "Hero" } }, files ?? ["hero.jpg"]));
+    loadSite(writeSite(site, assets ?? { hero: { file: "hero.jpg", alt: "Hero" }, icon: { file: "icon.png", alt: "" } }, files ?? ["hero.jpg", "icon.png"]));
   } catch (error) {
     if (error instanceof SiteValidationError) return error.issues;
     throw error;
@@ -113,7 +113,7 @@ describe("assets", () => {
   });
 
   test("asset file missing on disk", () => {
-    expect(issuesFor(() => {}, { hero: { file: "hero.jpg", alt: "Hero" } }, [])).toContain(
+    expect(issuesFor(() => {}, { hero: { file: "hero.jpg", alt: "Hero" }, icon: { file: "icon.png", alt: "" } }, ["icon.png"])).toContain(
       'assets/assets.json: "hero" points to a missing file assets/hero.jpg.',
     );
   });
