@@ -8,9 +8,10 @@ import { toneFor } from "@/site/theme";
 export interface Props {
   section: SectionOf<"contact">;
   headingLevel: "h1" | "h2";
+  layout?: "split" | "centered";
 }
 
-const { section, headingLevel } = Astro.props;
+const { section, headingLevel, layout = "split" } = Astro.props;
 const { content, props } = section;
 const { business } = site;
 
@@ -31,6 +32,7 @@ const contactInfo = content.showDetails
 <ContactForm
   id={section.id}
   headingLevel={headingLevel}
+  layout={layout}
   eyebrow={content.eyebrow}
   title={content.title}
   description={content.description}

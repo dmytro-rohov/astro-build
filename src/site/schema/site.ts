@@ -54,6 +54,21 @@ const Address = z.object({
   country: z.string().regex(/^[A-Z]{2}$/, "ISO 3166-1 alpha-2 code, e.g. PL.").optional(),
 });
 
+export const DAYS = ["mo", "tu", "we", "th", "fr", "sa", "su"] as const;
+
+const Time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Time as "HH:MM", e.g. "09:00".');
+
+const HoursEntry = z
+  .object({
+    days: z.array(z.enum(DAYS)).min(1).max(7).describe('Days of the week: "mo", "tu", "we", "th", "fr", "sa", "su".'),
+    opens: Time.optional(),
+    closes: Time.optional(),
+    closed: z.boolean().optional(),
+  })
+  .refine((entry) => (entry.closed ? !entry.opens && !entry.closes : Boolean(entry.opens && entry.closes)), {
+    message: 'Set "opens" and "closes" (HH:MM), or "closed": true.',
+  });
+
 export const BusinessSchema = z.object({
   type: field(z.string().regex(/^[A-Z][A-Za-z]{2,40}$/, "A schema.org type, e.g. LocalBusiness, DanceSchool, AutoRepair."), {
     label: "Rodzaj działalności",
@@ -69,11 +84,26 @@ export const BusinessSchema = z.object({
     description: "Public phone number in international format.",
   }),
   address: field(Address.optional(), { label: "Adres", fieldType: "text", description: "Postal address of the place." }),
-  openingHours: field(z.array(text(40)).max(14).default([]), {
-    label: "Godziny otwarcia",
-    fieldType: "list",
-    description: 'Opening hours in schema.org format, e.g. "Mo-Fr 09:00-17:00".',
-  }),
+  hours: field(
+    z
+      .array(HoursEntry)
+      .max(7)
+      .default([])
+      .superRefine((entries, context) => {
+        const seen = new Set<string>();
+        entries.forEach((entry, index) =>
+          entry.days.forEach((day) => {
+            if (seen.has(day)) context.addIssue({ code: "custom", path: [index, "days"], message: `Day "${day}" is listed twice.` });
+            seen.add(day);
+          }),
+        );
+      }),
+    {
+      label: "Godziny otwarcia",
+      fieldType: "list",
+      description: 'Opening hours, e.g. [{ "days": ["mo","tu","we","th","fr"], "opens": "09:00", "closes": "17:00" }, { "days": ["su"], "closed": true }].',
+    },
+  ),
   priceRange: field(text(40).optional(), { label: "Przedział cen", fieldType: "text", description: 'e.g. "$$" or "100-300 PLN".' }),
   sameAs: field(z.array(HttpsUrl).max(10).default([]), { label: "Profile w sieci", fieldType: "list", description: "Facebook, Instagram, Google Maps… (https)." }),
 });

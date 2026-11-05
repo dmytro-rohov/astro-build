@@ -8,9 +8,11 @@
 import { z } from "zod";
 import { Id } from "./fields";
 
+export const SECTION_TONES = ["default", "muted", "inverse", "accent"] as const;
+
 /** Props every section accepts. */
 export const CommonSectionProps = z.object({
-  tone: z.enum(["default", "muted", "inverse"]).optional().describe("Background tone of the section."),
+  tone: z.enum(SECTION_TONES).optional().describe("Background tone of the section."),
   spacing: z.enum(["sm", "md", "lg", "xl"]).optional().describe("Vertical padding of the section."),
   align: z.enum(["left", "center"]).optional().describe("Text alignment where the variant supports it."),
 });
@@ -55,6 +57,8 @@ export type SectionTypeDefinition<
   description: string;
   content: Content;
   variants: Variants;
+  /** Allow tone "accent" (brand-colored background). Not for sections with forms or cards on surfaces. */
+  accentTone?: boolean;
 };
 
 function variantObject(
@@ -62,8 +66,13 @@ function variantObject(
   variant: string,
   definition: VariantDefinition,
   content: z.ZodObject,
+  accentTone: boolean,
 ) {
-  const props = CommonSectionProps.extend(definition.props?.shape ?? {}).strict();
+  const tones = accentTone ? SECTION_TONES : SECTION_TONES.filter((tone) => tone !== "accent");
+  const props = CommonSectionProps.extend({
+    tone: z.enum(tones as [string, ...string[]]).optional().describe("Background tone of the section."),
+    ...(definition.props?.shape ?? {}),
+  }).strict();
 
   return z.object({
     ...base,
@@ -77,9 +86,10 @@ function variantUnion(
   base: z.ZodRawShape,
   variants: Record<string, VariantDefinition>,
   content: z.ZodObject,
+  accentTone = false,
 ) {
   const options = Object.entries(variants).map(([name, definition]) =>
-    variantObject(base, name, definition, content),
+    variantObject(base, name, definition, content, accentTone),
   );
 
   return z.discriminatedUnion("variant", options as [(typeof options)[number], ...(typeof options)[number][]]);
@@ -98,6 +108,7 @@ export function defineSectionType<
     },
     definition.variants,
     definition.content,
+    definition.accentTone ?? false,
   ) as unknown as VariantUnion<SectionBase<Type>, Variants, Content>;
 
   return { ...definition, schema };

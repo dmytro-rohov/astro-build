@@ -31,7 +31,8 @@
     "test:unit": "vitest run",
     "site:validate": "tsx scripts/site/validate.ts",
     "site:build": "tsx scripts/site/build.ts",
-    "test:broken-site": "bash scripts/site/check-broken.sh"
+    "test:broken-site": "bash scripts/site/check-broken.sh",
+    "test:catalog": "bash scripts/site/test-catalog.sh"
   },
   "dependencies": {
     "@astrojs/node": "^11.0.3",

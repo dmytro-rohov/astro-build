@@ -41,4 +41,10 @@
     color: var(--color-text-primary);
     background: var(--color-background-primary);
   }
+
+  // Accent sections re-scope the tokens the same way (brand color background).
+  .section--tone-accent {
+    color: var(--color-text-primary);
+    background: var(--color-background-primary);
+  }
 }

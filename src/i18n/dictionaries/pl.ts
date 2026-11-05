@@ -7,6 +7,28 @@ export default {
     titleTemplate: "{title} | {siteName}",
   },
 
+  days: {
+    mo: { short: "Pn", long: "Poniedziałek" },
+    tu: { short: "Wt", long: "Wtorek" },
+    we: { short: "Śr", long: "Środa" },
+    th: { short: "Cz", long: "Czwartek" },
+    fr: { short: "Pt", long: "Piątek" },
+    sa: { short: "Sb", long: "Sobota" },
+    su: { short: "Nd", long: "Niedziela" },
+  },
+
+  sections: {
+    hoursTitle: "Godziny otwarcia",
+    closed: "Zamknięte",
+    address: "Adres",
+    phone: "Telefon",
+    email: "E-mail",
+    openInMaps: "Otwórz w mapach",
+    popularPlan: "Najczęściej wybierany",
+    rating: "Ocena: {value} na 5",
+    contactBar: "Dane kontaktowe",
+  },
+
   common: {
     skipToContent: "Przejdź do treści",
     backToHome: "Wróć na stronę główną",

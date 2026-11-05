@@ -1,0 +1,33 @@
+---
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"services">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const ItemHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="services" variant="price-list" tone={props.tone} spacing={props.spacing} width="md">
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <ul class="s-price-list">
+      {content.items.map((item) => (
+        <li class="s-price-list__item">
+          <div class="s-price-list__row">
+            <ItemHeading class="s-price-list__title">{item.title}</ItemHeading>
+            <span class="s-price-list__leader" aria-hidden="true"></span>
+            {item.price && <p class="s-price-list__price">{item.price}</p>}
+          </div>
+          {item.description && <p class="s-price-list__description">{item.description}</p>}
+        </li>
+      ))}
+    </ul>
+  </Stack>
+</SectionShell>

@@ -13,9 +13,14 @@ export const cta = defineSectionType({
     primaryAction: field(Action, { label: "Główny przycisk", fieldType: "link", description: "The action." }),
     secondaryAction: field(Action.optional(), { label: "Drugi link", fieldType: "link", description: "Optional secondary link." }),
   }),
+  accentTone: true,
   variants: {
     boxed: {
       description: "Centered content in a highlighted box.",
+      uses: ["eyebrow", "secondaryAction"],
+    },
+    banner: {
+      description: "Full-width band: text on the left, actions on the right.",
       uses: ["eyebrow", "secondaryAction"],
     },
   },

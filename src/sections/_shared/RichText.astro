@@ -1,0 +1,13 @@
+---
+/** richtext-lite from site.json, rendered and escaped by the engine. */
+import { renderRichTextLite } from "@/site/richtext";
+
+export interface Props {
+  text: string;
+  class?: string;
+}
+
+const { text, class: className } = Astro.props;
+---
+
+<div class:list={["s-richtext", className]} set:html={renderRichTextLite(text)} />

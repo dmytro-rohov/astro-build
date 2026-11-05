@@ -7,6 +7,28 @@ export default {
     titleTemplate: "{title} | {siteName}",
   },
 
+  days: {
+    mo: { short: "Пн", long: "Понеділок" },
+    tu: { short: "Вт", long: "Вівторок" },
+    we: { short: "Ср", long: "Середа" },
+    th: { short: "Чт", long: "Четвер" },
+    fr: { short: "Пт", long: "П’ятниця" },
+    sa: { short: "Сб", long: "Субота" },
+    su: { short: "Нд", long: "Неділя" },
+  },
+
+  sections: {
+    hoursTitle: "Години роботи",
+    closed: "Зачинено",
+    address: "Адреса",
+    phone: "Телефон",
+    email: "Електронна пошта",
+    openInMaps: "Відкрити на мапі",
+    popularPlan: "Найпопулярніший",
+    rating: "Оцінка: {value} з 5",
+    contactBar: "Контактні дані",
+  },
+
   common: {
     skipToContent: "Перейти до вмісту",
     backToHome: "Повернутися на головну",

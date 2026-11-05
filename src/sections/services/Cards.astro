@@ -1,0 +1,48 @@
+---
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Grid from "@/components/layouts/Grid.astro";
+import Card from "@/components/ui/Card.astro";
+import Icon from "@/components/media/Icon.astro";
+import Img from "@/components/media/Img.astro";
+import Link from "@/components/ui/Link.astro";
+import { getAsset } from "@/site/assets";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"services", "cards">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const ItemHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="services" variant="cards" tone={props.tone} spacing={props.spacing}>
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <Grid as="ul" columns={props.columns ?? "3"} gap="lg" class="s-services__list">
+      {content.items.map((item) => {
+        const image = item.image ? getAsset(item.image) : undefined;
+        return (
+          <Card as="li" variant="elevated" padding="none" class="s-services__card">
+            {image && <Img src={image.image} alt={image.alt} kind={image.alt ? "content" : "decorative"} aspect={[3, 2]} focal={image.focal} sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" widths={[480, 720, 960]} class="s-services__image" />}
+            <Stack space="sm" class="s-services__body">
+              {item.icon && <Icon name={item.icon} class="s-services__icon" size="1.75rem" />}
+              <ItemHeading class="s-services__title">{item.title}</ItemHeading>
+              {item.description && <p class="s-services__description">{item.description}</p>}
+              {(item.price || item.action) && (
+                <div class="s-services__footer">
+                  {item.price && <p class="s-services__price">{item.price}</p>}
+                  {item.action && <Link href={item.action.href}>{item.action.label}</Link>}
+                </div>
+              )}
+            </Stack>
+          </Card>
+        );
+      })}
+    </Grid>
+  </Stack>
+</SectionShell>

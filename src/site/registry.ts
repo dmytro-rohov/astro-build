@@ -8,10 +8,16 @@ import { cta } from "../sections/cta/schema";
 import { faq } from "../sections/faq/schema";
 import { features } from "../sections/features/schema";
 import { hero } from "../sections/hero/schema";
+import { about } from "../sections/about/schema";
+import { services } from "../sections/services/schema";
+import { testimonials } from "../sections/testimonials/schema";
+import { gallery } from "../sections/gallery/schema";
+import { pricing } from "../sections/pricing/schema";
+import { hoursLocation } from "../sections/hours-location/schema";
 import { footer } from "../layout/footer/schema";
 import { navbar } from "../layout/navbar/schema";
 
-export const sectionTypes = [hero, features, cta, faq, contact] as const;
+export const sectionTypes = [hero, about, services, features, testimonials, gallery, pricing, faq, cta, contact, hoursLocation] as const;
 
 export const layoutTypes = { navbar, footer } as const;
 

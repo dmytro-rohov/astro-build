@@ -1,0 +1,28 @@
+---
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Details from "@/sections/hours-location/Details.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Card from "@/components/ui/Card.astro";
+import { t } from "@/i18n";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"hours-location">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const inner = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="hours-location" variant="card" tone={props.tone} spacing={props.spacing}>
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title ?? t.sections.hoursTitle} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
+    <div class="s-hours-location__cards">
+      <Card variant="elevated" padding="lg"><Details part="hours" showPhone={content.showPhone} headingLevel={inner} /></Card>
+      <Card variant="elevated" padding="lg"><Details part="address" mapUrl={content.mapUrl} showPhone={content.showPhone} headingLevel={inner} /></Card>
+    </div>
+  </Stack>
+</SectionShell>

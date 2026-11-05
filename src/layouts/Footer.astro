@@ -9,6 +9,7 @@ import { siteConfig } from "@/config/site";
 import Logo from "@/components/media/Logo.astro";
 import { ANALYTICS_CONFIG } from "@/config/analytics";
 import { format, t } from "@/i18n";
+import { site } from "virtual:site";
 
 export type FooterLink = {
   label: string;
@@ -56,17 +57,48 @@ const {
   class: className,
   ...restProps
 } = Astro.props;
+
+const variant = site.layout.footer.variant;
+const allLinks = groups.flatMap((group) => group.links);
 ---
 
 <footer
   {...restProps}
   class:list={[
     "site-footer",
+    `site-footer--${variant}`,
     className,
   ]}
 >
   <Container size="xl">
     <Stack space="xl">
+      {variant !== "columns" && (
+        <div class="site-footer__compact">
+          <a class="site-footer__brand" href={brandHref}>
+            <Logo size="footer" />
+          </a>
+          {variant === "centered" && description && <p class="site-footer__description">{description}</p>}
+          {socialLinks.length > 0 && (
+            <ul class="site-footer__social-list site-footer__social-list--inline">
+              {socialLinks.map((item) => (
+                <li class="site-footer__social-item">
+                  <a class="site-footer__social-link" href={item.href} target="_blank" rel="noopener noreferrer" aria-label={item.label}>
+                    <Icon name={item.icon} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+          <nav aria-label={brandLabel} class="site-footer__inline-nav">
+            <ul class="site-footer__inline-links">
+              {allLinks.map((link) => (
+                <li><Link href={link.href} external={link.external} variant="muted" class="site-footer__link">{link.label}</Link></li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      )}
+      {variant === "columns" && (
       <div class="site-footer__main">
         <Stack class="site-footer__brand-block" space="md">
           <a class="site-footer__brand" href={brandHref}>
@@ -142,6 +174,7 @@ const {
           </div>
         )}
       </div>
+      )}
 
       <Divider />
 

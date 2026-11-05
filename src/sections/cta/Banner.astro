@@ -1,0 +1,21 @@
+---
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Actions from "@/sections/_shared/Actions.astro";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"cta">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+---
+
+<SectionShell id={section.id} type="cta" variant="banner" tone={props.tone} spacing={props.spacing} defaultSpacing="md">
+  <div class="s-cta-banner">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} />
+    <Actions primary={content.primaryAction} secondary={content.secondaryAction} />
+  </div>
+</SectionShell>

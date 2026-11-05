@@ -21,7 +21,12 @@ export const features = defineSectionType({
     description: field(multilineText(240).optional(), { label: "Opis", fieldType: "textarea", description: "Short intro under the title." }),
     items: field(listWithIds(FeatureItem, 2, 12), { label: "Elementy", fieldType: "list", description: "2–12 features; 3 or 6 look best." }),
   }),
+  accentTone: false,
   variants: {
+    "icon-list": {
+      description: "Two-column list with an icon per item, no cards — light and compact.",
+      uses: ["eyebrow", "description", "items.icon"],
+    },
     "cards-grid": {
       description: "Cards in a responsive grid (1 column on phones).",
       uses: ["eyebrow", "description", "items.eyebrow", "items.icon"],

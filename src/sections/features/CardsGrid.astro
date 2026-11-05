@@ -1,10 +1,10 @@
 ---
 import FeatureGrid from "@/components/widgets/FeatureGrid.astro";
-import type { SectionOf } from "@/site/types";
+import type { VariantOf } from "@/site/types";
 import { toneFor } from "@/site/theme";
 
 export interface Props {
-  section: SectionOf<"features">;
+  section: VariantOf<"features", "cards-grid">;
   headingLevel: "h1" | "h2";
 }
 

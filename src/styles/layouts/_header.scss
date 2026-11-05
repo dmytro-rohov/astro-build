@@ -18,6 +18,7 @@
   .site-header__inner {
     display: flex;
     align-items: center;
+    padding-block: var(--spacing-xs);
     justify-content: space-between;
     gap: var(--spacing-lg);
     min-height: 4rem;

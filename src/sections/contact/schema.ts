@@ -17,5 +17,9 @@ export const contact = defineSectionType({
       description: "Text and contact details on one side, form in a card on the other.",
       uses: ["eyebrow", "description", "showDetails"],
     },
+    "form-centered": {
+      description: "Narrow centered form with the contact details listed below.",
+      uses: ["eyebrow", "description", "showDetails"],
+    },
   },
 });

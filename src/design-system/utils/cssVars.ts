@@ -13,7 +13,7 @@ import fs from "fs";
 import path from "path";
 import { loadSite, resolveSiteDir, SiteValidationError } from "../../site/loader";
 import { fontPairs, fontStack } from "../fonts/library";
-import { resolveTheme, type SemanticPalette } from "../theme";
+import { accentPalette, resolveTheme, type SemanticPalette } from "../theme";
 import { shapeTokens } from "../theme/shape";
 import { tokens } from "../tokens/index";
 
@@ -88,9 +88,17 @@ ${lines(flatTokens)}
 ${lines(colorVars(theme.dark))}
 }
 
+:root .section--tone-accent {
+${lines(colorVars(accentPalette(theme.light)))}
+}
+
 :root[data-theme="dark"] {
   color-scheme: dark;
 ${lines(colorVars(theme.dark))}
+}
+
+:root[data-theme="dark"] .section--tone-accent {
+${lines(colorVars(accentPalette(theme.dark)))}
 }
 
 :root[data-theme="dark"] .section--tone-inverse {
@@ -107,6 +115,10 @@ ${lines(colorVars(theme.dark), "    ")}
   :root:not([data-theme]) .section--tone-inverse {
     color-scheme: light;
 ${lines(colorVars(theme.light), "    ")}
+  }
+
+  :root:not([data-theme]) .section--tone-accent {
+${lines(colorVars(accentPalette(theme.dark)), "    ")}
   }
 }
 `;

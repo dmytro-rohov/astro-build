@@ -3,6 +3,9 @@ import Container from "@/components/layouts/Container.astro";
 import Navbar, { type NavItem, type NavAction } from "@/components/widgets/Navbar.astro";
 import { siteConfig } from "@/config/site";
 import Logo from "@/components/media/Logo.astro";
+import Link from "@/components/ui/Link.astro";
+import { site } from "virtual:site";
+import { t } from "@/i18n";
 
 export interface Props {
   brandHref?: string;
@@ -16,20 +19,34 @@ const {
   brandHref = "/",
   navItems = siteConfig.header.nav,
   cta = siteConfig.header.cta,
-  sticky = true,
+  sticky = siteConfig.header.sticky,
   class: className,
   ...restProps
 } = Astro.props;
+
+const variant = site.layout.navbar.variant;
+const { phone, email } = site.business;
 ---
 
 <header
   {...restProps}
   class:list={[
     "site-header",
+    `site-header--${variant}`,
     sticky && "site-header--sticky",
     className,
   ]}
 >
+  {variant === "topbar" && (phone || email) && (
+    <div class="site-header__topbar">
+      <Container size="xl">
+        <ul class="site-header__contact" aria-label={t.sections.contactBar}>
+          {phone && <li><Link href={`tel:${phone.replace(/[^\d+]/g, "")}`} variant="muted">{phone}</Link></li>}
+          {email && <li><Link href={`mailto:${email}`} variant="muted">{email}</Link></li>}
+        </ul>
+      </Container>
+    </div>
+  )}
   <Container size="xl">
     <div class="site-header__inner">
       <a class="site-header__brand" href={brandHref}>

@@ -151,11 +151,18 @@
       display: none;
     }
 
+    // Many pages or a long button wrap onto a second line instead of overflowing.
+    .navbar {
+      min-width: 0;
+    }
+
     .navbar__menu {
       position: static;
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      gap: var(--spacing-md);
+      justify-content: flex-end;
+      gap: var(--spacing-sm) var(--spacing-md);
       min-width: 0;
       padding: 0;
       background: transparent;
@@ -169,7 +176,9 @@
 
     .navbar__list {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
+      justify-content: flex-end;
       gap: var(--spacing-xs);
     }
 

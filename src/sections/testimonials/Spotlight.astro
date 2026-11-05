@@ -1,0 +1,41 @@
+---
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stars from "@/sections/testimonials/Stars.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"testimonials">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const items = content.items.slice(0, 3);
+---
+
+<SectionShell id={section.id} type="testimonials" variant="spotlight" tone={props.tone} spacing={props.spacing} width="md">
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} headingLevel={headingLevel} align="center" />
+    {items.map((item) => {
+      const avatar = item.avatar ? getAsset(item.avatar) : undefined;
+      return (
+        <figure class="s-spotlight">
+          <span class="s-spotlight__mark" aria-hidden="true">“</span>
+          <blockquote class="s-spotlight__quote"><p>{item.quote}</p></blockquote>
+          <figcaption class="s-spotlight__author">
+            {avatar && <Img src={avatar.image} alt="" kind="decorative" aspect={[1, 1]} focal={avatar.focal} widths={[96, 160]} sizes="56px" class="s-testimonial__avatar" />}
+            <span>
+              <span class="s-testimonial__name">{item.author}</span>
+              {item.role && <span class="s-testimonial__role">{item.role}</span>}
+            </span>
+            {item.rating && <Stars rating={item.rating} />}
+          </figcaption>
+        </figure>
+      );
+    })}
+  </Stack>
+</SectionShell>

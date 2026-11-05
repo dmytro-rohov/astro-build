@@ -19,6 +19,10 @@ export const faq = defineSectionType({
     items: field(listWithIds(FaqItem, 1, 20), { label: "Pytania", fieldType: "list", description: "1–20 questions." }),
   }),
   variants: {
+    "two-column": {
+      description: "All questions and answers visible in two columns — good for short answers.",
+      uses: ["eyebrow", "description"],
+    },
     accordion: {
       description: "Expandable questions (native details/summary, works without JavaScript).",
       uses: ["eyebrow", "description"],

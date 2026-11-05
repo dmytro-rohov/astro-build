@@ -1,0 +1,13 @@
+---
+import FormSplit from "@/sections/contact/FormSplit.astro";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"contact">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+---
+
+<FormSplit section={section} headingLevel={headingLevel} layout="centered" />
