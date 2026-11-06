@@ -1,12 +1,12 @@
 /**
  * Builds one site: validation, system assets (tokens, fonts, icons) and Astro.
  * Usage: npm run site:build -- --site sites/_demo [--out dist-sites/demo]
- * The output (default ./dist) is served by `node server.mjs` (or `--out` dir).
+ * The output (default ./dist) is served by `node server.mjs` (OUT_DIR=<out>).
+ * --out may be outside the project (the orchestrator's workspace).
  */
-import { spawnSync } from "node:child_process";
-import path from "node:path";
 import { loadSite, resolveSiteDir, SiteValidationError } from "../../src/site/loader";
 import { getFlag } from "./args";
+import { runBuild } from "./lib";
 
 const dir = resolveSiteDir(getFlag("site"));
 const out = getFlag("out");
@@ -22,7 +22,4 @@ try {
   throw error;
 }
 
-const env = { ...process.env, SITE_DIR: dir, ...(out ? { OUT_DIR: path.resolve(out) } : {}) };
-const result = spawnSync("npm", ["run", "build"], { stdio: "inherit", env });
-
-process.exit(result.status ?? 1);
+process.exit(runBuild(dir, out ?? "dist") ? 0 : 1);

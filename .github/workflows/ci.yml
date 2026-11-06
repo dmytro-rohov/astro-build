@@ -38,6 +38,9 @@ jobs:
       - name: Remote contact mode builds a static site
         run: npm run test:remote
 
+      - name: Builds into a folder outside the project (orchestrator workspace)
+        run: npm run test:outside
+
       # Builds the site with test values and runs the browser tests.
       - name: End-to-end and accessibility tests
         run: npm run test:e2e
