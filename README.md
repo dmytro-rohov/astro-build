@@ -442,7 +442,7 @@ Available media primitives:
 - `Figure`
 - `Icon`
 
-The icon system uses an SVG sprite generated from raw SVG files.
+`Icon` uses the per-site SVG sprite built from the Lucide set (see Icons).
 
 ---
 
@@ -657,23 +657,22 @@ npm run build
 
 ---
 
-## Adding a New Icon
+## Icons
 
-The icon name is the SVG file name without `.svg`.
+One consistent family: **Lucide** (`lucide-static`, ISC license) — 149 icons curated
+for small-business sites in `src/design-system/icons/library.ts`, grouped into 12
+categories (contact, time & booking, business, food, beauty & health, sport, auto,
+home & construction, education, media & events, nature & pets, general) with Polish
+and English keywords. `catalog.json` lists them for the orchestrator; site.json uses
+them by name (`services` and `features` items, footer social links).
 
-1. Add raw SVG to:
+`npm run build-icons` (part of `build:system`) puts only the icons the site needs into
+its sprite — the engine's own (`check`, `mail`, `map-pin`, `phone`) plus every `icon`
+in site.json — so a page downloads a few KB. `ICONS=all npm run build-icons` builds the
+whole set. The Lucide license is copied to `public/icons/LICENSE-lucide.txt`.
 
-```txt
-src/assets/icons/raw/
-```
-
-2. Run:
-
-```bash
-npm run build-icons
-```
-
-3. Use icon:
+**Adding an icon:** add an entry to `icons` in `library.ts` (category, keywords and the
+Lucide name in `lucide` when it differs), then `npm run build:system`.
 
 ```astro
 ---
@@ -683,14 +682,9 @@ import Icon from "@/components/media/Icon.astro";
 <Icon name="mail" />
 ```
 
-Included icons: `menu`, `close`, `check`, `arrow-right`, `chevron-down`,
-`external-link`, `star`, `grid`, `blocks`, `image`, `code`, `mail`, `phone`,
-`map-pin`, `clock`.
-
-Icon rules (enforced by `svgo.config.js`): 24×24 `viewBox`, every color is turned
-into `currentColor`, so icons follow the text color in light and dark schemes.
-Brand logos (Facebook, Instagram…) are not included — add them from the brand's
-official assets.
+Icons follow the text color (`currentColor`) in light and dark schemes. Brand logos
+(Facebook, Instagram…) are not included — they are trademarks; social links use
+`external-link`.
 
 ---
 

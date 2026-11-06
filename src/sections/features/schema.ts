@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { iconNames } from "../../design-system/sprite.generated";
+import { ICON_NAMES } from "../../design-system/icons/library";
 import { defineSectionType } from "../../site/schema/define";
 import { field, Id, listWithIds, multilineText, text } from "../../site/schema/fields";
 
@@ -8,7 +8,7 @@ const FeatureItem = z.strictObject({
   eyebrow: field(text(24).optional(), { label: "Etykieta", fieldType: "text", description: "Tiny label above the item title." }),
   title: field(text(60), { label: "Tytuł", fieldType: "text", description: "Feature or benefit name." }),
   description: field(multilineText(200), { label: "Opis", fieldType: "textarea", description: "One or two sentences." }),
-  icon: field(z.enum(iconNames).optional(), { label: "Ikona", fieldType: "select", description: "Icon from the built-in set." }),
+  icon: field(z.enum(ICON_NAMES).optional(), { label: "Ikona", fieldType: "select", description: "Icon from the built-in set (see icons in catalog.json: category and keywords)." }),
 });
 
 export const features = defineSectionType({

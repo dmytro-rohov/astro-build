@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { iconNames } from "../../design-system/sprite.generated";
+import { ICON_NAMES } from "../../design-system/icons/library";
 import { defineLayoutType } from "../../site/schema/define";
 import { Action, field, HttpsUrl, multilineText, text } from "../../site/schema/fields";
 
@@ -11,7 +11,7 @@ const LinkGroup = z.strictObject({
 const SocialLink = z.strictObject({
   label: text(40),
   href: HttpsUrl,
-  icon: z.enum(iconNames),
+  icon: z.enum(ICON_NAMES),
 });
 
 export const footer = defineLayoutType({

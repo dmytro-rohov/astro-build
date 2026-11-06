@@ -16,7 +16,7 @@ import path from "node:path";
 import { z } from "zod";
 import { archetypes } from "../../src/design-system/archetypes";
 import { fontFamilies, fontPairs, pairScripts, type FontPairId } from "../../src/design-system/fonts/library";
-import { iconNames } from "../../src/design-system/sprite.generated";
+import { icons } from "../../src/design-system/icons/library";
 import { ENGINE_VERSION } from "../../src/site/engine";
 import { layoutTypes, sectionTypes } from "../../src/site/registry";
 import type { FieldMeta, ImageSlot } from "../../src/site/schema/fields";
@@ -152,7 +152,7 @@ const catalog = {
     fits: pair.tags,
     scripts: pairScripts(id as FontPairId),
   })),
-  icons: iconNames,
+  icons: Object.entries(icons).map(([name, icon]) => ({ name, category: icon.category, keywords: icon.keywords })),
   reservedSlugs: RESERVED_SLUGS,
 };
 

@@ -37,6 +37,9 @@ public/favicon.ico
 public/favicon.svg
 public/og-cover.jpg
 public/icons/*.png
+public/icons/sprite.*.svg
+public/icons/LICENSE-lucide.txt
+src/design-system/sprite.generated.ts
 src/styles/abstracts/_fonts.scss
 src/design-system/fonts.generated.ts
 src/design-system/appIcons.generated.ts
