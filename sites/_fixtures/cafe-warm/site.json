@@ -168,6 +168,38 @@
           }
         },
         {
+          "id": "dostawcy",
+          "type": "logo-cloud",
+          "variant": "grid",
+          "props": {},
+          "content": {
+            "eyebrow": "Skąd ziarna",
+            "title": "Kupujemy bezpośrednio od farm i lokalnych wytwórców",
+            "items": [
+              {
+                "id": "esperanza",
+                "name": "Finca La Esperanza",
+                "logo": "asset:dostawca-1"
+              },
+              {
+                "id": "sidama",
+                "name": "Kooperatywa Sidama",
+                "logo": "asset:dostawca-2"
+              },
+              {
+                "id": "santa-rosa",
+                "name": "Hacienda Santa Rosa",
+                "logo": "asset:dostawca-3"
+              },
+              {
+                "id": "mlyn",
+                "name": "Młyn Ruski",
+                "logo": "asset:dostawca-4"
+              }
+            ]
+          }
+        },
+        {
           "id": "atuty",
           "type": "features",
           "variant": "cards-grid",
@@ -182,25 +214,25 @@
                 "id": "palarnia",
                 "title": "Własna palarnia",
                 "description": "Palimy w małych partiach i podajemy kawę najwyżej trzy tygodnie po wypaleniu.",
-                "icon": "star"
+                "icon": "coffee"
               },
               {
                 "id": "sniadania",
                 "title": "Śniadania do 13:00",
                 "description": "Jajka po turecku, owsianka, kanapki na chlebie na zakwasie — także w wersji wegańskiej.",
-                "icon": "clock"
+                "icon": "croissant"
               },
               {
                 "id": "praca",
                 "title": "Dobre miejsce do pracy",
                 "description": "Szybkie Wi-Fi, gniazdka przy stołach i cisza przed południem.",
-                "icon": "code"
+                "icon": "wifi"
               },
               {
                 "id": "psy",
                 "title": "Psy mile widziane",
                 "description": "Dla czworonogów zawsze stoi miska z wodą, a czasem znajdzie się też smakołyk.",
-                "icon": "check"
+                "icon": "dog"
               }
             ]
           }
@@ -280,6 +312,18 @@
             "description": "Trzy minuty pieszo od Rynku. Latem zapraszamy do ogródka na podwórzu kamienicy.",
             "mapUrl": "https://www.openstreetmap.org/search?query=Ruska%2019%20Wroc%C5%82aw",
             "showPhone": false
+          }
+        },
+        {
+          "id": "mapa",
+          "type": "embed",
+          "variant": "split",
+          "props": {},
+          "content": {
+            "title": "Trzy minuty od Rynku",
+            "description": "Wejście od ul. Ruskiej, ogródek na podwórzu kamienicy.",
+            "url": "https://www.openstreetmap.org/export/embed.html?bbox=17.0250%2C51.1080%2C17.0330%2C51.1120&layer=mapnik&marker=51.1100%2C17.0290",
+            "frameTitle": "Mapa: kawiarnia Ziarno i Para, ul. Ruska 19, Wrocław"
           }
         },
         {

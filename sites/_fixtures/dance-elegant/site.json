@@ -139,7 +139,24 @@
               "label": "Zobacz zajęcia",
               "href": "/zajecia"
             },
-            "image": "asset:hero"
+            "image": "asset:hero",
+            "highlights": [
+              {
+                "id": "lata",
+                "value": "od 2009",
+                "label": "uczymy w Krakowie"
+              },
+              {
+                "id": "grupy",
+                "value": "max 12",
+                "label": "osób w grupie"
+              },
+              {
+                "id": "proba",
+                "value": "0 zł",
+                "label": "pierwsza lekcja"
+              }
+            ]
           }
         },
         {
@@ -192,7 +209,7 @@
                 "eyebrow": "Na start",
                 "title": "Lekcja próbna za darmo",
                 "description": "Przyjdź na pierwsze zajęcia bez zobowiązań i sprawdź, czy styl i grupa są dla Ciebie.",
-                "icon": "star"
+                "icon": "gift"
               },
               {
                 "id": "godziny",
@@ -206,7 +223,7 @@
                 "eyebrow": "Bez stresu",
                 "title": "Bez partnera? Żaden problem",
                 "description": "W zajęciach w parach rotujemy partnerów, więc możesz przyjść sam lub sama.",
-                "icon": "check"
+                "icon": "users"
               },
               {
                 "id": "centrum",
@@ -214,6 +231,39 @@
                 "title": "Sala w samym centrum",
                 "description": "Pięć minut pieszo od Rynku, przystanek tramwajowy Plac Inwalidów tuż obok.",
                 "icon": "map-pin"
+              }
+            ]
+          }
+        },
+        {
+          "id": "instruktorzy",
+          "type": "team",
+          "variant": "cards",
+          "props": {},
+          "content": {
+            "eyebrow": "Instruktorzy",
+            "title": "Poznaj osoby, które nauczą Cię tańczyć",
+            "members": [
+              {
+                "id": "anna",
+                "name": "Anna Wrona",
+                "role": "Salsa, bachata",
+                "bio": "Wicemistrzyni Polski w salsie, tańczy od 20 lat. Uczy cierpliwie i z humorem.",
+                "photo": "asset:team-1"
+              },
+              {
+                "id": "michal",
+                "name": "Michał Wrona",
+                "role": "Salsa, pierwszy taniec",
+                "bio": "Choreograf ponad 300 pierwszych tańców. Przygotuje Was nawet w pięć lekcji.",
+                "photo": "asset:team-2"
+              },
+              {
+                "id": "julia",
+                "name": "Julia Sowa",
+                "role": "Balet, hip-hop dla dzieci",
+                "bio": "Absolwentka szkoły baletowej, prowadzi zajęcia dla dorosłych i najmłodszych.",
+                "photo": "asset:team-3"
               }
             ]
           }
@@ -299,44 +349,184 @@
                 "title": "Salsa kubańska",
                 "description": "Energiczny taniec w parach i w kole (rueda). Najlepszy wybór na początek przygody z tańcem.",
                 "price": "od 180 zł / mies.",
-                "icon": "star"
+                "icon": "music"
               },
               {
                 "id": "bachata",
                 "title": "Bachata",
                 "description": "Zmysłowy taniec z Dominikany. Uczymy prowadzenia i podążania krok po kroku.",
                 "price": "od 180 zł / mies.",
-                "icon": "star"
+                "icon": "footprints"
               },
               {
                 "id": "balet",
                 "title": "Balet dla dorosłych",
                 "description": "Technika, postawa i rozciąganie przy drążku. Bez wymagań — wystarczą wygodne ubrania.",
                 "price": "od 200 zł / mies.",
-                "icon": "check"
+                "icon": "person-standing"
               },
               {
                 "id": "pierwszy-taniec",
                 "title": "Pierwszy taniec",
                 "description": "Indywidualne lekcje dla par młodych, z choreografią do wybranej piosenki.",
                 "price": "480 zł / 5 lekcji",
-                "icon": "check"
+                "icon": "heart"
               },
               {
                 "id": "hip-hop",
                 "title": "Hip-hop dla dzieci",
                 "description": "Zajęcia dla dzieci od 7 do 12 lat: rytm, koordynacja i mnóstwo zabawy.",
                 "price": "160 zł / mies.",
-                "icon": "blocks"
+                "icon": "baby"
               },
               {
                 "id": "zumba",
                 "title": "Zumba",
                 "description": "Taneczny trening cardio przy muzyce latino. Spalasz kalorie i nie myślisz o tym.",
                 "price": "45 zł / wejście",
-                "icon": "clock"
+                "icon": "flame"
               }
             ]
+          }
+        },
+        {
+          "id": "grafik",
+          "type": "schedule",
+          "variant": "week",
+          "props": {},
+          "content": {
+            "eyebrow": "Grafik",
+            "title": "Grafik zajęć",
+            "description": "Aktualny grafik na sezon jesienno-zimowy. Na każde zajęcia można przyjść na lekcję próbną.",
+            "items": [
+              {
+                "id": "c1",
+                "day": "mo",
+                "start": "17:00",
+                "end": "18:00",
+                "title": "Salsa — początkujący",
+                "instructor": "Anna Wrona",
+                "level": "Początkujący"
+              },
+              {
+                "id": "c2",
+                "day": "mo",
+                "start": "18:15",
+                "end": "19:15",
+                "title": "Bachata — średniozaawansowani",
+                "instructor": "Anna Wrona",
+                "level": "Średni"
+              },
+              {
+                "id": "c3",
+                "day": "mo",
+                "start": "19:30",
+                "end": "20:30",
+                "title": "Zumba",
+                "instructor": "Julia Sowa",
+                "level": "Otwarte"
+              },
+              {
+                "id": "c4",
+                "day": "tu",
+                "start": "17:00",
+                "end": "17:45",
+                "title": "Hip-hop dla dzieci 7–9 lat",
+                "instructor": "Julia Sowa",
+                "level": "Dzieci"
+              },
+              {
+                "id": "c5",
+                "day": "tu",
+                "start": "18:00",
+                "end": "19:00",
+                "title": "Balet dla dorosłych",
+                "instructor": "Julia Sowa",
+                "level": "Początkujący"
+              },
+              {
+                "id": "c6",
+                "day": "tu",
+                "start": "19:15",
+                "end": "20:15",
+                "title": "Salsa — średniozaawansowani",
+                "instructor": "Michał Wrona",
+                "level": "Średni"
+              },
+              {
+                "id": "c7",
+                "day": "we",
+                "start": "17:00",
+                "end": "18:00",
+                "title": "Bachata — początkujący",
+                "instructor": "Anna Wrona",
+                "level": "Początkujący"
+              },
+              {
+                "id": "c8",
+                "day": "we",
+                "start": "18:15",
+                "end": "19:15",
+                "title": "Salsa rueda",
+                "instructor": "Michał Wrona",
+                "level": "Średni"
+              },
+              {
+                "id": "c9",
+                "day": "th",
+                "start": "17:00",
+                "end": "17:45",
+                "title": "Hip-hop dla dzieci 10–12 lat",
+                "instructor": "Julia Sowa",
+                "level": "Dzieci"
+              },
+              {
+                "id": "c10",
+                "day": "th",
+                "start": "18:00",
+                "end": "19:00",
+                "title": "Balet dla dorosłych",
+                "instructor": "Julia Sowa",
+                "level": "Średni"
+              },
+              {
+                "id": "c11",
+                "day": "th",
+                "start": "19:15",
+                "end": "20:15",
+                "title": "Zumba",
+                "instructor": "Julia Sowa",
+                "level": "Otwarte"
+              },
+              {
+                "id": "c12",
+                "day": "fr",
+                "start": "19:00",
+                "end": "22:00",
+                "title": "Wieczorek taneczny",
+                "instructor": "Anna i Michał Wronowie",
+                "level": "Otwarte"
+              },
+              {
+                "id": "c13",
+                "day": "sa",
+                "start": "10:00",
+                "end": "11:00",
+                "title": "Salsa — początkujący",
+                "instructor": "Michał Wrona",
+                "level": "Początkujący"
+              },
+              {
+                "id": "c14",
+                "day": "sa",
+                "start": "11:15",
+                "end": "12:15",
+                "title": "Pierwszy taniec — lekcje indywidualne",
+                "instructor": "Michał Wrona",
+                "level": "Pary"
+              }
+            ],
+            "note": "W święta i długie weekendy zajęcia się nie odbywają. Zmiany ogłaszamy z tygodniowym wyprzedzeniem."
           }
         },
         {
@@ -531,6 +721,19 @@
             "description": "Sala znajduje się na pierwszym piętrze, wejście od podwórza. Najbliższy przystanek: Plac Inwalidów.",
             "mapUrl": "https://www.openstreetmap.org/search?query=D%C5%82uga%2042%20Krak%C3%B3w",
             "showPhone": true
+          }
+        },
+        {
+          "id": "mapa",
+          "type": "embed",
+          "variant": "split",
+          "props": {},
+          "content": {
+            "eyebrow": "Mapa",
+            "title": "Jak do nas trafić",
+            "description": "Wejście od podwórza kamienicy przy ul. Długiej 42, sala na pierwszym piętrze.",
+            "url": "https://www.openstreetmap.org/export/embed.html?bbox=19.9330%2C50.0680%2C19.9420%2C50.0720&layer=mapnik&marker=50.0700%2C19.9375",
+            "frameTitle": "Mapa: Szkoła Tańca Pas de Deux, ul. Długa 42, Kraków"
           }
         }
       ]

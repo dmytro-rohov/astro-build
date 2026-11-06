@@ -146,7 +146,7 @@
         {
           "id": "start",
           "type": "hero",
-          "variant": "split-image",
+          "variant": "panel",
           "props": {},
           "content": {
             "eyebrow": "Warsztat samochodowy · Poznań Łazarz",
@@ -160,7 +160,59 @@
               "label": "Cennik usług",
               "href": "/#uslugi"
             },
-            "image": "asset:hero"
+            "image": "asset:hero",
+            "highlights": [
+              {
+                "id": "lata",
+                "value": "25 lat",
+                "label": "na Łazarzu"
+              },
+              {
+                "id": "gwarancja",
+                "value": "12 mies.",
+                "label": "gwarancji"
+              },
+              {
+                "id": "ocena",
+                "value": "4,9/5",
+                "label": "średnia ocen"
+              }
+            ]
+          }
+        },
+        {
+          "id": "liczby",
+          "type": "stats",
+          "variant": "row",
+          "props": {},
+          "content": {
+            "title": "Warsztat, któremu ufają kierowcy z Poznania",
+            "items": [
+              {
+                "id": "auta",
+                "value": "12 000+",
+                "label": "naprawionych samochodów",
+                "description": "Osobowe i dostawcze do 3,5 t, wszystkich marek."
+              },
+              {
+                "id": "lata",
+                "value": "25 lat",
+                "label": "doświadczenia",
+                "description": "Rodzinny warsztat prowadzony od 1999 roku."
+              },
+              {
+                "id": "stanowiska",
+                "value": "4",
+                "label": "stanowiska naprawcze",
+                "description": "Termin na większość napraw w 48 godzin."
+              },
+              {
+                "id": "ocena",
+                "value": "4,9/5",
+                "label": "średnia ocen klientów",
+                "description": "Z opinii zebranych w ostatnich dwóch latach."
+              }
+            ]
           }
         },
         {
@@ -179,28 +231,28 @@
                 "eyebrow": "Przejrzyście",
                 "title": "Kosztorys przed naprawą",
                 "description": "Dzwonimy z wyceną, zanim zaczniemy. Bez Twojej zgody nie wymienimy żadnej części.",
-                "icon": "check"
+                "icon": "file-text"
               },
               {
                 "id": "gwarancja",
                 "eyebrow": "Spokój",
                 "title": "12 miesięcy gwarancji",
                 "description": "Na części i robociznę. Jeśli coś będzie nie tak — poprawimy bez dyskusji.",
-                "icon": "star"
+                "icon": "shield-check"
               },
               {
                 "id": "termin",
                 "eyebrow": "Szybko",
                 "title": "Termin w 48 godzin",
                 "description": "Na większość napraw mechanicznych przyjmujemy auto w ciągu dwóch dni roboczych.",
-                "icon": "clock"
+                "icon": "calendar-check"
               },
               {
                 "id": "zastepcze",
                 "eyebrow": "Wygodnie",
                 "title": "Auto zastępcze",
                 "description": "Przy dłuższych naprawach pożyczymy Ci samochód, żebyś nie stał w miejscu.",
-                "icon": "arrow-right"
+                "icon": "car-front"
               }
             ]
           }
@@ -222,42 +274,78 @@
                 "title": "Diagnostyka komputerowa",
                 "description": "Odczyt i kasowanie błędów, test czujników i układów elektronicznych.",
                 "price": "od 120 zł",
-                "icon": "code"
+                "icon": "gauge"
               },
               {
                 "id": "olej",
                 "title": "Wymiana oleju i filtrów",
                 "description": "Olej dobrany do normy producenta, filtry oleju, powietrza i kabinowy.",
                 "price": "od 90 zł",
-                "icon": "check"
+                "icon": "droplets"
               },
               {
                 "id": "hamulce",
                 "title": "Układ hamulcowy",
                 "description": "Klocki, tarcze, płyn hamulcowy i przewody. Test skuteczności na rolkach.",
                 "price": "od 150 zł",
-                "icon": "check"
+                "icon": "wrench"
               },
               {
                 "id": "klimatyzacja",
                 "title": "Serwis klimatyzacji",
                 "description": "Odgrzybianie, uzupełnienie czynnika i kontrola szczelności układu.",
                 "price": "od 199 zł",
-                "icon": "clock"
+                "icon": "snowflake"
               },
               {
                 "id": "opony",
                 "title": "Opony i wyważanie",
                 "description": "Wymiana sezonowa, wyważanie, naprawa i przechowalnia opon.",
                 "price": "od 100 zł",
-                "icon": "grid"
+                "icon": "car"
               },
               {
                 "id": "przeglad",
                 "title": "Przegląd przed zakupem",
                 "description": "Sprawdzimy używane auto, zanim je kupisz: lakier, zawieszenie, silnik i elektronika.",
                 "price": "250 zł",
-                "icon": "star"
+                "icon": "clipboard-check"
+              }
+            ]
+          }
+        },
+        {
+          "id": "jak-dzialamy",
+          "type": "process",
+          "variant": "steps",
+          "props": {},
+          "content": {
+            "eyebrow": "Jak działamy",
+            "title": "Od telefonu do odbioru auta",
+            "steps": [
+              {
+                "id": "kontakt",
+                "title": "Zgłoszenie",
+                "description": "Dzwonisz lub piszesz, opisujesz objawy. Proponujemy najbliższy termin.",
+                "icon": "phone"
+              },
+              {
+                "id": "diagnoza",
+                "title": "Diagnoza i kosztorys",
+                "description": "Sprawdzamy auto i dzwonimy z wyceną. Bez Twojej zgody nic nie wymieniamy.",
+                "icon": "clipboard-check"
+              },
+              {
+                "id": "naprawa",
+                "title": "Naprawa",
+                "description": "Naprawiamy na częściach OE lub sprawdzonych zamiennikach — Ty wybierasz.",
+                "icon": "wrench"
+              },
+              {
+                "id": "odbior",
+                "title": "Odbiór z gwarancją",
+                "description": "Pokazujemy wymienione części, wystawiamy fakturę i 12 miesięcy gwarancji.",
+                "icon": "shield-check"
               }
             ]
           }

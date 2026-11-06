@@ -16,6 +16,12 @@ export type Archetype = {
   tags: readonly string[];
   colorScheme: "light" | "dark";
   accent: string;
+  /**
+   * Accents that suit the archetype, each from a different color family (the
+   * first is `accent`). The orchestrator picks from here when the brief has no
+   * brand color, so two designs never share a family.
+   */
+  recommendedAccents: readonly string[];
   neutral: NeutralName;
   /** 0–0.06: how much of the accent tints light backgrounds (warmer, branded feel). */
   tint: number;
@@ -38,6 +44,7 @@ export const archetypes = {
     tags: ["neutral", "any"],
     colorScheme: "light",
     accent: "#2563eb",
+    recommendedAccents: ["#2563eb", "#0f766e", "#7c3aed", "#e11d48"],
     neutral: "gray",
     tint: 0,
     fontPair: "inter",
@@ -55,6 +62,7 @@ export const archetypes = {
     tags: ["architecture", "design studio", "photography", "consulting", "minimal"],
     colorScheme: "light",
     accent: "#18181b",
+    recommendedAccents: ["#18181b", "#2563eb", "#15803d", "#c2410c"],
     neutral: "zinc",
     tint: 0,
     fontPair: "dm-sans",
@@ -72,6 +80,7 @@ export const archetypes = {
     tags: ["beauty salon", "spa", "wedding", "jewellery", "restaurant", "luxury"],
     colorScheme: "light",
     accent: "#8a5a2b",
+    recommendedAccents: ["#8a5a2b", "#9b3d6b", "#1f3a5f", "#4d6b2f"],
     neutral: "stone",
     tint: 0.02,
     fontPair: "cormorant-garamond+manrope",
@@ -89,6 +98,7 @@ export const archetypes = {
     tags: ["automotive", "gym", "sport", "construction", "barber", "bold"],
     colorScheme: "light",
     accent: "#dc2626",
+    recommendedAccents: ["#dc2626", "#ca8a04", "#2563eb", "#16a34a"],
     neutral: "neutral",
     tint: 0,
     fontPair: "oswald+inter",
@@ -106,6 +116,7 @@ export const archetypes = {
     tags: ["cafe", "bakery", "restaurant", "kids", "family", "craft"],
     colorScheme: "light",
     accent: "#c2410c",
+    recommendedAccents: ["#c2410c", "#9f1239", "#4d7c0f", "#0f766e"],
     neutral: "stone",
     tint: 0.05,
     fontPair: "fraunces+work-sans",
@@ -123,6 +134,7 @@ export const archetypes = {
     tags: ["luxury", "night club", "whisky", "tattoo", "premium", "dark"],
     colorScheme: "dark",
     accent: "#d4a537",
+    recommendedAccents: ["#d4a537", "#c084fc", "#5eead4", "#f87171"],
     neutral: "slate",
     tint: 0,
     fontPair: "playfair-display+inter",
@@ -140,6 +152,7 @@ export const archetypes = {
     tags: ["accounting", "law firm", "it services", "insurance", "b2b", "corporate"],
     colorScheme: "light",
     accent: "#1d4ed8",
+    recommendedAccents: ["#1d4ed8", "#0f766e", "#475569", "#b91c1c"],
     neutral: "slate",
     tint: 0.015,
     fontPair: "source-serif-4+inter",
@@ -157,6 +170,7 @@ export const archetypes = {
     tags: ["dance school", "events", "startup", "fitness", "music", "energetic"],
     colorScheme: "light",
     accent: "#7c3aed",
+    recommendedAccents: ["#7c3aed", "#db2777", "#ea580c", "#0891b2"],
     neutral: "gray",
     tint: 0.03,
     fontPair: "space-grotesk+inter",

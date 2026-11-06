@@ -34,5 +34,17 @@
   "g-6": {
     "file": "g-6.jpg",
     "alt": "Grafika: wieczorek taneczny w sali"
+  },
+  "team-1": {
+    "file": "team-1.jpg",
+    "alt": "Grafika w miejscu portretu: Anna Wrona"
+  },
+  "team-2": {
+    "file": "team-2.jpg",
+    "alt": "Grafika w miejscu portretu: Michał Wrona"
+  },
+  "team-3": {
+    "file": "team-3.jpg",
+    "alt": "Grafika w miejscu portretu: Julia Sowa"
   }
 }

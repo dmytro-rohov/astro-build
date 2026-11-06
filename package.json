@@ -40,6 +40,7 @@
     "site:screenshot": "tsx scripts/site/screenshot.ts",
     "site:report": "tsx scripts/site/report.ts",
     "site:migrate": "tsx scripts/site/migrate.ts",
+    "site:compare": "tsx scripts/site/compare.ts",
     "catalog": "tsx scripts/site/catalog.ts",
     "gallery": "tsx scripts/site/gallery.ts"
   },
