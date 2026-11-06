@@ -1,0 +1,31 @@
+---
+/** Oversized, left-aligned headline with a thin rule and key facts — no image. */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Actions from "@/sections/_shared/Actions.astro";
+import Highlights from "@/sections/about/Highlights.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"hero">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+---
+
+<SectionShell id={section.id} type="hero" variant="minimal" tone={props.tone} spacing={props.spacing} defaultSpacing="xl" width="xl">
+  <Stack space="2xl" class="s-hero-minimal">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} headingLevel={headingLevel} align="left" class="s-hero-minimal__header" />
+    <div class="s-hero-minimal__rule" aria-hidden="true"></div>
+    <div class="s-hero-minimal__bottom">
+      <Stack space="xl">
+        {content.description && <p class="s-hero-minimal__description">{content.description}</p>}
+        <Actions primary={content.primaryAction} secondary={content.secondaryAction} />
+      </Stack>
+      {content.highlights && <Highlights items={content.highlights} />}
+    </div>
+  </Stack>
+</SectionShell>

@@ -1,0 +1,62 @@
+---
+/**
+ * Map / booking / video embed. Nothing is loaded from the provider until the
+ * visitor clicks (privacy); without JavaScript the link opens it in a new tab.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import { format, t } from "@/i18n";
+import { embedProvider } from "@/site/embeds";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"embed">;
+  headingLevel: "h1" | "h2";
+  variant: "full" | "split";
+}
+
+const { section, headingLevel, variant } = Astro.props;
+const { content, props } = section;
+// Validated by the schema; the provider decides the frame URL and proportions.
+const provider = embedProvider(content.url)!;
+const frameUrl = provider.frameUrl(new URL(content.url));
+// "split" without any text would leave an empty column: use the full layout.
+const layout = variant === "split" && (content.title || content.eyebrow || content.description) ? "split" : "full";
+const position = layout === "split" && "embedPosition" in props ? (props.embedPosition ?? "right") : "right";
+const vars = { provider: provider.label };
+const frameClass = { "16:9": "wide", "4:3": "standard", tall: "tall" }[provider.aspect];
+---
+
+<SectionShell id={section.id} type="embed" variant={variant} tone={props.tone} spacing={props.spacing} width={layout === "split" ? "xl" : "lg"}>
+  <div class:list={["s-embed__layout", `s-embed__layout--${layout}`, `s-embed__layout--media-${position}`]}>
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? (layout === "full" ? "center" : "left")} class="s-embed__header" />
+    <div class:list={["s-embed__frame", `s-embed__frame--${frameClass}`]} data-embed data-embed-src={frameUrl} data-embed-title={content.frameTitle} data-embed-kind={provider.kind}>
+      <Stack space="md" class="s-embed__placeholder">
+        <p class="s-embed__notice">{format(t.sections.embedNotice, vars)}</p>
+        <button type="button" class="button button--primary button--md" data-embed-load hidden>{format(t.sections.embedLoad, vars)}</button>
+        <a class="link" href={frameUrl} target="_blank" rel="noopener noreferrer">{format(t.sections.embedOpen, vars)}</a>
+      </Stack>
+    </div>
+  </div>
+</SectionShell>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-embed]")) {
+    const button = root.querySelector<HTMLButtonElement>("[data-embed-load]");
+    if (!button) continue;
+
+    button.hidden = false;
+    button.addEventListener("click", () => {
+      const frame = document.createElement("iframe");
+      frame.src = root.dataset.embedSrc ?? "";
+      frame.title = root.dataset.embedTitle ?? "";
+      frame.className = "s-embed__iframe";
+      frame.referrerPolicy = "strict-origin-when-cross-origin";
+      if (root.dataset.embedKind === "video") frame.allow = "fullscreen; picture-in-picture; encrypted-media";
+      root.replaceChildren(frame);
+      root.dataset.embedLoaded = "";
+      frame.focus();
+    });
+  }
+</script>

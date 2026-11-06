@@ -22,6 +22,8 @@ type Json = Record<string, unknown>;
 type Design = {
   id: string;
   archetype: string;
+  /** Accent of this design; default: the brand accent. Two designs never share a color family. */
+  accent?: string;
   contact?: Json;
   navbar: string;
   footer: string;
@@ -30,11 +32,13 @@ type Design = {
 };
 type Business = {
   key: string;
-  /** Brand color from the brief — the same in both designs. */
+  /** Brand color from the brief (design A); design B picks another family (npm run site:compare). */
   accent: string;
   palette: { from: string; to: string; blobs: string[]; line: string };
   motif: "ribbons" | "bands" | "rings";
   images: Record<string, { width: number; height: number; alt: string; focal?: { x: number; y: number } }>;
+  /** Hand-drawn SVG assets (partner logos). */
+  svgAssets?: Record<string, { svg: string; alt: string }>;
   site: Json;
   navbarCta: Json;
   footerContent: Json;
@@ -63,6 +67,9 @@ const dance: Business = {
     "g-4": { ...PHOTO, alt: "Grafika: zajęcia hip-hopu dla dzieci" },
     "g-5": { ...PHOTO, alt: "Grafika: próba pierwszego tańca" },
     "g-6": { ...PHOTO, alt: "Grafika: wieczorek taneczny w sali" },
+    "team-1": { width: 720, height: 900, alt: "Grafika w miejscu portretu: Anna Wrona" },
+    "team-2": { width: 720, height: 900, alt: "Grafika w miejscu portretu: Michał Wrona" },
+    "team-3": { width: 720, height: 900, alt: "Grafika w miejscu portretu: Julia Sowa" },
   },
   site: {
     lang: "pl",
@@ -112,6 +119,11 @@ const dance: Business = {
             primaryAction: { label: "Umów lekcję próbną", href: "/kontakt" },
             secondaryAction: { label: "Zobacz zajęcia", href: "/zajecia" },
             image: "asset:hero",
+            highlights: [
+              { id: "lata", value: "od 2009", label: "uczymy w Krakowie" },
+              { id: "grupy", value: "max 12", label: "osób w grupie" },
+              { id: "proba", value: "0 zł", label: "pierwsza lekcja" },
+            ],
           },
         },
         {
@@ -140,10 +152,23 @@ const dance: Business = {
             title: "Dobra szkoła tańca to coś więcej niż kroki",
             description: "Dbamy o to, żeby każda lekcja była przyjemnością — niezależnie od tego, czy tańczysz od tygodnia, czy od lat.",
             items: [
-              { id: "proba", eyebrow: "Na start", title: "Lekcja próbna za darmo", description: "Przyjdź na pierwsze zajęcia bez zobowiązań i sprawdź, czy styl i grupa są dla Ciebie.", icon: "star" },
+              { id: "proba", eyebrow: "Na start", title: "Lekcja próbna za darmo", description: "Przyjdź na pierwsze zajęcia bez zobowiązań i sprawdź, czy styl i grupa są dla Ciebie.", icon: "gift" },
               { id: "godziny", eyebrow: "Grafik", title: "Wieczory i soboty", description: "Zajęcia od 17:00 do 22:00 w tygodniu i przedpołudniami w soboty — po pracy i po szkole.", icon: "clock" },
-              { id: "partner", eyebrow: "Bez stresu", title: "Bez partnera? Żaden problem", description: "W zajęciach w parach rotujemy partnerów, więc możesz przyjść sam lub sama.", icon: "check" },
+              { id: "partner", eyebrow: "Bez stresu", title: "Bez partnera? Żaden problem", description: "W zajęciach w parach rotujemy partnerów, więc możesz przyjść sam lub sama.", icon: "users" },
               { id: "centrum", eyebrow: "Lokalizacja", title: "Sala w samym centrum", description: "Pięć minut pieszo od Rynku, przystanek tramwajowy Plac Inwalidów tuż obok.", icon: "map-pin" },
+            ],
+          },
+        },
+        {
+          id: "instruktorzy",
+          type: "team",
+          content: {
+            eyebrow: "Instruktorzy",
+            title: "Poznaj osoby, które nauczą Cię tańczyć",
+            members: [
+              { id: "anna", name: "Anna Wrona", role: "Salsa, bachata", bio: "Wicemistrzyni Polski w salsie, tańczy od 20 lat. Uczy cierpliwie i z humorem.", photo: "asset:team-1" },
+              { id: "michal", name: "Michał Wrona", role: "Salsa, pierwszy taniec", bio: "Choreograf ponad 300 pierwszych tańców. Przygotuje Was nawet w pięć lekcji.", photo: "asset:team-2" },
+              { id: "julia", name: "Julia Sowa", role: "Balet, hip-hop dla dzieci", bio: "Absolwentka szkoły baletowej, prowadzi zajęcia dla dorosłych i najmłodszych.", photo: "asset:team-3" },
             ],
           },
         },
@@ -206,13 +231,39 @@ const dance: Business = {
             title: "Wybierz styl dla siebie",
             description: "Każdy kurs ma grupę początkującą i średniozaawansowaną. Nie wiesz, który styl wybrać? Przyjdź na lekcję próbną.",
             items: [
-              { id: "salsa", title: "Salsa kubańska", description: "Energiczny taniec w parach i w kole (rueda). Najlepszy wybór na początek przygody z tańcem.", price: "od 180 zł / mies.", icon: "star" },
-              { id: "bachata", title: "Bachata", description: "Zmysłowy taniec z Dominikany. Uczymy prowadzenia i podążania krok po kroku.", price: "od 180 zł / mies.", icon: "star" },
-              { id: "balet", title: "Balet dla dorosłych", description: "Technika, postawa i rozciąganie przy drążku. Bez wymagań — wystarczą wygodne ubrania.", price: "od 200 zł / mies.", icon: "check" },
-              { id: "pierwszy-taniec", title: "Pierwszy taniec", description: "Indywidualne lekcje dla par młodych, z choreografią do wybranej piosenki.", price: "480 zł / 5 lekcji", icon: "check" },
-              { id: "hip-hop", title: "Hip-hop dla dzieci", description: "Zajęcia dla dzieci od 7 do 12 lat: rytm, koordynacja i mnóstwo zabawy.", price: "160 zł / mies.", icon: "blocks" },
-              { id: "zumba", title: "Zumba", description: "Taneczny trening cardio przy muzyce latino. Spalasz kalorie i nie myślisz o tym.", price: "45 zł / wejście", icon: "clock" },
+              { id: "salsa", title: "Salsa kubańska", description: "Energiczny taniec w parach i w kole (rueda). Najlepszy wybór na początek przygody z tańcem.", price: "od 180 zł / mies.", icon: "music" },
+              { id: "bachata", title: "Bachata", description: "Zmysłowy taniec z Dominikany. Uczymy prowadzenia i podążania krok po kroku.", price: "od 180 zł / mies.", icon: "footprints" },
+              { id: "balet", title: "Balet dla dorosłych", description: "Technika, postawa i rozciąganie przy drążku. Bez wymagań — wystarczą wygodne ubrania.", price: "od 200 zł / mies.", icon: "person-standing" },
+              { id: "pierwszy-taniec", title: "Pierwszy taniec", description: "Indywidualne lekcje dla par młodych, z choreografią do wybranej piosenki.", price: "480 zł / 5 lekcji", icon: "heart" },
+              { id: "hip-hop", title: "Hip-hop dla dzieci", description: "Zajęcia dla dzieci od 7 do 12 lat: rytm, koordynacja i mnóstwo zabawy.", price: "160 zł / mies.", icon: "baby" },
+              { id: "zumba", title: "Zumba", description: "Taneczny trening cardio przy muzyce latino. Spalasz kalorie i nie myślisz o tym.", price: "45 zł / wejście", icon: "flame" },
             ],
+          },
+        },
+        {
+          id: "grafik",
+          type: "schedule",
+          content: {
+            eyebrow: "Grafik",
+            title: "Grafik zajęć",
+            description: "Aktualny grafik na sezon jesienno-zimowy. Na każde zajęcia można przyjść na lekcję próbną.",
+            items: [
+              { id: "c1", day: "mo", start: "17:00", end: "18:00", title: "Salsa — początkujący", instructor: "Anna Wrona", level: "Początkujący" },
+              { id: "c2", day: "mo", start: "18:15", end: "19:15", title: "Bachata — średniozaawansowani", instructor: "Anna Wrona", level: "Średni" },
+              { id: "c3", day: "mo", start: "19:30", end: "20:30", title: "Zumba", instructor: "Julia Sowa", level: "Otwarte" },
+              { id: "c4", day: "tu", start: "17:00", end: "17:45", title: "Hip-hop dla dzieci 7–9 lat", instructor: "Julia Sowa", level: "Dzieci" },
+              { id: "c5", day: "tu", start: "18:00", end: "19:00", title: "Balet dla dorosłych", instructor: "Julia Sowa", level: "Początkujący" },
+              { id: "c6", day: "tu", start: "19:15", end: "20:15", title: "Salsa — średniozaawansowani", instructor: "Michał Wrona", level: "Średni" },
+              { id: "c7", day: "we", start: "17:00", end: "18:00", title: "Bachata — początkujący", instructor: "Anna Wrona", level: "Początkujący" },
+              { id: "c8", day: "we", start: "18:15", end: "19:15", title: "Salsa rueda", instructor: "Michał Wrona", level: "Średni" },
+              { id: "c9", day: "th", start: "17:00", end: "17:45", title: "Hip-hop dla dzieci 10–12 lat", instructor: "Julia Sowa", level: "Dzieci" },
+              { id: "c10", day: "th", start: "18:00", end: "19:00", title: "Balet dla dorosłych", instructor: "Julia Sowa", level: "Średni" },
+              { id: "c11", day: "th", start: "19:15", end: "20:15", title: "Zumba", instructor: "Julia Sowa", level: "Otwarte" },
+              { id: "c12", day: "fr", start: "19:00", end: "22:00", title: "Wieczorek taneczny", instructor: "Anna i Michał Wronowie", level: "Otwarte" },
+              { id: "c13", day: "sa", start: "10:00", end: "11:00", title: "Salsa — początkujący", instructor: "Michał Wrona", level: "Początkujący" },
+              { id: "c14", day: "sa", start: "11:15", end: "12:15", title: "Pierwszy taniec — lekcje indywidualne", instructor: "Michał Wrona", level: "Pary" },
+            ],
+            note: "W święta i długie weekendy zajęcia się nie odbywają. Zmiany ogłaszamy z tygodniowym wyprzedzeniem.",
           },
         },
         {
@@ -326,6 +377,17 @@ const dance: Business = {
             showPhone: true,
           },
         },
+        {
+          id: "mapa",
+          type: "embed",
+          content: {
+            eyebrow: "Mapa",
+            title: "Jak do nas trafić",
+            description: "Wejście od podwórza kamienicy przy ul. Długiej 42, sala na pierwszym piętrze.",
+            url: "https://www.openstreetmap.org/export/embed.html?bbox=19.9330%2C50.0680%2C19.9420%2C50.0720&layer=mapnik&marker=50.0700%2C19.9375",
+            frameTitle: "Mapa: Szkoła Tańca Pas de Deux, ul. Długa 42, Kraków",
+          },
+        },
       ],
     },
   ],
@@ -339,6 +401,9 @@ const dance: Business = {
         start: ["split-image"],
         "o-nas": ["image-side", { imagePosition: "left" }],
         "dlaczego-my": ["icon-list"],
+        instruktorzy: ["cards"],
+        grafik: ["week"],
+        mapa: ["split"],
         opinie: ["spotlight"],
         zapisy: ["boxed"],
         style: ["cards", { columns: "3" }],
@@ -352,12 +417,16 @@ const dance: Business = {
     {
       id: "dance-energetic",
       archetype: "energetic",
+      accent: "#7c3aed",
       navbar: "topbar",
       footer: "centered",
       variants: {
-        start: ["cover-image"],
+        start: ["minimal"],
         "o-nas": ["centered"],
         "dlaczego-my": ["cards-grid", { columns: "4" }],
+        instruktorzy: ["compact"],
+        grafik: ["table"],
+        mapa: ["full"],
         opinie: ["cards"],
         zapisy: ["banner"],
         style: ["price-list"],
@@ -437,6 +506,24 @@ const auto: Business = {
             primaryAction: { label: "Umów wizytę", href: "/#kontakt" },
             secondaryAction: { label: "Cennik usług", href: "/#uslugi" },
             image: "asset:hero",
+            highlights: [
+              { id: "lata", value: "25 lat", label: "na Łazarzu" },
+              { id: "gwarancja", value: "12 mies.", label: "gwarancji" },
+              { id: "ocena", value: "4,9/5", label: "średnia ocen" },
+            ],
+          },
+        },
+        {
+          id: "liczby",
+          type: "stats",
+          content: {
+            title: "Warsztat, któremu ufają kierowcy z Poznania",
+            items: [
+              { id: "auta", value: "12 000+", label: "naprawionych samochodów", description: "Osobowe i dostawcze do 3,5 t, wszystkich marek." },
+              { id: "lata", value: "25 lat", label: "doświadczenia", description: "Rodzinny warsztat prowadzony od 1999 roku." },
+              { id: "stanowiska", value: "4", label: "stanowiska naprawcze", description: "Termin na większość napraw w 48 godzin." },
+              { id: "ocena", value: "4,9/5", label: "średnia ocen klientów", description: "Z opinii zebranych w ostatnich dwóch latach." },
+            ],
           },
         },
         {
@@ -446,10 +533,10 @@ const auto: Business = {
             eyebrow: "Dlaczego my",
             title: "Uczciwie, szybko i z gwarancją",
             items: [
-              { id: "kosztorys", eyebrow: "Przejrzyście", title: "Kosztorys przed naprawą", description: "Dzwonimy z wyceną, zanim zaczniemy. Bez Twojej zgody nie wymienimy żadnej części.", icon: "check" },
-              { id: "gwarancja", eyebrow: "Spokój", title: "12 miesięcy gwarancji", description: "Na części i robociznę. Jeśli coś będzie nie tak — poprawimy bez dyskusji.", icon: "star" },
-              { id: "termin", eyebrow: "Szybko", title: "Termin w 48 godzin", description: "Na większość napraw mechanicznych przyjmujemy auto w ciągu dwóch dni roboczych.", icon: "clock" },
-              { id: "zastepcze", eyebrow: "Wygodnie", title: "Auto zastępcze", description: "Przy dłuższych naprawach pożyczymy Ci samochód, żebyś nie stał w miejscu.", icon: "arrow-right" },
+              { id: "kosztorys", eyebrow: "Przejrzyście", title: "Kosztorys przed naprawą", description: "Dzwonimy z wyceną, zanim zaczniemy. Bez Twojej zgody nie wymienimy żadnej części.", icon: "file-text" },
+              { id: "gwarancja", eyebrow: "Spokój", title: "12 miesięcy gwarancji", description: "Na części i robociznę. Jeśli coś będzie nie tak — poprawimy bez dyskusji.", icon: "shield-check" },
+              { id: "termin", eyebrow: "Szybko", title: "Termin w 48 godzin", description: "Na większość napraw mechanicznych przyjmujemy auto w ciągu dwóch dni roboczych.", icon: "calendar-check" },
+              { id: "zastepcze", eyebrow: "Wygodnie", title: "Auto zastępcze", description: "Przy dłuższych naprawach pożyczymy Ci samochód, żebyś nie stał w miejscu.", icon: "car-front" },
             ],
           },
         },
@@ -461,12 +548,26 @@ const auto: Business = {
             title: "Usługi i orientacyjne ceny",
             description: "Ceny robocizny dla aut osobowych. Dokładną wycenę z częściami podamy po oględzinach.",
             items: [
-              { id: "diagnostyka", title: "Diagnostyka komputerowa", description: "Odczyt i kasowanie błędów, test czujników i układów elektronicznych.", price: "od 120 zł", icon: "code" },
-              { id: "olej", title: "Wymiana oleju i filtrów", description: "Olej dobrany do normy producenta, filtry oleju, powietrza i kabinowy.", price: "od 90 zł", icon: "check" },
-              { id: "hamulce", title: "Układ hamulcowy", description: "Klocki, tarcze, płyn hamulcowy i przewody. Test skuteczności na rolkach.", price: "od 150 zł", icon: "check" },
-              { id: "klimatyzacja", title: "Serwis klimatyzacji", description: "Odgrzybianie, uzupełnienie czynnika i kontrola szczelności układu.", price: "od 199 zł", icon: "clock" },
-              { id: "opony", title: "Opony i wyważanie", description: "Wymiana sezonowa, wyważanie, naprawa i przechowalnia opon.", price: "od 100 zł", icon: "grid" },
-              { id: "przeglad", title: "Przegląd przed zakupem", description: "Sprawdzimy używane auto, zanim je kupisz: lakier, zawieszenie, silnik i elektronika.", price: "250 zł", icon: "star" },
+              { id: "diagnostyka", title: "Diagnostyka komputerowa", description: "Odczyt i kasowanie błędów, test czujników i układów elektronicznych.", price: "od 120 zł", icon: "gauge" },
+              { id: "olej", title: "Wymiana oleju i filtrów", description: "Olej dobrany do normy producenta, filtry oleju, powietrza i kabinowy.", price: "od 90 zł", icon: "droplets" },
+              { id: "hamulce", title: "Układ hamulcowy", description: "Klocki, tarcze, płyn hamulcowy i przewody. Test skuteczności na rolkach.", price: "od 150 zł", icon: "wrench" },
+              { id: "klimatyzacja", title: "Serwis klimatyzacji", description: "Odgrzybianie, uzupełnienie czynnika i kontrola szczelności układu.", price: "od 199 zł", icon: "snowflake" },
+              { id: "opony", title: "Opony i wyważanie", description: "Wymiana sezonowa, wyważanie, naprawa i przechowalnia opon.", price: "od 100 zł", icon: "car" },
+              { id: "przeglad", title: "Przegląd przed zakupem", description: "Sprawdzimy używane auto, zanim je kupisz: lakier, zawieszenie, silnik i elektronika.", price: "250 zł", icon: "clipboard-check" },
+            ],
+          },
+        },
+        {
+          id: "jak-dzialamy",
+          type: "process",
+          content: {
+            eyebrow: "Jak działamy",
+            title: "Od telefonu do odbioru auta",
+            steps: [
+              { id: "kontakt", title: "Zgłoszenie", description: "Dzwonisz lub piszesz, opisujesz objawy. Proponujemy najbliższy termin.", icon: "phone" },
+              { id: "diagnoza", title: "Diagnoza i kosztorys", description: "Sprawdzamy auto i dzwonimy z wyceną. Bez Twojej zgody nic nie wymieniamy.", icon: "clipboard-check" },
+              { id: "naprawa", title: "Naprawa", description: "Naprawiamy na częściach OE lub sprawdzonych zamiennikach — Ty wybierasz.", icon: "wrench" },
+              { id: "odbior", title: "Odbiór z gwarancją", description: "Pokazujemy wymienione części, wystawiamy fakturę i 12 miesięcy gwarancji.", icon: "shield-check" },
             ],
           },
         },
@@ -559,7 +660,9 @@ const auto: Business = {
       navbar: "topbar",
       footer: "columns",
       variants: {
-        start: ["split-image"],
+        start: ["panel"],
+        liczby: ["row"],
+        "jak-dzialamy": ["steps"],
         zalety: ["cards-grid", { columns: "4" }],
         uslugi: ["cards", { columns: "3" }],
         "o-warsztacie": ["image-side"],
@@ -573,10 +676,13 @@ const auto: Business = {
     {
       id: "auto-bold",
       archetype: "bold",
+      accent: "#ca8a04",
       navbar: "simple",
       footer: "simple",
       variants: {
         start: ["cover-image"],
+        liczby: ["cards"],
+        "jak-dzialamy": ["timeline"],
         zalety: ["icon-list"],
         uslugi: ["price-list"],
         "o-warsztacie": ["centered"],
@@ -597,6 +703,12 @@ const cafe: Business = {
   accent: "#a0623a",
   palette: { from: "#2e1c13", to: "#7c4f33", blobs: ["#e8c9a0", "#c08552", "#f4e7d3", "#a0623a"], line: "#f6ebdc" },
   motif: "rings",
+  svgAssets: {
+    "dostawca-1": { alt: "Finca La Esperanza", svg: `<svg xmlns="http://www.w3.org/2000/svg" width="360" height="120" viewBox="0 0 360 120"><circle cx="52" cy="60" r="34" fill="none" stroke="#3b2418" stroke-width="6"/><path d="M38 60c8-18 20-18 28 0s20 18 28 0" fill="none" stroke="#3b2418" stroke-width="5" transform="translate(-14 0)"/><text x="104" y="62" font-family="Georgia, serif" font-size="21" font-weight="700" fill="#3b2418">FINCA LA ESPERANZA</text><text x="105" y="88" font-family="Arial, sans-serif" font-size="15" fill="#6b4a36">Kolumbia</text></svg>` },
+    "dostawca-2": { alt: "Kooperatywa Sidama", svg: `<svg xmlns="http://www.w3.org/2000/svg" width="360" height="120" viewBox="0 0 360 120"><circle cx="52" cy="60" r="34" fill="none" stroke="#3b2418" stroke-width="6"/><path d="M38 60c8-18 20-18 28 0s20 18 28 0" fill="none" stroke="#3b2418" stroke-width="5" transform="translate(-14 0)"/><text x="104" y="62" font-family="Georgia, serif" font-size="26" font-weight="700" fill="#3b2418">SIDAMA</text><text x="105" y="88" font-family="Arial, sans-serif" font-size="15" fill="#6b4a36">Etiopia · kooperatywa</text></svg>` },
+    "dostawca-3": { alt: "Hacienda Santa Rosa", svg: `<svg xmlns="http://www.w3.org/2000/svg" width="360" height="120" viewBox="0 0 360 120"><circle cx="52" cy="60" r="34" fill="none" stroke="#3b2418" stroke-width="6"/><path d="M38 60c8-18 20-18 28 0s20 18 28 0" fill="none" stroke="#3b2418" stroke-width="5" transform="translate(-14 0)"/><text x="104" y="62" font-family="Georgia, serif" font-size="26" font-weight="700" fill="#3b2418">SANTA ROSA</text><text x="105" y="88" font-family="Arial, sans-serif" font-size="15" fill="#6b4a36">Gwatemala</text></svg>` },
+    "dostawca-4": { alt: "Młyn Ruski — mąka na zakwas", svg: `<svg xmlns="http://www.w3.org/2000/svg" width="360" height="120" viewBox="0 0 360 120"><circle cx="52" cy="60" r="34" fill="none" stroke="#3b2418" stroke-width="6"/><path d="M38 60c8-18 20-18 28 0s20 18 28 0" fill="none" stroke="#3b2418" stroke-width="5" transform="translate(-14 0)"/><text x="104" y="62" font-family="Georgia, serif" font-size="26" font-weight="700" fill="#3b2418">MŁYN RUSKI</text><text x="105" y="88" font-family="Arial, sans-serif" font-size="15" fill="#6b4a36">mąka na zakwas</text></svg>` },
+  },
   images: {
     hero: { ...HERO, alt: "Abstrakcyjna kompozycja w kolorach kawy i mleka", focal: { x: 50, y: 40 } },
     about: { ...ABOUT, alt: "Abstrakcyjna grafika w odcieniach palonej kawy" },
@@ -671,16 +783,30 @@ const cafe: Business = {
           },
         },
         {
+          id: "dostawcy",
+          type: "logo-cloud",
+          content: {
+            eyebrow: "Skąd ziarna",
+            title: "Kupujemy bezpośrednio od farm i lokalnych wytwórców",
+            items: [
+              { id: "esperanza", name: "Finca La Esperanza", logo: "asset:dostawca-1" },
+              { id: "sidama", name: "Kooperatywa Sidama", logo: "asset:dostawca-2" },
+              { id: "santa-rosa", name: "Hacienda Santa Rosa", logo: "asset:dostawca-3" },
+              { id: "mlyn", name: "Młyn Ruski", logo: "asset:dostawca-4" },
+            ],
+          },
+        },
+        {
           id: "atuty",
           type: "features",
           content: {
             eyebrow: "Dlaczego warto",
             title: "Miejsce na szybkie espresso i na długie popołudnie",
             items: [
-              { id: "palarnia", title: "Własna palarnia", description: "Palimy w małych partiach i podajemy kawę najwyżej trzy tygodnie po wypaleniu.", icon: "star" },
-              { id: "sniadania", title: "Śniadania do 13:00", description: "Jajka po turecku, owsianka, kanapki na chlebie na zakwasie — także w wersji wegańskiej.", icon: "clock" },
-              { id: "praca", title: "Dobre miejsce do pracy", description: "Szybkie Wi-Fi, gniazdka przy stołach i cisza przed południem.", icon: "code" },
-              { id: "psy", title: "Psy mile widziane", description: "Dla czworonogów zawsze stoi miska z wodą, a czasem znajdzie się też smakołyk.", icon: "check" },
+              { id: "palarnia", title: "Własna palarnia", description: "Palimy w małych partiach i podajemy kawę najwyżej trzy tygodnie po wypaleniu.", icon: "coffee" },
+              { id: "sniadania", title: "Śniadania do 13:00", description: "Jajka po turecku, owsianka, kanapki na chlebie na zakwasie — także w wersji wegańskiej.", icon: "croissant" },
+              { id: "praca", title: "Dobre miejsce do pracy", description: "Szybkie Wi-Fi, gniazdka przy stołach i cisza przed południem.", icon: "wifi" },
+              { id: "psy", title: "Psy mile widziane", description: "Dla czworonogów zawsze stoi miska z wodą, a czasem znajdzie się też smakołyk.", icon: "dog" },
             ],
           },
         },
@@ -720,6 +846,16 @@ const cafe: Business = {
             description: "Trzy minuty pieszo od Rynku. Latem zapraszamy do ogródka na podwórzu kamienicy.",
             mapUrl: "https://www.openstreetmap.org/search?query=Ruska%2019%20Wroc%C5%82aw",
             showPhone: false,
+          },
+        },
+        {
+          id: "mapa",
+          type: "embed",
+          content: {
+            title: "Trzy minuty od Rynku",
+            description: "Wejście od ul. Ruskiej, ogródek na podwórzu kamienicy.",
+            url: "https://www.openstreetmap.org/export/embed.html?bbox=17.0250%2C51.1080%2C17.0330%2C51.1120&layer=mapnik&marker=51.1100%2C17.0290",
+            frameTitle: "Mapa: kawiarnia Ziarno i Para, ul. Ruska 19, Wrocław",
           },
         },
         {
@@ -781,6 +917,8 @@ const cafe: Business = {
       variants: {
         start: ["split-image"],
         "o-nas": ["image-side", { imagePosition: "right" }],
+        dostawcy: ["grid"],
+        mapa: ["split"],
         atuty: ["cards-grid", { columns: "2" }],
         galeria: ["mosaic"],
         opinie: ["cards"],
@@ -793,11 +931,14 @@ const cafe: Business = {
     {
       id: "cafe-premium-dark",
       archetype: "premium-dark",
+      accent: "#d4a537",
       navbar: "centered",
       footer: "centered",
       variants: {
         start: ["cover-image"],
         "o-nas": ["centered"],
+        dostawcy: ["row"],
+        mapa: ["full"],
         atuty: ["icon-list"],
         galeria: ["grid"],
         opinie: ["spotlight"],
@@ -899,6 +1040,10 @@ for (const business of [dance, auto, cafe]) {
       fs.writeFileSync(path.join(dir, "assets", `${id}.jpg`), rendered[id]);
       assets[id] = { file: `${id}.jpg`, alt: image.alt, ...(image.focal ? { focal: image.focal } : {}) };
     }
+    for (const [id, asset] of Object.entries(business.svgAssets ?? {})) {
+      fs.writeFileSync(path.join(dir, "assets", `${id}.svg`), asset.svg);
+      assets[id] = { file: `${id}.svg`, alt: asset.alt };
+    }
 
     const site = {
       $schema: "../../../dist-catalog/site.schema.json",
@@ -906,7 +1051,7 @@ for (const business of [dance, auto, cafe]) {
       engine: "^3.0.0",
       siteId: design.id,
       ...business.site,
-      theme: { archetype: design.archetype, accent: business.accent },
+      theme: { archetype: design.archetype, accent: design.accent ?? business.accent },
       ...(design.contact ? { contact: design.contact } : {}),
       layout: {
         navbar: { variant: design.navbar, props: { sticky: true }, content: { cta: business.navbarCta } },

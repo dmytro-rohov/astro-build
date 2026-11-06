@@ -1,7 +1,7 @@
 {
   "name": "astro-starter",
   "type": "module",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "engines": {
     "node": ">=24.16.0 <25",
     "npm": ">=11"
@@ -11,7 +11,7 @@
     "dev": "astro dev",
     "start": "node server.mjs",
     "tokens": "tsx src/design-system/utils/cssVars.ts",
-    "build-icons": "node scripts/build-icons.js",
+    "build-icons": "tsx scripts/build-icons.ts",
     "build:fonts": "tsx scripts/build-fonts.ts",
     "build:system": "npm run tokens && npm run build-icons && npm run build:fonts && npm run build:app-icons",
     "build": "npm run build:system && astro build",
@@ -26,7 +26,7 @@
     "test:e2e": "playwright test",
     "test:lighthouse": "lhci autorun --config=lighthouserc.cjs",
     "test": "npm run test:e2e && npm run test:lighthouse",
-    "ci": "npm run validate && npm run test:broken-site && npm run test:remote && npm run test",
+    "ci": "npm run validate && npm run test:broken-site && npm run test:remote && npm run test:outside && npm run test",
     "test:docker": "bash scripts/docker-smoke.sh",
     "test:unit": "vitest run",
     "site:validate": "tsx scripts/site/validate.ts",
@@ -34,11 +34,13 @@
     "test:broken-site": "bash scripts/site/check-broken.sh",
     "test:catalog": "bash scripts/site/test-catalog.sh",
     "test:remote": "bash scripts/site/test-remote.sh",
+    "test:outside": "bash scripts/site/test-outside.sh",
     "test:fixtures": "bash scripts/site/test-fixtures.sh",
     "site:preview": "tsx scripts/site/preview.ts",
     "site:screenshot": "tsx scripts/site/screenshot.ts",
     "site:report": "tsx scripts/site/report.ts",
     "site:migrate": "tsx scripts/site/migrate.ts",
+    "site:compare": "tsx scripts/site/compare.ts",
     "catalog": "tsx scripts/site/catalog.ts",
     "gallery": "tsx scripts/site/gallery.ts"
   },
@@ -77,6 +79,7 @@
     "globals": "^17.9.0",
     "image-size": "^2.0.4",
     "lighthouse": "13.6.0",
+    "lucide-static": "1.70.0",
     "sass": "^1.97.3",
     "sharp": "^0.35.3",
     "stylelint": "^17.14.1",

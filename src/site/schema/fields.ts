@@ -51,6 +51,13 @@ export const multilineText = (max: number, min = 1) =>
     .max(max)
     .refine((value) => !UNSAFE_CHARACTERS.test(value), UNSAFE_MESSAGE);
 
+/** Days of the week (business hours, class schedules). */
+export const DAYS = ["mo", "tu", "we", "th", "fr", "sa", "su"] as const;
+export type Day = (typeof DAYS)[number];
+
+/** Time of day "HH:MM" (24 h). */
+export const Time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Time as "HH:MM", e.g. "09:00".');
+
 /** Stable identifier for pages, sections and list items (also used as HTML id). */
 export const Id = z
   .string()

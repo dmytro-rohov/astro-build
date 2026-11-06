@@ -26,5 +26,21 @@
   "g-4": {
     "file": "g-4.jpg",
     "alt": "Grafika: palenie ziaren kawy"
+  },
+  "dostawca-1": {
+    "file": "dostawca-1.svg",
+    "alt": "Finca La Esperanza"
+  },
+  "dostawca-2": {
+    "file": "dostawca-2.svg",
+    "alt": "Kooperatywa Sidama"
+  },
+  "dostawca-3": {
+    "file": "dostawca-3.svg",
+    "alt": "Hacienda Santa Rosa"
+  },
+  "dostawca-4": {
+    "file": "dostawca-4.svg",
+    "alt": "Młyn Ruski — mąka na zakwas"
   }
 }

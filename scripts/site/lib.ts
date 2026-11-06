@@ -25,20 +25,61 @@ export function siteContext(): SiteContext {
   }
 }
 
-/** Full build (system assets + Astro) of one site into `out/dist`. */
-export function buildSite(context: SiteContext, quiet = false): boolean {
+const ROOT = process.cwd();
+
+const isInside = (dir: string, parent: string) => {
+  const relative = path.relative(parent, dir);
+  return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
+};
+
+/**
+ * Full build (system assets + Astro) of the site in `siteDir` into `outDir`.
+ *
+ * Astro imports its prerender chunks from the output directory, so a build
+ * straight into a folder outside the project cannot resolve node_modules
+ * ("Cannot find package …"). Such builds go to a staging folder inside the
+ * project and are moved afterwards; a Node-server build (contact "local") gets
+ * a node_modules link so `node server.mjs` runs from there too.
+ */
+export function runBuild(siteDir: string, outDir: string, quiet = false): boolean {
+  const target = path.resolve(outDir);
+  const staging = isInside(target, ROOT) ? target : path.join(ROOT, ".generated", "staging", path.basename(target));
+
+  fs.rmSync(staging, { recursive: true, force: true });
   const result = spawnSync("npm", ["run", "build"], {
     stdio: quiet ? "pipe" : "inherit",
-    env: { ...process.env, SITE_DIR: context.dir, OUT_DIR: distDir(context) },
+    env: { ...process.env, SITE_DIR: siteDir, OUT_DIR: staging },
   });
 
-  if (result.status !== 0 && quiet) {
-    process.stderr.write(result.stdout?.toString() ?? "");
-    process.stderr.write(result.stderr?.toString() ?? "");
+  if (result.status !== 0) {
+    if (quiet) {
+      process.stderr.write(result.stdout?.toString() ?? "");
+      process.stderr.write(result.stderr?.toString() ?? "");
+    }
+    return false;
   }
 
-  return result.status === 0;
+  if (staging !== target) {
+    fs.rmSync(target, { recursive: true, force: true });
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    try {
+      fs.renameSync(staging, target);
+    } catch {
+      // Another filesystem: copy, then remove the staging folder.
+      fs.cpSync(staging, target, { recursive: true });
+      fs.rmSync(staging, { recursive: true, force: true });
+    }
+
+    if (fs.existsSync(path.join(target, "server", "entry.mjs"))) {
+      fs.symlinkSync(path.join(ROOT, "node_modules"), path.join(target, "node_modules"), "junction");
+    }
+  }
+
+  return true;
 }
+
+/** Full build of one site into `out/dist`. */
+export const buildSite = (context: SiteContext, quiet = false) => runBuild(context.dir, distDir(context), quiet);
 
 export const distDir = (context: SiteContext) => path.join(context.out, "dist");
 

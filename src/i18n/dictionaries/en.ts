@@ -33,6 +33,16 @@ export const en = {
     popularPlan: "Most popular",
     rating: "Rating: {value} out of 5",
     contactBar: "Contact details",
+    scheduleTime: "Time",
+    scheduleClass: "Class",
+    scheduleInstructor: "Instructor",
+    scheduleLevel: "Level",
+    scheduleRoom: "Room",
+    scheduleDay: "Day",
+    embedLoad: "Show content from {provider}",
+    embedNotice: "This content is loaded from {provider}. After you click, {provider} may set cookies and receive your IP address.",
+    embedOpen: "Open in {provider}",
+    step: "Step {number}",
   },
 
   common: {
@@ -145,6 +155,7 @@ export const en = {
       cookiesHeading: "Cookies and analytics",
       cookiesText: "Optional analytics cookies (Google Analytics) are used only after you give consent. You can change or withdraw your consent at any time.",
       noCookiesText: "This website does not use analytics or advertising cookies. A small entry in your browser storage may remember your cookie choice.",
+      embedsText: "Some pages show content from {providers} (maps, booking or video). It loads only after you click it; from then on the provider receives your IP address and may set its own cookies under its own privacy policy.",
       updated: "Last updated: {date}",
     },
     contactSent: {

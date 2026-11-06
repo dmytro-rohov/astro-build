@@ -1,0 +1,31 @@
+---
+/** Both stats variants: "row" (big numbers with dividers) and "cards". */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"stats">;
+  headingLevel: "h1" | "h2";
+  variant: "row" | "cards";
+}
+
+const { section, headingLevel, variant } = Astro.props;
+const { content, props } = section;
+---
+
+<SectionShell id={section.id} type="stats" variant={variant} tone={props.tone} spacing={props.spacing} defaultSpacing="md">
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <dl class:list={["s-stats__list", `s-stats__list--${variant}`, `s-stats__list--count-${content.items.length}`]}>
+      {content.items.map((item) => (
+        <div class="s-stats__item">
+          <dt class="s-stats__label">{item.label}</dt>
+          <dd class="s-stats__value">{item.value}</dd>
+          {variant === "cards" && item.description && <dd class="s-stats__description">{item.description}</dd>}
+        </div>
+      ))}
+    </dl>
+  </Stack>
+</SectionShell>

@@ -1,0 +1,43 @@
+---
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import { t } from "@/i18n";
+import { scheduleByDay } from "@/site/schedule";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"schedule">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const DayHeading = headingLevel === "h1" ? "h2" : "h3";
+const days = scheduleByDay(content.items);
+---
+
+<SectionShell id={section.id} type="schedule" variant="week" tone={props.tone} spacing={props.spacing} width="xl">
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <div class:list={["s-week", `s-week--days-${days.length}`]}>
+      {days.map((group) => (
+        <section class="s-week__day" aria-labelledby={`${section.id}-${group.day}`}>
+          <DayHeading class="s-week__day-title" id={`${section.id}-${group.day}`}>{t.days[group.day].long}</DayHeading>
+          <ul class="s-week__list">
+            {group.items.map((item) => (
+              <li class="s-week__item">
+                <p class="s-week__time"><time datetime={item.start}>{item.start}</time>–<time datetime={item.end}>{item.end}</time></p>
+                <p class="s-week__title">{item.title}</p>
+                {(item.level || item.instructor || item.room) && (
+                  <p class="s-week__meta">{[item.level, item.instructor, item.room].filter(Boolean).join(" · ")}</p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+    {content.note && <p class="s-schedule__note">{content.note}</p>}
+  </Stack>
+</SectionShell>

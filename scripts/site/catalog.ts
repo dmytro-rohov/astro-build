@@ -15,8 +15,9 @@
 import path from "node:path";
 import { z } from "zod";
 import { archetypes } from "../../src/design-system/archetypes";
+import { ACCENT_FAMILIES, accentFamily } from "../../src/design-system/theme/families";
 import { fontFamilies, fontPairs, pairScripts, type FontPairId } from "../../src/design-system/fonts/library";
-import { iconNames } from "../../src/design-system/sprite.generated";
+import { icons } from "../../src/design-system/icons/library";
 import { ENGINE_VERSION } from "../../src/site/engine";
 import { layoutTypes, sectionTypes } from "../../src/site/registry";
 import type { FieldMeta, ImageSlot } from "../../src/site/schema/fields";
@@ -106,7 +107,8 @@ const catalog = {
   generatedAt: new Date().toISOString(),
   rules: [
     "Content belongs to the section type; a variant only adds props and shows a subset of optional fields — switching variants never loses content.",
-    "Two designs for one brief should differ in archetype, font pair and section variants, and can share the same content.",
+    "Two designs for one brief must differ in archetype, accent color family (accentFamilies) and hero variant, and should differ in font pair, navbar, footer and section variants; they share the same content. Check with `npm run site:compare -- --site A --site B`.",
+    "Without a brand color in the brief, take accents from archetypes[].recommendedAccents — each list spans different families.",
     "Links: https://, mailto:, tel:, site paths or #anchors only. Rich text: **bold**, *italic*, [text](link) — never HTML.",
     "Images are referenced as asset:<id> from assets/assets.json and cropped to each slot's proportions.",
     "Business data (contact, address, hours) lives only in `business`; sections read it from there.",
@@ -133,6 +135,7 @@ const catalog = {
     fits: archetype.tags,
     colorScheme: archetype.colorScheme,
     accent: archetype.accent,
+    recommendedAccents: archetype.recommendedAccents.map((hex) => ({ hex, family: accentFamily(hex) })),
     fontPair: archetype.fontPair,
     style: {
       radius: archetype.radius,
@@ -152,7 +155,8 @@ const catalog = {
     fits: pair.tags,
     scripts: pairScripts(id as FontPairId),
   })),
-  icons: iconNames,
+  accentFamilies: ACCENT_FAMILIES,
+  icons: Object.entries(icons).map(([name, icon]) => ({ name, category: icon.category, keywords: icon.keywords })),
   reservedSlugs: RESERVED_SLUGS,
 };
 

@@ -14,10 +14,19 @@ import { testimonials } from "../sections/testimonials/schema";
 import { gallery } from "../sections/gallery/schema";
 import { pricing } from "../sections/pricing/schema";
 import { hoursLocation } from "../sections/hours-location/schema";
+import { schedule } from "../sections/schedule/schema";
+import { team } from "../sections/team/schema";
+import { stats } from "../sections/stats/schema";
+import { processSteps } from "../sections/process/schema";
+import { logoCloud } from "../sections/logo-cloud/schema";
+import { embed } from "../sections/embed/schema";
 import { footer } from "../layout/footer/schema";
 import { navbar } from "../layout/navbar/schema";
 
-export const sectionTypes = [hero, about, services, features, testimonials, gallery, pricing, faq, cta, contact, hoursLocation] as const;
+export const sectionTypes = [
+  hero, about, services, features, stats, processSteps, team, schedule, testimonials,
+  gallery, logoCloud, pricing, faq, cta, contact, hoursLocation, embed,
+] as const;
 
 export const layoutTypes = { navbar, footer } as const;
 

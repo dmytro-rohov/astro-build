@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { iconNames } from "../../design-system/sprite.generated";
+import { ICON_NAMES } from "../../design-system/icons/library";
 import { defineSectionType } from "../../site/schema/define";
 import { Action, field, Id, imageSlot, listWithIds, multilineText, text } from "../../site/schema/fields";
 
@@ -8,7 +8,7 @@ const Service = z.strictObject({
   title: field(text(60), { label: "Nazwa", fieldType: "text", description: "Service name." }),
   description: field(multilineText(240).optional(), { label: "Opis", fieldType: "textarea", description: "One or two sentences." }),
   price: field(text(24).optional(), { label: "Cena", fieldType: "text", description: 'Price as text, e.g. "od 120 zł", "150 zł / h".' }),
-  icon: field(z.enum(iconNames).optional(), { label: "Ikona", fieldType: "select", description: "Icon from the built-in set." }),
+  icon: field(z.enum(ICON_NAMES).optional(), { label: "Ikona", fieldType: "select", description: "Icon from the built-in set (see icons in catalog.json: category and keywords)." }),
   image: field(imageSlot({ aspect: [3, 2], minWidth: 600 }).optional(), { label: "Zdjęcie", fieldType: "image", description: "Optional photo (3:2)." }),
   action: field(Action.optional(), { label: "Link", fieldType: "link", description: "Optional link, e.g. booking." }),
 });

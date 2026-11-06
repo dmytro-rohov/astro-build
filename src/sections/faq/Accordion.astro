@@ -1,8 +1,12 @@
 ---
-import FAQ from "@/components/widgets/FAQ.astro";
+/** Questions as an accordion (details/summary) + FAQPage JSON-LD. */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Tag from "@/components/ui/Tag.astro";
+import Accordion from "@/components/ui/Accordion.astro";
+import { faqSchema, serializeJsonLd } from "@/lib/seo/schema";
 import { renderRichTextLite, richTextLiteToPlain } from "@/site/richtext";
 import type { VariantOf } from "@/site/types";
-import { toneFor } from "@/site/theme";
 
 export interface Props {
   section: VariantOf<"faq", "accordion">;
@@ -11,6 +15,8 @@ export interface Props {
 
 const { section, headingLevel } = Astro.props;
 const { content, props } = section;
+const align = props.align ?? "center";
+const Heading = headingLevel;
 
 const items = content.items.map((item, index) => ({
   title: item.question,
@@ -18,16 +24,21 @@ const items = content.items.map((item, index) => ({
   contentHtml: renderRichTextLite(item.answer),
   open: props.openFirst === true && index === 0,
 }));
+
+// One faq section per page (schema rule), so one FAQPage block.
+const faqJsonLd = serializeJsonLd(faqSchema(items.map((item) => ({ question: item.title, answer: item.content }))));
 ---
 
-<FAQ
-  id={section.id}
-  headingLevel={headingLevel}
-  eyebrow={content.eyebrow}
-  title={content.title}
-  description={content.description}
-  items={items}
-  accordionVariant={props.style}
-  tone={toneFor("faq", props.tone)}
-  align={props.align}
-/>
+<SectionShell id={section.id} type="faq" variant="accordion" tone={props.tone} spacing={props.spacing} width="md" class:list={["faq", `faq--align-${align}`]}>
+  <Stack space="xl">
+    <Stack class="faq__header" space="md">
+      {content.eyebrow && <Tag variant="primary" class="faq__eyebrow">{content.eyebrow}</Tag>}
+      <Heading class="faq__title">{content.title}</Heading>
+      {content.description && <p class="faq__description">{content.description}</p>}
+    </Stack>
+
+    <Accordion items={items} variant={props.style} class="faq__accordion" />
+  </Stack>
+</SectionShell>
+
+<script is:inline type="application/ld+json" set:html={faqJsonLd} />

@@ -20,5 +20,6 @@ const { sections } = Astro.props;
     throw new Error(`[site] No component for section "${section.id}" (${section.type}/${section.variant}).`);
   }
 
-  return <Component section={section} headingLevel={index === 0 ? "h1" : "h2"} />;
+  // `variant` lets one component serve several variants (stats, process, logo-cloud, embed).
+  return <Component section={section} variant={section.variant} headingLevel={index === 0 ? "h1" : "h2"} />;
 })}

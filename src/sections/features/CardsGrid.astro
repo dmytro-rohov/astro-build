@@ -1,7 +1,13 @@
 ---
-import FeatureGrid from "@/components/widgets/FeatureGrid.astro";
-import type { VariantOf } from "@/site/types";
+/** Feature cards in a responsive grid (1 column on phones). */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Grid from "@/components/layouts/Grid.astro";
+import Icon from "@/components/media/Icon.astro";
+import Card from "@/components/ui/Card.astro";
+import Tag from "@/components/ui/Tag.astro";
 import { toneFor } from "@/site/theme";
+import type { VariantOf } from "@/site/types";
 
 export interface Props {
   section: VariantOf<"features", "cards-grid">;
@@ -10,16 +16,35 @@ export interface Props {
 
 const { section, headingLevel } = Astro.props;
 const { content, props } = section;
+const align = props.align ?? "center";
+const Heading = headingLevel;
+const ItemHeading = headingLevel === "h1" ? "h2" : "h3";
 ---
 
-<FeatureGrid
+<SectionShell
   id={section.id}
-  headingLevel={headingLevel}
-  eyebrow={content.eyebrow}
-  title={content.title}
-  description={content.description}
-  items={content.items}
-  columns={props.columns}
-  tone={toneFor("features", props.tone)}
-  align={props.align}
-/>
+  type="features"
+  variant="cards-grid"
+  tone={props.tone ?? toneFor("features", undefined) ?? "muted"}
+  spacing={props.spacing}
+  class:list={["feature-grid", `feature-grid--align-${align}`]}
+>
+  <Stack space="xl">
+    <Stack class="feature-grid__header" space="md">
+      {content.eyebrow && <Tag variant="primary" class="feature-grid__eyebrow">{content.eyebrow}</Tag>}
+      <Heading class="feature-grid__title">{content.title}</Heading>
+      {content.description && <p class="feature-grid__description">{content.description}</p>}
+    </Stack>
+
+    <Grid columns={props.columns ?? "3"} gap="lg" as="ul" class="feature-grid__list">
+      {content.items.map((item) => (
+        <Card as="li" variant="elevated" class="feature-grid__item">
+          {item.eyebrow && <Tag size="sm" variant="muted" class="feature-grid__item-eyebrow">{item.eyebrow}</Tag>}
+          {item.icon && <Icon name={item.icon} class="feature-grid__icon" label="" />}
+          <ItemHeading class="feature-grid__item-title">{item.title}</ItemHeading>
+          <p class="feature-grid__item-description">{item.description}</p>
+        </Card>
+      ))}
+    </Grid>
+  </Stack>
+</SectionShell>

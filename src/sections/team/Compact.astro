@@ -1,0 +1,40 @@
+---
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"team">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const NameHeading = headingLevel === "h1" ? "h2" : "h3";
+const initials = (name: string) => name.split(/\s+/).map((part) => part[0]).slice(0, 2).join("").toUpperCase();
+---
+
+<SectionShell id={section.id} type="team" variant="compact" tone={props.tone} spacing={props.spacing}>
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <ul class="s-people">
+      {content.members.map((member) => {
+        const photo = member.photo ? getAsset(member.photo) : undefined;
+        return (
+          <li class="s-people__item">
+            {photo ? (
+              <Img src={photo.image} alt="" kind="decorative" aspect={[1, 1]} focal={photo.focal} widths={[128, 256]} sizes="8rem" class="s-people__photo" />
+            ) : (
+              <span class="s-people__initials" aria-hidden="true">{initials(member.name)}</span>
+            )}
+            <NameHeading class="s-people__name">{member.name}</NameHeading>
+            <p class="s-people__role">{member.role}</p>
+          </li>
+        );
+      })}
+    </ul>
+  </Stack>
+</SectionShell>

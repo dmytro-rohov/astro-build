@@ -29,6 +29,13 @@ for site in "${SITES[@]}"; do
   fi
 done
 
+# Each business has two designs from the same content: they must look clearly different.
+for pair in "dance-elegant dance-energetic" "auto-corporate auto-bold" "cafe-warm cafe-premium-dark"; do
+  read -r a b <<<"$pair"
+  [ -d "sites/_fixtures/$a" ] && [ -d "sites/_fixtures/$b" ] || continue
+  npx tsx scripts/site/compare.ts --site "sites/_fixtures/$a" --site "sites/_fixtures/$b" >/dev/null || failed+=("$a vs $b (too similar)")
+done
+
 if [ ${#failed[@]} -gt 0 ]; then
   echo "✖ Fixtures failed: ${failed[*]}"
   exit 1

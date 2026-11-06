@@ -1,9 +1,10 @@
 /**
  * Content Security Policy built from site.json: only the hosts a site really
  * uses are allowed — Google Analytics when analytics is configured, the form
- * service in remote contact mode. Frames are blocked until embeds (v3.1) add
- * their own allow-list. Used by astro.config.mjs.
+ * service in remote contact mode, the providers of the site's embed sections
+ * (frames are blocked otherwise). Used by astro.config.mjs.
  */
+import { embedProvider } from "./embeds";
 import type { Site } from "./schema/site";
 
 const GA = {
@@ -21,8 +22,15 @@ export type Directive = `${DirectiveName}${string}`;
 
 export type SiteCsp = { directives: Directive[]; scriptResources: string[] };
 
-export function cspForSite(site: Pick<Site, "contact">, gaId: string): SiteCsp {
+/** Origins of the embed sections of a site (maps, booking, video). */
+export function embedOrigins(site: Pick<Site, "pages">): string[] {
+  const urls = site.pages.flatMap((page) => page.sections).flatMap((section) => (section.type === "embed" ? [section.content.url] : []));
+  return [...new Set(urls.map((url) => embedProvider(url)?.origin).filter((origin): origin is string => Boolean(origin)))].sort();
+}
+
+export function cspForSite(site: Pick<Site, "contact" | "pages">, gaId: string): SiteCsp {
   const analytics = Boolean(gaId);
+  const frames = embedOrigins(site);
   const formOrigin = site.contact.mode === "remote" ? new URL(site.contact.endpoint).origin : undefined;
 
   const list = (...values: (string | false | undefined)[]) => values.filter(Boolean).join(" ");
@@ -38,7 +46,7 @@ export function cspForSite(site: Pick<Site, "contact">, gaId: string): SiteCsp {
       directive("object-src", "'none'"),
       directive("base-uri", "'self'"),
       directive("form-action", "'self'", formOrigin),
-      directive("frame-src", "'none'"),
+      directive("frame-src", ...(frames.length ? frames : ["'none'"])),
       // frame-ancestors is not used: prerendered pages get the policy in a <meta>
       // tag, where browsers ignore it. Framing is blocked by X-Frame-Options instead.
     ],

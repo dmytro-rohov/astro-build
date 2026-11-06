@@ -11,9 +11,16 @@ import Link from "@/components/ui/Link.astro";
 import { ANALYTICS_CONFIG } from "@/config/analytics";
 import { format, lang, t } from "@/i18n";
 import { site } from "virtual:site";
+import { embedProvider } from "@/site/embeds";
 
 const p = t.pages.privacy;
 const { business } = site;
+// Providers of the site's embed sections (maps, booking, video).
+const embedProviders = [
+  ...new Set(
+    site.pages.flatMap((page) => page.sections).flatMap((section) => (section.type === "embed" ? [embedProvider(section.content.url)?.label ?? ""] : [])),
+  ),
+].filter(Boolean);
 const name = business.name ?? site.meta.name;
 const address = [business.address?.street, [business.address?.postalCode, business.address?.city].filter(Boolean).join(" ")]
   .filter(Boolean)
@@ -74,6 +81,7 @@ const updated = new Intl.DateTimeFormat(lang, { dateStyle: "long" }).format(
           ) : (
             <p>{p.noCookiesText}</p>
           )}
+          {embedProviders.length > 0 && <p>{format(p.embedsText, { providers: embedProviders.join(", ") })}</p>}
         </Stack>
 
         <p class="privacy__updated">{format(p.updated, { date: updated })}</p>

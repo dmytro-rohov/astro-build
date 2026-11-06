@@ -1,0 +1,40 @@
+---
+/** Both logo-cloud variants: "row" (muted, wrapping) and "grid" (tiles). */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"logo-cloud">;
+  headingLevel: "h1" | "h2";
+  variant: "row" | "grid";
+}
+
+const { section, headingLevel, variant } = Astro.props;
+const { content, props } = section;
+---
+
+<SectionShell id={section.id} type="logo-cloud" variant={variant} tone={props.tone} spacing={props.spacing} defaultSpacing="md">
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <ul class:list={["s-logos", `s-logos--${variant}`]}>
+      {content.items.map((item) => {
+        const { image } = getAsset(item.logo);
+        const logo =
+          image.format === "svg" ? (
+            <img class="s-logos__image" src={image.src} width={image.width} height={image.height} alt={item.name} loading="lazy" decoding="async" />
+          ) : (
+            <Img src={image} alt={item.name} widths={[160, 320]} sizes="10rem" class="s-logos__image" />
+          );
+        return (
+          <li class="s-logos__item">
+            {item.href ? <a class="s-logos__link" href={item.href} rel="noopener noreferrer" target="_blank">{logo}</a> : logo}
+          </li>
+        );
+      })}
+    </ul>
+  </Stack>
+</SectionShell>

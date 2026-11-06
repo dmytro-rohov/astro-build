@@ -1,18 +1,20 @@
-# Astro Starter v3
+# Astro Starter v3.1
 
 A website engine for small business sites: one `site.json` (content, business data,
 theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **11 section types, 23 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **17 section types, 37 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
 - SEO and JSON-LD from business data (opening hours, address, FAQ), GDPR cookie banner,
   CSP without `unsafe-inline`, contact form — own Node API or any form service
-- CLI for the orchestrator: validate, build, screenshots, `report.json` with axe and
-  Lighthouse gates, AI catalog and JSON Schema, schema migrations
-- Tests on every change: 230 unit tests, Playwright e2e + axe, Lighthouse, a generated
+- CLI for the orchestrator: validate, build (also into its own workspace), screenshots,
+  `report.json` with axe and Lighthouse gates, `site:compare` for two designs of one brief,
+  AI catalog and JSON Schema, schema migrations
+- Tests on every change: Vitest unit tests, Playwright e2e + axe, Lighthouse, a generated
   min/max catalog in all archetypes, six realistic fixture sites, Docker smoke test
 
 ## Quick start
@@ -61,8 +63,8 @@ src/
 │  ├─ fonts/          font families and pairs
 │  ├─ tokens/         core tokens
 │  └─ utils/          tokens → SCSS (per site)
-├─ components/        layout, UI, form, media primitives and widgets
-├─ layouts/           BaseLayout, Header, Footer
+├─ components/        layout, UI, form and media primitives (Accordion, ContactForm…)
+├─ layouts/           BaseLayout, Header, Navbar, Footer
 ├─ i18n/dictionaries/ one file per language (en, pl, uk)
 ├─ lib/contact/       contact form validation and delivery
 ├─ pages/             [...slug].astro (all site pages), privacy, contact results, 404/500
@@ -98,7 +100,12 @@ npm run site:build -- --site <dir> [--out <dir>]    # full build (default ./dist
 npm run site:preview -- --site <dir> [--port 4321]  # dev server with live reload
 npm run site:screenshot -- --site <dir> [--out <dir>] [--no-build]  # desktop + mobile PNG of every page
 npm run site:report -- --site <dir> [--out <dir>] [--no-lighthouse] [--no-screenshots]  # build + axe + Lighthouse + screenshots → report.json
+npm run site:compare -- --site <dirA> --site <dirB> [--same-brand-accent] [--json]  # two designs of one brief differ enough?
 ```
+
+`--out` may point anywhere, also outside the project (the orchestrator's workspace): the
+build runs in `.generated/staging` and is moved there; a contact-`local` build gets a
+`node_modules` link so `OUT_DIR=<out> node server.mjs` runs from that folder.
 
 `site:report` writes `<out>/report.json` for the orchestrator (default out:
 `.generated/sites/<siteId>`): engine and schema version, validation issues and warnings
@@ -151,7 +158,7 @@ the migrated site is validated like any build.
 
 | Type | Variants |
 |---|---|
-| `hero` | `split-image`, `centered`, `cover-image` (photo behind text, always the dark palette) |
+| `hero` | `split-image`, `centered`, `cover-image` (photo behind text, always the dark palette), `panel` (edge-to-edge split), `minimal` (oversized type + facts) |
 | `about` | `image-side`, `centered` |
 | `services` | `cards`, `price-list` |
 | `features` | `cards-grid`, `icon-list` |
@@ -162,10 +169,25 @@ the migrated site is validated like any build.
 | `cta` | `boxed`, `banner` |
 | `contact` | `form-split`, `form-centered` (details from `business`) |
 | `hours-location` | `card`, `compact` (hours, address, phone from `business`) |
+| `stats` | `row`, `cards` (key numbers; accent tone allowed) |
+| `process` | `steps`, `timeline` (numbered steps, optional icons) |
+| `team` | `cards`, `compact` (portraits 4:5 / round) |
+| `schedule` | `week`, `table` (weekly classes, sorted by day and time) |
+| `logo-cloud` | `row`, `grid` (partner / client logos, SVG or PNG) |
+| `embed` | `full`, `split` (OpenStreetMap, Google Maps, YouTube, Vimeo, Calendly — see below) |
 | layout `navbar` | `simple`, `centered`, `topbar` (phone/email bar) |
 | layout `footer` | `columns`, `simple`, `centered` |
 
-Common section props: `tone` (`default`, `muted`, `inverse`; `accent` for hero, about, cta),
+**Rules:** at most one `contact` and one `faq` section per page; the first section of a page
+renders its only `<h1>`, so `stats`, `logo-cloud` and `embed` need a title there.
+
+**Embeds** (`src/site/embeds.ts`): only links from the listed providers are accepted
+(YouTube becomes `youtube-nocookie.com`, Vimeo gets `dnt=1`). Nothing is requested from the
+provider before the visitor clicks "Show content from …"; without JavaScript a link opens it
+in a new tab. The CSP `frame-src` lists exactly the providers the site uses, and the privacy
+page names them. Script widgets (e.g. Booksy) are not embeddable — link to them with a button.
+
+Common section props: `tone` (`default`, `muted`, `inverse`; `accent` for hero, about, cta, stats),
 `spacing`, `align`. Without `tone` the archetype default for the type is used.
 
 **Adding a variant:** add it to `variants` in `src/sections/<type>/schema.ts` (description,
@@ -201,6 +223,12 @@ local QA tool (replaces the v2 `/playground` page) and is never deployed.
   scale, default accent, background tint, font pair, radius, button shape (square / rounded /
   pill), image style (sharp / rounded / shadow / border), card style, spacing density,
   heading style (weight, case, tracking) and default section tones.
+- **Two designs, two color families**: accents belong to families by OKLCH hue (`red`,
+  `orange`, `yellow`, `green`, `teal`, `blue`, `purple`, `pink`, `neutral`). Every archetype
+  recommends 4 accents from 4 families (`recommendedAccents`, also in `catalog.json`).
+  `npm run site:compare` fails when two designs of one brief share the archetype, the accent
+  family or the hero variant (`--same-brand-accent` when the brief fixes the brand color:
+  then the font pair must differ) and suggests accents from another family.
 - **Accent**: the whole palette (light and dark) is generated in OKLCH from one color.
   When the client's color fails WCAG AA it is darkened or lightened (same hue) and the change
   is reported in the build output and `src/design-system/theme.generated.json`.
@@ -442,25 +470,18 @@ Available media primitives:
 - `Figure`
 - `Icon`
 
-The icon system uses an SVG sprite generated from raw SVG files.
+`Icon` uses the per-site SVG sprite built from the Lucide set (see Icons).
 
 ---
 
-### Widgets
+### Section components
 
-Available page widgets:
+Every section variant lives in `src/sections/<type>/` and renders through `SectionShell`
+(anchor id, tone, spacing, `data-section-type` for the tests). Shared building blocks:
+`Accordion` (`components/ui`), `ContactForm` (`components/form`), `SectionHeader`,
+`Actions`, `RichText` (`sections/_shared`). There is no separate "widgets" layer any more.
 
-- `Hero`
-- `FeatureGrid`
-- `CTA`
-- `FAQ`
-- `ContactForm`
-- `Navbar`
-- `Accordion`
-
-Widgets are larger reusable page sections built from smaller primitives.
-
-Site layouts (`src/layouts/`): `BaseLayout`, `Header`, `Footer`.
+Site layouts (`src/layouts/`): `BaseLayout`, `Header`, `Navbar`, `Footer`.
 
 `Button` renders a `<button>` by default and a link styled as a button when `href` is set:
 
@@ -657,23 +678,22 @@ npm run build
 
 ---
 
-## Adding a New Icon
+## Icons
 
-The icon name is the SVG file name without `.svg`.
+One consistent family: **Lucide** (`lucide-static`, ISC license) — 149 icons curated
+for small-business sites in `src/design-system/icons/library.ts`, grouped into 12
+categories (contact, time & booking, business, food, beauty & health, sport, auto,
+home & construction, education, media & events, nature & pets, general) with Polish
+and English keywords. `catalog.json` lists them for the orchestrator; site.json uses
+them by name (`services` and `features` items, footer social links).
 
-1. Add raw SVG to:
+`npm run build-icons` (part of `build:system`) puts only the icons the site needs into
+its sprite — the engine's own (`check`, `mail`, `map-pin`, `phone`) plus every `icon`
+in site.json — so a page downloads a few KB. `ICONS=all npm run build-icons` builds the
+whole set. The Lucide license is copied to `public/icons/LICENSE-lucide.txt`.
 
-```txt
-src/assets/icons/raw/
-```
-
-2. Run:
-
-```bash
-npm run build-icons
-```
-
-3. Use icon:
+**Adding an icon:** add an entry to `icons` in `library.ts` (category, keywords and the
+Lucide name in `lucide` when it differs), then `npm run build:system`.
 
 ```astro
 ---
@@ -683,14 +703,9 @@ import Icon from "@/components/media/Icon.astro";
 <Icon name="mail" />
 ```
 
-Included icons: `menu`, `close`, `check`, `arrow-right`, `chevron-down`,
-`external-link`, `star`, `grid`, `blocks`, `image`, `code`, `mail`, `phone`,
-`map-pin`, `clock`.
-
-Icon rules (enforced by `svgo.config.js`): 24×24 `viewBox`, every color is turned
-into `currentColor`, so icons follow the text color in light and dark schemes.
-Brand logos (Facebook, Instagram…) are not included — add them from the brand's
-official assets.
+Icons follow the text color (`currentColor`) in light and dark schemes. Brand logos
+(Facebook, Instagram…) are not included — they are trademarks; social links use
+`external-link`.
 
 ---
 
@@ -752,6 +767,7 @@ npm run test:e2e         # Playwright: builds the demo with test values, browser
 npm run test:lighthouse  # Lighthouse CI on the test build (run after test:e2e)
 npm run test:broken-site # an invalid site.json stops validation and the build
 npm run test:remote      # contact "remote" mode produces a purely static site
+npm run test:outside     # builds into a folder outside the project, both contact modes
 npm run test:catalog     # generated min/max catalog in all 8 archetypes
 npm run test:fixtures    # the six fixture sites (+ report gates for three of them)
 npm run ci               # validate + broken-site + remote + e2e + Lighthouse
@@ -785,15 +801,16 @@ blocked in tests.
 repair shop (one page) and a café (2 pages), each in two designs built from **the same
 content**, like the two proposals the orchestrator makes for a brief:
 
-| Site | Archetype | Notes |
+| Site | Archetype · accent | Notes |
 |---|---|---|
-| `dance-elegant` / `dance-energetic` | elegant / energetic | multi-page, local contact API |
-| `auto-corporate` / `auto-bold` | corporate / bold | corporate uses contact mode `remote` (static) |
-| `cafe-warm` / `cafe-premium-dark` | warm / premium-dark | premium-dark is a dark site |
+| `dance-elegant` / `dance-energetic` | elegant · pink / energetic · purple | 4 pages: schedule, team, map; hero split-image / minimal |
+| `auto-corporate` / `auto-bold` | corporate · orange / bold · yellow | stats, process; hero panel / cover; corporate uses contact `remote` |
+| `cafe-warm` / `cafe-premium-dark` | warm · orange / premium-dark · yellow | partner logos, map; premium-dark is a dark site |
 
-Images are generated abstract compositions (no stock photos or licences). The content
-lives in `scripts/site/make-fixtures.ts`; after changing it run
-`npx tsx scripts/site/make-fixtures.ts` and commit the result.
+`npm run test:fixtures` also runs `site:compare` on every pair. Images are generated abstract
+placeholders (no stock photos or licences) — real photos come from the client or the
+generator, not from the engine. The content lives in `scripts/site/make-fixtures.ts`; after
+changing it run `npx tsx scripts/site/make-fixtures.ts` and commit the result.
 
 Lighthouse thresholds (`lighthouserc.cjs` and `site:report`): performance ≥ 90,
 accessibility, best practices and SEO ≥ 95.
@@ -836,13 +853,22 @@ debug mode, immutable font caching). CI runs it on every pull request.
 
 ## Version
 
-Current version: **v3** (`3.0.0`), `schemaVersion` 1. The v2 starter is kept on the
-`v2` branch / tag `v2.0.0`.
+Current version: **v3.1** (`3.1.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
+starter is kept on the `v2` branch / tag `v2.0.0`.
 
-v3 adds to v2:
+v3.1 adds:
+
+- 6 section types — `schedule`, `team`, `stats`, `process`, `logo-cloud`, `embed` — and the
+  hero variants `panel` and `minimal` (17 types, 37 variants)
+- 149 Lucide icons in 12 business categories with keywords, per-site sprite
+- distinct designs: accent families, recommended accents per archetype, `site:compare`
+- `--out` outside the project (orchestrator workspace) for build, screenshot and report
+- all sections render through `SectionShell` (the v2 widgets layer is gone)
+
+v3.0 added to v2:
 
 - the site engine: everything from `site.json`, Zod schemas, readable errors, untrusted input
-- section catalog: 11 types, 23 variants, navbar and footer variants, min/max boundary tests
+- section catalog with navbar and footer variants and min/max boundary tests
 - themes: 8 archetypes, generated OKLCH palettes with WCAG AA correction, shape tokens,
   12 font pairs with per-language subsets
 - images: slots with proportions and minimum sizes, focal-point crops, generated app icons
