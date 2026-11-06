@@ -1,0 +1,39 @@
+---
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Card from "@/components/ui/Card.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"team">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const NameHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="team" variant="cards" tone={props.tone} spacing={props.spacing}>
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <ul class:list={["s-team__list", `s-team__list--count-${Math.min(content.members.length, 4)}`]}>
+      {content.members.map((member) => {
+        const photo = member.photo ? getAsset(member.photo) : undefined;
+        return (
+          <Card as="li" variant="elevated" padding="none" class="s-team__card">
+            {photo && <Img src={photo.image} alt={photo.alt || member.name} aspect={[4, 5]} focal={photo.focal} widths={[320, 480, 640]} sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" class="s-team__photo" />}
+            <Stack space="xs" class="s-team__body">
+              <NameHeading class="s-team__name">{member.name}</NameHeading>
+              <p class="s-team__role">{member.role}</p>
+              {member.bio && <p class="s-team__bio">{member.bio}</p>}
+            </Stack>
+          </Card>
+        );
+      })}
+    </ul>
+  </Stack>
+</SectionShell>

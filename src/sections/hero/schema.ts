@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { defineSectionType } from "../../site/schema/define";
-import { Action, field, imageSlot, multilineText, text } from "../../site/schema/fields";
+import { Action, field, Id, imageSlot, listWithIds, multilineText, text } from "../../site/schema/fields";
+
+const Highlight = z.strictObject({
+  id: Id,
+  value: field(text(16), { label: "Wartość", fieldType: "text", description: 'Short fact, e.g. "15 lat", "4,9/5".' }),
+  label: field(text(40), { label: "Opis", fieldType: "text", description: "What the value means." }),
+});
 
 export const hero = defineSectionType({
   type: "hero",
@@ -37,6 +43,11 @@ export const hero = defineSectionType({
       fieldType: "image",
       description: "Hero image, cropped to 4:3 around the focal point; at least 960px wide.",
     }),
+    highlights: field(listWithIds(Highlight, 1, 3).optional(), {
+      label: "Wyróżniki",
+      fieldType: "list",
+      description: "Up to 3 short facts shown under the actions (minimal and panel variants).",
+    }),
   }),
   accentTone: true,
   variants: {
@@ -51,6 +62,15 @@ export const hero = defineSectionType({
     "cover-image": {
       description: "Full-width photo behind the text with a dark overlay — bold and atmospheric. Needs an image.",
       uses: ["eyebrow", "description", "primaryAction", "secondaryAction", "image"],
+    },
+    panel: {
+      description: "Edge-to-edge split: text on a colored panel, the photo filling the other half up to the screen edge. Needs an image.",
+      uses: ["eyebrow", "description", "primaryAction", "secondaryAction", "image", "highlights"],
+      props: z.strictObject({ imagePosition: z.enum(["left", "right"]).optional().describe("Photo side on wide screens.") }),
+    },
+    minimal: {
+      description: "Oversized left-aligned headline, a thin rule and key facts — editorial and confident, no image.",
+      uses: ["eyebrow", "description", "primaryAction", "secondaryAction", "highlights"],
     },
   },
 });

@@ -27,6 +27,16 @@ export default {
     popularPlan: "Najczęściej wybierany",
     rating: "Ocena: {value} na 5",
     contactBar: "Dane kontaktowe",
+    scheduleTime: "Godzina",
+    scheduleClass: "Zajęcia",
+    scheduleInstructor: "Prowadzący",
+    scheduleLevel: "Poziom",
+    scheduleRoom: "Sala",
+    scheduleDay: "Dzień",
+    embedLoad: "Pokaż treść z {provider}",
+    embedNotice: "Ta treść pochodzi z serwisu {provider}. Po kliknięciu {provider} może zapisać pliki cookie i otrzyma Twój adres IP.",
+    embedOpen: "Otwórz w {provider}",
+    step: "Krok {number}",
   },
 
   common: {
@@ -139,6 +149,7 @@ export default {
       cookiesHeading: "Pliki cookie i analityka",
       cookiesText: "Opcjonalne analityczne pliki cookie (Google Analytics) są używane wyłącznie po wyrażeniu zgody. Zgodę możesz w każdej chwili zmienić lub wycofać.",
       noCookiesText: "Ta strona nie używa analitycznych ani reklamowych plików cookie. Niewielki wpis w pamięci przeglądarki może zapamiętać Twój wybór dotyczący plików cookie.",
+      embedsText: "Niektóre strony pokazują treści z serwisów {providers} (mapy, rezerwacje lub wideo). Ładują się dopiero po kliknięciu; od tej chwili dostawca otrzymuje Twój adres IP i może zapisywać własne pliki cookie zgodnie ze swoją polityką prywatności.",
       updated: "Ostatnia aktualizacja: {date}",
     },
     contactSent: {

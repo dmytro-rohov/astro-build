@@ -1,0 +1,39 @@
+---
+/** Both process variants: "steps" (side by side) and "timeline" (vertical). */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Icon from "@/components/media/Icon.astro";
+import { format, t } from "@/i18n";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"process">;
+  headingLevel: "h1" | "h2";
+  variant: "steps" | "timeline";
+}
+
+const { section, headingLevel, variant } = Astro.props;
+const { content, props } = section;
+const StepHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="process" variant={variant} tone={props.tone} spacing={props.spacing} width={variant === "timeline" ? "md" : "lg"}>
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? (variant === "timeline" ? "left" : "center")} />
+    <ol class:list={["s-process__list", `s-process__list--${variant}`, `s-process__list--count-${Math.min(content.steps.length, 4)}`]}>
+      {content.steps.map((step, index) => (
+        <li class="s-process__step">
+          <span class="s-process__marker" aria-hidden="true">
+            {step.icon ? <Icon name={step.icon} size="1.25rem" /> : index + 1}
+          </span>
+          <div class="s-process__body">
+            <p class="s-process__number">{format(t.sections.step, { number: index + 1 })}</p>
+            <StepHeading class="s-process__title">{step.title}</StepHeading>
+            <p class="s-process__description">{step.description}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </Stack>
+</SectionShell>

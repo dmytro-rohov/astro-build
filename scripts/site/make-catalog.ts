@@ -106,6 +106,9 @@ function example(schema: z.ZodType, mode: Mode, key: string, index = 0): unknown
     const max = schema.maxLength ?? 120;
 
     if (key === "mapUrl") return linkFor(key);
+    // Schedule: a class every hour from 8:00, spread over the week.
+    if (key === "start" || key === "end") return `${String(8 + (Math.floor(index / 7) % 13)).padStart(2, "0")}:${key === "start" ? "00" : "50"}`;
+    if (key === "url") return "https://www.openstreetmap.org/export/embed.html?bbox=17.03%2C51.10%2C17.04%2C51.11&layer=mapnik";
     if (key === "href") return schema.safeParse("/").success ? "/" : "https://example.com/";
     if (key === "id") return `${mode}-${++idCounter}`;
     if (meta.editor?.fieldType === "richtext-lite") return richTextOf(max, mode);
@@ -123,6 +126,7 @@ function example(schema: z.ZodType, mode: Mode, key: string, index = 0): unknown
 
   if (schema instanceof z.ZodEnum) {
     const options = schema.options as string[];
+    if (key === "day") return options[index % options.length];
     return mode === "min" ? options[0] : options[options.length - 1];
   }
 
@@ -170,17 +174,33 @@ const sectionsOf = (type: (typeof sectionTypes)[number]) =>
     }),
   );
 
+// Two section types per page (pages are limited to 12). The first type on a
+// page has a required title (it renders the page's h1, also in MIN mode).
+const titleRequired = (type: (typeof sectionTypes)[number]) => {
+  const title = (type.content.shape as Record<string, z.ZodType>).title;
+  return Boolean(title) && !title.safeParse(undefined).success;
+};
+const pageTypes = sectionTypes.filter((type) => !ONE_PER_PAGE_TYPES.includes(type.type));
+const leads = pageTypes.filter(titleRequired);
+const followers = pageTypes.filter((type) => !titleRequired(type));
+const groups: (typeof sectionTypes)[number][][] = [];
+
+while (leads.length) {
+  const lead = leads.shift()!;
+  const follower = followers.shift() ?? (leads.length > followers.length ? leads.pop() : undefined);
+  groups.push(follower ? [lead, follower] : [lead]);
+}
+if (followers.length) throw new Error("make-catalog: more optional-title types than pages");
+
 // Types allowed once per page (contact, faq): instance N goes onto the N-th
-// page after the home page (pages are limited to 12, so no page per instance).
-const pages = sectionTypes
-  .filter((type) => !ONE_PER_PAGE_TYPES.includes(type.type))
-  .map((type) => ({
-    id: type.type,
-    slug: type.type === "hero" ? "/" : `/${type.type}`,
-    title: type.label,
-    nav: { show: true, label: type.type },
-    sections: sectionsOf(type),
-  }));
+// page after the home page.
+const pages = groups.map((group, index) => ({
+  id: index === 0 ? "home" : group[0].type,
+  slug: index === 0 ? "/" : `/${group[0].type}`,
+  title: group.map((type) => type.label).join(" + "),
+  nav: { show: true, label: group[0].type },
+  sections: group.flatMap(sectionsOf),
+}));
 
 for (const type of sectionTypes.filter((type) => ONE_PER_PAGE_TYPES.includes(type.type))) {
   sectionsOf(type).forEach((section, index) => pages[index + 1].sections.push(section));

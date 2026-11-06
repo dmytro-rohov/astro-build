@@ -8,7 +8,7 @@ import { ARCHETYPE_IDS } from "../../design-system/archetypes";
 import { fontPairs, type FontPairId } from "../../design-system/fonts/library";
 import { OVERRIDABLE_KEYS } from "../../design-system/theme";
 import { layoutTypes, sectionTypes } from "../registry";
-import { Action, field, HttpsUrl, Id, imageSlot, Slug, text, type ImageSlot } from "./fields";
+import { Action, DAYS, field, HttpsUrl, Id, imageSlot, Slug, text, Time, type ImageSlot } from "./fields";
 
 export const SCHEMA_VERSION = 1;
 
@@ -42,6 +42,9 @@ export const RESERVED_IDS: readonly string[] = [
 ];
 
 export const isReservedId = (id: string) => RESERVED_IDS.includes(id);
+
+/** Section types whose title is optional and has no fallback. */
+const OPTIONAL_TITLE_TYPES = ["stats", "logo-cloud", "embed"] as const;
 
 /** At most one per page: the form has fixed field ids, FAQPage JSON-LD must be unique. */
 export const ONE_PER_PAGE = ["contact", "faq"] as const;
@@ -89,9 +92,7 @@ const Address = z.strictObject({
   country: z.string().regex(/^[A-Z]{2}$/, "ISO 3166-1 alpha-2 code, e.g. PL.").optional(),
 });
 
-export const DAYS = ["mo", "tu", "we", "th", "fr", "sa", "su"] as const;
-
-const Time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Time as "HH:MM", e.g. "09:00".');
+export { DAYS };
 
 const HoursEntry = z
   .strictObject({
@@ -287,6 +288,11 @@ export const SiteSchema = z
 
       page.sections.forEach((section, sectionIndex) => {
         const previous = sectionIds.get(section.id);
+
+        // The first section renders the page's only <h1>; these types have an optional title.
+        if (sectionIndex === 0 && (OPTIONAL_TITLE_TYPES as readonly string[]).includes(section.type) && !("title" in section.content && section.content.title)) {
+          context.addIssue({ code: "custom", path: at("sections", 0, "content", "title"), message: `The first section of a page needs a title (it becomes the page's h1).` });
+        }
 
         if (isReservedId(section.id)) {
           context.addIssue({ code: "custom", path: at("sections", sectionIndex, "id"), message: `Section id "${section.id}" is used by the engine — choose another.` });

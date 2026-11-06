@@ -1,0 +1,56 @@
+---
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import { t } from "@/i18n";
+import { scheduleByDay } from "@/site/schedule";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"schedule">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const days = scheduleByDay(content.items);
+const has = (key: "instructor" | "level" | "room") => content.items.some((item) => item[key]);
+const columns = { instructor: has("instructor"), level: has("level"), room: has("room") };
+---
+
+<SectionShell id={section.id} type="schedule" variant="table" tone={props.tone} spacing={props.spacing}>
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
+    <div class="s-timetable__scroll">
+      <table class="s-timetable">
+        {content.title && <caption class="visually-hidden">{content.title}</caption>}
+        <thead>
+          <tr>
+            <th scope="col">{t.sections.scheduleTime}</th>
+            <th scope="col">{t.sections.scheduleClass}</th>
+            {columns.level && <th scope="col">{t.sections.scheduleLevel}</th>}
+            {columns.instructor && <th scope="col">{t.sections.scheduleInstructor}</th>}
+            {columns.room && <th scope="col">{t.sections.scheduleRoom}</th>}
+          </tr>
+        </thead>
+        {days.map((group) => (
+          <tbody class="s-timetable__day">
+            <tr>
+              <th scope="colgroup" colspan={2 + Object.values(columns).filter(Boolean).length} class="s-timetable__day-title">{t.days[group.day].long}</th>
+            </tr>
+            {group.items.map((item) => (
+              <tr>
+                <td class="s-timetable__time"><time datetime={item.start}>{item.start}</time>–<time datetime={item.end}>{item.end}</time></td>
+                <th scope="row" class="s-timetable__class">{item.title}</th>
+                {columns.level && <td>{item.level}</td>}
+                {columns.instructor && <td>{item.instructor}</td>}
+                {columns.room && <td>{item.room}</td>}
+              </tr>
+            ))}
+          </tbody>
+        ))}
+      </table>
+    </div>
+    {content.note && <p class="s-schedule__note">{content.note}</p>}
+  </Stack>
+</SectionShell>

@@ -27,6 +27,16 @@ export default {
     popularPlan: "Найпопулярніший",
     rating: "Оцінка: {value} з 5",
     contactBar: "Контактні дані",
+    scheduleTime: "Час",
+    scheduleClass: "Заняття",
+    scheduleInstructor: "Викладач",
+    scheduleLevel: "Рівень",
+    scheduleRoom: "Зала",
+    scheduleDay: "День",
+    embedLoad: "Показати вміст із {provider}",
+    embedNotice: "Цей вміст завантажується з {provider}. Після натискання {provider} може зберігати файли cookie та отримає вашу IP-адресу.",
+    embedOpen: "Відкрити в {provider}",
+    step: "Крок {number}",
   },
 
   common: {
@@ -139,6 +149,7 @@ export default {
       cookiesHeading: "Файли cookie та аналітика",
       cookiesText: "Необов’язкові аналітичні файли cookie (Google Analytics) використовуються лише після вашої згоди. Ви можете будь-коли змінити або відкликати згоду.",
       noCookiesText: "Цей сайт не використовує аналітичних чи рекламних файлів cookie. Невеликий запис у сховищі браузера може запам’ятати ваш вибір щодо cookie.",
+      embedsText: "Деякі сторінки показують вміст із {providers} (мапи, бронювання або відео). Він завантажується лише після натискання; відтоді постачальник отримує вашу IP-адресу та може зберігати власні файли cookie згідно зі своєю політикою конфіденційності.",
       updated: "Останнє оновлення: {date}",
     },
     contactSent: {
