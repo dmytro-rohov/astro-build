@@ -1,7 +1,13 @@
 ---
-import CTA from "@/components/widgets/CTA.astro";
-import type { SectionOf } from "@/site/types";
+/** Call to action in a box (inverse box on tinted sections). */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Cluster from "@/components/layouts/Cluster.astro";
+import Tag from "@/components/ui/Tag.astro";
+import Button from "@/components/ui/Button.astro";
+import Link from "@/components/ui/Link.astro";
 import { toneFor } from "@/site/theme";
+import type { SectionOf } from "@/site/types";
 
 export interface Props {
   section: SectionOf<"cta">;
@@ -10,17 +16,32 @@ export interface Props {
 
 const { section, headingLevel } = Astro.props;
 const { content, props } = section;
+const align = props.align ?? "center";
+const tone = toneFor("cta", props.tone) ?? "default";
+const Heading = headingLevel;
 ---
 
-<CTA
+<SectionShell
   id={section.id}
-  headingLevel={headingLevel}
-  eyebrow={content.eyebrow}
-  title={content.title}
-  description={content.description}
-  primaryAction={content.primaryAction}
-  secondaryAction={content.secondaryAction}
-  align={props.align}
-  tone={toneFor("cta", props.tone)}
-  boxed
-/>
+  type="cta"
+  variant="boxed"
+  tone={props.tone}
+  spacing={props.spacing}
+  class:list={["cta", `cta--align-${align}`, `cta--tone-${tone}`, "cta--boxed"]}
+>
+  <div class="cta__box cta__box--boxed">
+    <Stack class="cta__content" space="lg">
+      {content.eyebrow && <Tag variant="primary" class="cta__eyebrow">{content.eyebrow}</Tag>}
+
+      <Stack space="md">
+        <Heading class="cta__title">{content.title}</Heading>
+        <p class="cta__description">{content.description}</p>
+      </Stack>
+
+      <Cluster class="cta__actions" gap="md" justify={align === "center" ? "center" : "start"}>
+        <Button href={content.primaryAction.href} size="lg">{content.primaryAction.label}</Button>
+        {content.secondaryAction && <Link href={content.secondaryAction.href}>{content.secondaryAction.label}</Link>}
+      </Cluster>
+    </Stack>
+  </div>
+</SectionShell>

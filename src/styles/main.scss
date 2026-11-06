@@ -45,18 +45,19 @@
 
 // site layouts
 @use "./layouts/header";
+@use "./layouts/navbar";
 @use "./layouts/footer";
+@use "./layouts/error-page";
 
+// shared components used by sections
+@use "./components/accordion";
+@use "./components/form/contact-form";
 
-// widgets
-@use "./widgets/navbar";
-@use "./widgets/hero";
-@use "./widgets/feature-grid";
-@use "./widgets/cta";
-@use "./widgets/accordion";
-@use "./widgets/faq";
-@use "./widgets/contact-form";
-@use "./widgets/error-page";
+// sections (cascade layer "widgets")
+@use "./sections/hero";
+@use "./sections/feature-grid";
+@use "./sections/cta";
+@use "./sections/faq";
 @use "./sections/shared";
 @use "./sections/sections";
 @use "./sections/blocks";

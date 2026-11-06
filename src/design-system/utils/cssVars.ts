@@ -14,6 +14,7 @@ import path from "path";
 import { loadSite, resolveSiteDir, SiteValidationError } from "../../site/loader";
 import { fontPairs, fontStack } from "../fonts/library";
 import { accentPalette, resolveTheme, type SemanticPalette } from "../theme";
+import { relativeLuminance } from "../theme/color";
 import { shapeTokens } from "../theme/shape";
 import { tokens } from "../tokens/index";
 
@@ -65,8 +66,17 @@ const allTokens = {
   fontFamily: { ...tokens.fontFamily, base: fontStack(pair.body), heading: fontStack(pair.heading) },
 };
 
-const flatTokens = { ...flatten(allTokens as unknown as TokenObject), ...shapeTokens(theme.archetype) };
-const colorVars = (palette: SemanticPalette) => flatten({ color: palette } as unknown as TokenObject);
+/**
+ * Partner logos (logo-cloud) are made for light backgrounds: on a dark palette
+ * the muted row turns them into light silhouettes, and grid tiles stay light.
+ */
+const logoVars = (palette: SemanticPalette): Record<string, TokenValue> =>
+  relativeLuminance(palette.background.primary) < 0.2
+    ? { "logo-filter": "grayscale(1) brightness(0) invert(1)", "logo-filter-hover": "brightness(0) invert(1)", "logo-opacity": "0.8", "logo-tile": "#f5f5f4" }
+    : { "logo-filter": "grayscale(1)", "logo-filter-hover": "none", "logo-opacity": "0.75", "logo-tile": palette.background.surface };
+
+const flatTokens = { ...flatten(allTokens as unknown as TokenObject), ...logoVars(theme.light), ...shapeTokens(theme.archetype) };
+const colorVars = (palette: SemanticPalette) => ({ ...flatten({ color: palette } as unknown as TokenObject), ...logoVars(palette) });
 
 const lines = (values: Record<string, TokenValue>, indent = "  ") =>
   Object.entries(values)

@@ -521,15 +521,15 @@
   }
 
   .s-logos--row .s-logos__image {
-    opacity: 0.75;
-    filter: grayscale(1);
+    opacity: var(--logo-opacity);
+    filter: var(--logo-filter);
     transition: opacity var(--motion-duration-fast) var(--motion-easing-standard), filter var(--motion-duration-fast) var(--motion-easing-standard);
   }
 
   .s-logos--row .s-logos__link:hover .s-logos__image,
   .s-logos--row .s-logos__link:focus-visible .s-logos__image {
     opacity: 1;
-    filter: none;
+    filter: var(--logo-filter-hover);
   }
 
   .s-logos--grid {
@@ -543,7 +543,7 @@
     place-items: center;
     min-height: 6rem;
     padding: var(--spacing-md);
-    background: var(--color-background-surface);
+    background: var(--logo-tile);
     border: 1px solid var(--color-border-default);
     border-radius: var(--radius-card);
   }
