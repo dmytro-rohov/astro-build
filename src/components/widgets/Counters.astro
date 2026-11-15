@@ -1,0 +1,85 @@
+---
+/**
+ * Count-up animation for numbers (v3.2), reusable: any element with `data-counter` whose text
+ * holds a number ("od 2012", "15 lat", "4,9", "1 200 klientów") counts up to it when it scrolls
+ * into view. The HTML keeps the final text (no JavaScript, crawlers, screen readers: the real
+ * value); years count up from 30 years before, other numbers from 0; reduced motion: no animation.
+ * Included once by BaseLayout.
+ */
+---
+
+<script>
+  const elements = [...document.querySelectorAll<HTMLElement>("[data-counter]")];
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const NUMBER = /\d[\d\s\u00a0\u202f]*(?:[.,]\d+)?/;
+
+  type Counter = { element: HTMLElement; before: string; after: string; from: number; to: number; decimals: number; comma: boolean; grouped: boolean };
+
+  const counters: Counter[] = elements.flatMap((element) => {
+    const text = element.textContent ?? "";
+    const match = text.match(NUMBER);
+    if (!match || match.index === undefined) return [];
+    const raw = match[0].trimEnd();
+    const grouped = /\d[\s\u00a0\u202f]\d/.test(raw);
+    const plain = raw.replace(/[\s\u00a0\u202f]/g, "");
+    const comma = plain.includes(",");
+    const decimals = /[.,](\d+)$/.exec(plain)?.[1].length ?? 0;
+    const to = Number(plain.replace(",", "."));
+    if (!Number.isFinite(to) || to <= 0) return [];
+    const year = !grouped && decimals === 0 && to >= 1900 && to <= 2100;
+    element.setAttribute("aria-label", text.trim());
+    return [{ element, before: text.slice(0, match.index), after: text.slice(match.index + raw.length), from: year ? to - 30 : 0, to, decimals, comma, grouped }];
+  });
+
+  const format = (counter: Counter, value: number) => {
+    let number = value.toFixed(counter.decimals);
+    if (counter.grouped) number = Number(number).toLocaleString("pl-PL", { minimumFractionDigits: counter.decimals, maximumFractionDigits: counter.decimals });
+    else if (counter.comma) number = number.replace(".", ",");
+    return `${counter.before}${number}${counter.after}`;
+  };
+
+  const run = (counter: Counter) => {
+    const duration = 1400;
+    const start = performance.now();
+    const step = (now: number) => {
+      const progress = Math.min(1, (now - start) / duration);
+      const eased = 1 - (1 - progress) ** 3;
+      counter.element.textContent = format(counter, counter.from + (counter.to - counter.from) * eased);
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+
+  if (!reduced && counters.length && "IntersectionObserver" in window) {
+    const byElement = new Map(counters.map((counter) => [counter.element, counter]));
+    // Runs the count when the number is mostly visible.
+    const start = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          start.unobserve(entry.target);
+          const counter = byElement.get(entry.target as HTMLElement);
+          if (counter) run(counter);
+        }
+      },
+      { threshold: 0.6 },
+    );
+    // Sets the starting value only just before the number comes into view: a page jumped through
+    // or a full-page screenshot keeps the real values.
+    const prepare = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          prepare.unobserve(entry.target);
+          const counter = byElement.get(entry.target as HTMLElement);
+          if (!counter) continue;
+          counter.element.textContent = format(counter, counter.from);
+          start.observe(counter.element);
+        }
+      },
+      { rootMargin: "0px 0px 25% 0px" },
+    );
+    for (const counter of counters) prepare.observe(counter.element);
+  }
+</script>
+

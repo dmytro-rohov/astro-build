@@ -5,7 +5,6 @@ import Stack from "@/components/layouts/Stack.astro";
 import Cluster from "@/components/layouts/Cluster.astro";
 import Tag from "@/components/ui/Tag.astro";
 import Button from "@/components/ui/Button.astro";
-import Link from "@/components/ui/Link.astro";
 import { toneFor } from "@/site/theme";
 import type { SectionOf } from "@/site/types";
 
@@ -40,7 +39,7 @@ const Heading = headingLevel;
 
       <Cluster class="cta__actions" gap="md" justify={align === "center" ? "center" : "start"}>
         <Button href={content.primaryAction.href} size="lg">{content.primaryAction.label}</Button>
-        {content.secondaryAction && <Link href={content.secondaryAction.href}>{content.secondaryAction.label}</Link>}
+        {content.secondaryAction && <Button href={content.secondaryAction.href} variant="ghost" size="lg">{content.secondaryAction.label}</Button>}
       </Cluster>
     </Stack>
   </div>

@@ -18,6 +18,8 @@ export type NavAction = {
 export interface Props {
   items: NavItem[];
   cta?: NavAction;
+  /** Phone and e-mail of the topbar: on phones the topbar is hidden and they appear in the menu. */
+  contact?: { phone?: string; email?: string };
   label?: string;
   class?: string;
 }
@@ -25,6 +27,7 @@ export interface Props {
 const {
   items,
   cta,
+  contact,
   label = t.nav.label,
   class: className,
   ...restProps
@@ -99,6 +102,13 @@ function isActiveLink(href: string) {
         {cta.label}
       </Button>
     )}
+
+    {(contact?.phone || contact?.email) && (
+      <ul class="navbar__contact" aria-label={t.sections.contactBar}>
+        {contact.phone && <li><a class="navbar__contact-link" href={`tel:${contact.phone.replace(/[^\d+]/g, "")}`}>{contact.phone}</a></li>}
+        {contact.email && <li><a class="navbar__contact-link" href={`mailto:${contact.email}`}>{contact.email}</a></li>}
+      </ul>
+    )}
   </div>
 </nav>
 
@@ -141,8 +151,9 @@ function isActiveLink(href: string) {
       }
     });
 
+    // A link, or the empty part of the full-screen phone menu, closes it.
     menu.addEventListener("click", (event) => {
-      if (event.target instanceof Element && event.target.closest("a")) {
+      if (event.target === menu || (event.target instanceof Element && event.target.closest("a"))) {
         closeMenu();
       }
     });

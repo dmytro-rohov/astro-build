@@ -26,4 +26,18 @@
     border: var(--image-border);
     box-shadow: var(--image-shadow);
   }
+
+  // v3.2: CSS crops (object-fit: cover) keep the focal area; without one, a bit above the middle
+  // so heads are not cut off.
+  .image {
+    object-position: 50% 30%;
+  }
+
+  @each $y, $vy in (top: 15%, middle: 45%, bottom: 85%) {
+    @each $x, $vx in (left: 15%, center: 50%, right: 85%) {
+      .image--focus-#{$y}-#{$x} {
+        object-position: $vx $vy;
+      }
+    }
+  }
 }

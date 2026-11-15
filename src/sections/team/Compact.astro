@@ -20,7 +20,7 @@ const initials = (name: string) => name.split(/\s+/).map((part) => part[0]).slic
 <SectionShell id={section.id} type="team" variant="compact" tone={props.tone} spacing={props.spacing}>
   <Stack space="xl">
     <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
-    <ul class="s-people">
+    <ul class:list={["s-people", content.members.length <= 2 && "s-people--few"]}>
       {content.members.map((member) => {
         const photo = member.photo ? getAsset(member.photo) : undefined;
         return (

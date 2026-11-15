@@ -42,13 +42,27 @@ test.describe("mobile menu", () => {
     await expect(page.locator("#navbar-menu a").first()).toBeHidden();
   });
 
-  test("clicking outside closes it", async ({ page }) => {
+  test("clicking the empty part of the full-screen menu closes it", async ({ page }) => {
     const toggle = page.locator("[data-navbar-toggle]");
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
 
-    await page.locator("main h1").click();
+    // v3.2: the menu covers the screen under the header; below the links it closes on click.
+    const menu = page.locator("#navbar-menu");
+    const box = await menu.boundingBox();
+    await menu.click({ position: { x: 20, y: (box?.height ?? 400) - 20 } });
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  });
+
+  test("the menu covers the screen under the header and the page does not scroll", async ({ page }) => {
+    await page.locator("[data-navbar-toggle]").click();
+    const header = await page.locator(".site-header").boundingBox();
+    const viewport = page.viewportSize();
+    // After the slide-in animation the menu starts right under the header.
+    await expect.poll(async () => Math.round((await page.locator("#navbar-menu").boundingBox())?.y ?? 0)).toBe(Math.round((header?.y ?? 0) + (header?.height ?? 0)));
+    const menu = await page.locator("#navbar-menu").boundingBox();
+    expect(Math.round(menu?.width ?? 0)).toBe(viewport?.width);
+    expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).toBe("hidden");
   });
 });
 

@@ -6,7 +6,6 @@ import Stack from "@/components/layouts/Stack.astro";
 import Cluster from "@/components/layouts/Cluster.astro";
 import Tag from "@/components/ui/Tag.astro";
 import Button from "@/components/ui/Button.astro";
-import Link from "@/components/ui/Link.astro";
 import Img from "@/components/media/Img.astro";
 import { getAsset } from "@/site/assets";
 import type { SectionOf } from "@/site/types";
@@ -50,7 +49,7 @@ const layoutProps = image ? ({ ratio: "text-media", gap: "2xl", align: "center" 
       {hasActions && (
         <Cluster class="hero__actions" gap="md">
           {content.primaryAction && <Button href={content.primaryAction.href} size="lg">{content.primaryAction.label}</Button>}
-          {content.secondaryAction && <Link href={content.secondaryAction.href}>{content.secondaryAction.label}</Link>}
+          {content.secondaryAction && <Button href={content.secondaryAction.href} variant="ghost" size="lg">{content.secondaryAction.label}</Button>}
         </Cluster>
       )}
     </Stack>

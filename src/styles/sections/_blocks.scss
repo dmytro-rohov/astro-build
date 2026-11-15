@@ -42,7 +42,7 @@
   @include mq(lg) {
     .s-hero-panel {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      min-height: min(80vh, 48rem);
+      min-height: var(--hero-min-height);
     }
 
     .s-hero-panel__media {
@@ -322,7 +322,10 @@
 
   .s-people {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
+
+    // auto-fit + center: a few people sit in the middle, not in the left columns of a wide grid.
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 13rem));
+    justify-content: center;
     gap: var(--spacing-xl) var(--spacing-lg);
     margin: 0;
     padding: 0;
@@ -618,5 +621,45 @@
 
   .s-embed__frame--tall .s-embed__iframe {
     height: 42rem;
+  }
+}
+
+// v3.2: one or two people (team compact) — a horizontal card per person (photo next to the
+// name and role), centered, instead of two small portraits and an empty row.
+@layer widgets {
+  @include mq(md) {
+    .s-people--few {
+      grid-template-columns: repeat(auto-fit, minmax(0, 24rem));
+      gap: var(--spacing-xl);
+      text-align: start;
+    }
+
+    .s-people--few .s-people__item {
+      display: grid;
+      grid-template-columns: 8rem minmax(0, 1fr);
+      grid-template-rows: auto auto 1fr;
+      align-items: start;
+      column-gap: var(--spacing-lg);
+      padding: var(--spacing-lg);
+      background: var(--color-background-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-card);
+    }
+
+    .s-people--few .s-people__photo,
+    .s-people--few .s-people__initials {
+      grid-row: 1 / -1;
+      margin: 0;
+    }
+
+    .s-people--few .s-people__name {
+      align-self: end;
+      margin-block-start: var(--spacing-md);
+    }
+
+    .s-people--few :is(.s-people__name, .s-people__role) {
+      text-align: start;
+      margin-inline: 0;
+    }
   }
 }

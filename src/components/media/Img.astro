@@ -54,6 +54,13 @@ if (import.meta.env.DEV && kind === "content" && !alt) {
   throw new Error("[Img] Missing alt text for content image");
 }
 
+// Where CSS crops again (object-fit: cover in tall layouts), keep the same part of the picture: a
+// class per focal area (inline styles are blocked by the CSP). Without a focal point: a bit above
+// the middle, where faces usually are.
+const focusClass = focal
+  ? `image--focus-${focal.y < 34 ? "top" : focal.y > 66 ? "bottom" : "middle"}-${focal.x < 34 ? "left" : focal.x > 66 ? "right" : "center"}`
+  : undefined;
+
 const loading = priority === "high" ? "eager" : "lazy";
 const fetchpriority = priority === "high" ? "high" : "auto";
 ---
@@ -69,5 +76,5 @@ const fetchpriority = priority === "high" ? "high" : "auto";
   sizes={sizes}
   format={format}
   {...crop}
-  class:list={["image", className]}
+  class:list={["image", focusClass, className]}
 />

@@ -2,7 +2,6 @@
 /** Primary button + optional secondary link, as used by many sections. */
 import Cluster from "@/components/layouts/Cluster.astro";
 import Button from "@/components/ui/Button.astro";
-import Link from "@/components/ui/Link.astro";
 
 type Action = { label: string; href: string };
 
@@ -19,6 +18,6 @@ const { primary, secondary, align = "left", size = "lg" } = Astro.props;
 {(primary || secondary) && (
   <Cluster gap="md" justify={align === "center" ? "center" : "start"} class="s-actions">
     {primary && <Button href={primary.href} size={size}>{primary.label}</Button>}
-    {secondary && <Link href={secondary.href}>{secondary.label}</Link>}
+    {secondary && <Button href={secondary.href} variant="ghost" size={size}>{secondary.label}</Button>}
   </Cluster>
 )}

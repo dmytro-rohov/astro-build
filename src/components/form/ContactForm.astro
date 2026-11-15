@@ -73,10 +73,10 @@ const {
 } = Astro.props;
 
 const hasContactInfo = contactInfo.length > 0;
-const Layout = layout === "split" ? Split : Stack;
-const layoutProps = layout === "split"
-  ? ({ ratio: "sidebar", gap: "2xl", align: "start" } as const)
-  : ({ space: "xl" } as const);
+// v3.2: always two columns — text and contact details (sticky) next to the form, which gets the
+// wider column; "centered" only centers the heading on phones.
+const Layout = Split;
+const layoutProps = { ratio: "media-text", gap: "2xl", align: "start" } as const;
 const Heading = headingLevel;
 const SubHeading = headingLevel === "h1" ? "h2" : "h3";
 ---
@@ -91,7 +91,7 @@ const SubHeading = headingLevel === "h1" ? "h2" : "h3";
     className,
   ]}
 >
-  <Container size={layout === "split" ? "lg" : "sm"}>
+  <Container size="lg">
     <Layout {...layoutProps} class:list={[layout === "centered" && "contact-form-section--centered"]}>
       <Stack class="contact-form-section__content" space="lg">
         <Stack space="md">

@@ -2,7 +2,8 @@
 
 @layer widgets {
   .site-footer {
-    padding-block: var(--spacing-3xl);
+    // v3.2: room above, little below the last line.
+    padding-block: var(--spacing-3xl) var(--spacing-lg);
     color: var(--color-text-secondary);
     background: var(--color-background-secondary);
     border-block-start: 1px solid var(--color-border-default);
@@ -153,9 +154,27 @@
     line-height: var(--line-height-normal);
   }
 
+  // "Strona wykonana przez Mytko.dev" — the last, quietest line.
+  .site-footer__credit {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+  }
+
+  .site-footer__credit-link {
+    color: inherit;
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+    transition: color var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .site-footer__credit-link:hover {
+    color: var(--color-action-primary);
+  }
+
   @include mq(md) {
     .site-footer {
-      padding-block: var(--spacing-4xl);
+      padding-block: var(--spacing-4xl) var(--spacing-xl);
     }
 
     .site-footer__main {

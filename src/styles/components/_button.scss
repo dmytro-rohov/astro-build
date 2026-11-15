@@ -1,3 +1,5 @@
+@use "../abstracts/mixins" as *;
+
 @layer components {
   .button {
     display: inline-flex;
@@ -28,19 +30,19 @@
 
   .button--sm {
     min-height: 2.25rem;
-    padding-inline: var(--spacing-sm);
+    padding-inline: var(--spacing-md);
     font-size: var(--font-size-sm);
   }
 
   .button--md {
     min-height: 2.75rem;
-    padding-inline: var(--spacing-md);
+    padding-inline: var(--spacing-lg);
     font-size: var(--font-size-sm);
   }
 
   .button--lg {
     min-height: 3.25rem;
-    padding-inline: var(--spacing-lg);
+    padding-inline: var(--spacing-xl);
     font-size: var(--font-size-base);
   }
 
@@ -75,6 +77,12 @@
     background: var(--color-background-muted);
   }
 
+  // Secondary actions next to a primary button (hero, CTA, sections) are ghost buttons with
+  // the same height and side padding, not bare text links.
+  .button--ghost.button--lg {
+    padding-inline: var(--spacing-lg);
+  }
+
   .button--danger {
     color: var(--color-text-inverse);
     background: var(--color-feedback-error);
@@ -87,6 +95,13 @@
 
   .button:hover {
     transform: translateY(-1px);
+  }
+
+  // Phones: the actions of a section (primary + secondary) stack at full width.
+  @include mq-down(sm) {
+    :is(.hero__actions, .cta__actions, .s-actions) > .button {
+      flex: 1 1 100%;
+    }
   }
 
   .button:active {

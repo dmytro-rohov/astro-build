@@ -39,6 +39,12 @@ export default {
     step: "Krok {number}",
   },
 
+  slider: {
+    previous: "Poprzednie",
+    next: "Następne",
+    label: "Przewijana lista",
+  },
+
   common: {
     skipToContent: "Przejdź do treści",
     backToHome: "Wróć na stronę główną",
@@ -59,6 +65,8 @@ export default {
     privacyPolicy: "Polityka prywatności",
     cookieSettings: "Ustawienia cookies",
     copyright: "© {year} {siteName}. Wszelkie prawa zastrzeżone.",
+    madeBy: "Strona wykonana przez",
+    console: "Tę stronę zbudowało Mytko.dev — szybkie, dostępne strony dla firm i specjalistów. Chcesz taką? https://mytko.dev",
   },
 
   cookies: {

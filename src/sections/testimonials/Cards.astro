@@ -4,6 +4,7 @@ import SectionHeader from "@/sections/_shared/SectionHeader.astro";
 import Stars from "@/sections/testimonials/Stars.astro";
 import Stack from "@/components/layouts/Stack.astro";
 import Grid from "@/components/layouts/Grid.astro";
+import Slider from "@/components/widgets/Slider.astro";
 import Card from "@/components/ui/Card.astro";
 import Img from "@/components/media/Img.astro";
 import { getAsset } from "@/site/assets";
@@ -16,12 +17,15 @@ export interface Props {
 
 const { section, headingLevel } = Astro.props;
 const { content, props } = section;
+// More than 3 reviews: a slider instead of a long grid (v3.2).
+const List = content.items.length > 3 ? Slider : Grid;
+const listProps = content.items.length > 3 ? { label: content.title, class: "s-testimonials__slider" } : { as: "ul", columns: "3", gap: "lg", class: "s-testimonials__list" };
 ---
 
 <SectionShell id={section.id} type="testimonials" variant="cards" tone={props.tone} spacing={props.spacing}>
   <Stack space="xl">
     <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
-    <Grid as="ul" columns="3" gap="lg" class="s-testimonials__list">
+    <List {...listProps}>
       {content.items.map((item) => {
         const avatar = item.avatar ? getAsset(item.avatar) : undefined;
         return (
@@ -40,6 +44,6 @@ const { content, props } = section;
           </Card>
         );
       })}
-    </Grid>
+    </List>
   </Stack>
 </SectionShell>

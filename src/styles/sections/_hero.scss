@@ -5,6 +5,31 @@
     overflow: clip;
   }
 
+  // v3.2: the hero fills the first screen (minus the sticky header, measured by BaseLayout)
+  // and centers its content; the panel and cover variants set the same height themselves.
+  .s-hero {
+    --hero-min-height: calc(100svh - var(--header-offset, 4.5rem));
+  }
+
+  .s-hero:not(.s-hero--panel) {
+    display: grid;
+    align-content: center;
+    min-height: var(--hero-min-height);
+  }
+
+  // Split hero: the picture takes the height of the text block (not a fixed 4:3 box).
+  .hero--with-media .hero__media {
+    align-self: stretch;
+    display: flex;
+  }
+
+  .hero--with-media .hero__media .hero__image {
+    height: 100%;
+    min-height: 18rem;
+    max-height: calc(var(--hero-min-height) - var(--spacing-2xl));
+    aspect-ratio: auto;
+  }
+
   .hero__content {
     max-width: 42rem;
   }

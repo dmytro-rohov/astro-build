@@ -53,7 +53,7 @@ const { phone, email } = site.business;
         <Logo size="header" />
       </a>
 
-      <Navbar items={navItems} cta={cta} />
+      <Navbar items={navItems} cta={cta} contact={variant === "topbar" ? { phone, email } : undefined} />
     </div>
   </Container>
 </header>

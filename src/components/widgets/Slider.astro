@@ -1,0 +1,56 @@
+---
+/**
+ * Horizontal slider (v3.2), reusable: the slotted <li> items scroll sideways with snapping
+ * (swipe on phones), with previous/next buttons; 1 item per view on phones, 2 on tablets,
+ * 3 on desktops. Without JavaScript it is still a scrollable list.
+ *   <Slider label="Opinie"><li>…</li><li>…</li></Slider>
+ */
+import { t } from "@/i18n";
+
+export interface Props {
+  label?: string;
+  class?: string;
+}
+
+const { label = t.slider.label, class: className } = Astro.props;
+---
+
+<div class:list={["slider", className]} data-slider role="region" aria-roledescription="carousel" aria-label={label}>
+  <ul class="slider__track" data-slider-track tabindex="0">
+    <slot />
+  </ul>
+  <div class="slider__controls">
+    <button type="button" class="slider__button" data-slider-prev aria-label={t.slider.previous}>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="m14.5 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    </button>
+    <button type="button" class="slider__button" data-slider-next aria-label={t.slider.next}>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="m9.5 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  for (const slider of document.querySelectorAll<HTMLElement>("[data-slider]")) {
+    const track = slider.querySelector<HTMLElement>("[data-slider-track]");
+    const previous = slider.querySelector<HTMLButtonElement>("[data-slider-prev]");
+    const next = slider.querySelector<HTMLButtonElement>("[data-slider-next]");
+    if (!track || !previous || !next) continue;
+
+    // One step = one card plus the gap.
+    const step = () => {
+      const item = track.querySelector<HTMLElement>(":scope > *");
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      return item ? item.offsetWidth + gap : track.clientWidth;
+    };
+    const update = () => {
+      previous.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+    };
+
+    previous.addEventListener("click", () => track.scrollBy({ left: -step() }));
+    next.addEventListener("click", () => track.scrollBy({ left: step() }));
+    track.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update, { passive: true });
+    update();
+  }
+</script>
