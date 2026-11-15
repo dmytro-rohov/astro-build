@@ -63,7 +63,8 @@ test.describe(`site ${path.basename(siteDir)}`, () => {
             }
 
             for (const element of container.querySelectorAll<HTMLElement>("*")) {
-              if (element.closest("[aria-hidden='true'], .visually-hidden, svg")) continue;
+              // Items of a slider scroll sideways inside its track by design (the track itself must fit).
+              if (element.closest("[aria-hidden='true'], .visually-hidden, svg, [data-slider-track] > *")) continue;
 
               const rect = element.getBoundingClientRect();
               if (!rect.width || !rect.height) continue;
