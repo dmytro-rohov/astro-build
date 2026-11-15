@@ -12,12 +12,13 @@
     --container-max: 56rem;
   }
 
+  // Wide content aims at 1224px (76.5rem) and stays fluid below it: width is min(), never fixed.
   .container--lg {
-    --container-max: 70rem;
+    --container-max: 76.5rem;
   }
 
   .container--xl {
-    --container-max: 80rem;
+    --container-max: 76.5rem;
   }
 
   .container--full {

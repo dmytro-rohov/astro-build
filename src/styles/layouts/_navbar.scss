@@ -61,27 +61,28 @@
     transform: translateY(-0.3rem) rotate(-45deg);
   }
 
+  // Phones (v3.2): the menu covers the whole screen under the header and slides in smoothly;
+  // the header (with the close button) stays on top, the page behind does not scroll.
   .navbar__menu {
-    position: absolute;
-    inset-block-start: calc(100% + var(--spacing-sm));
-    inset-inline-end: 0;
-    display: grid;
-    gap: var(--spacing-md);
-    min-width: min(18rem, calc(100vw - var(--spacing-md) * 2));
-    padding: var(--spacing-md);
-    background: var(--color-background-surface);
-    border: 1px solid var(--color-border-default);
-    border-radius: var(--radius-card);
-    box-shadow: var(--elevation-dropdown);
+    position: fixed;
+    inset: var(--header-offset, 4.5rem) 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+    min-width: 0;
+    padding: var(--spacing-xl) var(--spacing-md) calc(var(--spacing-2xl) + env(safe-area-inset-bottom));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--color-background-primary);
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-0.25rem);
+    transform: translateY(-0.75rem);
 
     // Closing: fade out first, then hide (visibility switches after the fade).
     transition:
-      opacity var(--motion-duration-fast) var(--motion-easing-standard),
-      transform var(--motion-duration-fast) var(--motion-easing-standard),
-      visibility 0s linear var(--motion-duration-fast);
+      opacity var(--motion-duration-slow) var(--motion-easing-emphasized),
+      transform var(--motion-duration-slow) var(--motion-easing-emphasized),
+      visibility 0s linear var(--motion-duration-slow);
   }
 
   .navbar[data-open] .navbar__menu {
@@ -93,6 +94,51 @@
     transition-delay: 0s;
   }
 
+  // Links follow one after another when the menu opens.
+  .navbar__menu .navbar__item {
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition:
+      opacity var(--motion-duration-normal) var(--motion-easing-emphasized),
+      transform var(--motion-duration-normal) var(--motion-easing-emphasized);
+  }
+
+  .navbar[data-open] .navbar__menu .navbar__item {
+    opacity: 1;
+    transform: none;
+  }
+
+  @for $i from 1 through 8 {
+    .navbar[data-open] .navbar__item:nth-child(#{$i}) {
+      transition-delay: #{40ms + $i * 35ms};
+    }
+  }
+
+  @include mq-down(md) {
+    html:has(.navbar[data-open]) {
+      overflow: hidden;
+    }
+
+    .navbar__menu .navbar__link {
+      min-height: 3.5rem;
+      padding-inline: var(--spacing-md);
+      font-size: var(--font-size-xl);
+    }
+
+    .navbar__menu .navbar__cta {
+      min-height: 3.25rem;
+      font-size: var(--font-size-base);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .navbar__menu,
+    .navbar__menu .navbar__item {
+      transform: none;
+      transition-duration: 0s;
+    }
+  }
+
   // Without JavaScript the toggle cannot work: show the links inline instead.
   @media (scripting: none) {
     .navbar__toggle {
@@ -101,6 +147,7 @@
 
     .navbar__menu {
       position: static;
+      inset: auto;
       min-width: 0;
       padding: 0;
       background: transparent;
@@ -108,6 +155,11 @@
       box-shadow: none;
       opacity: 1;
       visibility: visible;
+      transform: none;
+    }
+
+    .navbar__menu .navbar__item {
+      opacity: 1;
       transform: none;
     }
 
@@ -136,6 +188,14 @@
     min-height: 2.5rem;
     padding-inline: var(--spacing-sm);
     border-radius: var(--radius-control);
+    transition:
+      color var(--motion-duration-fast) var(--motion-easing-standard),
+      background-color var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  // Menu links are not running text: no underline (the "links in lists" rule is for content).
+  .navbar__list .navbar__link {
+    text-decoration: none;
   }
 
   .navbar__link:hover,
@@ -159,12 +219,14 @@
 
     .navbar__menu {
       position: static;
+      inset: auto;
       display: flex;
-      flex-wrap: wrap;
+      flex-flow: row wrap;
       align-items: center;
       justify-content: flex-end;
       gap: var(--spacing-sm) var(--spacing-md);
       min-width: 0;
+      overflow: visible;
       padding: 0;
       background: transparent;
       border: 0;
@@ -173,6 +235,13 @@
       opacity: 1;
       visibility: visible;
       transform: none;
+      transition: none;
+    }
+
+    .navbar__menu .navbar__item {
+      opacity: 1;
+      transform: none;
+      transition: none;
     }
 
     .navbar__list {

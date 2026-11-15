@@ -22,7 +22,7 @@ const { content, props } = section;
       {content.items.map((item) => (
         <div class="s-stats__item">
           <dt class="s-stats__label">{item.label}</dt>
-          <dd class="s-stats__value">{item.value}</dd>
+          <dd class="s-stats__value" data-counter>{item.value}</dd>
           {variant === "cards" && item.description && <dd class="s-stats__description">{item.description}</dd>}
         </div>
       ))}

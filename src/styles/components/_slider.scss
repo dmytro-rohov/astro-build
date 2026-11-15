@@ -1,0 +1,89 @@
+@use "../abstracts/mixins" as *;
+
+// Horizontal slider (components/widgets/Slider.astro), v3.2.
+@layer components {
+  .slider {
+    display: grid;
+    gap: var(--spacing-lg);
+  }
+
+  .slider__track {
+    --slider-gap: var(--spacing-lg);
+
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(88%, 24rem);
+    gap: var(--slider-gap);
+    margin: 0;
+    padding: var(--spacing-xs) 0 var(--spacing-sm);
+    list-style: none;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+
+  .slider__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .slider__track > * {
+    scroll-snap-align: start;
+  }
+
+  .slider__track:focus-visible {
+    outline: 2px solid var(--color-focus-ring, var(--color-action-primary));
+    outline-offset: 4px;
+  }
+
+  @include mq(md) {
+    .slider__track {
+      grid-auto-columns: calc((100% - var(--slider-gap)) / 2);
+    }
+  }
+
+  @include mq(lg) {
+    .slider__track {
+      grid-auto-columns: calc((100% - var(--slider-gap) * 2) / 3);
+    }
+  }
+
+  .slider__controls {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-sm);
+  }
+
+  .slider__button {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: var(--color-text-primary);
+    background: var(--color-background-surface, var(--color-background-primary));
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition:
+      background-color var(--motion-duration-fast) var(--motion-easing-standard),
+      border-color var(--motion-duration-fast) var(--motion-easing-standard),
+      opacity var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .slider__button:hover:not(:disabled) {
+    background: var(--color-background-muted);
+    border-color: var(--color-border-strong);
+  }
+
+  .slider__button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .slider__track {
+      scroll-behavior: auto;
+    }
+  }
+}

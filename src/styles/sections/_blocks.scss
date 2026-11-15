@@ -42,7 +42,7 @@
   @include mq(lg) {
     .s-hero-panel {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      min-height: min(80vh, 48rem);
+      min-height: var(--hero-min-height);
     }
 
     .s-hero-panel__media {

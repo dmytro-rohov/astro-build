@@ -2,6 +2,7 @@
 import Header from "@/layouts/Header.astro";
 import Footer from "@/layouts/Footer.astro";
 import CookieConsent from "@/components/CookieConsent.astro";
+import Counters from "@/components/widgets/Counters.astro";
 import { siteConfig } from "@/config/site";
 import { isNoindexPath } from "@/config/indexing";
 import { dir, ogLocale, pageTitle, t } from "@/i18n";
@@ -181,5 +182,22 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
     </main>
     {showFooter && <Footer />}
     <CookieConsent />
+    <Counters />
+    <span hidden data-mytko-console={t.footer.console}></span>
+    <script>
+      // The sticky header's real height: the hero fills the rest of the first screen (--header-offset)
+      // and the phone menu opens right under the header.
+      // A constructed style sheet, not a style="" attribute: inline styles are blocked by the CSP.
+      const header = document.querySelector(".site-header");
+      const sheet = new CSSStyleSheet();
+      document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+      const setOffset = () => sheet.replaceSync(`:root { --header-offset: ${header instanceof HTMLElement ? header.offsetHeight : 0}px; }`);
+      setOffset();
+      window.addEventListener("resize", setOffset, { passive: true });
+
+      // Signature for the curious who open the console (text in the site's language).
+      const message = document.querySelector("[data-mytko-console]")?.getAttribute("data-mytko-console");
+      if (message) console.info(`%cMytko.dev%c ${message}`, "padding:2px 8px;border-radius:4px;background:#0b110d;color:#b7e34d;font-weight:700", "color:inherit");
+    </script>
   </body>
 </html>

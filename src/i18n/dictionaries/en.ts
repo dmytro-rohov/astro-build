@@ -45,6 +45,12 @@ export const en = {
     step: "Step {number}",
   },
 
+  slider: {
+    previous: "Previous",
+    next: "Next",
+    label: "Scrollable list",
+  },
+
   common: {
     skipToContent: "Skip to content",
     backToHome: "Back to home page",
@@ -65,6 +71,8 @@ export const en = {
     privacyPolicy: "Privacy policy",
     cookieSettings: "Cookie settings",
     copyright: "© {year} {siteName}. All rights reserved.",
+    madeBy: "Website by",
+    console: "This site was built by Mytko.dev — fast, accessible websites for businesses and specialists. Want one? https://mytko.dev",
   },
 
   cookies: {

@@ -141,8 +141,9 @@ function isActiveLink(href: string) {
       }
     });
 
+    // A link, or the empty part of the full-screen phone menu, closes it.
     menu.addEventListener("click", (event) => {
-      if (event.target instanceof Element && event.target.closest("a")) {
+      if (event.target === menu || (event.target instanceof Element && event.target.closest("a"))) {
         closeMenu();
       }
     });

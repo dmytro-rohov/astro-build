@@ -39,6 +39,12 @@ export default {
     step: "Крок {number}",
   },
 
+  slider: {
+    previous: "Попередні",
+    next: "Наступні",
+    label: "Гортальний список",
+  },
+
   common: {
     skipToContent: "Перейти до вмісту",
     backToHome: "Повернутися на головну",
@@ -59,6 +65,8 @@ export default {
     privacyPolicy: "Політика конфіденційності",
     cookieSettings: "Налаштування cookie",
     copyright: "© {year} {siteName}. Усі права захищено.",
+    madeBy: "Сайт створено",
+    console: "Цей сайт створила команда Mytko.dev — швидкі, доступні сайти для бізнесу й фахівців. Хочете такий? https://mytko.dev",
   },
 
   cookies: {

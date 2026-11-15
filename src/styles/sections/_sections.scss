@@ -19,7 +19,7 @@
   }
 
   .s-hero--cover-image.s-hero-cover--with-image {
-    min-height: min(80vh, 46rem);
+    min-height: var(--hero-min-height);
     display: grid;
     align-items: center;
   }
@@ -63,6 +63,26 @@
     width: 100%;
   }
 
+  // v3.2: next to text the picture is as tall as the text block (cropped, focal point kept),
+  // never a tall portrait that pushes the section past one screen.
+  @include mq(md) {
+    .s-about__layout--with-image {
+      align-items: stretch;
+    }
+
+    .s-about__layout--with-image .s-about__media {
+      display: flex;
+    }
+
+    .s-about__layout--with-image .s-about__image {
+      height: 100%;
+      min-height: 20rem;
+      max-height: 80svh;
+      aspect-ratio: auto;
+      object-fit: cover;
+    }
+  }
+
   @include mq(md) {
     .s-about__layout--with-image {
       grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
@@ -94,6 +114,11 @@
     display: flex;
     flex-direction: column-reverse;
     gap: var(--spacing-xs);
+  }
+
+  // Count-up numbers (components/widgets/Counters.astro): digits of equal width, no jumping.
+  [data-counter] {
+    font-variant-numeric: tabular-nums;
   }
 
   .s-highlights__value {

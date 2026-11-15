@@ -853,8 +853,22 @@ debug mode, immutable font caching). CI runs it on every pull request.
 
 ## Version
 
-Current version: **v3.1** (`3.1.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
+Current version: **v3.2** (`3.2.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
 starter is kept on the `v2` branch / tag `v2.0.0`.
+
+v3.2 (design review of the first generated sites):
+
+- wide content aims at 1224px (`container--lg`/`--xl` = 76.5rem, fluid `min()`), lower section
+  rhythm (80/96px) so a section usually fits one screen
+- the hero fills the first screen (`100svh` minus the sticky header, measured at runtime);
+  pictures next to text take the text block's height (hero split, about)
+- calmer motion (240/320/480ms), wider button paddings, secondary actions are ghost buttons,
+  actions stack at full width on phones
+- reusable widgets: `Counters` (count-up for `[data-counter]`: stats and highlights) and
+  `Slider` (testimonials with more than 3 items)
+- phone menu: full screen under the header, smooth open/close, staggered links, no page scroll
+- wider contact form, smaller footer bottom padding, "Strona wykonana przez Mytko.dev" in the
+  footer and a short signature in the browser console (pl/uk/en)
 
 v3.1 adds:
 

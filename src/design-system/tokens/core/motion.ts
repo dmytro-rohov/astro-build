@@ -1,9 +1,10 @@
 export const motion = {
   duration: {
     instant: "0ms",
-    fast: "150ms",
-    normal: "250ms",
-    slow: "400ms",
+    // Hover and focus feedback: unhurried enough to read as smooth, not nervous (v3.2).
+    fast: "240ms",
+    normal: "320ms",
+    slow: "480ms",
   },
 
   easing: {
