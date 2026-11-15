@@ -1,6 +1,16 @@
+@use "../../abstracts/mixins" as *;
+
 @layer widgets {
   .contact-form-section__content {
     max-width: 34rem;
+  }
+
+  // The details stay in view next to a long form.
+  @include mq(md) {
+    .contact-form-section__content {
+      position: sticky;
+      inset-block-start: calc(var(--header-offset, 4.5rem) + var(--spacing-lg));
+    }
   }
 
   .contact-form-section__eyebrow {
@@ -89,10 +99,14 @@
   }
 
   .contact-form__status {
-    min-height: 1.5em;
     margin: 0;
     font-size: var(--font-size-sm);
     line-height: var(--line-height-normal);
+  }
+
+  // Nothing to say yet: no empty gap above the send button.
+  .contact-form__status:empty {
+    display: none;
   }
 
   .contact-form__status[data-state="pending"] {

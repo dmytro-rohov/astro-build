@@ -81,4 +81,11 @@
     -webkit-line-clamp: 2;
     line-clamp: 2;
   }
+
+  // v3.2: on phones the topbar's phone and e-mail move into the menu.
+  @include mq-down(md) {
+    .site-header__topbar {
+      display: none;
+    }
+  }
 }
