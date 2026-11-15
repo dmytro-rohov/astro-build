@@ -16,6 +16,11 @@ export interface ImgProps {
   aspect?: readonly [number, number];
   /** Focal point kept visible when cropping, in % (default 50/50). */
   focal?: { x: number; y: number };
+  /**
+   * Encoder quality (1–100). Default 72: photos stay sharp at ~100–150 KB per size (v3.2.1);
+   * pictures under a strong overlay can go lower.
+   */
+  quality?: number;
   class?: string;
 }
 
@@ -29,6 +34,7 @@ const {
   format = "webp",
   aspect,
   focal,
+  quality = 72,
   class: className,
 } = Astro.props;
 
@@ -75,6 +81,7 @@ const fetchpriority = priority === "high" ? "high" : "auto";
   widths={usableWidths}
   sizes={sizes}
   format={format}
+  quality={quality}
   {...crop}
   class:list={["image", focusClass, className]}
 />

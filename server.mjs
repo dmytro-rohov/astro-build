@@ -12,6 +12,7 @@ import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import zlib from "node:zlib";
 
 process.env.ASTRO_NODE_AUTOSTART = "disabled";
 
@@ -66,6 +67,9 @@ const CONTENT_TYPES = {
   ".woff2": "font/woff2",
 };
 
+/** Text files are sent gzip-compressed when the client accepts it (like the Caddy sites). */
+const COMPRESSIBLE = new Set([".html", ".css", ".js", ".json", ".webmanifest", ".xml", ".txt", ".svg"]);
+
 /** Static mode (no Astro server): file, then <path>/index.html, else 404.html. */
 function staticHandler(root) {
   const resolve = (pathname) => {
@@ -104,13 +108,20 @@ function staticHandler(root) {
     const status = file ? 200 : 404;
     file ??= path.join(root, "404.html");
 
-    res.writeHead(status, { "Content-Type": CONTENT_TYPES[path.extname(file)] ?? "application/octet-stream" });
+    const gzip = COMPRESSIBLE.has(path.extname(file)) && /\bgzip\b/.test(req.headers["accept-encoding"] ?? "");
+    res.writeHead(status, {
+      "Content-Type": CONTENT_TYPES[path.extname(file)] ?? "application/octet-stream",
+      Vary: "Accept-Encoding",
+      ...(gzip && { "Content-Encoding": "gzip" }),
+    });
     if (req.method === "HEAD") {
       res.end();
       return;
     }
 
-    fs.createReadStream(file).pipe(res);
+    const stream = fs.createReadStream(file);
+    if (gzip) stream.pipe(zlib.createGzip()).pipe(res);
+    else stream.pipe(res);
   };
 }
 
