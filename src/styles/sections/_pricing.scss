@@ -85,8 +85,7 @@
   }
 
   .s-plan__badge {
-    align-self: flex-start;
-    justify-self: start;
+    place-self: start;
     padding: 0.125rem var(--spacing-sm);
     color: var(--color-action-primary-text);
     background: var(--color-action-primary);
