@@ -492,6 +492,7 @@
 
   .s-plan-table__actions .button {
     width: 100%;
+    padding-inline: var(--spacing-sm);
   }
 
   .s-plan-table__plan--highlighted {
@@ -507,6 +508,27 @@
   .s-plan-table__actions > .s-plan-table__plan--highlighted {
     border-end-start-radius: var(--radius-card);
     border-end-end-radius: var(--radius-card);
+  }
+
+  // Tablets: a narrower label column and smaller type, so four plans fit their columns.
+  @include mq-down(lg) {
+    .s-plan-table__corner,
+    .s-plan-table .s-plan-table__label {
+      width: 28%;
+    }
+
+    .s-plan-table th,
+    .s-plan-table td {
+      padding-inline: var(--spacing-sm);
+    }
+
+    .s-plan-table__name {
+      font-size: var(--font-size-lg);
+    }
+
+    .s-plan-table__amount {
+      font-size: var(--font-size-2xl);
+    }
   }
 
   // Phones: every feature is a line of its own, its marks below it in the plans' columns.
@@ -599,6 +621,7 @@
     }
 
     .s-plan-table--count-4 .s-plan-table__actions .button {
+      padding-inline: 0;
       font-size: var(--font-size-xs);
     }
   }
