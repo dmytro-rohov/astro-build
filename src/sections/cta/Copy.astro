@@ -1,0 +1,40 @@
+---
+/**
+ * The text of a CTA as the v3.3 variants arrange it: eyebrow, title, optional description
+ * and the actions. `secondary` picks the second button's weight (an outline on brand-colored
+ * cards, where a ghost button would read as plain text); `arrow` puts a knob at the end of the
+ * main button: a phone or envelope for tel: / mailto: links, else an arrow.
+ */
+import Cluster from "@/components/layouts/Cluster.astro";
+import Tag from "@/components/ui/Tag.astro";
+import Button from "@/components/ui/Button.astro";
+import Icon from "@/components/media/Icon.astro";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  content: SectionOf<"cta">["content"];
+  headingLevel: "h1" | "h2";
+  align?: "start" | "center";
+  secondary?: "ghost" | "secondary";
+  arrow?: boolean;
+  class?: string;
+}
+
+const { content, headingLevel, align = "start", secondary = "ghost", arrow = false, class: className } = Astro.props;
+const Heading = headingLevel;
+const href = content.primaryAction.href;
+const knob = href.startsWith("tel:") ? "phone" : href.startsWith("mailto:") ? "mail" : "arrow-right";
+---
+
+<div class:list={["s-cta-copy", `s-cta-copy--${align}`, className]}>
+  {content.eyebrow && <Tag variant="primary" class="s-cta-copy__eyebrow">{content.eyebrow}</Tag>}
+  <Heading class="s-cta-copy__title">{content.title}</Heading>
+  {content.description && <p class="s-cta-copy__description">{content.description}</p>}
+  <Cluster gap="md" justify={align === "center" ? "center" : "start"} class="s-actions s-cta-copy__actions">
+    <Button href={content.primaryAction.href} size="lg" class={arrow ? "s-cta-copy__arrowed" : undefined}>
+      {content.primaryAction.label}
+      {arrow && <span class="s-cta-copy__knob"><Icon name={knob} size="1rem" /></span>}
+    </Button>
+    {content.secondaryAction && <Button href={content.secondaryAction.href} variant={secondary} size="lg">{content.secondaryAction.label}</Button>}
+  </Cluster>
+</div>

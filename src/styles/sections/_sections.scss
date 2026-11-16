@@ -379,19 +379,6 @@
     font-size: var(--font-size-lg);
   }
 
-  // ---------- cta: banner ----------
-  .s-cta-banner {
-    display: grid;
-    gap: var(--spacing-lg);
-    align-items: center;
-  }
-
-  @include mq(md) {
-    .s-cta-banner {
-      grid-template-columns: minmax(0, 1fr) auto;
-    }
-  }
-
   // ---------- hours + location ----------
   .s-hours-location__cards,
   .s-hours-location__band {

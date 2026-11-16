@@ -1,0 +1,32 @@
+---
+/**
+ * Brand-colored card: the text and two buttons on the left, concentric circles growing out of
+ * the right edge (on phones out of the lower corner, under the buttons).
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import Copy from "@/sections/cta/Copy.astro";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"cta", "rings">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+---
+
+<SectionShell id={section.id} type="cta" variant="rings" tone={props.tone} spacing={props.spacing} defaultSpacing="md">
+  <div class="s-cta-rings">
+    <Copy content={content} headingLevel={headingLevel} secondary="secondary" arrow class="s-cta-rings__copy" />
+    <span class="s-cta-rings__deco" aria-hidden="true">
+      <span class="s-cta-rings__ring">
+        <span class="s-cta-rings__ring">
+          <span class="s-cta-rings__ring">
+            <span class="s-cta-rings__ring"></span>
+          </span>
+        </span>
+      </span>
+    </span>
+  </div>
+</SectionShell>

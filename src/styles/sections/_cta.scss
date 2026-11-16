@@ -1,3 +1,32 @@
+// Section type cta: boxed and banner (v2, reworked in v3.3) and the v3.3 variants rings,
+// gradient-cards, faces and band-card, which share the text block of Copy.astro (.s-cta-copy).
+@use "../abstracts/mixins" as *;
+
+// A surface in one color with one ink (a brand card, a white card on the brand color): the
+// pair is a palette's accent and its button text, checked ≥ 4.5:1 like an accent section. The
+// tokens inside follow, so the eyebrow, buttons and focus rings turn into the ink.
+@mixin on-color($background, $ink) {
+  --color-text-primary: #{$ink};
+  --color-text-secondary: #{$ink};
+  --color-border-default: color-mix(in srgb, #{$ink} 30%, transparent);
+  --color-action-primary: #{$ink};
+  --color-action-primary-hover: color-mix(in srgb, #{$ink} 88%, #{$background});
+  --color-action-primary-text: #{$background};
+  --color-action-secondary: transparent;
+  --color-action-secondary-hover: color-mix(in srgb, #{$ink} 12%, transparent);
+  --color-action-secondary-text: #{$ink};
+  --color-background-muted: color-mix(in srgb, #{$ink} 12%, #{$background});
+  --color-focus-ring: #{$ink};
+
+  color: #{$ink};
+
+  // A tint of the ink under small text would cost contrast: outline only (as in accent sections).
+  .tag--primary {
+    background: transparent;
+    border-color: color-mix(in srgb, #{$ink} 45%, transparent);
+  }
+}
+
 @layer widgets {
   .cta {
     position: relative;
@@ -7,18 +36,36 @@
     position: relative;
   }
 
+  // v3.3: a glow of the brand color from the top edge over a fine dot grid that fades out
+  // toward the bottom, behind the centered text.
   .cta__box--boxed {
-    padding: var(--spacing-2xl);
+    --box-glow: color-mix(in srgb, var(--color-action-primary) 18%, transparent);
+
+    isolation: isolate;
+    overflow: clip;
+    padding: var(--spacing-2xl) var(--spacing-lg);
     background:
-      radial-gradient(
-        circle at top left,
-        color-mix(in srgb, var(--color-action-primary) 16%, transparent),
-        transparent 22rem
-      ),
+      radial-gradient(ellipse 70% 60% at 50% 0, var(--box-glow), transparent),
       var(--color-background-surface);
     border: 1px solid var(--color-border-default);
-    border-radius: var(--radius-2xl);
+    border-radius: calc(var(--radius-card) * 1.5);
     box-shadow: var(--elevation-card);
+  }
+
+  .cta__box--boxed::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background-image: radial-gradient(color-mix(in srgb, var(--color-text-primary) 22%, transparent) 1px, transparent 1.5px);
+    background-size: 1.25rem 1.25rem;
+    mask-image: radial-gradient(ellipse 80% 90% at 50% 0, #000, transparent);
+  }
+
+  @include mq(md) {
+    .cta__box--boxed {
+      padding: var(--spacing-3xl) var(--spacing-2xl);
+    }
   }
 
   .cta__content {
@@ -60,14 +107,645 @@
   }
 
   .cta--tone-inverse .cta__box--boxed {
+    --box-glow: color-mix(in srgb, var(--color-action-primary) 26%, transparent);
+
     background:
-      radial-gradient(
-        circle at top left,
-        color-mix(in srgb, var(--color-action-primary) 22%, transparent),
-        transparent 22rem
-      ),
+      radial-gradient(ellipse 70% 60% at 50% 0, var(--box-glow), transparent),
       color-mix(in srgb, var(--color-background-primary) 92%, var(--color-text-primary));
-    border-color: var(--color-border-default);
   }
 
+  // ---------- banner ----------
+  // An edge-to-edge band: the text behind a brand bar, the actions stacked to its right from lg,
+  // past a hairline.
+  .s-cta-banner {
+    display: grid;
+    gap: var(--spacing-xl);
+    align-items: center;
+  }
+
+  .s-cta-banner__header {
+    max-width: 44rem;
+    padding-inline-start: var(--spacing-lg);
+    border-inline-start: 0.25rem solid var(--color-action-primary);
+  }
+
+  .s-cta-banner__header .s-header__title {
+    font-size: clamp(var(--font-size-2xl), 3.2vw, var(--font-size-4xl));
+    line-height: var(--line-height-tight);
+    text-wrap: balance;
+  }
+
+  @include mq(lg) {
+    .s-cta-banner {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--spacing-3xl);
+    }
+
+    // The two buttons one above the other, equally wide.
+    .s-cta-banner__actions {
+      display: flex;
+      align-items: center;
+      align-self: stretch;
+      max-width: 24rem;
+      padding-inline-start: var(--spacing-3xl);
+      border-inline-start: 1px solid var(--color-border-default);
+    }
+
+    .s-cta-banner__actions .s-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  // ---------- shared (v3.3) ----------
+  // The brand pair of the section's palette. In accent sections it is already swapped (the
+  // accent palette's action color is the ink), so a brand card there turns into the ink (white
+  // on most accents) with brand-colored text, and the light cards ("paper") do the same.
+  .s-cta {
+    --cta-brand: var(--color-action-primary);
+    --cta-ink: var(--color-action-primary-text);
+  }
+
+  .s-cta-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    max-width: 40rem;
+  }
+
+  .s-cta-copy--center {
+    align-items: center;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .s-cta-copy__title {
+    font-size: clamp(var(--font-size-3xl), 4vw, var(--font-size-5xl));
+    line-height: var(--line-height-tight);
+    text-wrap: balance;
+    hyphens: auto;
+  }
+
+  .s-cta-copy__description {
+    max-width: 36rem;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .s-cta-copy__actions {
+    align-self: stretch;
+    margin-block-start: var(--spacing-sm);
+  }
+
+  // The knob at the end of the main button: the button's colors swapped.
+  .s-cta-copy__arrowed {
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding-inline-end: 0.375rem;
+  }
+
+  .s-cta-copy__knob {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--color-action-primary);
+    background: var(--color-action-primary-text);
+    border-radius: var(--radius-button);
+  }
+
+  .s-cta-copy__knob svg {
+    transition: translate var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .s-cta-copy__arrowed:hover .s-cta-copy__knob svg {
+    translate: 0.15em 0;
+  }
+
+  // ---------- rings ----------
+  // A brand card; concentric circles (nested, each a white veil that adds up toward a light
+  // middle) grow out of its right edge, on phones out of the lower corner under the buttons.
+  // On the white card of an accent section the veils are the brand color instead.
+  .s-cta-rings {
+    @include on-color(var(--cta-brand), var(--cta-ink));
+
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    padding: var(--spacing-2xl) var(--spacing-lg) 11rem;
+    background: var(--cta-brand);
+    border-radius: calc(var(--radius-card) * 1.5);
+    box-shadow: 0 2rem 4rem -2.5rem color-mix(in srgb, var(--cta-brand) 80%, transparent);
+  }
+
+  .s-cta-rings__copy .s-cta-copy__title {
+    font-size: clamp(var(--font-size-3xl), 4vw, var(--font-size-5xl));
+  }
+
+  .s-cta-rings__deco {
+    position: absolute;
+    z-index: -1;
+    inset-block-end: -9rem;
+    inset-inline-end: -7rem;
+    width: 20rem;
+    aspect-ratio: 1;
+  }
+
+  .s-cta-rings__ring {
+    position: absolute;
+    inset: 0;
+    background: rgb(255 255 255 / 16%);
+    border-radius: 50%;
+    box-shadow: 0 0 2.5rem -0.5rem color-mix(in srgb, var(--cta-brand) 60%, rgb(0 0 0 / 40%));
+  }
+
+  .s-cta-rings__ring .s-cta-rings__ring {
+    inset: 12%;
+  }
+
+  .section--tone-accent .s-cta-rings__ring {
+    background: color-mix(in srgb, var(--cta-ink) 16%, transparent);
+  }
+
+  @include mq(md) {
+    .s-cta-rings {
+      display: flex;
+      align-items: center;
+      min-height: 22rem;
+      padding: var(--spacing-3xl) var(--spacing-2xl);
+    }
+
+    .s-cta-rings__copy {
+      max-width: min(36rem, 62%);
+    }
+
+    .s-cta-rings__deco {
+      inset-block: 50% auto;
+      inset-inline-end: -14rem;
+      width: 36rem;
+      translate: 0 -50%;
+    }
+  }
+
+  @include mq(lg) {
+    .s-cta-rings {
+      padding-inline: var(--spacing-3xl);
+    }
+
+    .s-cta-rings__deco {
+      inset-inline-end: -10rem;
+      width: 40rem;
+    }
+  }
+
+  // ---------- gradient cards ----------
+  // A band from the brand color to a hue-turned version of it (lightness kept, so the text keeps
+  // its contrast) under fine wave lines that fade out behind the text. Up to three facts on light
+  // cards float on its right side, starting above the band's top edge; on phones they follow
+  // the text.
+  .s-cta--gradient-cards {
+    --band: var(--cta-brand);
+    --band-ink: var(--cta-ink);
+    --paper: var(--color-background-surface);
+    --paper-ink: var(--color-text-primary);
+    --paper-text: var(--color-text-secondary);
+    --paper-accent: var(--color-action-primary);
+  }
+
+  // Accent sections: the band keeps the section's brand color (set off by a hairline), the
+  // cards are the ink.
+  .s-cta--gradient-cards.section--tone-accent {
+    --band: var(--cta-ink);
+    --band-ink: var(--cta-brand);
+    --paper: var(--cta-brand);
+    --paper-ink: var(--cta-ink);
+    --paper-text: var(--cta-ink);
+    --paper-accent: var(--cta-ink);
+  }
+
+  .s-cta--gradient-cards.section--tone-accent .s-cta-gradient {
+    border: 1px solid color-mix(in srgb, var(--band-ink) 30%, transparent);
+  }
+
+  .s-cta-gradient {
+    @include on-color(var(--band), var(--band-ink));
+
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    gap: var(--spacing-2xl);
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    background: linear-gradient(
+      160deg,
+      var(--band) 35%,
+      oklch(from var(--band) calc(l + 0.04) c calc(h - 30))
+    );
+    border-radius: calc(var(--radius-card) * 1.5);
+    box-shadow: 0 2rem 4rem -2.5rem color-mix(in srgb, var(--band) 80%, transparent);
+  }
+
+  .s-cta-gradient__pattern {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    fill: none;
+    stroke: color-mix(in srgb, var(--band-ink) 30%, transparent);
+    stroke-width: 1;
+    mask-image: linear-gradient(to bottom, transparent 45%, #000);
+  }
+
+  .s-cta-gradient__pattern path {
+    vector-effect: non-scaling-stroke;
+  }
+
+  // Without facts the lines frame the centered text from both sides.
+  .s-cta-gradient:not(.s-cta-gradient--facts) .s-cta-gradient__pattern {
+    mask-image: radial-gradient(ellipse 60% 75% at 50% 45%, transparent 40%, #000);
+  }
+
+  .s-cta-gradient__facts {
+    display: grid;
+    gap: var(--spacing-md);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-cta-gradient__fact {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--spacing-md);
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+    color: var(--paper-ink);
+    background: var(--paper);
+    border-radius: var(--radius-card);
+    box-shadow: 0 1.25rem 2.5rem -1.25rem rgb(0 0 0 / 35%);
+  }
+
+  .s-cta-gradient__badge {
+    display: grid;
+    grid-row: span 2;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: var(--paper);
+    background: var(--paper-accent);
+    border-radius: var(--radius-control);
+  }
+
+  .s-cta-gradient__value {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--heading-weight);
+    line-height: var(--line-height-tight);
+  }
+
+  .s-cta-gradient__label {
+    color: var(--paper-text);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-snug);
+  }
+
+  // Tablets: the cards in a row under the text. Wide screens: text left, the cards in a
+  // staggered column right; the pattern fades in from the left instead of from the top.
+  @include mq(md) {
+    .s-cta-gradient {
+      align-items: center;
+      min-height: 20rem;
+      padding: var(--spacing-3xl) var(--spacing-2xl);
+    }
+
+    .s-cta-gradient__facts {
+      grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    }
+  }
+
+  @include mq(lg) {
+    .s-cta-gradient {
+      padding-inline: var(--spacing-3xl);
+    }
+
+    .s-cta-gradient--facts {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.75fr);
+    }
+
+    .s-cta-gradient--facts .s-cta-gradient__pattern {
+      mask-image: linear-gradient(to right, transparent 25%, #000 75%);
+    }
+
+    .s-cta-gradient__facts {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: end;
+    }
+
+    .s-cta-gradient__fact {
+      width: min(100%, 19rem);
+    }
+
+    .s-cta-gradient__fact:nth-child(2) {
+      margin-inline-end: 22%;
+    }
+
+    .s-cta-gradient__fact:nth-child(3) {
+      margin-inline-end: 6%;
+    }
+
+    // Two or three cards start above the band's top edge (the section padding leaves the room).
+    .s-cta-gradient__facts--2,
+    .s-cta-gradient__facts--3 {
+      align-self: start;
+      margin-block-start: calc(-1 * (var(--spacing-3xl) + var(--spacing-xl)));
+    }
+
+    .s-cta-gradient__fact:nth-child(2) {
+      rotate: -2deg;
+    }
+
+    .s-cta-gradient__fact:nth-child(odd) {
+      rotate: 1.5deg;
+    }
+  }
+
+  // ---------- faces ----------
+  // A light card; photos (or tinted dots without them) float around the text in the empty
+  // space on both sides: eight spots, odd ones on the left, measured from the card edge as
+  // a share of that space (--side) so they never reach the text. On phones they are one
+  // overlapping row above the text.
+  .s-cta--faces {
+    --paper: var(--color-background-surface);
+  }
+
+  .s-cta-faces {
+    --copy: 100%;
+    --side: calc((100% - var(--copy)) / 2);
+
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    display: grid;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    background: var(--paper);
+    border: 1px solid var(--card-border-color);
+    border-radius: calc(var(--radius-card) * 1.5);
+    box-shadow: var(--card-shadow);
+  }
+
+  .section--tone-default .s-cta-faces {
+    background: color-mix(in srgb, var(--color-background-muted) 60%, var(--paper));
+  }
+
+  .s-cta--faces.section--tone-accent .s-cta-faces {
+    @include on-color(var(--cta-brand), var(--cta-ink));
+
+    --paper: var(--cta-brand);
+  }
+
+  .s-cta-faces__spots {
+    display: flex;
+    justify-content: center;
+  }
+
+  .s-cta-faces__spot {
+    position: relative;
+    display: block;
+    flex: none;
+    width: 3.25rem;
+    aspect-ratio: 1;
+    overflow: clip;
+    background: color-mix(in srgb, var(--color-action-primary) 22%, var(--paper));
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 0.1875rem var(--paper),
+      0 0.75rem 1.5rem -0.75rem rgb(0 0 0 / 45%);
+  }
+
+  .s-cta-faces__spot + .s-cta-faces__spot {
+    margin-inline-start: -0.75rem;
+  }
+
+  .s-cta-faces__spot:nth-child(n + 6),
+  .s-cta-faces--photos .s-cta-faces__spot--dot {
+    display: none;
+  }
+
+  // Phones without photos: a row of dots growing toward the middle instead of a stack.
+  @include mq-down(md) {
+    .s-cta-faces:not(.s-cta-faces--photos) .s-cta-faces__spots {
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .s-cta-faces:not(.s-cta-faces--photos) .s-cta-faces__spot {
+      width: 1.25rem;
+      margin: 0;
+      box-shadow: none;
+    }
+
+    .s-cta-faces:not(.s-cta-faces--photos) .s-cta-faces__spot:nth-child(even) {
+      width: 2rem;
+    }
+
+    .s-cta-faces:not(.s-cta-faces--photos) .s-cta-faces__spot:nth-child(3) {
+      width: 2.75rem;
+    }
+  }
+
+  // Dots: the brand in steps, light to strong, so the row reads as one shape.
+  .s-cta-faces__spot--dot:nth-child(3n + 2) {
+    background: color-mix(in srgb, var(--color-action-primary) 45%, var(--paper));
+  }
+
+  .s-cta-faces__spot--dot:nth-child(3n) {
+    background: var(--color-action-primary);
+  }
+
+  .s-cta-faces__photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @include mq(md) {
+    .s-cta-faces {
+      --copy: min(26rem, 60%);
+
+      align-items: center;
+      min-height: 24rem;
+      padding: var(--spacing-3xl) var(--spacing-xl);
+    }
+
+    .s-cta-faces__copy {
+      max-width: var(--copy);
+    }
+
+    .s-cta-faces__spots {
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      display: block;
+    }
+
+    .s-cta-faces__spot {
+      --size: 1;
+      --x: 0.5;
+      --y: 50%;
+
+      position: absolute;
+      inset-block-start: var(--y);
+      width: clamp(2.5rem, calc(var(--side) * 0.3 * var(--size)), calc(5rem * var(--size)));
+      translate: -50% -50%;
+    }
+
+    .s-cta-faces__spot + .s-cta-faces__spot {
+      margin: 0;
+    }
+
+    .s-cta-faces__spot:nth-child(odd) {
+      inset-inline-start: calc(var(--side) * var(--x));
+    }
+
+    .s-cta-faces__spot:nth-child(even) {
+      inset-inline-end: calc(var(--side) * var(--x));
+      translate: 50% -50%;
+    }
+
+    .s-cta-faces__spot:nth-child(n) {
+      display: block;
+    }
+
+    .s-cta-faces__spot:nth-child(1) {
+      --x: 0.6;
+      --y: 24%;
+      --size: 1.1;
+    }
+
+    .s-cta-faces__spot:nth-child(2) {
+      --x: 0.55;
+      --y: 20%;
+      --size: 1.15;
+    }
+
+    .s-cta-faces__spot:nth-child(3) {
+      --x: 0.34;
+      --y: 70%;
+      --size: 1.2;
+    }
+
+    .s-cta-faces__spot:nth-child(4) {
+      --x: 0.36;
+      --y: 68%;
+      --size: 1.05;
+    }
+
+    .s-cta-faces__spot:nth-child(5) {
+      --x: 0.2;
+      --y: 34%;
+      --size: 0.8;
+    }
+
+    .s-cta-faces__spot:nth-child(6) {
+      --x: 0.8;
+      --y: 78%;
+      --size: 0.8;
+    }
+
+    .s-cta-faces__spot:nth-child(7) {
+      --x: 0.78;
+      --y: 80%;
+      --size: 0.75;
+    }
+
+    .s-cta-faces__spot:nth-child(8) {
+      --x: 0.16;
+      --y: 44%;
+      --size: 0.75;
+    }
+
+    // Dots stay a little smaller than photos.
+    .s-cta-faces__spot--dot {
+      scale: 0.8;
+    }
+  }
+
+  @include mq(lg) {
+    .s-cta-faces {
+      --copy: min(32rem, 56%);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .s-cta-faces__spot {
+      animation: s-cta-float 7s var(--motion-easing-standard) infinite alternate;
+    }
+
+    .s-cta-faces__spot:nth-child(3n + 2) {
+      animation-duration: 9s;
+      animation-delay: -3s;
+    }
+
+    .s-cta-faces__spot:nth-child(3n) {
+      animation-duration: 8s;
+      animation-delay: -5s;
+    }
+  }
+
+  @keyframes s-cta-float {
+    to {
+      transform: translateY(-0.5rem);
+    }
+  }
+
+  // ---------- band card ----------
+  // The section is a band of the brand color (muted sections keep their gray) with a light
+  // card in the middle and a spaced uppercase title. On the brand color of an accent section
+  // the card is the ink.
+  .s-cta--band-card:is(.section--tone-default, .section--tone-inverse) {
+    background: var(--cta-brand);
+  }
+
+  .s-cta-band {
+    max-width: 50rem;
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    margin-inline: auto;
+    background: var(--color-background-surface);
+    border-radius: var(--radius-card);
+    box-shadow: 0 2rem 4rem -2rem rgb(0 0 0 / 35%);
+  }
+
+  .s-cta--band-card.section--tone-accent .s-cta-band {
+    @include on-color(var(--cta-brand), var(--cta-ink));
+
+    background: var(--cta-brand);
+  }
+
+  .s-cta-band__copy {
+    max-width: 40rem;
+  }
+
+  .s-cta-band__copy .s-cta-copy__title {
+    color: var(--color-action-primary);
+    font-size: clamp(var(--font-size-2xl), 3.2vw, var(--font-size-4xl));
+    line-height: var(--line-height-snug);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .s-cta-band__copy .s-cta-copy__description {
+    font-size: var(--font-size-base);
+  }
+
+  @include mq(md) {
+    .s-cta-band {
+      padding: var(--spacing-3xl) var(--spacing-2xl);
+    }
+  }
 }

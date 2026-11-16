@@ -1,0 +1,25 @@
+---
+/**
+ * The section is a band of the brand color with a light card in the middle: a spaced
+ * uppercase title, the description and the actions, centered. The band is the contrast the
+ * archetypes' default CTA tone (inverse) gives other variants, so it is not applied here:
+ * without a tone the band is the page palette's brand color.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import Copy from "@/sections/cta/Copy.astro";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"cta", "band-card">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+---
+
+<SectionShell id={section.id} type="cta" variant="band-card" tone={props.tone ?? "default"} spacing={props.spacing} defaultSpacing="md">
+  <div class="s-cta-band">
+    <Copy content={content} headingLevel={headingLevel} align="center" class="s-cta-band__copy" />
+  </div>
+</SectionShell>
