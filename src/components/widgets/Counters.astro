@@ -33,7 +33,7 @@
 
   const format = (counter: Counter, value: number) => {
     let number = value.toFixed(counter.decimals);
-    if (counter.grouped) number = Number(number).toLocaleString("pl-PL", { minimumFractionDigits: counter.decimals, maximumFractionDigits: counter.decimals });
+    if (counter.grouped) number = Number(number).toLocaleString(document.documentElement.lang || undefined, { minimumFractionDigits: counter.decimals, maximumFractionDigits: counter.decimals });
     else if (counter.comma) number = number.replace(".", ",");
     return `${counter.before}${number}${counter.after}`;
   };

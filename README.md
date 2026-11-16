@@ -65,7 +65,7 @@ src/
 │  └─ utils/          tokens → SCSS (per site)
 ├─ components/        layout, UI, form and media primitives (Accordion, ContactForm…)
 ├─ layouts/           BaseLayout, Header, Navbar, Footer
-├─ i18n/dictionaries/ one file per language (en, pl, uk)
+├─ i18n/dictionaries/ one file per language (cs, de, en, es, fr, it, nl, pl, pt, ru, tr, uk)
 ├─ lib/contact/       contact form validation and delivery
 ├─ pages/             [...slug].astro (all site pages), privacy, contact results, 404/500
 └─ styles/
@@ -299,7 +299,15 @@ Any language works. The file name is the language code:
    (`"rtl"` for Arabic, Hebrew…).
 3. Set `"lang"` in site.json.
 
-No registration is needed — dictionaries are picked up automatically. The site
+Ready: Czech (`cs`), German (`de`), English (`en`), Spanish (`es`), French (`fr`),
+Italian (`it`), Dutch (`nl`), Polish (`pl`), Portuguese (`pt`, Portugal), Russian
+(`ru`), Turkish (`tr`) and Ukrainian (`uk`). Languages in other scripts (Chinese,
+Arabic, Hindi…) also need fonts with that script and, for right-to-left ones, a
+check of the layout.
+
+No registration is needed — dictionaries are picked up automatically, and
+`npm run catalog` lists them in `catalog.json` (`languages`: code, own name,
+English name, Open Graph locale, direction, scripts) for the generator. The site
 **content** in site.json must be written in that language. TypeScript checks that
 every dictionary has the same keys as `en.ts`; an unknown `lang` stops validation
 with a clear error, and a font pair without the language's script (e.g. Cyrillic
