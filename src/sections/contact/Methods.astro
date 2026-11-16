@@ -1,0 +1,52 @@
+---
+/**
+ * Ways to get in touch as action cards under the heading (call, write, visit — the whole card is
+ * the link), the form on a panel over a deep brand block that reaches the screen edge.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Form from "@/sections/contact/Form.astro";
+import Icon from "@/components/media/Icon.astro";
+import Link from "@/components/ui/Link.astro";
+import { site } from "virtual:site";
+import { t } from "@/i18n";
+import { contactDetails, contactHeader, contactMethods } from "@/sections/contact/details";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"contact", "methods">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const methods = content.showDetails ? contactMethods(contactDetails(site.business, t), t) : [];
+const MethodHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="contact" variant="methods" tone={props.tone} spacing={props.spacing}>
+  <div class="s-contact-methods">
+    <div class="s-contact-methods__intro">
+      <SectionHeader {...contactHeader(content, t)} headingLevel={headingLevel} align={props.align ?? "left"} />
+      {methods.length > 0 && (
+        <ul class="s-contact-methods__list">
+          {methods.map((method) => (
+            <li class="s-contact-method">
+              <span class="s-contact-method__icon"><Icon name={method.icon} size="1.375rem" /></span>
+              <div class="s-contact-method__body">
+                <MethodHeading class="s-contact-method__title">{method.title}</MethodHeading>
+                {method.lines.map((line) => <p class="s-contact-method__line">{line}</p>)}
+                <Link href={method.action.href} class="s-contact-method__action">
+                  {method.action.label}<Icon name="arrow-right" size="1em" class="s-contact-method__arrow" />
+                </Link>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+    <div class="s-contact-methods__panel">
+      <Form />
+    </div>
+  </div>
+</SectionShell>

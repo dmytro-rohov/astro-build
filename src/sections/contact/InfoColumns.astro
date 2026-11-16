@@ -1,0 +1,60 @@
+---
+/**
+ * Centered heading and an open form on top, then a band of large icon columns (phone, e-mail,
+ * address with directions, opening hours) over a strip of the brand color reaching the edges.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Form from "@/sections/contact/Form.astro";
+import Icon from "@/components/media/Icon.astro";
+import Link from "@/components/ui/Link.astro";
+import { site } from "virtual:site";
+import { t } from "@/i18n";
+import { hoursRows } from "@/site/hours";
+import { contactDetails, contactHeader } from "@/sections/contact/details";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"contact", "info-columns">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const details = content.showDetails ? contactDetails(site.business, t) : [];
+const hours = hoursRows(site.business.hours, t);
+const ColumnHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="contact" variant="info-columns" tone={props.tone} spacing={props.spacing}>
+  <div class="s-contact-columns">
+    <SectionHeader {...contactHeader(content, t)} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <div class="s-contact-columns__form">
+      <Form />
+    </div>
+    {details.length > 0 && (
+      <ul class:list={["s-contact-columns__band", `s-contact-columns__band--count-${details.length}`]}>
+        {details.map((detail) => (
+          <li class="s-contact-columns__item">
+            <span class="s-contact-columns__icon"><Icon name={detail.icon} size="1.625rem" /></span>
+            <ColumnHeading class="s-contact-columns__title">{detail.label}</ColumnHeading>
+            {detail.kind === "hours" ? (
+              <ul class="s-contact-columns__hours">
+                {hours.map((row) => (
+                  <li><abbr title={row.daysLong}>{row.days}</abbr> {row.value}</li>
+                ))}
+              </ul>
+            ) : detail.kind === "address" ? (
+              <p class="s-contact-columns__value">{detail.value}</p>
+            ) : (
+              <Link href={detail.href!} class="s-contact-columns__value s-contact-columns__value--link">{detail.value}</Link>
+            )}
+            {detail.kind === "address" && detail.href && (
+              <Link href={detail.href} class="s-contact-columns__link">{t.contactForm.directions}<Icon name="arrow-right" size="1em" /></Link>
+            )}
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</SectionShell>

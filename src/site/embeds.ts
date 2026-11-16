@@ -1,12 +1,15 @@
 /**
- * Embeds allowed in site.json (section "embed"): maps, booking and video
- * players from a fixed list of providers. Each embed loads only after a click
- * (privacy: no third-party cookies before the visitor asks for it), and the
- * site's CSP allows exactly the providers it uses. Pure TS (schema, CSP, tests).
+ * Embeds allowed in site.json (section "embed", the map of the contact "map"
+ * variant): maps, booking and video players from a fixed list of providers.
+ * Each embed loads only after a click (privacy: no third-party cookies before
+ * the visitor asks for it), and the site's CSP allows exactly the providers
+ * it uses. Pure TS (schema, CSP, tests).
  *
  * Script-based widgets (e.g. Booksy) are not embeddable safely — link to them
  * with a button (cta / hero action) instead.
  */
+import type { Site } from "./schema/site";
+
 export type EmbedProvider = {
   id: string;
   label: string;
@@ -76,4 +79,15 @@ export function embedProvider(value: string): EmbedProvider | undefined {
   } catch {
     return undefined;
   }
+}
+
+/** Embed URLs a site shows: embed sections and the map of a contact section in the "map" variant. */
+export function siteEmbedUrls(site: Pick<Site, "pages">): string[] {
+  return site.pages
+    .flatMap((page) => page.sections)
+    .flatMap((section) => {
+      if (section.type === "embed") return [section.content.url];
+      if (section.type === "contact" && section.variant === "map" && section.content.mapUrl) return [section.content.mapUrl];
+      return [];
+    });
 }

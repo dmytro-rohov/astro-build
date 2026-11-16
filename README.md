@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **17 section types, 67 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **17 section types, 71 variants**, 3 navbars and 3 footers, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -167,7 +167,7 @@ the migrated site is validated like any build.
 | `pricing` | `cards`, `compact`, `featured-center` (recommended plan in the middle, on the brand color), `table` (comparison: features × plans), `split` (intro left, plan rows right), `minimal` (typographic columns, thin rules) |
 | `faq` | `accordion`, `two-column` (both publish FAQPage JSON-LD) |
 | `cta` | `boxed`, `banner` |
-| `contact` | `form-split`, `form-centered` (details from `business`) |
+| `contact` | `form-split` (details as icon rows beside the form card), `form-centered` (one card: details on a brand panel + form), `info-columns` (open form, then large icon columns over a brand strip), `big-card` (one large card on a soft brand gradient), `methods` (call / write / visit action cards, form panel over a deep brand block), `map` (form + tall map with a place card) — details and hours from `business`, the same form in every layout; optional `mapUrl` (map embed) |
 | `hours-location` | `card`, `compact` (hours, address, phone from `business`) |
 | `stats` | `row`, `cards`, `rings` (progress rings), `bars` (progress bars, two columns), `chart-cards` (decorative mini charts), `highlight` (one big number + text), `bento` (tiles, first on the brand color); key numbers, accent tone allowed, optional `items[].progress` 0–100 |
 | `process` | `steps` (one connecting line), `timeline` (alternating around a central line), `cards` (outlined numbers), `wave` (wavy path), `snake` (line looping over and under round nodes), `chevrons` (rings with numbered arrows) — 2–8 steps, optional icons and time labels; all collapse to one vertical sequence on phones |
@@ -181,7 +181,8 @@ the migrated site is validated like any build.
 **Rules:** at most one `contact` and one `faq` section per page; the first section of a page
 renders its only `<h1>`, so `stats`, `logo-cloud` and `embed` need a title there.
 
-**Embeds** (`src/site/embeds.ts`): only links from the listed providers are accepted
+**Embeds** (`src/site/embeds.ts`): embed sections and the contact `map` variant's `mapUrl` (map
+providers only) accept only links from the listed providers
 (YouTube becomes `youtube-nocookie.com`, Vimeo gets `dnt=1`). Nothing is requested from the
 provider before the visitor clicks "Show content from …"; without JavaScript a link opens it
 in a new tab. The CSP `frame-src` lists exactly the providers the site uses, and the privacy
@@ -492,8 +493,9 @@ Available media primitives:
 
 Every section variant lives in `src/sections/<type>/` and renders through `SectionShell`
 (anchor id, tone, spacing, `data-section-type` for the tests). Shared building blocks:
-`Accordion` (`components/ui`), `ContactForm` (`components/form`), `SectionHeader`,
-`Actions`, `RichText` (`sections/_shared`). There is no separate "widgets" layer any more.
+`Accordion` (`components/ui`), `ContactForm` (`components/form`: the form alone, laid out by
+its own width), `SectionHeader`, `Actions`, `RichText`, `EmbedFrame` (`sections/_shared`).
+There is no separate "widgets" layer any more.
 
 Site layouts (`src/layouts/`): `BaseLayout`, `Header`, `Navbar`, `Footer`.
 

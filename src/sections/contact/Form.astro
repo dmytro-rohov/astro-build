@@ -1,0 +1,19 @@
+---
+/** ContactForm wired to the site's contact mode: this site's /api/contact (local) or the form service (remote). */
+import ContactForm from "@/components/form/ContactForm.astro";
+import { site } from "virtual:site";
+
+export interface Props {
+  class?: string;
+}
+
+const remote = site.contact.mode === "remote" ? site.contact : undefined;
+---
+
+<ContactForm
+  action={remote ? remote.endpoint : "/api/contact"}
+  hiddenFields={remote ? { siteId: site.siteId, lang: site.lang } : {}}
+  method="post"
+  privacyHref="/privacy"
+  class={Astro.props.class}
+/>

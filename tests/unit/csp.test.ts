@@ -30,3 +30,11 @@ test("frames are allowed only for the providers of the site's embeds", () => {
   expect(cspForSite(site, "").directives).toContain("frame-src https://calendly.com https://www.youtube-nocookie.com");
 });
 
+test("the contact map is framed only in the map variant", () => {
+  const mapUrl = "https://www.openstreetmap.org/export/embed.html?bbox=19.93%2C50.05%2C19.95%2C50.07";
+  const contact = (variant: string) => ({ type: "contact", variant, content: { mapUrl } });
+  const site = (variant: string) => ({ ...local, pages: [{ sections: [contact(variant)] }] }) as never;
+
+  expect(embedOrigins(site("map"))).toEqual(["https://www.openstreetmap.org"]);
+  expect(cspForSite(site("form-split"), "").directives).toContain("frame-src 'none'");
+});
