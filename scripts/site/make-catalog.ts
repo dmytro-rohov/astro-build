@@ -85,9 +85,8 @@ function asset(slot: ImageSlot): string {
   return `asset:${id}`;
 }
 
-function linkFor(key: string): string {
-  return key === "mapUrl" ? "https://www.openstreetmap.org/" : "/";
-}
+// An OpenStreetMap embed link: a map link (hours-location) and a map embed (contact) at once.
+const MAP_EMBED = "https://www.openstreetmap.org/export/embed.html?bbox=17.03%2C51.10%2C17.04%2C51.11&layer=mapnik";
 
 /** Example value for a schema in min or max mode (undefined = leave the field out). */
 function example(schema: z.ZodType, mode: Mode, key: string, index = 0): unknown {
@@ -105,10 +104,10 @@ function example(schema: z.ZodType, mode: Mode, key: string, index = 0): unknown
     const min = schema.minLength ?? 1;
     const max = schema.maxLength ?? 120;
 
-    if (key === "mapUrl") return linkFor(key);
+    if (key === "mapUrl") return MAP_EMBED;
     // Schedule: a class every hour from 8:00, spread over the week.
     if (key === "start" || key === "end") return `${String(8 + (Math.floor(index / 7) % 13)).padStart(2, "0")}:${key === "start" ? "00" : "50"}`;
-    if (key === "url") return "https://www.openstreetmap.org/export/embed.html?bbox=17.03%2C51.10%2C17.04%2C51.11&layer=mapnik";
+    if (key === "url") return MAP_EMBED;
     if (key === "href") return schema.safeParse("/").success ? "/" : "https://example.com/";
     if (key === "id") return `${mode}-${++idCounter}`;
     if (meta.editor?.fieldType === "richtext-lite") return richTextOf(max, mode);
@@ -185,8 +184,8 @@ const leads = pageTypes.filter(titleRequired);
 const followers = pageTypes.filter((type) => !titleRequired(type));
 const groups: (typeof sectionTypes)[number][][] = [];
 
-// A page holds at most 20 sections, and the pages after the home page also get a contact and
-// a faq section: two types share a page only when their sections fit in the other 18.
+// A page holds at most 20 sections, and every page may also get a contact and a faq
+// section: two types share a page only when their sections fit in the other 18.
 const PAGE_ROOM = 18;
 const sizeOf = (type: (typeof sectionTypes)[number]) => Object.keys(type.variants).length * 2;
 const take = (types: (typeof sectionTypes)[number][], room: number, fromEnd = false) => {
@@ -202,9 +201,9 @@ while (leads.length) {
 }
 if (followers.length) throw new Error("make-catalog: optional-title types left without a page (too many sections or types)");
 
-// Types allowed once per page (contact, faq): instance N goes onto the N-th
-// page after the home page.
-const pages = groups.map((group, index) => ({
+type CatalogPage = { id: string; slug: string; title: string; nav: { show: boolean; label: string }; sections: ReturnType<typeof sectionsOf> };
+
+const pages: CatalogPage[] = groups.map((group, index) => ({
   id: index === 0 ? "home" : group[0].type,
   slug: index === 0 ? "/" : `/${group[0].type}`,
   title: group.map((type) => type.label).join(" + "),
@@ -212,8 +211,17 @@ const pages = groups.map((group, index) => ({
   sections: group.flatMap(sectionsOf),
 }));
 
-for (const type of sectionTypes.filter((type) => ONE_PER_PAGE_TYPES.includes(type.type))) {
-  sectionsOf(type).forEach((section, index) => pages[index + 1].sections.push(section));
+// Types allowed once per page (contact, faq): instance N goes onto page N, the home page
+// included. When they have more instances than there are pages, pages holding only them
+// are added (their first section renders the h1: faq has a title, contact a default one).
+const onePerPage = sectionTypes.filter((type) => ONE_PER_PAGE_TYPES.includes(type.type)).map(sectionsOf);
+
+for (let index = pages.length; index < Math.max(...onePerPage.map((sections) => sections.length)); index++) {
+  pages.push({ id: `extra-${index}`, slug: `/extra-${index}`, title: `Kontakt i FAQ ${index}`, nav: { show: true, label: `extra-${index}` }, sections: [] });
+}
+
+for (const sections of onePerPage) {
+  sections.forEach((section, index) => pages[index].sections.push(section));
 }
 
 const site = {
