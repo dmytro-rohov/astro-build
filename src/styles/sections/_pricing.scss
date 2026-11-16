@@ -186,11 +186,10 @@
     }
   }
 
-
   // ---------- pricing: featured center ----------
   // v3.3, "three tiles": the featured plan in the middle is wider, taller and on the brand color
-  // (the accent palette of the section, swapped like an accent section); the tiles beside it
-  // start lower, end higher and stay quiet.
+  // (it swaps the accent and its text color, checked ≥ 4.5:1, like an accent section); the tiles
+  // beside it start lower, end higher and stay quiet.
   .s-tiers {
     --tier-accent: var(--color-action-primary);
     --tier-ink: var(--color-action-primary-text);
