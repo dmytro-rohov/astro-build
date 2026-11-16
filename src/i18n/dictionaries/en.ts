@@ -13,14 +13,15 @@ export const en = {
     titleTemplate: "{title} | {siteName}",
   },
 
+  /** `on` completes the hours status "opens {day} at 9:00" (Polish: "w poniedziałek", "we wtorek"). */
   days: {
-    mo: { short: "Mon", long: "Monday" },
-    tu: { short: "Tue", long: "Tuesday" },
-    we: { short: "Wed", long: "Wednesday" },
-    th: { short: "Thu", long: "Thursday" },
-    fr: { short: "Fri", long: "Friday" },
-    sa: { short: "Sat", long: "Saturday" },
-    su: { short: "Sun", long: "Sunday" },
+    mo: { short: "Mon", long: "Monday", on: "on Monday" },
+    tu: { short: "Tue", long: "Tuesday", on: "on Tuesday" },
+    we: { short: "Wed", long: "Wednesday", on: "on Wednesday" },
+    th: { short: "Thu", long: "Thursday", on: "on Thursday" },
+    fr: { short: "Fri", long: "Friday", on: "on Friday" },
+    sa: { short: "Sat", long: "Saturday", on: "on Saturday" },
+    su: { short: "Sun", long: "Sunday", on: "on Sunday" },
   },
 
   sections: {
@@ -30,6 +31,16 @@ export const en = {
     phone: "Phone",
     email: "Email",
     openInMaps: "Open in maps",
+    directions: "Get directions",
+    /** Live status of the opening hours (computed in the browser): "Open now · until 18:00". */
+    openNow: "Open now",
+    openUntil: "until {time}",
+    opensToday: "opens today at {time}",
+    opensTomorrow: "opens tomorrow at {time}",
+    opensOn: "opens {day} at {time}",
+    today: "Today",
+    mapLoad: "Show the map",
+    mapTitle: "Map: {place}",
     popularPlan: "Most popular",
     planPrice: "Price",
     planIncluded: "Included",

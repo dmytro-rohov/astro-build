@@ -1,0 +1,1088 @@
+// Hours and location ("Godziny i dojazd"), v3.3: six layouts of the same business data (hours,
+// address, phone; moved out of _sections.scss). Rows and the week come from src/site/hours.ts.
+// The live status (Status.astro) stays hidden until its script runs, so every layout reads the
+// same without JavaScript, only without "open now" and today's mark.
+@use "../abstracts/mixins" as *;
+
+// Hidden but read by screen readers (the utility class, for elements that are visible on other screens).
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: clip;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+// Small uppercase label above a fact (headings styled down).
+@mixin label {
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-snug);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+// Round icon on a tint of the brand color (mixed towards the text color for contrast).
+@mixin badge($size: 2.5rem) {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: $size;
+  height: $size;
+  color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+  background: color-mix(in srgb, var(--color-action-primary) 12%, transparent);
+  border-radius: var(--radius-full);
+}
+
+@mixin framed {
+  background: var(--color-background-surface);
+  border: 1px solid var(--card-border-color);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
+}
+
+@layer widgets {
+  // ---------- hours-location: shared ----------
+  // Hours and address blocks of the card and image-side variants (Details.astro).
+  .s-hours,
+  .s-location {
+    display: grid;
+    gap: var(--spacing-md);
+    align-content: start;
+  }
+
+  .s-hours__head {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .s-hours__badge {
+    @include badge;
+  }
+
+  .s-hours__title {
+    font-size: var(--font-size-xl);
+  }
+
+  .s-hours__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .s-hours__table th,
+  .s-hours__table td {
+    padding-block: var(--spacing-sm);
+    text-align: start;
+    vertical-align: top;
+    border-block-end: 1px dashed var(--color-border-strong);
+  }
+
+  .s-hours__table tr:last-child > * {
+    border-block-end: 0;
+  }
+
+  .s-hours__table th {
+    padding-inline-end: var(--spacing-md);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-hours__table abbr {
+    text-decoration: none;
+  }
+
+  .s-hours__table td {
+    text-align: end;
+    white-space: nowrap;
+  }
+
+  .s-hours__row--closed td {
+    color: var(--color-text-secondary);
+  }
+
+  // An address part (Address.astro) wraps as a whole before it breaks inside ("31-146" stays together).
+  .s-hours-address {
+    display: inline-block;
+    max-width: 100%;
+  }
+
+  .s-location__address {
+    display: grid;
+    font-size: var(--font-size-lg);
+    font-style: normal;
+    line-height: var(--line-height-snug);
+  }
+
+  .s-location__phone {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-location__icon {
+    flex: none;
+    color: var(--color-text-secondary);
+  }
+
+  .s-location__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    padding-block-start: var(--spacing-xs);
+  }
+
+  // Live status: hidden in the HTML, filled by the script. The dot is decoration, the words say it.
+  .s-open-status[hidden] {
+    display: none;
+  }
+
+  .s-open-status__dot {
+    flex: none;
+    width: 0.625rem;
+    height: 0.625rem;
+    background: var(--color-feedback-error);
+    border-radius: var(--radius-full);
+    box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--color-feedback-error) 18%, transparent);
+  }
+
+  .s-open-status[data-state="open"] .s-open-status__dot {
+    background: var(--color-feedback-success);
+    box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--color-feedback-success) 22%, transparent);
+  }
+
+  .s-open-status__label {
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-open-status__detail:empty {
+    display: none;
+  }
+
+  .s-open-status--pill {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs) var(--spacing-sm);
+    max-width: 100%;
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: var(--color-background-surface);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-sm);
+  }
+
+  .s-open-status--pill .s-open-status__dot {
+    margin-inline-end: var(--spacing-xs);
+  }
+
+  // ---------- hours-location: card ----------
+  // v3.3: icon badges, dashed rules between the hour rows, the route planner as the main button.
+  .s-hours-location__cards {
+    display: grid;
+    gap: var(--spacing-lg);
+  }
+
+  @include mq(md) {
+    .s-hours-location__cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .s-hours-location__cards--single {
+      grid-template-columns: minmax(0, 34rem);
+    }
+  }
+
+  // ---------- hours-location: compact ----------
+  // v3.3, "contact bar": one frame, a fact per cell (icon, small label, value), hairlines between.
+  .s-info-bar {
+    @include framed;
+
+    display: grid;
+  }
+
+  .s-info-bar__item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+  }
+
+  .s-info-bar__item + .s-info-bar__item {
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  @include mq(md) {
+    .s-info-bar {
+      grid-auto-columns: minmax(0, 1fr);
+      grid-auto-flow: column;
+    }
+
+    .s-info-bar__item + .s-info-bar__item {
+      border-block-start: 0;
+      border-inline-start: 1px solid var(--color-border-default);
+    }
+  }
+
+  @include mq(lg) {
+    .s-info-bar__item {
+      padding: var(--spacing-lg) var(--spacing-xl);
+    }
+  }
+
+  .s-info-bar__icon {
+    @include badge;
+  }
+
+  .s-info-bar__body {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-xs);
+    min-width: 0;
+  }
+
+  .s-info-bar__label {
+    @include label;
+  }
+
+  .s-info-bar__hours {
+    display: grid;
+    gap: 0.125rem;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .s-info-bar__row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0 var(--spacing-md);
+  }
+
+  .s-info-bar__row dt {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-info-bar__row abbr {
+    text-decoration: none;
+  }
+
+  .s-info-bar__row dd {
+    margin: 0;
+  }
+
+  .s-info-bar__row--closed dd {
+    color: var(--color-text-secondary);
+  }
+
+  .s-info-bar__value {
+    font-style: normal;
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-info-bar__phone {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-info-bar__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs) var(--spacing-lg);
+    font-size: var(--font-size-sm);
+  }
+
+  .s-info-bar__link,
+  .s-open-sign__link,
+  .s-week-strip__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  // ---------- hours-location: today ----------
+  // v3.3, "door sign": one narrow card, the live status as a band on top, the week day by day
+  // (today tinted with an accent edge and a tag), the address on a light footer.
+  .s-open-sign {
+    @include framed;
+
+    width: 100%;
+    max-width: 34rem;
+    margin-inline: auto;
+    overflow: clip;
+  }
+
+  .s-open-status--band {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.125rem var(--spacing-md);
+    padding: var(--spacing-lg) var(--spacing-md);
+    background: color-mix(in srgb, var(--color-feedback-error) 7%, transparent);
+    border-block-end: 1px solid var(--color-border-default);
+  }
+
+  .s-open-status--band[data-state="open"] {
+    background: color-mix(in srgb, var(--color-feedback-success) 10%, transparent);
+  }
+
+  .s-open-status--band .s-open-status__dot {
+    grid-row: span 2;
+    width: 0.875rem;
+    height: 0.875rem;
+    margin-inline: 0.375rem;
+    box-shadow: 0 0 0 0.375rem color-mix(in srgb, var(--color-feedback-error) 18%, transparent);
+  }
+
+  .s-open-status--band[data-state="open"] .s-open-status__dot {
+    box-shadow: 0 0 0 0.375rem color-mix(in srgb, var(--color-feedback-success) 22%, transparent);
+  }
+
+  .s-open-status--band .s-open-status__label {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--heading-weight);
+    font-variant-numeric: lining-nums;
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--heading-tracking);
+  }
+
+  .s-open-status--band .s-open-status__detail {
+    grid-column: 2;
+  }
+
+  .s-open-sign__week {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .s-open-sign__week th,
+  .s-open-sign__week td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: start;
+    border-block-end: 1px solid var(--color-border-default);
+  }
+
+  .s-open-sign__week tr:last-child > * {
+    border-block-end: 0;
+  }
+
+  .s-open-sign__week th {
+    font-weight: var(--font-weight-medium);
+  }
+
+  .s-open-sign__week td {
+    text-align: end;
+    white-space: nowrap;
+  }
+
+  .s-open-sign__day--closed > * {
+    color: var(--color-text-secondary);
+  }
+
+  .s-open-sign__day[aria-current="date"] > * {
+    color: var(--color-text-primary);
+    background: color-mix(in srgb, var(--color-action-primary) 10%, var(--color-background-surface));
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-open-sign__day[aria-current="date"] > th {
+    box-shadow: inset 0.25rem 0 0 var(--color-action-primary);
+  }
+
+  .s-open-sign__today {
+    display: inline-block;
+    margin-inline-start: var(--spacing-sm);
+    padding: 0.125rem var(--spacing-sm);
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    vertical-align: 0.1em;
+  }
+
+  .s-open-sign__today[hidden],
+  .s-week-strip__today[hidden] {
+    display: none;
+  }
+
+  .s-open-sign__place {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg) var(--spacing-md);
+    font-style: normal;
+    background: color-mix(in srgb, var(--color-text-primary) 4%, var(--color-background-surface));
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-open-sign__line {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .s-open-sign__icon {
+    flex: none;
+    margin-block-start: 0.2em;
+    color: var(--color-text-secondary);
+  }
+
+  .s-open-sign__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs) var(--spacing-lg);
+    padding-block-start: var(--spacing-xs);
+  }
+
+  @include mq(sm) {
+    .s-open-status--band,
+    .s-open-sign__place {
+      padding-inline: var(--spacing-xl);
+    }
+
+    .s-open-sign__week th,
+    .s-open-sign__week td {
+      padding-inline: var(--spacing-xl);
+    }
+  }
+
+  // ---------- hours-location: map ----------
+  // v3.3, "location widget": one frame, the panel (address big, route button, phone, hours) next
+  // to the map. The drawn map (MapArt) sits behind a consent card until the visitor loads the
+  // real one; on phones the panel comes first, the map and the consent card under it.
+  .s-hours-map {
+    @include framed;
+
+    display: grid;
+    overflow: clip;
+  }
+
+  .s-hours-map--panel-only {
+    max-width: 34rem;
+  }
+
+  .s-hours-map__panel {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+  }
+
+  .s-hours-map__block {
+    display: grid;
+    gap: var(--spacing-sm);
+    min-width: 0;
+  }
+
+  .s-hours-map__block + .s-hours-map__block {
+    padding-block-start: var(--spacing-lg);
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-hours-map__label {
+    @include label;
+  }
+
+  .s-hours-map__address {
+    display: grid;
+    font-style: normal;
+  }
+
+  .s-hours-map__street {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--heading-weight);
+    font-variant-numeric: lining-nums;
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--heading-tracking);
+    hyphens: auto;
+  }
+
+  .s-hours-map__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-sm) var(--spacing-lg);
+    padding-block-start: var(--spacing-sm);
+  }
+
+  .s-hours-map__phone {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-hours-map__hours {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .s-hours-map__hours th,
+  .s-hours-map__hours td {
+    padding-block: 0.25rem;
+    text-align: start;
+    vertical-align: top;
+  }
+
+  .s-hours-map__hours th {
+    padding-inline-end: var(--spacing-md);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-hours-map__hours abbr {
+    text-decoration: none;
+  }
+
+  .s-hours-map__hours td {
+    text-align: end;
+    white-space: nowrap;
+  }
+
+  .s-hours-map__closed td {
+    color: var(--color-text-secondary);
+  }
+
+  .s-hours-map__map {
+    position: relative;
+    display: grid;
+    grid-template-rows: minmax(16rem, 1fr) auto;
+    min-height: 20rem;
+    background: color-mix(in srgb, var(--color-text-primary) 6%, var(--color-background-surface));
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-hours-map__canvas {
+    position: relative;
+    overflow: clip;
+  }
+
+  .s-hours-map__art,
+  .s-hours-map__frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .s-hours-map__frame {
+    border: 0;
+  }
+
+  // The street under the pin's tip (the pin is drawn with its tip in the middle of the map).
+  .s-hours-map__marker {
+    position: absolute;
+    inset-block-start: calc(50% + 0.75rem);
+    inset-inline: 0;
+    width: fit-content;
+    max-width: calc(100% - 2rem);
+    margin-inline: auto;
+    padding: var(--spacing-xs) var(--spacing-md);
+    overflow: clip;
+    background: var(--color-background-surface);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .s-hours-map__consent {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--color-background-surface);
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-hours-map__notice {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  .s-hours-map__consent-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-sm);
+  }
+
+  .s-hours-map__map[data-map-loaded] {
+    grid-template-rows: none;
+  }
+
+  @include mq(md) {
+    .s-hours-map:not(.s-hours-map--panel-only) {
+      grid-template-columns: minmax(17rem, 2fr) minmax(0, 3fr);
+    }
+
+    .s-hours-map__panel {
+      gap: var(--spacing-xl);
+      padding: var(--spacing-xl);
+    }
+
+    .s-hours-map__block + .s-hours-map__block {
+      padding-block-start: var(--spacing-xl);
+    }
+
+    .s-hours-map__map {
+      display: block;
+      min-height: 30rem;
+      border-block-start: 0;
+      border-inline-start: 1px solid var(--color-border-default);
+    }
+
+    .s-hours-map__canvas {
+      position: absolute;
+      inset: 0;
+    }
+
+    // Wide map: the consent card floats over its lower edge.
+    .s-hours-map__consent {
+      position: absolute;
+      inset-block-end: var(--spacing-lg);
+      inset-inline: var(--spacing-lg);
+      max-width: 30rem;
+      margin-inline: auto;
+      border: 1px solid var(--card-border-color);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-lg);
+    }
+  }
+
+  @include mq(lg) {
+    .s-hours-map:not(.s-hours-map--panel-only) {
+      grid-template-columns: minmax(20rem, 26rem) minmax(0, 1fr);
+    }
+
+    .s-hours-map__panel {
+      padding: var(--spacing-2xl);
+    }
+  }
+
+  // Drawn map: theme colors, so it fits every archetype and the dark scheme.
+  .s-map-art__land {
+    fill: color-mix(in srgb, var(--color-text-primary) 6%, var(--color-background-surface));
+  }
+
+  .s-map-art__park {
+    fill: color-mix(in srgb, var(--color-feedback-success) 20%, var(--color-background-surface));
+  }
+
+  .s-map-art__river {
+    fill: none;
+    stroke: color-mix(in srgb, var(--color-primitive-blue-400) 30%, var(--color-background-surface));
+    stroke-width: 38;
+    stroke-linecap: round;
+  }
+
+  .s-map-art__casing,
+  .s-map-art__street {
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  .s-map-art__casing {
+    stroke: var(--color-border-default);
+    stroke-width: 16;
+  }
+
+  .s-map-art__street {
+    stroke: var(--color-background-surface);
+    stroke-width: 12;
+  }
+
+  .s-map-art__casing--main {
+    stroke-width: 26;
+  }
+
+  .s-map-art__street--main {
+    stroke-width: 22;
+  }
+
+  .s-map-art__route {
+    fill: none;
+    stroke: var(--color-action-primary);
+    stroke-width: 7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 2 14;
+  }
+
+  .s-map-art__shadow {
+    fill: rgb(0 0 0 / 18%);
+  }
+
+  .s-map-art__pin {
+    fill: var(--color-action-primary);
+    stroke: var(--color-background-surface);
+    stroke-width: 3;
+  }
+
+  .s-map-art__pin-dot {
+    fill: var(--color-background-surface);
+  }
+
+  // ---------- hours-location: image-side ----------
+  // v3.3: the photo spans two thirds, the card overlaps its edge (centered vertically) and
+  // carries the section title. Without a photo: a brand-colored panel with a dot pattern.
+  // Phones: the photo on top, the card pulled up over its lower edge.
+  .s-hours-photo {
+    display: grid;
+  }
+
+  .s-hours-photo__media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: clip;
+    border: var(--image-border);
+    border-radius: var(--radius-image);
+    box-shadow: var(--image-shadow);
+  }
+
+  .s-hours-photo__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .s-hours-photo--no-image .s-hours-photo__media {
+    aspect-ratio: 16 / 9;
+    background:
+      radial-gradient(circle, color-mix(in srgb, var(--color-action-primary-text) 30%, transparent) 0.09rem, transparent 0.11rem) 0 0 / 1.25rem 1.25rem,
+      var(--color-action-primary);
+  }
+
+  .s-hours-photo__mark {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: color-mix(in srgb, var(--color-action-primary-text) 55%, transparent);
+  }
+
+  .s-hours-photo__mark svg {
+    width: min(9rem, 40%);
+  }
+
+  .s-hours-photo__card {
+    @include framed;
+
+    position: relative;
+    display: grid;
+    gap: var(--spacing-xl);
+    min-width: 0;
+    padding: var(--spacing-lg);
+    margin: -3rem var(--spacing-sm) 0;
+    box-shadow: var(--shadow-xl);
+  }
+
+  .s-hours-photo__card .s-header__title {
+    font-size: clamp(var(--font-size-2xl), 3vw, var(--font-size-3xl));
+  }
+
+  .s-hours-photo__details {
+    display: grid;
+    gap: var(--spacing-xl);
+  }
+
+  @include mq(sm) {
+    .s-hours-photo__card {
+      padding: var(--spacing-xl);
+      margin-inline: var(--spacing-lg);
+    }
+  }
+
+  @include mq(md) {
+    .s-hours-photo {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      align-items: center;
+    }
+
+    .s-hours-photo__media,
+    .s-hours-photo--no-image .s-hours-photo__media {
+      grid-area: 1 / 1 / 2 / 9;
+      align-self: stretch;
+      aspect-ratio: auto;
+      min-height: 30rem;
+    }
+
+    .s-hours-photo__card {
+      grid-area: 1 / 6 / 2 / 13;
+      margin: var(--spacing-2xl) 0;
+    }
+
+    .s-hours-photo--image-right .s-hours-photo__media {
+      grid-area: 1 / 5 / 2 / 13;
+    }
+
+    // The clock in the middle of the part the card leaves free.
+    .s-hours-photo__mark {
+      inset-inline-end: 30%;
+    }
+
+    .s-hours-photo--image-right .s-hours-photo__mark {
+      inset-inline: 30% 0;
+    }
+
+    .s-hours-photo--image-right .s-hours-photo__card {
+      grid-area: 1 / 1 / 2 / 8;
+    }
+  }
+
+  @include mq(lg) {
+    .s-hours-photo__card {
+      grid-column: 7 / 13;
+      padding: var(--spacing-2xl);
+    }
+
+    .s-hours-photo--image-right .s-hours-photo__card {
+      grid-column: 1 / 7;
+    }
+  }
+
+  // ---------- hours-location: week strip ----------
+  // v3.3: the week as seven tiles: opening time big, closing time under it, a 24-hour track
+  // with the open hours; closed days dashed and muted, today's tile on the brand color. Phones:
+  // a tile per row (name left, hours right, no track).
+  .s-week-strip__intro {
+    display: grid;
+    gap: var(--spacing-lg);
+  }
+
+  .s-header--center + .s-open-status {
+    justify-self: center;
+  }
+
+  .s-header--left + .s-open-status {
+    justify-self: start;
+  }
+
+  .s-week-strip {
+    display: grid;
+    gap: var(--spacing-sm);
+    margin: 0;
+  }
+
+  .s-week-strip__day {
+    @include framed;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--spacing-xs) var(--spacing-md);
+    min-width: 0;
+    padding: var(--spacing-sm) var(--spacing-lg);
+  }
+
+  .s-week-strip__day--closed {
+    background: transparent;
+    border-style: dashed;
+    border-color: var(--color-border-strong);
+    box-shadow: none;
+  }
+
+  .s-week-strip__name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-xs) var(--spacing-sm);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-week-strip__short {
+    display: none;
+  }
+
+  .s-week-strip__today {
+    padding: 0.125rem var(--spacing-sm);
+    color: var(--color-action-primary);
+    background: var(--color-action-primary-text);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+
+  .s-week-strip__hours {
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+  }
+
+  .s-week-strip__opens {
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-week-strip__hours--closed {
+    color: var(--color-text-secondary);
+  }
+
+  .s-week-strip__track {
+    display: none;
+  }
+
+  // Today: the whole tile on the brand color, in the brand's ink.
+  .s-week-strip__day[aria-current="date"] {
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    border: 1px solid var(--color-action-primary);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .s-week-strip__day[aria-current="date"] :is(.s-week-strip__name, .s-week-strip__hours, .s-week-strip__closes) {
+    color: inherit;
+  }
+
+  @include mq(md) {
+    .s-week-strip {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+
+    .s-week-strip__day {
+      position: relative;
+      grid-template-columns: none;
+      align-content: start;
+      justify-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-lg) var(--spacing-sm) var(--spacing-md);
+      text-align: center;
+    }
+
+    // Today's tag sits on the tile's top edge, so the tile keeps the height of the others.
+    .s-week-strip__today {
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline: 0;
+      width: fit-content;
+      margin-inline: auto;
+      border: 2px solid var(--color-action-primary);
+      translate: 0 -50%;
+    }
+
+    .s-week-strip__name {
+      justify-content: center;
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-xs);
+      letter-spacing: var(--letter-spacing-wide);
+      text-transform: uppercase;
+    }
+
+    .s-week-strip__hours {
+      display: grid;
+      justify-items: center;
+      gap: 0.125rem;
+      width: 100%;
+      text-align: center;
+    }
+
+    // Centered, so proportional lining figures (old-style ones of serif heading fonts look uneven).
+    .s-week-strip__opens {
+      font-family: var(--font-family-heading);
+      font-size: var(--font-size-2xl);
+      font-weight: var(--heading-weight);
+      font-variant-numeric: lining-nums proportional-nums;
+      line-height: var(--line-height-tight);
+    }
+
+    .s-week-strip__closes {
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    .s-week-strip__closes time {
+      margin-inline-start: 0.25em;
+    }
+
+    .s-week-strip__hours--closed {
+      align-self: center;
+      padding-block: var(--spacing-sm);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      hyphens: auto;
+    }
+
+    // 24 hours, the open ones filled (decoration: the times say it).
+    .s-week-strip__track {
+      display: grid;
+      grid-template-columns: repeat(24, minmax(0, 1fr));
+      width: 100%;
+      height: 0.375rem;
+      margin-block-start: var(--spacing-sm);
+      overflow: clip;
+      background: color-mix(in srgb, var(--color-text-primary) 9%, transparent);
+      border-radius: var(--radius-pill);
+    }
+
+    .s-week-strip__span {
+      grid-row: 1;
+      background: var(--color-action-primary);
+      border-radius: var(--radius-pill);
+    }
+
+    @for $hour from 0 through 23 {
+      .s-week-strip__span--from-#{$hour} {
+        grid-column-start: $hour + 1;
+      }
+    }
+
+    @for $hour from 1 through 24 {
+      .s-week-strip__span--to-#{$hour} {
+        grid-column-end: $hour + 1;
+      }
+    }
+
+    .s-week-strip__day[aria-current="date"] .s-week-strip__track {
+      background: color-mix(in srgb, var(--color-action-primary-text) 25%, transparent);
+    }
+
+    .s-week-strip__day[aria-current="date"] .s-week-strip__span {
+      background: var(--color-action-primary-text);
+    }
+  }
+
+  // Tiles in a row narrower than ~150px: the short day names (the long ones stay for screen readers).
+  @include mq(md) {
+    @include mq-down(xl) {
+      .s-week-strip__long {
+        @include visually-hidden;
+      }
+
+      .s-week-strip__short {
+        display: inline;
+      }
+    }
+  }
+
+  .s-week-strip__place {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-sm) var(--spacing-xl);
+    font-style: normal;
+  }
+
+  .s-week-strip__fact {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    max-width: 100%;
+  }
+
+  .s-week-strip__icon {
+    flex: none;
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+  }
+}

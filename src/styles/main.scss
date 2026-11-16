@@ -68,5 +68,6 @@
 @use "./sections/stats";
 @use "./sections/team";
 @use "./sections/schedule";
+@use "./sections/hours-location";
 @use "./sections/testimonials";
 @layer reset, tokens, base, layout, components, widgets, utilities, state;

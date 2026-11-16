@@ -50,6 +50,10 @@ import LogoCloud from "@/sections/logo-cloud/LogoCloud.astro";
 import Embed from "@/sections/embed/Embed.astro";
 import HoursCard from "@/sections/hours-location/Card.astro";
 import HoursCompact from "@/sections/hours-location/Compact.astro";
+import HoursImageSide from "@/sections/hours-location/ImageSide.astro";
+import HoursMap from "@/sections/hours-location/Map.astro";
+import HoursToday from "@/sections/hours-location/Today.astro";
+import HoursWeekStrip from "@/sections/hours-location/WeekStrip.astro";
 import PricingCards from "@/sections/pricing/Cards.astro";
 import PricingCompact from "@/sections/pricing/Compact.astro";
 import PricingFeaturedCenter from "@/sections/pricing/FeaturedCenter.astro";
@@ -79,7 +83,7 @@ export const sectionComponents: Record<string, Record<string, SectionComponent>>
   faq: { accordion: FaqAccordion, "two-column": FaqTwoColumn },
   cta: { boxed: CtaBoxed, banner: CtaBanner },
   contact: { "form-split": ContactFormSplit, "form-centered": ContactFormCentered },
-  "hours-location": { card: HoursCard, compact: HoursCompact },
+  "hours-location": { card: HoursCard, compact: HoursCompact, today: HoursToday, map: HoursMap, "image-side": HoursImageSide, "week-strip": HoursWeekStrip },
   schedule: { week: ScheduleWeek, table: ScheduleTable, "day-columns": ScheduleDayColumns, matrix: ScheduleMatrix, tabs: ScheduleTabs, agenda: ScheduleAgenda },
   team: { cards: TeamCards, compact: TeamCompact, "social-cards": TeamSocialCards, spotlight: TeamSpotlight, "color-tiles": TeamColorTiles, directory: TeamDirectory },
   stats: { row: Stats, cards: Stats, rings: StatsRings, bars: StatsBars, "chart-cards": StatsChartCards, highlight: StatsHighlight, bento: StatsBento },

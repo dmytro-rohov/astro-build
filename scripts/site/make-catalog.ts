@@ -108,7 +108,7 @@ function example(schema: z.ZodType, mode: Mode, key: string, index = 0): unknown
     if (key === "mapUrl") return linkFor(key);
     // Schedule: a class every hour from 8:00, spread over the week.
     if (key === "start" || key === "end") return `${String(8 + (Math.floor(index / 7) % 13)).padStart(2, "0")}:${key === "start" ? "00" : "50"}`;
-    if (key === "url") return "https://www.openstreetmap.org/export/embed.html?bbox=17.03%2C51.10%2C17.04%2C51.11&layer=mapnik";
+    if (key === "url" || key === "mapEmbed") return "https://www.openstreetmap.org/export/embed.html?bbox=17.03%2C51.10%2C17.04%2C51.11&layer=mapnik";
     if (key === "href") return schema.safeParse("/").success ? "/" : "https://example.com/";
     if (key === "id") return `${mode}-${++idCounter}`;
     if (meta.editor?.fieldType === "richtext-lite") return richTextOf(max, mode);
