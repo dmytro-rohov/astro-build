@@ -1,7 +1,12 @@
 ---
+/**
+ * Edge-to-edge band: the text behind a brand bar on the left, the actions on the right (below
+ * the text up to lg). Without a tone from the section or the archetype the band is muted.
+ */
 import SectionShell from "@/sections/_shared/SectionShell.astro";
 import SectionHeader from "@/sections/_shared/SectionHeader.astro";
 import Actions from "@/sections/_shared/Actions.astro";
+import { toneFor } from "@/site/theme";
 import type { SectionOf } from "@/site/types";
 
 export interface Props {
@@ -13,9 +18,11 @@ const { section, headingLevel } = Astro.props;
 const { content, props } = section;
 ---
 
-<SectionShell id={section.id} type="cta" variant="banner" tone={props.tone} spacing={props.spacing} defaultSpacing="md">
+<SectionShell id={section.id} type="cta" variant="banner" tone={props.tone ?? toneFor("cta", undefined) ?? "muted"} spacing={props.spacing} defaultSpacing="md">
   <div class="s-cta-banner">
-    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} />
-    <Actions primary={content.primaryAction} secondary={content.secondaryAction} />
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} class="s-cta-banner__header" />
+    <div class="s-cta-banner__actions">
+      <Actions primary={content.primaryAction} secondary={content.secondaryAction} />
+    </div>
   </div>
 </SectionShell>

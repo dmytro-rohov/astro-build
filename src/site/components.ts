@@ -7,8 +7,12 @@ import AboutCentered from "@/sections/about/Centered.astro";
 import AboutImageSide from "@/sections/about/ImageSide.astro";
 import ContactFormCentered from "@/sections/contact/FormCentered.astro";
 import ContactFormSplit from "@/sections/contact/FormSplit.astro";
+import CtaBandCard from "@/sections/cta/BandCard.astro";
 import CtaBanner from "@/sections/cta/Banner.astro";
 import CtaBoxed from "@/sections/cta/Boxed.astro";
+import CtaFaces from "@/sections/cta/Faces.astro";
+import CtaGradientCards from "@/sections/cta/GradientCards.astro";
+import CtaRings from "@/sections/cta/Rings.astro";
 import FaqAccordion from "@/sections/faq/Accordion.astro";
 import FaqTwoColumn from "@/sections/faq/TwoColumn.astro";
 import FeaturesBento from "@/sections/features/Bento.astro";
@@ -77,7 +81,7 @@ export const sectionComponents: Record<string, Record<string, SectionComponent>>
   gallery: { grid: GalleryGrid, mosaic: GalleryGrid },
   pricing: { cards: PricingCards, compact: PricingCompact, "featured-center": PricingFeaturedCenter, table: PricingTable, split: PricingSplit, minimal: PricingMinimal },
   faq: { accordion: FaqAccordion, "two-column": FaqTwoColumn },
-  cta: { boxed: CtaBoxed, banner: CtaBanner },
+  cta: { boxed: CtaBoxed, banner: CtaBanner, rings: CtaRings, "gradient-cards": CtaGradientCards, faces: CtaFaces, "band-card": CtaBandCard },
   contact: { "form-split": ContactFormSplit, "form-centered": ContactFormCentered },
   "hours-location": { card: HoursCard, compact: HoursCompact },
   schedule: { week: ScheduleWeek, table: ScheduleTable, "day-columns": ScheduleDayColumns, matrix: ScheduleMatrix, tabs: ScheduleTabs, agenda: ScheduleAgenda },
