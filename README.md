@@ -853,8 +853,12 @@ debug mode, immutable font caching). CI runs it on every pull request.
 
 ## Version
 
-Current version: **v3.2** (`3.2.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
+Current version: **v3.2** (`3.2.1`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
 starter is kept on the `v2` branch / tag `v2.0.0`.
+
+v3.2.1: lighter pages — photos encode at quality 72 (the cover hero at 55, under its overlay,
+widths up to 1600), and `server.mjs` sends text files gzip-compressed in static mode, like the
+Caddy sites, so the Lighthouse gate measures what visitors get.
 
 v3.2 (design review of the first generated sites):
 

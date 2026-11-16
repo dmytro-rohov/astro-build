@@ -35,7 +35,7 @@ const align = props.align ?? "left";
 >
   {image && (
     <div class="s-hero-cover__media" aria-hidden="true">
-      <Img src={image.image} alt="" kind="decorative" priority="high" sizes="100vw" widths={[640, 960, 1280, 1920]} aspect={[4, 3]} focal={image.focal} class="s-hero-cover__image" />
+      <Img src={image.image} alt="" kind="decorative" priority="high" sizes="100vw" widths={[640, 960, 1280, 1600]} quality={55} aspect={[4, 3]} focal={image.focal} class="s-hero-cover__image" />
     </div>
   )}
   <Stack space="xl" class:list={["s-hero-cover__content", `s-hero-cover__content--${align}`]}>
