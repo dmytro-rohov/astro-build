@@ -1,0 +1,70 @@
+---
+/**
+ * Pages of up to five photos — tall, wide and small tiles (layout.ts) — one page at a time in the
+ * Slider, the title beside the arrows and dashes under the page. Captions show on hover and in
+ * the viewer. 2–5 photos make a single page without controls.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import MoreLink from "@/sections/gallery/MoreLink.astro";
+import Photo from "@/sections/gallery/Photo.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Lightbox from "@/components/widgets/Lightbox.astro";
+import Slider from "@/components/widgets/Slider.astro";
+import { SLIDER_TILES, sliderPages, type SliderTile } from "@/sections/gallery/layout";
+import { format, t } from "@/i18n";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"gallery", "slider">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const count = content.items.length;
+const lightbox = props.lightbox ?? true;
+const align = props.align ?? "left";
+
+let offset = 0;
+const pages = sliderPages(count).map((size) => content.items.slice(offset, (offset += size)).map((item, index) => ({ item, number: offset - size + index + 1 })));
+const paged = pages.length > 1;
+const List = paged ? Slider : "ul";
+const listProps = paged ? { label: content.title, single: true, dots: pages.length, class: "s-gallery-slider" } : { class: "s-gallery-slider s-gallery-slider--one" };
+
+// Crop and srcset per tile; on phones the tiles are rearranged and cropped again by CSS.
+const tiles: Record<SliderTile, { aspect: [number, number]; widths: number[]; sizes: string }> = {
+  big: { aspect: [8, 5], widths: [480, 800, 1200], sizes: "(min-width: 1280px) 816px, (min-width: 768px) 66vw, 100vw" },
+  wide: { aspect: [8, 5], widths: [320, 480, 640, 800], sizes: "(min-width: 1280px) 408px, (min-width: 768px) 33vw, 50vw" },
+  tall: { aspect: [4, 5], widths: [320, 480, 640, 800], sizes: "(min-width: 1280px) 408px, (min-width: 768px) 33vw, 50vw" },
+  small: { aspect: [4, 5], widths: [240, 320, 480], sizes: "(min-width: 1280px) 204px, (min-width: 768px) 17vw, 50vw" },
+  half: { aspect: [6, 5], widths: [480, 640, 960, 1200], sizes: "(min-width: 1280px) 612px, (min-width: 768px) 50vw, 100vw" },
+};
+---
+
+<SectionShell id={section.id} type="gallery" variant="slider" tone={props.tone} spacing={props.spacing} width="xl">
+  <Stack space="xl">
+    {!paged && <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={align} />}
+    <Lightbox label={content.title} enabled={lightbox}>
+      <List {...listProps}>
+        {paged && (
+          <Stack slot="head" space="lg">
+            <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align="left" />
+            <MoreLink link={content.link} align="left" />
+          </Stack>
+        )}
+        {pages.map((page) => (
+          <li class:list={["s-gallery-slider__page", `s-gallery-slider__page--${page.length}`]}>
+            {page.map(({ item, number }, index) => (
+              <figure class="s-gallery-slider__tile">
+                <Photo image={item.image} caption={item.caption} lightbox={lightbox} {...tiles[SLIDER_TILES[page.length][index]]} label={format(t.lightbox.status, { number, count })} />
+                {item.caption && <figcaption class="s-gallery__overlay s-gallery-slider__caption">{item.caption}</figcaption>}
+              </figure>
+            ))}
+          </li>
+        ))}
+      </List>
+    </Lightbox>
+    {!paged && <MoreLink link={content.link} align={align} />}
+  </Stack>
+</SectionShell>

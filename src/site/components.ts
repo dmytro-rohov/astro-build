@@ -30,7 +30,13 @@ import FeaturesIconList from "@/sections/features/IconList.astro";
 import FeaturesOrbit from "@/sections/features/Orbit.astro";
 import FeaturesSpotlight from "@/sections/features/Spotlight.astro";
 import FeaturesStaggered from "@/sections/features/Staggered.astro";
+import GalleryCheckerboard from "@/sections/gallery/Checkerboard.astro";
+import GalleryExplore from "@/sections/gallery/Explore.astro";
 import GalleryGrid from "@/sections/gallery/Grid.astro";
+import GalleryMasonry from "@/sections/gallery/Masonry.astro";
+import GalleryMosaic from "@/sections/gallery/Mosaic.astro";
+import GalleryPolaroid from "@/sections/gallery/Polaroid.astro";
+import GallerySlider from "@/sections/gallery/Slider.astro";
 import HeroCentered from "@/sections/hero/Centered.astro";
 import HeroCoverImage from "@/sections/hero/CoverImage.astro";
 import HeroSplitImage from "@/sections/hero/SplitImage.astro";
@@ -90,7 +96,7 @@ export const sectionComponents: Record<string, Record<string, SectionComponent>>
   services: { cards: ServicesCards, "price-list": ServicesPriceList },
   features: { "cards-grid": FeaturesCardsGrid, "icon-list": FeaturesIconList, "icon-badge": FeaturesIconBadge, staggered: FeaturesStaggered, orbit: FeaturesOrbit, spotlight: FeaturesSpotlight, bento: FeaturesBento },
   testimonials: { cards: TestimonialsCards, spotlight: TestimonialsSpotlight, carousel: TestimonialsCarousel, portraits: TestimonialsPortraits, "quote-cards": TestimonialsQuoteCards, rating: TestimonialsRating },
-  gallery: { grid: GalleryGrid, mosaic: GalleryGrid },
+  gallery: { grid: GalleryGrid, mosaic: GalleryMosaic, slider: GallerySlider, masonry: GalleryMasonry, polaroid: GalleryPolaroid, checkerboard: GalleryCheckerboard, explore: GalleryExplore },
   pricing: { cards: PricingCards, compact: PricingCompact, "featured-center": PricingFeaturedCenter, table: PricingTable, split: PricingSplit, minimal: PricingMinimal },
   faq: { accordion: FaqAccordion, "two-column": FaqTwoColumn, "split-contact": FaqSplitContact, categories: FaqCategories, "with-image": FaqWithImage, search: FaqSearch },
   cta: { boxed: CtaBoxed, banner: CtaBanner, rings: CtaRings, "gradient-cards": CtaGradientCards, faces: CtaFaces, "band-card": CtaBandCard },

@@ -1,0 +1,20 @@
+---
+/** The section's optional link to more photos (Instagram, a portfolio page), under the photos. */
+import Button from "@/components/ui/Button.astro";
+import Icon from "@/components/media/Icon.astro";
+
+export interface Props {
+  link?: { label: string; href: string };
+  align?: "left" | "center";
+}
+
+const { link, align = "center" } = Astro.props;
+---
+
+{link && (
+  <div class:list={["s-gallery__more", `s-gallery__more--${align}`]}>
+    <Button href={link.href} variant="secondary">
+      {link.label}<Icon name="arrow-right" size="1.125em" />
+    </Button>
+  </div>
+)}

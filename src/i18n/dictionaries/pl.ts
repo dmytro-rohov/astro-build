@@ -49,6 +49,7 @@ export default {
     embedNotice: "Ta treść pochodzi z serwisu {provider}. Po kliknięciu {provider} może zapisać pliki cookie i otrzyma Twój adres IP.",
     embedOpen: "Otwórz w {provider}",
     step: "Krok {number}",
+    gallery: "Galeria",
     reviews: { one: "{count} opinia", few: "{count} opinie", many: "{count} opinii", other: "{count} opinii" },
   },
 
@@ -71,6 +72,14 @@ export default {
     next: "Następne",
     label: "Przewijana lista",
     page: "Pokaż {number} z {count}",
+  },
+
+  lightbox: {
+    label: "Przeglądarka zdjęć",
+    close: "Zamknij",
+    previous: "Poprzednie zdjęcie",
+    next: "Następne zdjęcie",
+    status: "Zdjęcie {number} z {count}",
   },
 
   common: {

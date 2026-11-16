@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **17 section types, 83 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **17 section types, 88 variants**, 3 navbars and 3 footers, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -163,7 +163,7 @@ the migrated site is validated like any build.
 | `services` | `cards`, `price-list` |
 | `features` | `cards-grid`, `icon-list`, `icon-badge` (round icon on the card edge, link per card), `staggered` (zigzag cards over a colored band), `orbit` (items around a central circle; a list on phones), `spotlight` (one raised card), `bento` (tiles of different sizes, one accent tile) |
 | `testimonials` | `cards` (a slider over 3 reviews), `spotlight` (first three, stacked), `carousel` (one quote at a time on a brand panel, arrows + dots), `portraits` (photo tile + brand quote card, checkerboard), `quote-cards` (quote mark in a curved corner, one card on the brand color), `rating` (overall score + review rows); without a photo the initials are shown, stars only for a real `rating`; optional `ratingAverage`, `ratingCount`, `ratingSource`, `ratingLink` from a review profile (Google…) |
-| `gallery` | `grid`, `mosaic` |
+| `gallery` | `grid` (even 4:3 tiles, captions below), `mosaic` (first photo large, square tiles closing a rectangle), `slider` (pages of up to five tall, wide and small tiles, arrows beside the title, dashes), `masonry` (columns of different heights ending level, captions on the photos), `polaroid` (tilted prints over a brand band), `checkerboard` (photos alternate with text tiles: optional `items[].title`, `text`, `link`), `explore` (vertical word on a framed panel beside staggered portraits) — every photo opens a full-screen viewer (prop `lightbox`, default on; without JavaScript it links to the image), optional `link` to more photos |
 | `pricing` | `cards`, `compact`, `featured-center` (recommended plan in the middle, on the brand color), `table` (comparison: features × plans), `split` (intro left, plan rows right), `minimal` (typographic columns, thin rules) |
 | `faq` | `accordion`, `two-column`, `split-contact` (title and a contact card with phone and e-mail from `business`, optional photo and button), `categories` (a category menu switching the questions; without categories the questions are the menu), `with-image` (numbered questions beside a photo or a brand question-mark panel), `search` (brand panel with a search field, category pills and a live result count) — all publish FAQPage JSON-LD and list everything without JavaScript; optional `items[].category`, `image`, `action` |
 | `cta` | `boxed` (glow over a dot grid), `banner` (edge-to-edge band, brand bar, stacked actions), `rings` (brand card, concentric circles), `gradient-cards` (gradient band with wave lines, facts on floating cards), `faces` (light card, round photos around it — tinted dots without them), `band-card` (light card on a brand band, spaced uppercase title); optional `highlights` (gradient-cards) and `images` (faces); `description` optional |
@@ -495,8 +495,9 @@ Available media primitives:
 Every section variant lives in `src/sections/<type>/` and renders through `SectionShell`
 (anchor id, tone, spacing, `data-section-type` for the tests). Shared building blocks:
 `Accordion` (`components/ui`), `ContactForm` (`components/form`: the form alone, laid out by
-its own width), `SectionHeader`, `Actions`, `RichText`, `EmbedFrame` (`sections/_shared`).
-There is no separate "widgets" layer any more.
+its own width), `Slider` and `Lightbox` (full-screen photo viewer on a native `<dialog>`:
+arrows, swipe, Escape, captions, counter; `components/widgets`), `SectionHeader`, `Actions`,
+`RichText`, `EmbedFrame` (`sections/_shared`). There is no separate "widgets" layer any more.
 
 Site layouts (`src/layouts/`): `BaseLayout`, `Header`, `Navbar`, `Footer`.
 

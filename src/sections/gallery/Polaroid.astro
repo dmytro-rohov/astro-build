@@ -1,0 +1,64 @@
+---
+/**
+ * Instant prints: every photo in a white frame with a wide lower edge for the caption, slightly
+ * tilted and overlapping, over a two-tone band — the title on the brand color, the prints
+ * reaching down into the section's own tone.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import MoreLink from "@/sections/gallery/MoreLink.astro";
+import Photo from "@/sections/gallery/Photo.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Lightbox from "@/components/widgets/Lightbox.astro";
+import { getAsset } from "@/site/assets";
+import { autoColumns } from "@/sections/features/layout";
+import { shapeOf, tileSizes } from "@/sections/gallery/layout";
+import { format, t } from "@/i18n";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"gallery", "polaroid">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const count = content.items.length;
+const columns = autoColumns(count);
+const lightbox = props.lightbox ?? true;
+// Prints keep the photo's orientation: portrait ones stand upright.
+const aspects = { landscape: [4, 3], square: [1, 1], portrait: [4, 5] } as const;
+---
+
+<SectionShell id={section.id} type="gallery" variant="polaroid" tone={props.tone} spacing={props.spacing} width="xl">
+  <Stack space="2xl">
+    <div class="s-polaroids__band">
+      <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    </div>
+    <Lightbox label={content.title} enabled={lightbox}>
+      <ul class:list={["s-polaroids", `s-polaroids--${columns}`]}>
+        {content.items.map((item, index) => {
+          const shape = shapeOf(getAsset(item.image).image);
+          return (
+            <li class="s-polaroids__item">
+              <figure class:list={["s-polaroid", `s-polaroid--${shape}`]}>
+                <Photo
+                  image={item.image}
+                  caption={item.caption}
+                  lightbox={lightbox}
+                  aspect={aspects[shape]}
+                  widths={[320, 480, 640]}
+                  sizes={tileSizes(Number(columns), 2)}
+                  label={format(t.lightbox.status, { number: index + 1, count })}
+                  class="s-polaroid__photo"
+                />
+                {item.caption && <figcaption class="s-polaroid__caption">{item.caption}</figcaption>}
+              </figure>
+            </li>
+          );
+        })}
+      </ul>
+    </Lightbox>
+    <MoreLink link={content.link} />
+  </Stack>
+</SectionShell>

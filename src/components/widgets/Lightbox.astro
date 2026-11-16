@@ -1,0 +1,133 @@
+---
+/**
+ * Full-screen photo viewer (v3.3), reusable: wraps a gallery whose photo links carry
+ * `data-lightbox-item` (href = the whole photo, data-width / data-height, optional data-caption).
+ * A click opens a modal <dialog> with the photo, its caption, a counter and previous/next
+ * buttons; arrow keys and swipes change the photo, Escape closes it and focus returns to the
+ * photo. Without JavaScript the links open the image itself. `enabled={false}` renders only
+ * the slot.
+ *   <Lightbox label="Galeria"><ul>… <a href={large} data-lightbox-item>…</a> …</ul></Lightbox>
+ */
+import { t } from "@/i18n";
+
+export interface Props {
+  /** Name of the viewer, e.g. the section title. */
+  label?: string;
+  enabled?: boolean;
+  class?: string;
+}
+
+const { label = t.lightbox.label, enabled = true, class: className } = Astro.props;
+---
+
+{enabled ? (
+  <div class:list={["lightbox-group", className]} data-lightbox>
+    <slot />
+    <dialog class="lightbox" aria-label={label} data-lightbox-dialog data-status={t.lightbox.status}>
+      <div class="lightbox__bar">
+        <p class="lightbox__counter" aria-live="polite">
+          <span aria-hidden="true" data-lightbox-count></span>
+          <span class="visually-hidden" data-lightbox-status></span>
+        </p>
+        <button type="button" class="lightbox__button" data-lightbox-close aria-label={t.lightbox.close} autofocus>
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+        </button>
+      </div>
+      <figure class="lightbox__figure" data-lightbox-stage>
+        <img class="lightbox__image" alt="" decoding="async" data-lightbox-image />
+        <figcaption class="lightbox__caption" data-lightbox-caption></figcaption>
+      </figure>
+      <button type="button" class="lightbox__button lightbox__button--previous" data-lightbox-prev aria-label={t.lightbox.previous}>
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="m14.5 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      </button>
+      <button type="button" class="lightbox__button lightbox__button--next" data-lightbox-next aria-label={t.lightbox.next}>
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="m9.5 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      </button>
+    </dialog>
+  </div>
+) : (
+  <slot />
+)}
+
+<script>
+  for (const group of document.querySelectorAll<HTMLElement>("[data-lightbox]")) {
+    const dialog = group.querySelector<HTMLDialogElement>("[data-lightbox-dialog]");
+    const links = [...group.querySelectorAll<HTMLAnchorElement>("[data-lightbox-item]")];
+    if (!dialog || !links.length) continue;
+
+    const image = dialog.querySelector<HTMLImageElement>("[data-lightbox-image]")!;
+    const caption = dialog.querySelector<HTMLElement>("[data-lightbox-caption]")!;
+    const count = dialog.querySelector<HTMLElement>("[data-lightbox-count]")!;
+    const status = dialog.querySelector<HTMLElement>("[data-lightbox-status]")!;
+    const previous = dialog.querySelector<HTMLButtonElement>("[data-lightbox-prev]")!;
+    const next = dialog.querySelector<HTMLButtonElement>("[data-lightbox-next]")!;
+    const stage = dialog.querySelector<HTMLElement>("[data-lightbox-stage]")!;
+    const rtl = getComputedStyle(dialog).direction === "rtl";
+    let current = 0;
+    let opener: HTMLElement | undefined;
+
+    const show = (index: number) => {
+      current = (index + links.length) % links.length;
+      const link = links[current];
+
+      // Hidden until the new photo has loaded, so the previous one never shows under a new caption
+      // (the same photo twice in a row fires no load event: it stays as it is).
+      if (image.src !== link.href) {
+        image.classList.add("is-loading");
+        image.width = Number(link.dataset.width);
+        image.height = Number(link.dataset.height);
+        image.src = link.href;
+      }
+      image.alt = link.querySelector("img")?.alt ?? "";
+      caption.textContent = link.dataset.caption ?? "";
+      caption.hidden = !link.dataset.caption;
+      count.textContent = `${current + 1} / ${links.length}`;
+      status.textContent = (dialog.dataset.status ?? "").replace("{number}", String(current + 1)).replace("{count}", String(links.length));
+
+      // The neighbours load in the background: browsing feels instant.
+      for (const step of [1, -1]) new Image().src = links[(current + step + links.length) % links.length].href;
+    };
+
+    image.addEventListener("load", () => image.classList.remove("is-loading"));
+    previous.hidden = next.hidden = links.length < 2;
+
+    links.forEach((link, index) => {
+      link.setAttribute("aria-haspopup", "dialog");
+      link.addEventListener("click", (event) => {
+        // Ctrl / Cmd / Shift + click still opens the image in a new tab or window.
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        opener = link;
+        show(index);
+        dialog.showModal();
+      });
+    });
+
+    previous.addEventListener("click", () => show(current - 1));
+    next.addEventListener("click", () => show(current + 1));
+    dialog.querySelector("[data-lightbox-close]")?.addEventListener("click", () => dialog.close());
+    dialog.addEventListener("close", () => opener?.focus());
+
+    dialog.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      event.preventDefault();
+      show(current + ((event.key === "ArrowRight") !== rtl ? 1 : -1));
+    });
+
+    // A click beside the photo (on the dark backdrop) closes the viewer.
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog || event.target === stage) dialog.close();
+    });
+
+    // Swipe left / right on touch screens (a swipe fires no click; mice use the buttons).
+    let start: { x: number; y: number } | undefined;
+    stage.addEventListener("pointerdown", (event) => (start = event.pointerType === "mouse" ? undefined : { x: event.clientX, y: event.clientY }));
+    stage.addEventListener("pointerup", (event) => {
+      if (!start || links.length < 2) return;
+      const dx = event.clientX - start.x;
+      const dy = event.clientY - start.y;
+      start = undefined;
+      if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) show(current + ((dx < 0) !== rtl ? 1 : -1));
+    });
+  }
+</script>

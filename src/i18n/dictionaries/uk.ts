@@ -49,6 +49,7 @@ export default {
     embedNotice: "Цей вміст завантажується з {provider}. Після натискання {provider} може зберігати файли cookie та отримає вашу IP-адресу.",
     embedOpen: "Відкрити в {provider}",
     step: "Крок {number}",
+    gallery: "Галерея",
     reviews: { one: "{count} відгук", few: "{count} відгуки", many: "{count} відгуків", other: "{count} відгуку" },
   },
 
@@ -71,6 +72,14 @@ export default {
     next: "Наступні",
     label: "Гортальний список",
     page: "Показати {number} з {count}",
+  },
+
+  lightbox: {
+    label: "Перегляд фото",
+    close: "Закрити",
+    previous: "Попереднє фото",
+    next: "Наступне фото",
+    status: "Фото {number} з {count}",
   },
 
   common: {

@@ -17,6 +17,7 @@
 @use "./components/link";
 @use "./components/card";
 @use "./components/slider";
+@use "./components/lightbox";
 @use "./components/tag";
 @use "./components/divider";
 @use "./components/progress";
@@ -71,4 +72,5 @@
 @use "./sections/hours-location";
 @use "./sections/testimonials";
 @use "./sections/contact";
+@use "./sections/gallery";
 @layer reset, tokens, base, layout, components, widgets, utilities, state;
