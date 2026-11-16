@@ -1,4 +1,8 @@
 ---
+/**
+ * Accessible table grouped by day (a header row per day): time, class, then the level,
+ * instructor and room columns that any class fills. Phones: every class is a small block.
+ */
 import SectionShell from "@/sections/_shared/SectionShell.astro";
 import SectionHeader from "@/sections/_shared/SectionHeader.astro";
 import Stack from "@/components/layouts/Stack.astro";
@@ -21,7 +25,7 @@ const columns = { instructor: has("instructor"), level: has("level"), room: has(
 <SectionShell id={section.id} type="schedule" variant="table" tone={props.tone} spacing={props.spacing}>
   <Stack space="xl">
     <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
-    <div class="s-timetable__scroll">
+    <div class="s-timetable__frame">
       <table class="s-timetable">
         {content.title && <caption class="visually-hidden">{content.title}</caption>}
         <thead>
@@ -35,16 +39,16 @@ const columns = { instructor: has("instructor"), level: has("level"), room: has(
         </thead>
         {days.map((group) => (
           <tbody class="s-timetable__day">
-            <tr>
+            <tr class="s-timetable__day-row">
               <th scope="colgroup" colspan={2 + Object.values(columns).filter(Boolean).length} class="s-timetable__day-title">{t.days[group.day].long}</th>
             </tr>
             {group.items.map((item) => (
               <tr>
                 <td class="s-timetable__time"><time datetime={item.start}>{item.start}</time>–<time datetime={item.end}>{item.end}</time></td>
                 <th scope="row" class="s-timetable__class">{item.title}</th>
-                {columns.level && <td>{item.level}</td>}
-                {columns.instructor && <td>{item.instructor}</td>}
-                {columns.room && <td>{item.room}</td>}
+                {columns.level && <td class="s-timetable__meta">{item.level}</td>}
+                {columns.instructor && <td class="s-timetable__meta">{item.instructor}</td>}
+                {columns.room && <td class="s-timetable__meta">{item.room}</td>}
               </tr>
             ))}
           </tbody>

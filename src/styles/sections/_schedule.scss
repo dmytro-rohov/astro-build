@@ -1,0 +1,1000 @@
+// Schedule ("Grafik zajęć"), v3.3: six layouts of the same weekly classes (moved out of
+// _blocks.scss). Days and times come sorted from src/site/schedule.ts. Every layout becomes
+// a list of days on phones and never scrolls sideways; long class names wrap anywhere.
+@use "../abstracts/mixins" as *;
+
+// Hidden but read by screen readers (the utility class, for elements that are visible on other screens).
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+// Week, desktops: one column per day under one row of header strips.
+@mixin week-columns($board) {
+  #{$board} {
+    grid-template-columns: repeat(var(--week-days, 1), minmax(0, 1fr));
+  }
+
+  #{$board} .s-week__day {
+    grid-template-columns: none;
+  }
+
+  #{$board} .s-week__day + .s-week__day {
+    border-block-start: 0;
+    border-inline-start: 1px solid var(--color-border-default);
+  }
+
+  #{$board} .s-week__day-title {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: center;
+  }
+
+  #{$board} .s-week__list {
+    grid-template-columns: none;
+    padding: var(--spacing-sm);
+  }
+}
+
+// Matrix rows as cards (phones and tablets, with six or seven days also small laptops): a line
+// per day with the day name, free days left out.
+@mixin matrix-cards($table) {
+  #{$table},
+  #{$table} tbody {
+    display: grid;
+    align-items: start;
+    gap: var(--spacing-md);
+  }
+
+  #{$table} thead {
+    @include visually-hidden;
+  }
+
+  #{$table} tr {
+    display: grid;
+    align-content: start;
+    overflow: clip;
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  #{$table} tbody > tr > * {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: 0;
+  }
+
+  #{$table} .s-matrix__name {
+    background: color-mix(in srgb, var(--color-action-primary) 13%, transparent);
+    font-size: var(--font-size-lg);
+  }
+
+  #{$table} tbody .s-matrix__cell {
+    display: grid;
+    gap: var(--spacing-xs) var(--spacing-md);
+    text-align: start;
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  #{$table} tbody .s-matrix__cell--empty {
+    display: none;
+  }
+
+  #{$table} .s-matrix__cell-day {
+    display: block;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+
+  #{$table} .s-matrix__slots {
+    gap: var(--spacing-sm);
+  }
+
+  // Wider phones: the day name in a column of its own; from tablets two cards a row.
+  @include mq(sm) {
+    #{$table} tbody .s-matrix__cell {
+      grid-template-columns: 8rem minmax(0, 1fr);
+    }
+
+    #{$table} .s-matrix__cell-day {
+      padding-block-start: 0.15em;
+    }
+  }
+
+  @include mq(md) {
+    #{$table} tbody {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+// Tabs: the short day name instead of the long one (which stays for screen readers).
+@mixin short-day-names($tabs) {
+  #{$tabs} .s-day-tabs__long {
+    @include visually-hidden;
+  }
+
+  #{$tabs} .s-day-tabs__short {
+    display: inline;
+  }
+}
+
+@layer widgets {
+  // ---------- schedule: shared ----------
+  .s-schedule__note {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  // One detail (level, instructor, room) wraps as a whole before it breaks inside.
+  .s-schedule__detail {
+    display: inline-block;
+    max-width: 100%;
+  }
+
+  .s-schedule__note--center {
+    width: 100%;
+    max-width: 48rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  // ---------- schedule: week ----------
+  // v3.3, "calendar board": one frame, a column per day under a header strip, classes as tinted
+  // blocks with an accent edge. Tablets: a row per day with the name on the left; phones stack.
+  .s-week {
+    display: grid;
+    overflow: clip;
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-week__day {
+    display: grid;
+    align-content: start;
+    min-width: 0;
+  }
+
+  .s-week__day + .s-week__day {
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-week__day-title {
+    padding: var(--spacing-sm) var(--spacing-md);
+    color: var(--color-text-primary);
+    background: var(--color-background-muted);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-snug);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+
+  .s-week__list {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-week__item {
+    display: grid;
+    align-content: start;
+    gap: 0.125rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: color-mix(in srgb, var(--color-action-primary) 9%, var(--color-background-surface));
+    border-inline-start: 3px solid var(--color-action-primary);
+    border-radius: var(--radius-control);
+  }
+
+  // Mixed towards the text color, so the small time keeps 4.5:1 on the tinted block (as .tag--primary).
+  .s-week__time {
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    font-size: var(--font-size-sm);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-week__title {
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  .s-week__meta {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    overflow-wrap: anywhere;
+  }
+
+  @include mq(md) {
+    .s-week__day {
+      grid-template-columns: 10rem minmax(0, 1fr);
+    }
+
+    .s-week__day-title {
+      padding: var(--spacing-md);
+    }
+
+    .s-week__list {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    }
+  }
+
+  // Desktops: a column per day; six or seven days only from xl (below, their columns are too narrow).
+  @include mq(lg) {
+    @include week-columns(".s-week:not(.s-week--days-6, .s-week--days-7)");
+
+    @for $days from 2 through 7 {
+      .s-week--days-#{$days} {
+        --week-days: #{$days};
+      }
+    }
+
+    // One to three days do not stretch over the whole width.
+    .s-week--days-1 {
+      width: 100%;
+      max-width: 24rem;
+      margin-inline: auto;
+    }
+
+    .s-week--days-2 {
+      width: 100%;
+      max-width: 44rem;
+      margin-inline: auto;
+    }
+
+    .s-week--days-3 {
+      width: 100%;
+      max-width: 62rem;
+      margin-inline: auto;
+    }
+  }
+
+  @include mq(xl) {
+    @include week-columns(":is(.s-week--days-6, .s-week--days-7)");
+
+    // Columns of ~170px: tighter blocks and smaller type, so class names keep their words.
+    :is(.s-week--days-6, .s-week--days-7) .s-week__item {
+      padding: var(--spacing-sm);
+    }
+
+    :is(.s-week--days-6, .s-week--days-7) .s-week__title {
+      font-size: var(--font-size-sm);
+    }
+
+    :is(.s-week--days-6, .s-week--days-7) .s-week__meta {
+      font-size: var(--font-size-xs);
+    }
+  }
+
+  // ---------- schedule: day columns ----------
+  // v3.3, "poster": separate columns under solid header blocks (the brand color and the inverse
+  // neutral in turn) holding the day name in a pill, classes as striped rows. The name sits on the
+  // surface color, not on the block, so any accent keeps its contrast.
+  .s-day-columns {
+    display: grid;
+    gap: var(--spacing-lg) var(--spacing-md);
+  }
+
+  @include mq(md) {
+    .s-day-columns {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    }
+
+    .s-day-columns--days-1 {
+      width: 100%;
+      max-width: 22rem;
+      margin-inline: auto;
+    }
+
+    .s-day-columns--days-2 {
+      width: 100%;
+      max-width: 44rem;
+      margin-inline: auto;
+    }
+  }
+
+  // Wide screens: the whole week in one row.
+  @include mq(xl) {
+    .s-day-columns {
+      grid-template-columns: repeat(var(--day-columns, 1), minmax(0, 1fr));
+    }
+
+    @for $days from 2 through 7 {
+      .s-day-columns--days-#{$days} {
+        --day-columns: #{$days};
+      }
+    }
+
+    .s-day-columns--days-3 {
+      width: 100%;
+      max-width: 62rem;
+      margin-inline: auto;
+    }
+
+    // Columns of ~165px: tighter rows and smaller type, so class names keep their words.
+    :is(.s-day-columns--days-6, .s-day-columns--days-7) .s-day-column__list {
+      padding: var(--spacing-xs);
+    }
+
+    :is(.s-day-columns--days-6, .s-day-columns--days-7) .s-day-column__item {
+      padding: var(--spacing-sm);
+    }
+
+    :is(.s-day-columns--days-6, .s-day-columns--days-7) .s-day-column__title {
+      font-size: var(--font-size-sm);
+    }
+
+    :is(.s-day-columns--days-6, .s-day-columns--days-7) .s-day-column__meta {
+      font-size: var(--font-size-xs);
+    }
+  }
+
+  .s-day-column {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: clip;
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-day-column__head {
+    display: flex;
+    justify-content: center;
+    padding: var(--spacing-md) var(--spacing-sm);
+    background: var(--color-action-primary);
+    box-shadow: inset 0 -0.25rem 0 rgb(0 0 0 / 14%);
+  }
+
+  .s-day-column:nth-child(even) .s-day-column__head {
+    background: var(--color-background-inverse);
+  }
+
+  .s-day-column__name {
+    max-width: 100%;
+    padding: var(--spacing-xs) var(--spacing-md);
+    color: var(--color-text-primary);
+    background: var(--color-background-surface);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-snug);
+    letter-spacing: var(--letter-spacing-wide);
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .s-day-column__list {
+    display: grid;
+    padding: var(--spacing-sm);
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-day-column__item {
+    display: grid;
+    gap: 0.125rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-control);
+  }
+
+  .s-day-column__item:nth-child(odd) {
+    background: color-mix(in srgb, var(--color-text-primary) 5%, var(--color-background-surface));
+  }
+
+  .s-day-column__time {
+    font-size: var(--font-size-sm);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-day-column__title {
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  .s-day-column__meta {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    overflow-wrap: anywhere;
+  }
+
+  // ---------- schedule: matrix ----------
+  // v3.3, "printed timetable": rows × days under a tinted header band, hairlines between the
+  // days. Below lg (with six or seven days below xl, their columns do not fit) every row becomes
+  // a card with a line per day: the day name in the cell stands in for the hidden column headers.
+  .s-matrix {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  // One or two day columns do not stretch over the whole width.
+  .s-matrix--days-1 {
+    max-width: 36rem;
+  }
+
+  .s-matrix--days-2 {
+    max-width: 52rem;
+  }
+
+  .s-matrix th,
+  .s-matrix td {
+    padding: var(--spacing-md) var(--spacing-sm);
+    vertical-align: top;
+    overflow-wrap: anywhere;
+  }
+
+  .s-matrix thead th {
+    padding-block: var(--spacing-sm);
+    color: var(--color-text-primary);
+    background: color-mix(in srgb, var(--color-action-primary) 13%, transparent);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-align: center;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
+
+  .s-matrix thead th:first-child {
+    width: 18%;
+    padding-inline-start: var(--spacing-lg);
+    text-align: start;
+    border-start-start-radius: var(--radius-button);
+    border-end-start-radius: var(--radius-button);
+  }
+
+  .s-matrix thead th:last-child {
+    border-start-end-radius: var(--radius-button);
+    border-end-end-radius: var(--radius-button);
+  }
+
+  .s-matrix tbody > tr > * {
+    border-block-end: 1px solid var(--color-border-default);
+  }
+
+  .s-matrix__name {
+    padding-inline-start: var(--spacing-lg);
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-base);
+    font-weight: var(--heading-weight);
+    line-height: var(--line-height-snug);
+    text-align: start;
+    hyphens: auto;
+  }
+
+  // Instructor names are short: larger, like a printed timetable (class names may be long).
+  .s-matrix--by-instructor .s-matrix__name {
+    font-size: var(--font-size-lg);
+  }
+
+  .s-matrix__cell {
+    text-align: center;
+    border-inline-start: 1px solid var(--color-border-default);
+  }
+
+  // A short dash marks a free day (decoration: the cell itself is empty).
+  .s-matrix__cell--empty::before {
+    content: "";
+    display: block;
+    width: 0.75rem;
+    height: 2px;
+    margin: 0.65em auto 0;
+    background: var(--color-border-strong);
+    border-radius: var(--radius-pill);
+  }
+
+  .s-matrix__cell-day {
+    display: none;
+  }
+
+  .s-matrix__slots {
+    display: grid;
+    gap: var(--spacing-md);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-matrix__slot {
+    display: grid;
+    gap: 0.125rem;
+    line-height: var(--line-height-snug);
+  }
+
+  .s-matrix__time {
+    font-size: var(--font-size-sm);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-matrix__lead {
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    hyphens: auto;
+  }
+
+  .s-matrix__meta {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+  }
+
+  @include mq-down(lg) {
+    @include matrix-cards(".s-matrix");
+  }
+
+  @include mq-down(xl) {
+    @include matrix-cards(":is(.s-matrix--days-6, .s-matrix--days-7)");
+  }
+
+  // ---------- schedule: tabs ----------
+  // v3.3: the days as a segmented control over one day's classes (rows with the start time big).
+  // The tab list stays hidden without JavaScript, and then every day is shown under its heading.
+  .s-day-tabs {
+    display: grid;
+    gap: var(--spacing-xl);
+  }
+
+  .s-day-tabs__list {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs);
+    background: color-mix(in srgb, var(--color-text-primary) 6%, transparent);
+    border-radius: var(--radius-button);
+  }
+
+  .s-day-tabs__list[hidden],
+  .s-day-tabs__panel[hidden] {
+    display: none;
+  }
+
+  .s-day-tabs__tab {
+    min-width: 0;
+    min-height: 2.75rem;
+    padding: var(--spacing-sm) var(--spacing-xs);
+    color: var(--color-text-secondary);
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-button);
+    font: inherit;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition:
+      color var(--motion-duration-fast) var(--motion-easing-standard),
+      background-color var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .s-day-tabs__tab:hover {
+    color: var(--color-text-primary);
+    background: color-mix(in srgb, var(--color-text-primary) 7%, transparent);
+  }
+
+  .s-day-tabs__tab[aria-selected="true"] {
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    box-shadow: var(--elevation-card);
+  }
+
+  .s-day-tabs__short {
+    display: none;
+  }
+
+  // Short day names where the long ones do not fit: phones (three days or more), tablets (four
+  // or more) and small laptops (six or seven).
+  @include mq-down(sm) {
+    @include short-day-names(".s-day-tabs:not(.s-day-tabs--days-1, .s-day-tabs--days-2)");
+  }
+
+  @include mq-down(md) {
+    @include short-day-names(".s-day-tabs:not(.s-day-tabs--days-1, .s-day-tabs--days-2, .s-day-tabs--days-3)");
+  }
+
+  @include mq-down(lg) {
+    @include short-day-names(":is(.s-day-tabs--days-6, .s-day-tabs--days-7)");
+  }
+
+  .s-day-tabs__panel {
+    display: grid;
+    gap: var(--spacing-md);
+  }
+
+  .s-day-tabs__day {
+    font-size: var(--font-size-xl);
+  }
+
+  // With the tabs on, the selected tab names the day: the heading stays for screen readers.
+  [data-day-tabs="ready"] .s-day-tabs__day {
+    @include visually-hidden;
+  }
+
+  .s-day-tabs__classes {
+    padding: 0;
+    margin: 0;
+    overflow: clip;
+    list-style: none;
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-day-tabs__class {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+
+  .s-day-tabs__class + .s-day-tabs__class {
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-day-tabs__time {
+    display: grid;
+    align-self: stretch;
+    align-content: center;
+    min-width: 4.5rem;
+    padding-inline-end: var(--spacing-md);
+    border-inline-end: 2px solid var(--color-action-primary);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--line-height-tight);
+  }
+
+  .s-day-tabs__start {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--heading-weight);
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  .s-day-tabs__end {
+    margin-block-start: var(--spacing-xs);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  .s-day-tabs__body {
+    display: grid;
+    gap: var(--spacing-xs);
+    min-width: 0;
+  }
+
+  .s-day-tabs__title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
+  }
+
+  .s-day-tabs__meta {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    overflow-wrap: anywhere;
+  }
+
+  .s-day-tabs__level {
+    grid-column: 2;
+    justify-self: start;
+    max-width: 100%;
+    padding: 0.125rem var(--spacing-sm);
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    background: color-mix(in srgb, var(--color-action-primary) 10%, transparent);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    overflow-wrap: anywhere;
+  }
+
+  @include mq(md) {
+    .s-day-tabs__class {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: var(--spacing-sm) var(--spacing-xl);
+      padding: var(--spacing-lg) var(--spacing-xl);
+    }
+
+    .s-day-tabs__time {
+      min-width: 6rem;
+      padding-inline-end: var(--spacing-xl);
+    }
+
+    .s-day-tabs__start {
+      font-size: var(--font-size-3xl);
+    }
+
+    .s-day-tabs__level {
+      grid-column: auto;
+      justify-self: end;
+      max-width: 12rem;
+    }
+  }
+
+  // ---------- schedule: agenda ----------
+  // v3.3: a row per day (the name on the left stays in view while its classes scroll by), the
+  // classes on a thin timeline: time, a dot on the line, the class. Phones: the name on top.
+  .s-agenda {
+    --agenda-time: 4.25rem;
+    --agenda-gap: var(--spacing-xl);
+
+    display: grid;
+    border-block-end: 1px solid var(--color-border-default);
+  }
+
+  .s-agenda__day {
+    display: grid;
+    gap: var(--spacing-md);
+    padding-block: var(--spacing-lg);
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-agenda__day-name {
+    font-size: var(--font-size-xl);
+    overflow-wrap: anywhere;
+  }
+
+  @include mq(md) {
+    .s-agenda__day {
+      grid-template-columns: 11rem minmax(0, 1fr);
+      gap: var(--spacing-xl);
+      padding-block: var(--spacing-xl);
+    }
+
+    .s-agenda__day-name {
+      position: sticky;
+      inset-block-start: calc(var(--header-offset, 4.5rem) + var(--spacing-lg));
+      align-self: start;
+    }
+  }
+
+  .s-agenda__list {
+    display: grid;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-agenda__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--agenda-time) minmax(0, 1fr);
+    gap: var(--spacing-xs) var(--agenda-gap);
+    padding-block: var(--spacing-xs) var(--spacing-lg);
+  }
+
+  .s-agenda__item:last-child {
+    padding-block-end: 0;
+  }
+
+  // The timeline in the gap between the time and the class: a line and a dot at every start.
+  .s-agenda__item::before,
+  .s-agenda__item::after {
+    content: "";
+    position: absolute;
+    inset-inline-start: calc(var(--agenda-time) + var(--agenda-gap) / 2);
+  }
+
+  .s-agenda__item::before {
+    inset-block: 0;
+    width: 2px;
+    margin-inline-start: -1px;
+    background: var(--color-border-default);
+  }
+
+  .s-agenda__item:first-child::before {
+    inset-block-start: 0.85rem;
+  }
+
+  .s-agenda__item:last-child::before {
+    inset-block-end: auto;
+    height: 0.85rem;
+  }
+
+  .s-agenda__item:only-child::before {
+    display: none;
+  }
+
+  .s-agenda__item::after {
+    inset-block-start: calc(var(--spacing-xs) + 0.45rem);
+    width: 0.75rem;
+    height: 0.75rem;
+    margin-inline-start: -0.375rem;
+    background: var(--color-action-primary);
+    border-radius: var(--radius-full);
+  }
+
+  .s-agenda__time {
+    display: grid;
+    align-content: start;
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-agenda__end {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+  }
+
+  .s-agenda__body {
+    display: grid;
+    gap: 0.125rem;
+    min-width: 0;
+  }
+
+  .s-agenda__title {
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
+  }
+
+  .s-agenda__meta {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    overflow-wrap: anywhere;
+  }
+
+  .s-agenda__level {
+    grid-column: 2;
+    justify-self: start;
+    max-width: 100%;
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+  }
+
+  @include mq(md) {
+    .s-agenda__item {
+      grid-template-columns: var(--agenda-time) minmax(0, 1fr) auto;
+    }
+
+    .s-agenda__level {
+      grid-column: auto;
+      justify-self: end;
+      max-width: 10rem;
+      text-align: end;
+    }
+  }
+
+  // ---------- schedule: table ----------
+  // v3.3: the table sits in a card; every day is a tinted header row with an accent edge.
+  .s-timetable__frame {
+    overflow: clip;
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-timetable {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .s-timetable th,
+  .s-timetable td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: start;
+    vertical-align: top;
+    border-block-start: 1px solid var(--color-border-default);
+    overflow-wrap: anywhere;
+  }
+
+  .s-timetable thead th {
+    padding-block: var(--spacing-md);
+    color: var(--color-text-secondary);
+    border-block-start: 0;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+
+  .s-timetable .s-timetable__day-title {
+    padding-block: var(--spacing-sm);
+    color: var(--color-text-primary);
+    background: color-mix(in srgb, var(--color-action-primary) 9%, transparent);
+    border-inline-start: 3px solid var(--color-action-primary);
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-lg);
+    font-weight: var(--heading-weight);
+  }
+
+  .s-timetable__time {
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-semibold);
+    white-space: nowrap;
+  }
+
+  .s-timetable__class {
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-timetable__meta {
+    color: var(--color-text-secondary);
+  }
+
+  @include mq(md) {
+    .s-timetable th:first-child,
+    .s-timetable td:first-child {
+      padding-inline-start: var(--spacing-lg);
+    }
+
+    .s-timetable th:last-child,
+    .s-timetable td:last-child {
+      padding-inline-end: var(--spacing-lg);
+    }
+  }
+
+  // Phones: every class becomes a small block (no horizontal scrolling).
+  @include mq-down(md) {
+    .s-timetable thead {
+      @include visually-hidden;
+    }
+
+    .s-timetable tr {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.125rem var(--spacing-md);
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-block-start: 1px solid var(--color-border-default);
+    }
+
+    .s-timetable tr.s-timetable__day-row {
+      padding: 0;
+    }
+
+    .s-timetable__day:first-of-type > .s-timetable__day-row {
+      border-block-start: 0;
+    }
+
+    .s-timetable th,
+    .s-timetable td {
+      padding: 0;
+      border: 0;
+    }
+
+    .s-timetable .s-timetable__day-title {
+      grid-column: 1 / -1;
+      padding: var(--spacing-sm) var(--spacing-md);
+    }
+
+    .s-timetable__meta {
+      grid-column: 2;
+      font-size: var(--font-size-sm);
+    }
+
+    .s-timetable__meta:empty {
+      display: none;
+    }
+  }
+}

@@ -24,8 +24,12 @@ import HeroCoverImage from "@/sections/hero/CoverImage.astro";
 import HeroSplitImage from "@/sections/hero/SplitImage.astro";
 import HeroPanel from "@/sections/hero/Panel.astro";
 import HeroMinimal from "@/sections/hero/Minimal.astro";
-import ScheduleWeek from "@/sections/schedule/Week.astro";
+import ScheduleAgenda from "@/sections/schedule/Agenda.astro";
+import ScheduleDayColumns from "@/sections/schedule/DayColumns.astro";
+import ScheduleMatrix from "@/sections/schedule/Matrix.astro";
 import ScheduleTable from "@/sections/schedule/Table.astro";
+import ScheduleTabs from "@/sections/schedule/Tabs.astro";
+import ScheduleWeek from "@/sections/schedule/Week.astro";
 import TeamCards from "@/sections/team/Cards.astro";
 import TeamColorTiles from "@/sections/team/ColorTiles.astro";
 import TeamCompact from "@/sections/team/Compact.astro";
@@ -72,7 +76,7 @@ export const sectionComponents: Record<string, Record<string, SectionComponent>>
   cta: { boxed: CtaBoxed, banner: CtaBanner },
   contact: { "form-split": ContactFormSplit, "form-centered": ContactFormCentered },
   "hours-location": { card: HoursCard, compact: HoursCompact },
-  schedule: { week: ScheduleWeek, table: ScheduleTable },
+  schedule: { week: ScheduleWeek, table: ScheduleTable, "day-columns": ScheduleDayColumns, matrix: ScheduleMatrix, tabs: ScheduleTabs, agenda: ScheduleAgenda },
   team: { cards: TeamCards, compact: TeamCompact, "social-cards": TeamSocialCards, spotlight: TeamSpotlight, "color-tiles": TeamColorTiles, directory: TeamDirectory },
   stats: { row: Stats, cards: Stats, rings: StatsRings, bars: StatsBars, "chart-cards": StatsChartCards, highlight: StatsHighlight, bento: StatsBento },
   process: { steps: Process, timeline: Process, cards: Process, wave: ProcessWave, snake: ProcessSnake, chevrons: ProcessChevrons },

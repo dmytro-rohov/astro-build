@@ -1,0 +1,49 @@
+---
+/**
+ * Day columns: every day a separate column under a bold colored header (brand color and dark
+ * in turn) with the day name in a pill; classes as striped rows. Phones stack the days.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Details from "@/sections/schedule/Details.astro";
+import { t } from "@/i18n";
+import { scheduleByDay } from "@/site/schedule";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"schedule">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const DayHeading = headingLevel === "h1" ? "h2" : "h3";
+const days = scheduleByDay(content.items);
+---
+
+<SectionShell id={section.id} type="schedule" variant="day-columns" tone={props.tone} spacing={props.spacing} width="xl">
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <div class:list={["s-day-columns", `s-day-columns--days-${days.length}`]}>
+      {days.map((group) => (
+        <section class="s-day-column" aria-labelledby={`${section.id}-${group.day}`}>
+          <div class="s-day-column__head">
+            <DayHeading class="s-day-column__name" id={`${section.id}-${group.day}`}>{t.days[group.day].long}</DayHeading>
+          </div>
+          <ul class="s-day-column__list">
+            {group.items.map((item) => (
+              <li class="s-day-column__item">
+                <p class="s-day-column__time"><time datetime={item.start}>{item.start}</time>–<time datetime={item.end}>{item.end}</time></p>
+                <p class="s-day-column__title">{item.title}</p>
+                {item.instructor && <p class="s-day-column__meta">{item.instructor}</p>}
+                <Details parts={[item.level, item.room]} class="s-day-column__meta" />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+    {content.note && <p class="s-schedule__note s-schedule__note--center">{content.note}</p>}
+  </Stack>
+</SectionShell>

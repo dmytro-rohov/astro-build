@@ -67,4 +67,5 @@
 @use "./sections/process";
 @use "./sections/stats";
 @use "./sections/team";
+@use "./sections/schedule";
 @layer reset, tokens, base, layout, components, widgets, utilities, state;

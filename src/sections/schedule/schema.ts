@@ -28,11 +28,43 @@ export const schedule = defineSectionType({
   }),
   variants: {
     week: {
-      description: "One column per day with class cards (days without classes are hidden); days stack on phones.",
+      description:
+        "Calendar board: one framed grid with a column per day (days without classes are hidden) and every class as a tinted block; " +
+        "on tablets and phones every day becomes a row. Calm and clear, for up to ~25 classes spread over the week.",
       uses: ["eyebrow", "description", "items.instructor", "items.level", "items.room", "note"],
     },
     table: {
-      description: "Accessible table grouped by day: time, class, instructor, level — compact for long schedules.",
+      description: "Accessible table grouped by day: time, class, level, instructor, room — compact and searchable, for long schedules (20–60 classes).",
+      uses: ["eyebrow", "description", "items.instructor", "items.level", "items.room", "note"],
+    },
+    "day-columns": {
+      description:
+        "Poster-like day columns: every day a separate column with a bold colored header (alternating brand color and dark), classes as striped rows below. " +
+        "Energetic, for dance schools and gyms with 3–30 classes on 3–7 days.",
+      uses: ["eyebrow", "description", "items.instructor", "items.level", "items.room", "note"],
+    },
+    matrix: {
+      description:
+        "Grid like a printed timetable: rows are instructors (when every class has one and there are 2+ of them) or class names, columns are days, " +
+        "cells list time, class and room. Answers 'when does X teach / when is salsa'; for 2–8 rows. Becomes one card per row on phones.",
+      uses: ["eyebrow", "description", "items.instructor", "items.level", "items.room", "note"],
+      props: z.strictObject({
+        rows: z
+          .enum(["instructor", "class"])
+          .optional()
+          .describe("Rows of the grid: instructor (needs an instructor on every class) or class (one row per class name). Default: instructors when there are 2+ of them."),
+      }),
+    },
+    tabs: {
+      description:
+        "One day at a time: day tabs on top (today's day opens first), the day's classes as large rows with the start time big. " +
+        "Focused and app-like, good for many classes per day; without JavaScript all days are listed.",
+      uses: ["eyebrow", "description", "items.instructor", "items.level", "items.room", "note"],
+    },
+    agenda: {
+      description:
+        "Compact chronological agenda: day names on the left, classes on a thin timeline with the time first. " +
+        "Reads well on phones and for long schedules (any number of classes).",
       uses: ["eyebrow", "description", "items.instructor", "items.level", "items.room", "note"],
     },
   },

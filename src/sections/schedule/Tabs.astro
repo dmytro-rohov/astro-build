@@ -1,0 +1,124 @@
+---
+/**
+ * One day at a time: day tabs (ARIA tabs, roving tabindex, arrow keys) over the day's classes
+ * with the start time big. The tab list is hidden until the script runs; without JavaScript
+ * (or with one day) every day is listed under its own heading. The script opens today, or the
+ * next day with classes.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Details from "@/sections/schedule/Details.astro";
+import { t } from "@/i18n";
+import { scheduleByDay } from "@/site/schedule";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"schedule">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const DayHeading = headingLevel === "h1" ? "h2" : "h3";
+const days = scheduleByDay(content.items);
+const id = (part: string, day: string) => `${section.id}-${part}-${day}`;
+---
+
+<SectionShell id={section.id} type="schedule" variant="tabs" tone={props.tone} spacing={props.spacing} width="md">
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <div class:list={["s-day-tabs", `s-day-tabs--days-${days.length}`]} data-day-tabs>
+      <div class="s-day-tabs__list" role="tablist" aria-label={content.title} hidden>
+        {days.map((group, index) => (
+          <button
+            type="button"
+            role="tab"
+            class="s-day-tabs__tab"
+            id={id("tab", group.day)}
+            aria-controls={id("panel", group.day)}
+            aria-selected={index === 0 ? "true" : "false"}
+            tabindex={index === 0 ? 0 : -1}
+            data-day={group.day}
+          >
+            <span class="s-day-tabs__long">{t.days[group.day].long}</span>
+            <span class="s-day-tabs__short" aria-hidden="true">{t.days[group.day].short}</span>
+          </button>
+        ))}
+      </div>
+      {days.map((group) => (
+        <section class="s-day-tabs__panel" id={id("panel", group.day)} aria-labelledby={id("day", group.day)} data-day-panel>
+          <DayHeading class="s-day-tabs__day" id={id("day", group.day)}>{t.days[group.day].long}</DayHeading>
+          <ul class="s-day-tabs__classes">
+            {group.items.map((item) => (
+              <li class="s-day-tabs__class">
+                <p class="s-day-tabs__time">
+                  <time class="s-day-tabs__start" datetime={item.start}>{item.start}</time>
+                  <span class="s-day-tabs__end">– <time datetime={item.end}>{item.end}</time></span>
+                </p>
+                <div class="s-day-tabs__body">
+                  <p class="s-day-tabs__title">{item.title}</p>
+                  <Details parts={[item.instructor, item.room]} class="s-day-tabs__meta" />
+                </div>
+                {item.level && <p class="s-day-tabs__level">{item.level}</p>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+    {content.note && <p class="s-schedule__note s-schedule__note--center">{content.note}</p>}
+  </Stack>
+</SectionShell>
+
+<script>
+  // Week days as Date.getDay() numbers them (Sunday first).
+  const WEEK = ["su", "mo", "tu", "we", "th", "fr", "sa"];
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-day-tabs]")) {
+    const list = root.querySelector<HTMLElement>('[role="tablist"]');
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = [...root.querySelectorAll<HTMLElement>("[data-day-panel]")];
+    // One day needs no tabs: it stays listed under its heading.
+    if (!list || tabs.length < 2 || tabs.length !== panels.length) continue;
+
+    const select = (index: number, focus = false) => {
+      tabs.forEach((tab, current) => {
+        tab.setAttribute("aria-selected", String(current === index));
+        tab.tabIndex = current === index ? 0 : -1;
+        panels[current].hidden = current !== index;
+      });
+      if (focus) tabs[index].focus();
+    };
+
+    for (const [index, panel] of panels.entries()) {
+      panel.setAttribute("role", "tabpanel");
+      panel.setAttribute("aria-labelledby", tabs[index].id);
+      panel.tabIndex = 0;
+    }
+
+    // Arrow keys move between the tabs (and show them), Home / End jump to the ends.
+    list.addEventListener("keydown", (event) => {
+      const current = tabs.indexOf(event.target as HTMLButtonElement);
+      if (current < 0) return;
+
+      const back = getComputedStyle(list).direction === "rtl" ? "ArrowRight" : "ArrowLeft";
+      const forward = back === "ArrowLeft" ? "ArrowRight" : "ArrowLeft";
+      const next = { [back]: current - 1, [forward]: current + 1, Home: 0, End: tabs.length - 1 }[event.key];
+      if (next === undefined) return;
+
+      event.preventDefault();
+      select((next + tabs.length) % tabs.length, true);
+    });
+    tabs.forEach((tab, index) => tab.addEventListener("click", () => select(index)));
+
+    // Today, or the next day of the week that has classes.
+    const today = new Date().getDay();
+    const order = (day: string) => (WEEK.indexOf(day) - today + 7) % 7;
+    const first = tabs.reduce((best, tab, index) => (order(tab.dataset.day ?? "") < order(tabs[best].dataset.day ?? "") ? index : best), 0);
+
+    select(first);
+    list.hidden = false;
+    root.dataset.dayTabs = "ready";
+  }
+</script>

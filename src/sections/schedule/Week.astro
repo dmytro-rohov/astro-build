@@ -1,7 +1,12 @@
 ---
+/**
+ * Calendar board: one frame with a column per day (days without classes are hidden), the day
+ * names in a header strip and every class a tinted block. Below lg every day becomes a row.
+ */
 import SectionShell from "@/sections/_shared/SectionShell.astro";
 import SectionHeader from "@/sections/_shared/SectionHeader.astro";
 import Stack from "@/components/layouts/Stack.astro";
+import Details from "@/sections/schedule/Details.astro";
 import { t } from "@/i18n";
 import { scheduleByDay } from "@/site/schedule";
 import type { SectionOf } from "@/site/types";
@@ -29,15 +34,13 @@ const days = scheduleByDay(content.items);
               <li class="s-week__item">
                 <p class="s-week__time"><time datetime={item.start}>{item.start}</time>–<time datetime={item.end}>{item.end}</time></p>
                 <p class="s-week__title">{item.title}</p>
-                {(item.level || item.instructor || item.room) && (
-                  <p class="s-week__meta">{[item.level, item.instructor, item.room].filter(Boolean).join(" · ")}</p>
-                )}
+                <Details parts={[item.level, item.instructor, item.room]} class="s-week__meta" />
               </li>
             ))}
           </ul>
         </section>
       ))}
     </div>
-    {content.note && <p class="s-schedule__note">{content.note}</p>}
+    {content.note && <p class="s-schedule__note s-schedule__note--center">{content.note}</p>}
   </Stack>
 </SectionShell>
