@@ -136,8 +136,7 @@
   }
 
   // ---------- services ----------
-  .s-services__list,
-  .s-testimonials__list {
+  .s-services__list {
     padding: 0;
     margin: 0;
     list-style: none;
@@ -312,89 +311,6 @@
 
   .s-icon-list__description {
     color: var(--color-text-secondary);
-  }
-
-  // ---------- testimonials ----------
-  .s-testimonial {
-    display: grid;
-    gap: var(--spacing-md);
-    height: 100%;
-    margin: 0;
-  }
-
-  .s-testimonial__quote {
-    margin: 0;
-    color: var(--color-text-primary);
-    line-height: var(--line-height-relaxed);
-  }
-
-  .s-testimonial__author,
-  .s-spotlight__author {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--spacing-sm);
-    align-self: end;
-  }
-
-  .s-testimonial__avatar {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-  }
-
-  .s-testimonial__name {
-    display: block;
-    font-weight: var(--font-weight-bold);
-  }
-
-  .s-testimonial__role {
-    display: block;
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-sm);
-  }
-
-  .s-stars {
-    display: flex;
-    gap: 0.125rem;
-    color: var(--color-text-muted);
-  }
-
-  .s-stars__star {
-    flex: none;
-    width: 1rem;
-    height: 1rem;
-  }
-
-  .s-stars__star--on {
-    color: var(--color-action-primary);
-  }
-
-  .s-spotlight {
-    position: relative;
-    display: grid;
-    gap: var(--spacing-md);
-    margin: 0;
-    padding-inline-start: var(--spacing-xl);
-    border-inline-start: 3px solid var(--color-action-primary);
-  }
-
-  .s-spotlight__mark {
-    position: absolute;
-    inset-block-start: -1rem;
-    inset-inline-start: var(--spacing-sm);
-    color: var(--color-action-primary);
-    font-family: var(--font-family-heading);
-    font-size: 4rem;
-    line-height: 1;
-    opacity: 0.35;
-  }
-
-  .s-spotlight__quote {
-    margin: 0;
-    font-family: var(--font-family-heading);
-    font-size: clamp(var(--font-size-lg), 2.5vw, var(--font-size-2xl));
-    line-height: var(--line-height-snug);
   }
 
   // ---------- gallery ----------

@@ -66,4 +66,5 @@
 @use "./sections/pricing";
 @use "./sections/process";
 @use "./sections/stats";
+@use "./sections/testimonials";
 @layer reset, tokens, base, layout, components, widgets, utilities, state;

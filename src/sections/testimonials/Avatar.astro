@@ -1,0 +1,27 @@
+---
+/**
+ * Round client photo, or the initials on a tinted circle when the review has none.
+ * Decorative (the name is next to it). Size: --avatar on a parent (default 3rem).
+ */
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import { initials } from "@/sections/testimonials/layout";
+
+export interface Props {
+  author: string;
+  avatar?: string;
+  /** Rendered width for `sizes`, e.g. "3rem". */
+  size?: string;
+  widths?: number[];
+  class?: string;
+}
+
+const { author, avatar, size = "3rem", widths = [96, 160], class: className } = Astro.props;
+const asset = avatar ? getAsset(avatar) : undefined;
+---
+
+{asset ? (
+  <Img src={asset.image} alt="" kind="decorative" aspect={[1, 1]} focal={asset.focal} widths={widths} sizes={size} class:list={["s-avatar", className]} />
+) : (
+  <span class:list={["s-avatar", "s-avatar--initials", className]} aria-hidden="true">{initials(author) || "“"}</span>
+)}

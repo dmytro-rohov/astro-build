@@ -1,0 +1,59 @@
+---
+/**
+ * Every review as a pair: a portrait tile (photo, or big initials without one) with the name
+ * under it, and the quote on a brand-colored card. Two pairs per row on wide screens with every
+ * second row mirrored — photos and cards form a checkerboard; one pair per row on tablets.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import QuoteMark from "@/sections/testimonials/QuoteMark.astro";
+import Stars from "@/sections/testimonials/Stars.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import { initials, quoteSize } from "@/sections/testimonials/layout";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"testimonials", "portraits">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+// One type size for every card, set by the longest quote: the checkerboard stays even.
+const size = quoteSize(...content.items.map((item) => item.quote));
+---
+
+<SectionShell id={section.id} type="testimonials" variant="portraits" tone={props.tone} spacing={props.spacing}>
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
+    <ul class:list={["s-portraits", content.items.length === 1 && "s-portraits--one"]}>
+      {content.items.map((item) => {
+        const avatar = item.avatar ? getAsset(item.avatar) : undefined;
+        return (
+          <li class="s-portraits__item">
+            <figure class="s-portrait">
+              {avatar ? (
+                <Img src={avatar.image} alt="" kind="decorative" aspect={[4, 5]} focal={avatar.focal} widths={[240, 400, 560]} sizes="(min-width: 1024px) 18rem, (min-width: 768px) 22rem, 6rem" class="s-portrait__media s-portrait__photo" />
+              ) : (
+                <span class="s-portrait__media s-portrait__initials" aria-hidden="true">{initials(item.author) || "“"}</span>
+              )}
+              <div class="s-portrait__card">
+                <div class="s-portrait__head">
+                  {item.rating && <Stars rating={item.rating} />}
+                  <QuoteMark class="s-portrait__mark" />
+                </div>
+                <blockquote class:list={["s-portrait__quote", `s-portrait__quote--${size}`]}><p>{item.quote}</p></blockquote>
+              </div>
+              <figcaption class="s-portrait__caption">
+                <span class="s-portrait__name">{item.author}</span>
+                {item.role && <span class="s-portrait__role">{item.role}</span>}
+              </figcaption>
+            </figure>
+          </li>
+        );
+      })}
+    </ul>
+  </Stack>
+</SectionShell>

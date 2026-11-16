@@ -49,8 +49,14 @@
     }
   }
 
+  // v3.3: one item per view on every screen (testimonials carousel).
+  .slider--single .slider__track {
+    grid-auto-columns: 100%;
+  }
+
   .slider__controls {
     display: flex;
+    align-items: center;
     justify-content: center;
     gap: var(--spacing-sm);
   }
@@ -81,9 +87,68 @@
     cursor: default;
   }
 
+  // A dot per item (v3.3): the target is 1.5rem (WCAG 2.5.8), the dot inside it; the current
+  // one grows into a bar in the accent color.
+  .slider__dots {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-inline: var(--spacing-xs);
+  }
+
+  .slider__dot {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    color: var(--color-border-strong);
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .slider__dot::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    background: currentcolor;
+    border-radius: var(--radius-pill);
+    transition:
+      width var(--motion-duration-normal) var(--motion-easing-standard),
+      background-color var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .slider__dot:hover {
+    color: var(--color-text-secondary);
+  }
+
+  .slider__dot[aria-current="true"] {
+    color: var(--color-action-primary);
+  }
+
+  .slider__dot[aria-current="true"]::before {
+    width: 1.25rem;
+  }
+
+  // Without JavaScript the buttons cannot work: the list scrolls by itself, with a thin scrollbar.
+  @media (scripting: none) {
+    .slider__track {
+      scrollbar-width: thin;
+    }
+
+    .slider__controls {
+      display: none;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .slider__track {
       scroll-behavior: auto;
+    }
+
+    .slider__dot::before {
+      transition: none;
     }
   }
 }

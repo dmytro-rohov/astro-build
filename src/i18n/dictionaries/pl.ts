@@ -40,12 +40,14 @@ export default {
     embedNotice: "Ta treść pochodzi z serwisu {provider}. Po kliknięciu {provider} może zapisać pliki cookie i otrzyma Twój adres IP.",
     embedOpen: "Otwórz w {provider}",
     step: "Krok {number}",
+    reviews: { one: "{count} opinia", few: "{count} opinie", many: "{count} opinii", other: "{count} opinii" },
   },
 
   slider: {
     previous: "Poprzednie",
     next: "Następne",
     label: "Przewijana lista",
+    page: "Pokaż {number} z {count}",
   },
 
   common: {

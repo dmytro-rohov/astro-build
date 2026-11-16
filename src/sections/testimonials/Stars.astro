@@ -2,22 +2,36 @@
 /**
  * Rating stars. Inline SVG instead of the sprite: a <use> can't fill the sprite
  * symbol (its fill="none" wins inside the shadow tree), so filled stars need
- * their own path.
+ * their own path. An average (4.6) fills the last star partly: a nested <svg>
+ * cut to that width holds the filled path (no ids, no inline styles).
  */
-import { format, t } from "@/i18n";
+import { format, lang, t } from "@/i18n";
 
 export interface Props {
   rating: number;
+  class?: string;
 }
 
-const { rating } = Astro.props;
+const { rating, class: className } = Astro.props;
 const STAR = "m12 3.5 2.6 5.3 5.9.9-4.25 4.1 1 5.8L12 16.9l-5.25 2.7 1-5.8L3.5 9.7l5.9-.9z";
+const value = new Intl.NumberFormat(lang, { maximumFractionDigits: 1 }).format(rating);
+// Share of each star that is filled, in tenths.
+const fill = (star: number) => Math.round(Math.min(Math.max(rating - star + 1, 0), 1) * 10) / 10;
+const cut = (part: number) => Number((24 * part).toFixed(1));
 ---
 
-<p class="s-stars" role="img" aria-label={format(t.sections.rating, { value: rating })}>
-  {[1, 2, 3, 4, 5].map((star) => (
-    <svg class:list={["s-stars__star", star <= rating && "s-stars__star--on"]} viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
-      <path d={STAR} fill={star <= rating ? "currentColor" : "none"} stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-    </svg>
-  ))}
+<p class:list={["s-stars", className]} role="img" aria-label={format(t.sections.rating, { value })}>
+  {[1, 2, 3, 4, 5].map((star) => {
+    const part = fill(star);
+    return (
+      <svg class:list={["s-stars__star", part === 1 && "s-stars__star--on"]} viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+        <path d={STAR} fill={part === 1 ? "currentColor" : "none"} stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+        {part > 0 && part < 1 && (
+          <svg class="s-stars__part" width={cut(part)} height="24" viewBox={`0 0 ${cut(part)} 24`}>
+            <path d={STAR} fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+          </svg>
+        )}
+      </svg>
+    );
+  })}
 </p>
