@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **17 section types, 41 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **17 section types, 45 variants**, 3 navbars and 3 footers, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -170,7 +170,7 @@ the migrated site is validated like any build.
 | `contact` | `form-split`, `form-centered` (details from `business`) |
 | `hours-location` | `card`, `compact` (hours, address, phone from `business`) |
 | `stats` | `row`, `cards` (key numbers; accent tone allowed) |
-| `process` | `steps`, `timeline` (numbered steps, optional icons) |
+| `process` | `steps` (one connecting line), `timeline` (alternating around a central line), `cards` (outlined numbers), `wave` (wavy path), `snake` (line looping over and under round nodes), `chevrons` (rings with numbered arrows) — 2–8 steps, optional icons and time labels; all collapse to one vertical sequence on phones |
 | `team` | `cards`, `compact` (portraits 4:5 / round) |
 | `schedule` | `week`, `table` (weekly classes, sorted by day and time) |
 | `logo-cloud` | `row`, `grid` (partner / client logos, SVG or PNG) |

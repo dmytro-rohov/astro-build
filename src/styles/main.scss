@@ -63,4 +63,5 @@
 @use "./sections/sections";
 @use "./sections/blocks";
 @use "./sections/pricing";
+@use "./sections/process";
 @layer reset, tokens, base, layout, components, widgets, utilities, state;

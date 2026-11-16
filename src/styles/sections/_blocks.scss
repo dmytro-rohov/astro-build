@@ -1,5 +1,5 @@
-// Section types added in v3.1: schedule, team, stats, process, logo-cloud,
-// embed, and the hero variants panel and minimal.
+// Section types added in v3.1: schedule, team, stats, logo-cloud, embed, and the
+// hero variants panel and minimal (process moved to _process.scss in v3.3).
 @use "../abstracts/mixins" as *;
 
 @layer widgets {
@@ -223,84 +223,6 @@
     margin: 0;
     color: var(--color-text-secondary);
     font-size: var(--font-size-sm);
-  }
-
-  // ---------- process ----------
-  .s-process__list {
-    display: grid;
-    gap: var(--spacing-xl);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .s-process__step {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: var(--spacing-md);
-    align-items: start;
-  }
-
-  .s-process__marker {
-    display: inline-grid;
-    place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    color: var(--color-action-primary-text);
-    background: var(--color-action-primary);
-    border-radius: var(--radius-full);
-    font-family: var(--font-family-heading);
-    font-weight: var(--font-weight-bold);
-  }
-
-  .s-process__number {
-    margin: 0;
-    color: var(--color-text-muted);
-    font-size: var(--font-size-xs);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .s-process__title {
-    margin-block: var(--spacing-xs);
-    font-size: var(--font-size-xl);
-  }
-
-  .s-process__description {
-    color: var(--color-text-secondary);
-  }
-
-  @include mq(lg) {
-    .s-process__list--steps {
-      grid-template-columns: repeat(var(--steps, 3), minmax(0, 1fr));
-    }
-
-    .s-process__list--steps.s-process__list--count-2 { --steps: 2; }
-    .s-process__list--steps.s-process__list--count-3 { --steps: 3; }
-    .s-process__list--steps.s-process__list--count-4 { --steps: 4; }
-
-    .s-process__list--steps .s-process__step {
-      grid-template-columns: minmax(0, 1fr);
-    }
-  }
-
-  .s-process__list--timeline {
-    gap: 0;
-  }
-
-  .s-process__list--timeline .s-process__step {
-    position: relative;
-    padding-block-end: var(--spacing-xl);
-  }
-
-  // Line between the markers.
-  .s-process__list--timeline .s-process__step:not(:last-child)::before {
-    position: absolute;
-    inset-block: 2.75rem 0;
-    inset-inline-start: calc(1.375rem - 1px);
-    width: 2px;
-    background: var(--color-border-default);
-    content: "";
   }
 
   // ---------- team ----------

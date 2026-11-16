@@ -1,16 +1,20 @@
 ---
-/** Both process variants: "steps" (side by side) and "timeline" (vertical). */
+/**
+ * The process variants built from one markup (the CSS lays it out):
+ * "steps" (icons and big numbers on one connecting line), "timeline" (cards alternating
+ * around a central line) and "cards" (cards with outlined numbers and connectors).
+ */
 import SectionShell from "@/sections/_shared/SectionShell.astro";
 import SectionHeader from "@/sections/_shared/SectionHeader.astro";
 import Stack from "@/components/layouts/Stack.astro";
 import Icon from "@/components/media/Icon.astro";
-import { format, t } from "@/i18n";
+import { listClasses, stepNumber } from "@/sections/process/layout";
 import type { SectionOf } from "@/site/types";
 
 export interface Props {
   section: SectionOf<"process">;
   headingLevel: "h1" | "h2";
-  variant: "steps" | "timeline";
+  variant: "steps" | "timeline" | "cards";
 }
 
 const { section, headingLevel, variant } = Astro.props;
@@ -19,16 +23,20 @@ const StepHeading = headingLevel === "h1" ? "h2" : "h3";
 ---
 
 <SectionShell id={section.id} type="process" variant={variant} tone={props.tone} spacing={props.spacing} width={variant === "timeline" ? "md" : "lg"}>
-  <Stack space="xl">
-    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? (variant === "timeline" ? "left" : "center")} />
-    <ol class:list={["s-process__list", `s-process__list--${variant}`, `s-process__list--count-${Math.min(content.steps.length, 4)}`]}>
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <ol class:list={listClasses(variant, content.steps.length, variant === "timeline" ? undefined : 4)}>
       {content.steps.map((step, index) => (
         <li class="s-process__step">
+          {/* Icon (a dot without one) and the big number; the timeline puts them on both sides of its line. */}
           <span class="s-process__marker" aria-hidden="true">
-            {step.icon ? <Icon name={step.icon} size="1.25rem" /> : index + 1}
+            <span class:list={["s-process__icon", !step.icon && "s-process__icon--dot"]}>
+              {step.icon && <Icon name={step.icon} size="1.5rem" />}
+            </span>
+            <span class="s-process__index">{stepNumber(index)}</span>
           </span>
           <div class="s-process__body">
-            <p class="s-process__number">{format(t.sections.step, { number: index + 1 })}</p>
+            {step.duration && <p class="s-process__duration">{step.duration}</p>}
             <StepHeading class="s-process__title">{step.title}</StepHeading>
             <p class="s-process__description">{step.description}</p>
           </div>

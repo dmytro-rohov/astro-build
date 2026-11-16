@@ -25,6 +25,9 @@ import TeamCards from "@/sections/team/Cards.astro";
 import TeamCompact from "@/sections/team/Compact.astro";
 import Stats from "@/sections/stats/Stats.astro";
 import Process from "@/sections/process/Process.astro";
+import ProcessChevrons from "@/sections/process/Chevrons.astro";
+import ProcessSnake from "@/sections/process/Snake.astro";
+import ProcessWave from "@/sections/process/Wave.astro";
 import LogoCloud from "@/sections/logo-cloud/LogoCloud.astro";
 import Embed from "@/sections/embed/Embed.astro";
 import HoursCard from "@/sections/hours-location/Card.astro";
@@ -58,7 +61,7 @@ export const sectionComponents: Record<string, Record<string, SectionComponent>>
   schedule: { week: ScheduleWeek, table: ScheduleTable },
   team: { cards: TeamCards, compact: TeamCompact },
   stats: { row: Stats, cards: Stats },
-  process: { steps: Process, timeline: Process },
+  process: { steps: Process, timeline: Process, cards: Process, wave: ProcessWave, snake: ProcessSnake, chevrons: ProcessChevrons },
   "logo-cloud": { row: LogoCloud, grid: LogoCloud },
   embed: { full: Embed, split: Embed },
 };
