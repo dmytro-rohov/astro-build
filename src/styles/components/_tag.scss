@@ -39,6 +39,13 @@
     border-color: color-mix(in srgb, var(--color-action-primary) 20%, transparent);
   }
 
+  // On the brand color (accent sections) the text is the accent's ink, and a tint of it under
+  // the text would cost contrast (axe, default archetype): outline only.
+  .section--tone-accent .tag--primary {
+    background: transparent;
+    border-color: color-mix(in srgb, var(--color-action-primary) 45%, transparent);
+  }
+
   .tag--success {
     color: var(--color-feedback-success);
     background: color-mix(in srgb, var(--color-feedback-success) 10%, transparent);

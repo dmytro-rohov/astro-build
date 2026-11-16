@@ -19,6 +19,7 @@
 @use "./components/slider";
 @use "./components/tag";
 @use "./components/divider";
+@use "./components/progress";
 
 // primitive layouts
 @use "./layouts/container";
@@ -64,4 +65,5 @@
 @use "./sections/blocks";
 @use "./sections/pricing";
 @use "./sections/process";
+@use "./sections/stats";
 @layer reset, tokens, base, layout, components, widgets, utilities, state;

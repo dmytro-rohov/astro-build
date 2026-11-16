@@ -185,12 +185,22 @@ const leads = pageTypes.filter(titleRequired);
 const followers = pageTypes.filter((type) => !titleRequired(type));
 const groups: (typeof sectionTypes)[number][][] = [];
 
+// A page holds at most 20 sections, and the pages after the home page also get a contact and
+// a faq section: two types share a page only when their sections fit in the other 18.
+const PAGE_ROOM = 18;
+const sizeOf = (type: (typeof sectionTypes)[number]) => Object.keys(type.variants).length * 2;
+const take = (types: (typeof sectionTypes)[number][], room: number, fromEnd = false) => {
+  const index = fromEnd ? types.findLastIndex((type) => sizeOf(type) <= room) : types.findIndex((type) => sizeOf(type) <= room);
+  return index < 0 ? undefined : types.splice(index, 1)[0];
+};
+
 while (leads.length) {
   const lead = leads.shift()!;
-  const follower = followers.shift() ?? (leads.length > followers.length ? leads.pop() : undefined);
+  const room = PAGE_ROOM - sizeOf(lead);
+  const follower = take(followers, room) ?? (leads.length > followers.length ? take(leads, room, true) : undefined);
   groups.push(follower ? [lead, follower] : [lead]);
 }
-if (followers.length) throw new Error("make-catalog: more optional-title types than pages");
+if (followers.length) throw new Error("make-catalog: optional-title types left without a page (too many sections or types)");
 
 // Types allowed once per page (contact, faq): instance N goes onto the N-th
 // page after the home page.

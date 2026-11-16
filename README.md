@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **17 section types, 45 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **17 section types, 50 variants**, 3 navbars and 3 footers, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -169,7 +169,7 @@ the migrated site is validated like any build.
 | `cta` | `boxed`, `banner` |
 | `contact` | `form-split`, `form-centered` (details from `business`) |
 | `hours-location` | `card`, `compact` (hours, address, phone from `business`) |
-| `stats` | `row`, `cards` (key numbers; accent tone allowed) |
+| `stats` | `row`, `cards`, `rings` (progress rings), `bars` (progress bars, two columns), `chart-cards` (decorative mini charts), `highlight` (one big number + text), `bento` (tiles, first on the brand color); key numbers, accent tone allowed, optional `items[].progress` 0–100 |
 | `process` | `steps` (one connecting line), `timeline` (alternating around a central line), `cards` (outlined numbers), `wave` (wavy path), `snake` (line looping over and under round nodes), `chevrons` (rings with numbered arrows) — 2–8 steps, optional icons and time labels; all collapse to one vertical sequence on phones |
 | `team` | `cards`, `compact` (portraits 4:5 / round) |
 | `schedule` | `week`, `table` (weekly classes, sorted by day and time) |
@@ -440,6 +440,20 @@ Available UI primitives:
 - `Card`
 - `Tag`
 - `Divider`
+- `Progress` (v3.3) — a ring or a horizontal bar filled to `value` 0–100
+
+`Progress` draws the fill with SVG attributes (no inline styles, CSP-safe), so without
+JavaScript and in screenshots it shows the final state; just before it scrolls into view it
+empties and fills with a CSS transition at the pace of the count-up numbers (no animation with
+reduced motion). Its accessible name is the percentage (`role="img"`, `aria-label="75%"`) or
+`label`; `decorative` hides it from screen readers. Content in the slot sits inside the ring;
+`--progress-fill`, `--progress-track` and `--progress-thickness` (bar) restyle it.
+
+```astro
+<Progress value={75} />
+<Progress value={98} variant="bar" label="Zadowoleni klienci: 98%" />
+<Progress value={100} decorative><span>4,9</span></Progress>
+```
 
 ---
 

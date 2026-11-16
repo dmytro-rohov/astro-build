@@ -1,0 +1,38 @@
+---
+/**
+ * Stats "highlight": title and intro on the left, the first number very large on the right with
+ * the others small below it. Without a header the big number takes the left column.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"stats">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const [main, ...others] = content.items;
+const hasHeader = Boolean(content.eyebrow || content.title || content.description);
+---
+
+<SectionShell id={section.id} type="stats" variant="highlight" tone={props.tone} spacing={props.spacing}>
+  <div class:list={["s-stats-highlight", { "s-stats-highlight--no-header": !hasHeader }]}>
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align="left" class="s-stats-highlight__header" />
+    <dl class:list={["s-stats-highlight__list", `s-stats-highlight__list--others-${others.length}`]}>
+      <div class="s-stats-highlight__main">
+        <dt class="s-stats-highlight__main-label">{main.label}</dt>
+        <dd class:list={["s-stats-highlight__main-value", { "s-stats-highlight__main-value--long": main.value.length > 7 }]} data-counter>{main.value}</dd>
+        {main.description && <dd class="s-stats-highlight__main-description">{main.description}</dd>}
+      </div>
+      {others.map((item) => (
+        <div class="s-stats-highlight__item">
+          <dt class="s-stats-highlight__label">{item.label}</dt>
+          <dd class="s-stats-highlight__value" data-counter>{item.value}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</SectionShell>

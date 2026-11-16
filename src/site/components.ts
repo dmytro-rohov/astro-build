@@ -24,6 +24,11 @@ import ScheduleTable from "@/sections/schedule/Table.astro";
 import TeamCards from "@/sections/team/Cards.astro";
 import TeamCompact from "@/sections/team/Compact.astro";
 import Stats from "@/sections/stats/Stats.astro";
+import StatsBars from "@/sections/stats/Bars.astro";
+import StatsBento from "@/sections/stats/Bento.astro";
+import StatsChartCards from "@/sections/stats/ChartCards.astro";
+import StatsHighlight from "@/sections/stats/Highlight.astro";
+import StatsRings from "@/sections/stats/Rings.astro";
 import Process from "@/sections/process/Process.astro";
 import ProcessChevrons from "@/sections/process/Chevrons.astro";
 import ProcessSnake from "@/sections/process/Snake.astro";
@@ -60,7 +65,7 @@ export const sectionComponents: Record<string, Record<string, SectionComponent>>
   "hours-location": { card: HoursCard, compact: HoursCompact },
   schedule: { week: ScheduleWeek, table: ScheduleTable },
   team: { cards: TeamCards, compact: TeamCompact },
-  stats: { row: Stats, cards: Stats },
+  stats: { row: Stats, cards: Stats, rings: StatsRings, bars: StatsBars, "chart-cards": StatsChartCards, highlight: StatsHighlight, bento: StatsBento },
   process: { steps: Process, timeline: Process, cards: Process, wave: ProcessWave, snake: ProcessSnake, chevrons: ProcessChevrons },
   "logo-cloud": { row: LogoCloud, grid: LogoCloud },
   embed: { full: Embed, split: Embed },

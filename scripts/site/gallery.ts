@@ -39,7 +39,8 @@ for (const archetype of archetypes) {
 
   try {
     for (const scheme of ["light", "dark"] as const) {
-      const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+      // Reduced motion: count-up numbers and progress fills are shot at their final values.
+      const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, reducedMotion: "reduce" });
 
       for (const sitePage of context.loaded.site.pages) {
         await page.goto(server.url + sitePage.slug);

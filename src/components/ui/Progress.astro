@@ -1,0 +1,84 @@
+---
+/**
+ * Progress (v3.3), reusable: a ring or a horizontal bar filled to `value` (0–100).
+ * The fill comes from SVG presentation attributes (stroke-dasharray / stroke-dashoffset), never
+ * an inline style (CSP), so without JavaScript, crawlers and screenshots get the final state.
+ * Just before it scrolls into view the script empties it and the CSS transition fills it
+ * (the same pace as the count-up numbers); reduced motion: no animation.
+ * Content in the slot sits in the middle of the ring (e.g. the number). Colors and the bar's
+ * thickness are custom properties: --progress-fill, --progress-track, --progress-thickness.
+ *   <Progress value={75} />
+ *   <Progress value={98} variant="bar" label="Zadowoleni klienci: 98%" />
+ *   <Progress value={100} decorative><span>4,9</span></Progress>
+ */
+export interface Props {
+  /** 0–100. */
+  value: number;
+  variant?: "ring" | "bar";
+  /** Accessible name; "75%" by default. */
+  label?: string;
+  /** Only an ornament (e.g. a full ring around a number without a share): hidden from screen readers. */
+  decorative?: boolean;
+  class?: string;
+}
+
+const { value, variant = "ring", label, decorative = false, class: className } = Astro.props;
+const percent = Math.min(100, Math.max(0, Math.round(value)));
+// Normalized to a length of 100 (pathLength): the dash is the filled part, the offset hides the rest.
+const fill = { pathLength: 100, "stroke-dasharray": "100 100", "stroke-dashoffset": 100 - percent };
+const graphic = decorative
+  ? { "aria-hidden": "true" as const, focusable: "false" as const }
+  : { role: "img" as const, "aria-label": label ?? `${percent}%` };
+---
+
+<div class:list={["progress", `progress--${variant}`, className]} data-progress>
+  {variant === "ring" ? (
+    <svg class="progress__graphic" viewBox="0 0 100 100" {...graphic}>
+      <circle class="progress__track" cx="50" cy="50" r="45" />
+      {percent > 0 && <circle class="progress__fill" cx="50" cy="50" r="45" transform="rotate(-90 50 50)" {...fill} />}
+    </svg>
+  ) : (
+    <svg class="progress__graphic" {...graphic}>
+      <line class="progress__track" x1="0" y1="50%" x2="100%" y2="50%" />
+      {percent > 0 && <line class="progress__fill" x1="0" y1="50%" x2="100%" y2="50%" {...fill} />}
+    </svg>
+  )}
+  {Astro.slots.has("default") && (
+    <div class="progress__content">
+      <slot />
+    </div>
+  )}
+</div>
+
+<script>
+  // Same pattern as the count-up numbers (Counters.astro): empty only just before the element
+  // comes into view, so a page jumped through or a full-page screenshot keeps the final state.
+  const elements = [...document.querySelectorAll<HTMLElement>("[data-progress]")];
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (!reduced && elements.length && "IntersectionObserver" in window) {
+    // Fills when mostly visible.
+    const start = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          start.unobserve(entry.target);
+          (entry.target as HTMLElement).dataset.progress = "run";
+        }
+      },
+      { threshold: 0.6 },
+    );
+    const prepare = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          prepare.unobserve(entry.target);
+          (entry.target as HTMLElement).dataset.progress = "start";
+          start.observe(entry.target);
+        }
+      },
+      { rootMargin: "0px 0px 25% 0px" },
+    );
+    for (const element of elements) prepare.observe(element);
+  }
+</script>

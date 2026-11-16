@@ -1,0 +1,39 @@
+---
+/**
+ * Stats "bento": a title tile and number tiles of different sizes in one grid, the first number
+ * on the brand color. The tile sizes follow the number of tiles (see _stats.scss), so every
+ * count from 2 to 7 tiles fills whole rows.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"stats">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const hasHeader = Boolean(content.eyebrow || content.title || content.description);
+const tiles = content.items.length + (hasHeader ? 1 : 0);
+---
+
+<SectionShell id={section.id} type="stats" variant="bento" tone={props.tone} spacing={props.spacing}>
+  <div class:list={["s-stats-bento", `s-stats-bento--tiles-${tiles}`, { "s-stats-bento--no-header": !hasHeader }]}>
+    {hasHeader && (
+      <div class="s-stats-bento__tile s-stats-bento__tile--header">
+        <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align="left" class="s-stats-bento__header" />
+      </div>
+    )}
+    <dl class="s-stats-bento__list">
+      {content.items.map((item, index) => (
+        <div class:list={["s-stats-bento__tile", { "s-stats-bento__tile--accent": index === 0 }]}>
+          <dt class="s-stats-bento__label">{item.label}</dt>
+          <dd class:list={["s-stats-bento__value", { "s-stats-bento__value--long": item.value.length > 7 }]} data-counter>{item.value}</dd>
+          {item.description && <dd class="s-stats-bento__description">{item.description}</dd>}
+        </div>
+      ))}
+    </dl>
+  </div>
+</SectionShell>

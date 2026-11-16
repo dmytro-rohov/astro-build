@@ -12,9 +12,11 @@ export async function takeScreenshots(context: SiteContext, baseUrl: string) {
   const files: { page: string; desktop: string; mobile: string }[] = [];
 
   try {
+    // Reduced motion: count-up numbers and progress fills (v3.3) show their final values; after
+    // the scroll-through below they would otherwise be caught mid-animation.
     const profiles = {
-      desktop: { viewport: { width: 1440, height: 900 } },
-      mobile: devices["Pixel 7"],
+      desktop: { viewport: { width: 1440, height: 900 }, reducedMotion: "reduce" as const },
+      mobile: { ...devices["Pixel 7"], reducedMotion: "reduce" as const },
     };
     const contexts = {
       desktop: await browser.newContext(profiles.desktop),

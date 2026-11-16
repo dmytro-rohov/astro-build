@@ -1,0 +1,56 @@
+---
+/**
+ * Stats "chart-cards": cards with a big number and a small decorative chart (bars or a line).
+ * The chart is generated from the item (src/sections/stats/chart.ts), not data: aria-hidden.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import { areaPath, chartBars, chartSeries, endPoint, linePath } from "@/sections/stats/chart";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"stats", "chart-cards">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const chart = props.chart ?? "bars";
+const items = content.items.map((item) => {
+  const series = chartSeries(`${item.id}:${item.value}`, chart === "bars" ? 10 : 8);
+  return { ...item, series, end: endPoint(series) };
+});
+---
+
+<SectionShell id={section.id} type="stats" variant="chart-cards" tone={props.tone} spacing={props.spacing}>
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
+    <dl class:list={["s-stats-chart", `s-stats-chart--count-${items.length}`]}>
+      {items.map((item) => (
+        <div class="s-stats-chart__card">
+          <dt class="s-stats-chart__label">{item.label}</dt>
+          <dd class="s-stats-chart__value" data-counter>{item.value}</dd>
+          {item.description && <dd class="s-stats-chart__description">{item.description}</dd>}
+          <dd class="s-stats-chart__chart" aria-hidden="true">
+            {chart === "bars" ? (
+              <svg class="s-stats-chart__svg" focusable="false">
+                {chartBars(item.series).map((bar, index) => (
+                  <rect class:list={["s-stats-chart__bar", { "s-stats-chart__bar--last": index === item.series.length - 1 }]} x={bar.x} y={bar.y} width={bar.width} height={bar.height} rx="3" />
+                ))}
+              </svg>
+            ) : (
+              <svg class="s-stats-chart__svg" viewBox="0 0 100 40" preserveAspectRatio="none" focusable="false">
+                <path class="s-stats-chart__area" d={areaPath(item.series)} />
+                <path class="s-stats-chart__line" d={linePath(item.series)} vector-effect="non-scaling-stroke" />
+                {/* Zero-length paths with round caps and a non-scaling stroke: dots that stay round. */}
+                <path class="s-stats-chart__dot-ring" d={`M${item.end.x} ${item.end.y}h0`} vector-effect="non-scaling-stroke" />
+                <path class="s-stats-chart__dot" d={`M${item.end.x} ${item.end.y}h0`} vector-effect="non-scaling-stroke" />
+              </svg>
+            )}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  </Stack>
+</SectionShell>
