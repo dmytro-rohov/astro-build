@@ -7,7 +7,7 @@ import { demoSite, writeSite } from "./helpers";
 
 /** The summary keeps each day's hours on one line (no-break space, word joiners around dashes). */
 const unbroken = (text: string) => text.replaceAll(" ", "\u00a0").replaceAll("–", "\u2060–\u2060");
-const SUMMARY = `${unbroken("Pn–Pt 08:00–20:00")} · ${unbroken("Sb 09:00–14:00")}`;
+const SUMMARY = `${unbroken("Pn–Pt 8:00–20:00")} · ${unbroken("Sb 9:00–14:00")}`;
 
 const business = {
   type: "Physiotherapy" as const,
@@ -38,7 +38,7 @@ test("details: phone first, links for phone and e-mail, directions for the addre
       icon: "clock",
       label: "Godziny otwarcia",
       value: SUMMARY,
-      lines: ["Pn–Pt 08:00–20:00", "Sb 09:00–14:00", "Nd Zamknięte"],
+      lines: ["Pn–Pt 8:00–20:00", "Sb 9:00–14:00", "Nd Zamknięte"],
     },
   ]);
   expect(contactDetails({ type: "LocalBusiness", email: "a@b.pl", hours: [], sameAs: [] }, pl).map((detail) => detail.kind)).toEqual(["email"]);
