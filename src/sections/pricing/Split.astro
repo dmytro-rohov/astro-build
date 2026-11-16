@@ -1,0 +1,62 @@
+---
+/**
+ * Intro (title, description, note) on the left, stays in view; plans as stacked rows on the
+ * right with the price aligned right and the features as a short inline list.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Button from "@/components/ui/Button.astro";
+import Icon from "@/components/media/Icon.astro";
+import { t } from "@/i18n";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"pricing">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const PlanHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="pricing" variant="split" tone={props.tone} spacing={props.spacing} width="xl">
+  <div class="s-plan-split">
+    <div class="s-plan-split__intro">
+      <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
+      {content.note && <p class="s-plan-split__note">{content.note}</p>}
+    </div>
+    <ul class="s-plan-rows">
+      {content.plans.map((plan) => (
+        <li class:list={["s-plan-row", plan.highlighted && "s-plan-row--highlighted"]}>
+          <div class="s-plan-row__main">
+            <div class="s-plan-row__title">
+              <PlanHeading class="s-plan-row__name">{plan.name}</PlanHeading>
+              {plan.highlighted && <p class="s-plan-row__badge">{t.sections.popularPlan}</p>}
+            </div>
+            {plan.description && <p class="s-plan-row__description">{plan.description}</p>}
+            {plan.features.length > 0 && (
+              <ul class="s-plan-row__features">
+                {plan.features.map((feature) => (
+                  <li class="s-plan-row__feature">
+                    <Icon name="check" size="0.875rem" class="s-plan-row__check" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <div class="s-plan-row__side">
+            <p class="s-plan-row__price">
+              <span class="s-plan-row__amount">{plan.price}</span>
+              {plan.period && <span class="s-plan-row__period">{plan.period}</span>}
+            </p>
+            {plan.action && (
+              <Button href={plan.action.href} variant={plan.highlighted ? "primary" : "secondary"} size="sm" class="s-plan-row__action">{plan.action.label}</Button>
+            )}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</SectionShell>

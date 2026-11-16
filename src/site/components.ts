@@ -31,6 +31,10 @@ import HoursCard from "@/sections/hours-location/Card.astro";
 import HoursCompact from "@/sections/hours-location/Compact.astro";
 import PricingCards from "@/sections/pricing/Cards.astro";
 import PricingCompact from "@/sections/pricing/Compact.astro";
+import PricingFeaturedCenter from "@/sections/pricing/FeaturedCenter.astro";
+import PricingTable from "@/sections/pricing/Table.astro";
+import PricingSplit from "@/sections/pricing/Split.astro";
+import PricingMinimal from "@/sections/pricing/Minimal.astro";
 import ServicesCards from "@/sections/services/Cards.astro";
 import ServicesPriceList from "@/sections/services/PriceList.astro";
 import TestimonialsCards from "@/sections/testimonials/Cards.astro";
@@ -46,7 +50,7 @@ export const sectionComponents: Record<string, Record<string, SectionComponent>>
   features: { "cards-grid": FeaturesCardsGrid, "icon-list": FeaturesIconList },
   testimonials: { cards: TestimonialsCards, spotlight: TestimonialsSpotlight },
   gallery: { grid: GalleryGrid, mosaic: GalleryGrid },
-  pricing: { cards: PricingCards, compact: PricingCompact },
+  pricing: { cards: PricingCards, compact: PricingCompact, "featured-center": PricingFeaturedCenter, table: PricingTable, split: PricingSplit, minimal: PricingMinimal },
   faq: { accordion: FaqAccordion, "two-column": FaqTwoColumn },
   cta: { boxed: CtaBoxed, banner: CtaBanner },
   contact: { "form-split": ContactFormSplit, "form-centered": ContactFormCentered },

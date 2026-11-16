@@ -62,4 +62,5 @@
 @use "./sections/shared";
 @use "./sections/sections";
 @use "./sections/blocks";
+@use "./sections/pricing";
 @layer reset, tokens, base, layout, components, widgets, utilities, state;

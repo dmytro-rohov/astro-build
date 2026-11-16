@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **17 section types, 37 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **17 section types, 41 variants**, 3 navbars and 3 footers, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -164,7 +164,7 @@ the migrated site is validated like any build.
 | `features` | `cards-grid`, `icon-list` |
 | `testimonials` | `cards`, `spotlight` |
 | `gallery` | `grid`, `mosaic` |
-| `pricing` | `cards`, `compact` |
+| `pricing` | `cards`, `compact`, `featured-center` (recommended plan in the middle, on the brand color), `table` (comparison: features × plans), `split` (intro left, plan rows right), `minimal` (typographic columns, thin rules) |
 | `faq` | `accordion`, `two-column` (both publish FAQPage JSON-LD) |
 | `cta` | `boxed`, `banner` |
 | `contact` | `form-split`, `form-centered` (details from `business`) |
