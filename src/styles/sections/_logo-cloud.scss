@@ -588,7 +588,8 @@
   // ---------- color tiles ----------
   // Strong tiles made from the accent, five colors in turn (OKLCH: --light and the hue turned by
   // --turn). "brand": shades near the accent's hue; "spectrum": hues around the color wheel.
-  // The chroma falls away for an achromatic accent (graphite tiles).
+  // The chroma falls away for an achromatic accent (graphite tiles). A dark yellow turns olive:
+  // hues near yellow get lighter, and brand shades turn away from yellow (--away).
   .s-logo-tiles {
     --columns: 2;
     --gap: var(--spacing-sm);
@@ -607,10 +608,10 @@
   .s-logo-tiles__tile {
     --light: 0.5;
     --turn: 0;
+    --away: 1;
     --chroma: calc(min(c * 8, 1) * clamp(0.1, c, 0.18));
-
-    // Hues near yellow get lighter: a dark yellow turns olive.
-    --yellow: max(0, cos((h + var(--turn) - 105) * 1deg));
+    --hue: calc(h + var(--turn) * var(--away));
+    --yellow: max(0, cos((var(--hue) - 105) * 1deg));
 
     display: grid;
     flex: 0 0 calc((100% - (var(--columns) - 1) * var(--gap)) / var(--columns));
@@ -618,11 +619,16 @@
     min-width: 0;
     aspect-ratio: 4 / 3;
     padding: var(--spacing-lg);
-    background: oklch(from var(--color-action-primary) calc(var(--light) + 0.08 * var(--yellow)) var(--chroma) calc(h + var(--turn)));
+    background: oklch(from var(--color-action-primary) calc(var(--light) + 0.08 * var(--yellow)) var(--chroma) var(--hue));
     border-radius: var(--radius-card);
   }
 
-  @each $step, $light, $turn in (2 0.36 14, 3 0.58 -12, 4 0.3 -24, 5 0.44 28) {
+  // Turned up to 36° away from yellow (h ≈ 100): fully for red or green, barely for blue or gold.
+  .s-logo-tiles--brand .s-logo-tiles__tile {
+    --away: sin((h - 100) * 1deg);
+  }
+
+  @each $step, $light, $turn in (2 0.36 14, 3 0.58 26, 4 0.3 6, 5 0.44 36) {
     .s-logo-tiles--brand .s-logo-tiles__tile:nth-child(5n + #{$step}) {
       --light: #{$light};
       --turn: #{$turn};
