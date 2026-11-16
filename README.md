@@ -492,8 +492,10 @@ Available media primitives:
 
 Every section variant lives in `src/sections/<type>/` and renders through `SectionShell`
 (anchor id, tone, spacing, `data-section-type` for the tests). Shared building blocks:
-`Accordion` (`components/ui`), `ContactForm` (`components/form`), `SectionHeader`,
-`Actions`, `RichText` (`sections/_shared`). There is no separate "widgets" layer any more.
+`Accordion` (`components/ui`), `ContactForm` (`components/form`), `Slider` and `Lightbox`
+(full-screen photo viewer on a native `<dialog>`: arrows, swipe, Escape, captions, counter;
+`components/widgets`), `SectionHeader`, `Actions`, `RichText` (`sections/_shared`). There is no
+separate "widgets" layer any more.
 
 Site layouts (`src/layouts/`): `BaseLayout`, `Header`, `Navbar`, `Footer`.
 

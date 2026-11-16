@@ -3,9 +3,11 @@
  * Horizontal slider (v3.2), reusable: the slotted <li> items scroll sideways with snapping
  * (swipe on phones), with previous/next buttons; 1 item per view on phones, 2 on tablets,
  * 3 on desktops — or one on every screen with `single` (v3.3), and a dot per item with `dots`.
- * Without JavaScript it is still a scrollable list (the buttons are hidden then).
+ * Content in the `head` slot (v3.3, e.g. the section header) sits beside the arrows, the dots
+ * move under the track. Without JavaScript it is still a scrollable list (the buttons are hidden then).
  *   <Slider label="Opinie"><li>…</li><li>…</li></Slider>
  *   <Slider label="Opinie" single dots={items.length}>…</Slider>
+ *   <Slider label="Galeria" single dots={pages}><div slot="head">…</div><li>…</li></Slider>
  */
 import { format, t } from "@/i18n";
 
@@ -19,9 +21,11 @@ export interface Props {
 }
 
 const { label = t.slider.label, single = false, dots = 0, class: className } = Astro.props;
+const head = Astro.slots.has("head");
 ---
 
-<div class:list={["slider", single && "slider--single", className]} data-slider role="region" aria-roledescription="carousel" aria-label={label}>
+<div class:list={["slider", single && "slider--single", head && "slider--head", className]} data-slider role="region" aria-roledescription="carousel" aria-label={label}>
+  {head && <div class="slider__head"><slot name="head" /></div>}
   <ul class="slider__track" data-slider-track tabindex="0">
     <slot />
   </ul>

@@ -138,8 +138,9 @@ ${lines(colorVars(accentPalette(theme.dark)), "    ")}
   }
 }
 
-/* Cover hero: always the dark palette (light text over a dark photo overlay), also in dark sites. */
-:root .section.s-hero--cover-image {
+/* Cover hero and the photo viewer: always the dark palette (light text over dark), also in dark sites. */
+:root .section.s-hero--cover-image,
+:root .lightbox {
   color-scheme: dark;
 ${lines(colorVars(theme.dark))}
 }

@@ -131,13 +131,68 @@
     width: 1.25rem;
   }
 
+  // v3.3: content in the head slot. Phones: above the track, the arrows framing the dots under
+  // it; wider screens: the arrows beside the head (bottom-aligned), the dots under the track.
+  .slider--head {
+    grid-template:
+      "head head head"
+      "track track track"
+      "previous dots next" / auto minmax(0, 1fr) auto;
+    column-gap: var(--spacing-sm);
+  }
+
+  .slider--head .slider__controls {
+    display: contents;
+  }
+
+  .slider__head {
+    grid-area: head;
+    min-width: 0;
+  }
+
+  .slider--head .slider__track {
+    grid-area: track;
+  }
+
+  .slider--head .slider__button--previous {
+    grid-area: previous;
+  }
+
+  .slider--head .slider__button--next {
+    grid-area: next;
+  }
+
+  .slider--head .slider__dots {
+    grid-area: dots;
+    align-self: center;
+  }
+
+  @include mq(md) {
+    .slider--head {
+      grid-template:
+        "head previous next"
+        "track track track"
+        "dots dots dots" / minmax(0, 1fr) auto auto;
+    }
+
+    .slider--head .slider__head {
+      margin-inline-end: var(--spacing-lg);
+    }
+
+    .slider--head .slider__button {
+      align-self: end;
+    }
+  }
+
   // Without JavaScript the buttons cannot work: the list scrolls by itself, with a thin scrollbar.
   @media (scripting: none) {
     .slider__track {
       scrollbar-width: thin;
     }
 
-    .slider__controls {
+    .slider__controls,
+    .slider--head .slider__button,
+    .slider--head .slider__dots {
       display: none;
     }
   }

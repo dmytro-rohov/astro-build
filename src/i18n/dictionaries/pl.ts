@@ -50,6 +50,14 @@ export default {
     page: "Pokaż {number} z {count}",
   },
 
+  lightbox: {
+    label: "Przeglądarka zdjęć",
+    close: "Zamknij",
+    previous: "Poprzednie zdjęcie",
+    next: "Następne zdjęcie",
+    status: "Zdjęcie {number} z {count}",
+  },
+
   common: {
     skipToContent: "Przejdź do treści",
     backToHome: "Wróć na stronę główną",

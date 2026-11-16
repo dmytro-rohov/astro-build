@@ -57,6 +57,14 @@ export const en = {
     page: "Show {number} of {count}",
   },
 
+  lightbox: {
+    label: "Photo viewer",
+    close: "Close",
+    previous: "Previous photo",
+    next: "Next photo",
+    status: "Photo {number} of {count}",
+  },
+
   common: {
     skipToContent: "Skip to content",
     backToHome: "Back to home page",

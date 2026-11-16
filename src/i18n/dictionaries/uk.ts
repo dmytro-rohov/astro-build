@@ -50,6 +50,14 @@ export default {
     page: "Показати {number} з {count}",
   },
 
+  lightbox: {
+    label: "Перегляд фото",
+    close: "Закрити",
+    previous: "Попереднє фото",
+    next: "Наступне фото",
+    status: "Фото {number} з {count}",
+  },
+
   common: {
     skipToContent: "Перейти до вмісту",
     backToHome: "Повернутися на головну",
