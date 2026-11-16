@@ -1,0 +1,51 @@
+---
+/** A recommended section that is not built yet (preview only): why, what is missing, add or dismiss. */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Cluster from "@/components/layouts/Cluster.astro";
+import Tag from "@/components/ui/Tag.astro";
+import Button from "@/components/ui/Button.astro";
+import Icon from "@/components/media/Icon.astro";
+import type { SectionOf } from "@/site/types";
+
+export interface Props {
+  section: SectionOf<"suggestion">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const Heading = headingLevel;
+const listId = `${section.id}-missing`;
+---
+
+<SectionShell
+  id={section.id}
+  type="suggestion"
+  variant="box"
+  tone={props.tone}
+  spacing={props.spacing ?? "md"}
+  width="md"
+  class="suggestion"
+>
+  <div class="suggestion__box">
+    <span class="suggestion__icon" aria-hidden="true"><Icon name="lightbulb" size="1.5rem" /></span>
+    <Stack class="suggestion__content" space="md">
+      <Tag variant="primary" class="suggestion__eyebrow">{content.eyebrow}</Tag>
+      <Heading class="suggestion__title">{content.title}</Heading>
+      <p class="suggestion__reason">{content.reason}</p>
+      <div class="suggestion__missing">
+        <p class="suggestion__missing-title" id={listId}>{content.missingTitle}</p>
+        <ul class="suggestion__list" aria-labelledby={listId}>
+          {content.missing.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+      {(content.addAction || content.dismissAction) && (
+        <Cluster class="suggestion__actions" gap="md">
+          {content.addAction && <Button href={content.addAction.href}>{content.addAction.label}</Button>}
+          {content.dismissAction && <Button href={content.dismissAction.href} variant="ghost">{content.dismissAction.label}</Button>}
+        </Cluster>
+      )}
+    </Stack>
+  </div>
+</SectionShell>

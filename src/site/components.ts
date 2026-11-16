@@ -17,6 +17,7 @@ import CtaBoxed from "@/sections/cta/Boxed.astro";
 import CtaFaces from "@/sections/cta/Faces.astro";
 import CtaGradientCards from "@/sections/cta/GradientCards.astro";
 import CtaRings from "@/sections/cta/Rings.astro";
+import SuggestionBox from "@/sections/suggestion/Box.astro";
 import FaqAccordion from "@/sections/faq/Accordion.astro";
 import FaqCategories from "@/sections/faq/Categories.astro";
 import FaqSearch from "@/sections/faq/Search.astro";
@@ -112,4 +113,5 @@ export const sectionComponents: Record<string, Record<string, SectionComponent>>
   process: { steps: Process, timeline: Process, cards: Process, wave: ProcessWave, snake: ProcessSnake, chevrons: ProcessChevrons },
   "logo-cloud": { row: LogoCloud, grid: LogoCloud, coverflow: LogoCloudCoverflow, "split-image": LogoCloudSplitImage, marquee: LogoCloudMarquee, "color-tiles": LogoCloudColorTiles },
   embed: { full: Embed, split: Embed },
+  suggestion: { box: SuggestionBox },
 };

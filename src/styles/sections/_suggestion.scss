@@ -1,0 +1,61 @@
+@layer widgets {
+  // A recommended section that is not built yet (preview only): dashed, softly striped, clearly "to fill in".
+  .suggestion__box {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--spacing-lg);
+    padding: var(--spacing-xl);
+    border: 2px dashed color-mix(in srgb, var(--color-action-primary) 55%, var(--color-border-default));
+    border-radius: var(--radius-card);
+    background:
+      repeating-linear-gradient(
+        -45deg,
+        color-mix(in srgb, var(--color-action-primary) 5%, transparent) 0 0.75rem,
+        transparent 0.75rem 1.5rem
+      ),
+      color-mix(in srgb, var(--color-background-primary) 94%, var(--color-action-primary));
+  }
+
+  .suggestion__icon {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    color: var(--color-action-primary);
+    background: color-mix(in srgb, var(--color-action-primary) 14%, var(--color-background-primary));
+  }
+
+  .suggestion__title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .suggestion__reason {
+    max-width: 60ch;
+    color: var(--color-text-secondary);
+  }
+
+  .suggestion__missing-title {
+    font-weight: 700;
+  }
+
+  .suggestion__list {
+    display: grid;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-xs);
+    padding-left: 1.25rem;
+    list-style: disc;
+  }
+
+  .suggestion__list li {
+    list-style: inherit;
+  }
+
+  @media (width <= 40rem) {
+    .suggestion__box {
+      grid-template-columns: minmax(0, 1fr);
+      padding: var(--spacing-lg);
+    }
+  }
+}

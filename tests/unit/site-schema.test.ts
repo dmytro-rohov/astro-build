@@ -101,7 +101,7 @@ describe("site-wide rules", () => {
   });
 
   test("language without a dictionary", () => {
-    expect(issuesFor((site) => (site.lang = "de"))[0]).toMatch(/^lang: no dictionary for "de"/);
+    expect(issuesFor((site) => (site.lang = "sv"))[0]).toMatch(/^lang: no dictionary for "sv"/);
   });
 });
 

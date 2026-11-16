@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **17 section types, 92 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **18 section types, 93 variants**, 3 navbars and 3 footers, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -65,7 +65,7 @@ src/
 │  └─ utils/          tokens → SCSS (per site)
 ├─ components/        layout, UI, form and media primitives (Accordion, ContactForm…)
 ├─ layouts/           BaseLayout, Header, Navbar, Footer
-├─ i18n/dictionaries/ one file per language (en, pl, uk)
+├─ i18n/dictionaries/ one file per language (cs, de, en, es, fr, it, nl, pl, pt, ru, tr, uk)
 ├─ lib/contact/       contact form validation and delivery
 ├─ pages/             [...slug].astro (all site pages), privacy, contact results, 404/500
 └─ styles/
@@ -175,6 +175,7 @@ the migrated site is validated like any build.
 | `schedule` | `week` (calendar board: a framed column per day), `table` (grouped by day), `day-columns` (bold colored day headers), `matrix` (instructors or classes × days), `tabs` (one day at a time, today first), `agenda` (timeline list) — weekly classes, sorted by day and time; `matrix` rows by `instructor` or `class` (prop `rows`) |
 | `logo-cloud` | `row` (muted, balanced rows), `grid` (light tiles), `coverflow` (3D carousel, big card in the middle; 2–3 logos as a still fan), `split-image` (photo beside the title and tiles, pages of six with dots), `marquee` (endless band between rules: pauses on hover, focus and a button, still for reduced motion), `color-tiles` (logos knocked out white on strong tiles from the accent, `palette` brand / spectrum) — partner / client logos, SVG or PNG, sized by their proportions; a white plate behind a logo melts into the background; optional `image` for `split-image` |
 | `embed` | `full`, `split` (OpenStreetMap, Google Maps, YouTube, Vimeo, Calendly — see below) |
+| `suggestion` | `box` (preview only, never published: a recommended section the generator cannot build yet — why it helps, what is missing, links to add or dismiss it) |
 | layout `navbar` | `simple`, `centered`, `topbar` (phone/email bar) |
 | layout `footer` | `columns`, `simple`, `centered` |
 
@@ -301,7 +302,15 @@ Any language works. The file name is the language code:
    (`"rtl"` for Arabic, Hebrew…).
 3. Set `"lang"` in site.json.
 
-No registration is needed — dictionaries are picked up automatically. The site
+Ready: Czech (`cs`), German (`de`), English (`en`), Spanish (`es`), French (`fr`),
+Italian (`it`), Dutch (`nl`), Polish (`pl`), Portuguese (`pt`, Portugal), Russian
+(`ru`), Turkish (`tr`) and Ukrainian (`uk`). Languages in other scripts (Chinese,
+Arabic, Hindi…) also need fonts with that script and, for right-to-left ones, a
+check of the layout.
+
+No registration is needed — dictionaries are picked up automatically, and
+`npm run catalog` lists them in `catalog.json` (`languages`: code, own name,
+English name, Open Graph locale, direction, scripts) for the generator. The site
 **content** in site.json must be written in that language. TypeScript checks that
 every dictionary has the same keys as `en.ts`; an unknown `lang` stops validation
 with a clear error, and a font pair without the language's script (e.g. Cyrillic

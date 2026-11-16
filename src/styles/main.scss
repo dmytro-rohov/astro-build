@@ -74,4 +74,5 @@
 @use "./sections/contact";
 @use "./sections/gallery";
 @use "./sections/logo-cloud";
+@use "./sections/suggestion";
 @layer reset, tokens, base, layout, components, widgets, utilities, state;
