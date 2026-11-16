@@ -1,3 +1,4 @@
+@use "./abstracts/layers";
 @use "./abstracts/functions" as *;
 @use "./abstracts/mixins";
 @use "./abstracts/variables";
@@ -75,4 +76,3 @@
 @use "./sections/gallery";
 @use "./sections/logo-cloud";
 @use "./sections/suggestion";
-@layer reset, tokens, base, layout, components, widgets, utilities, state;
