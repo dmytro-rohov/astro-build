@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **17 section types, 55 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **17 section types, 59 variants**, 3 navbars and 3 footers, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -172,7 +172,7 @@ the migrated site is validated like any build.
 | `stats` | `row`, `cards`, `rings` (progress rings), `bars` (progress bars, two columns), `chart-cards` (decorative mini charts), `highlight` (one big number + text), `bento` (tiles, first on the brand color); key numbers, accent tone allowed, optional `items[].progress` 0–100 |
 | `process` | `steps` (one connecting line), `timeline` (alternating around a central line), `cards` (outlined numbers), `wave` (wavy path), `snake` (line looping over and under round nodes), `chevrons` (rings with numbered arrows) — 2–8 steps, optional icons and time labels; all collapse to one vertical sequence on phones |
 | `team` | `cards`, `compact` (portraits 4:5 / round) |
-| `schedule` | `week`, `table` (weekly classes, sorted by day and time) |
+| `schedule` | `week` (calendar board: a framed column per day), `table` (grouped by day), `day-columns` (bold colored day headers), `matrix` (instructors or classes × days), `tabs` (one day at a time, today first), `agenda` (timeline list) — weekly classes, sorted by day and time; `matrix` rows by `instructor` or `class` (prop `rows`) |
 | `logo-cloud` | `row`, `grid` (partner / client logos, SVG or PNG) |
 | `embed` | `full`, `split` (OpenStreetMap, Google Maps, YouTube, Vimeo, Calendly — see below) |
 | layout `navbar` | `simple`, `centered`, `topbar` (phone/email bar) |

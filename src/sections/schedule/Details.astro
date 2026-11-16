@@ -1,0 +1,20 @@
+---
+/**
+ * Details of a class (level, instructor, room…) joined with dots. Every detail is one
+ * inline block with its dot, so a narrow column breaks between them ("Sala 2" never ends up split).
+ */
+export interface Props {
+  parts: (string | undefined)[];
+  class: string;
+}
+
+const { parts, class: className } = Astro.props;
+const shown = parts.filter((part): part is string => Boolean(part));
+const last = shown.length - 1;
+---
+
+{shown.length > 0 && (
+  <p class={className}>
+    {shown.map((part, index) => (index < last ? <><span class="s-schedule__detail">{part} ·</span> </> : <span class="s-schedule__detail">{part}</span>))}
+  </p>
+)}
