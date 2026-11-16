@@ -70,22 +70,45 @@ const CONTENT_TYPES = {
 /** Text files are sent gzip-compressed when the client accepts it (like the Caddy sites). */
 const COMPRESSIBLE = new Set([".html", ".css", ".js", ".json", ".webmanifest", ".xml", ".txt", ".svg"]);
 
+/** File for a URL path inside root: the file itself, then <path>/index.html, then <path>.html. */
+function resolveFile(root, pathname) {
+  let decoded;
+  try {
+    decoded = decodeURIComponent(pathname);
+  } catch {
+    return undefined;
+  }
+
+  for (const candidate of [decoded, path.join(decoded, "index.html"), `${decoded}.html`]) {
+    const file = path.join(root, path.normalize(candidate));
+    // Never serve anything outside the output directory.
+    if (!file.startsWith(root + path.sep)) return undefined;
+    if (fs.existsSync(file) && fs.statSync(file).isFile()) return file;
+  }
+
+  return undefined;
+}
+
+/** Sends a file, gzip-compressed for text files when the client accepts it. */
+function sendFile(req, res, file, status = 200) {
+  const gzip = COMPRESSIBLE.has(path.extname(file)) && /\bgzip\b/.test(req.headers["accept-encoding"] ?? "");
+  res.writeHead(status, {
+    "Content-Type": CONTENT_TYPES[path.extname(file)] ?? "application/octet-stream",
+    Vary: "Accept-Encoding",
+    ...(gzip && { "Content-Encoding": "gzip" }),
+  });
+  if (req.method === "HEAD") {
+    res.end();
+    return;
+  }
+
+  const stream = fs.createReadStream(file);
+  if (gzip) stream.pipe(zlib.createGzip()).pipe(res);
+  else stream.pipe(res);
+}
+
 /** Static mode (no Astro server): file, then <path>/index.html, else 404.html. */
 function staticHandler(root) {
-  const resolve = (pathname) => {
-    const decoded = decodeURIComponent(pathname);
-    const candidates = [decoded, path.join(decoded, "index.html")];
-
-    for (const candidate of candidates) {
-      const file = path.join(root, path.normalize(candidate));
-      // Never serve anything outside the output directory.
-      if (!file.startsWith(root + path.sep)) return undefined;
-      if (fs.existsSync(file) && fs.statSync(file).isFile()) return file;
-    }
-
-    return undefined;
-  };
-
   return (req, res, pathname) => {
     if (req.method !== "GET" && req.method !== "HEAD") {
       res.writeHead(405, { Allow: "GET, HEAD" }).end();
@@ -98,35 +121,14 @@ function staticHandler(root) {
       return;
     }
 
-    let file;
-    try {
-      file = resolve(pathname);
-    } catch {
-      file = undefined;
-    }
-
-    const status = file ? 200 : 404;
-    file ??= path.join(root, "404.html");
-
-    const gzip = COMPRESSIBLE.has(path.extname(file)) && /\bgzip\b/.test(req.headers["accept-encoding"] ?? "");
-    res.writeHead(status, {
-      "Content-Type": CONTENT_TYPES[path.extname(file)] ?? "application/octet-stream",
-      Vary: "Accept-Encoding",
-      ...(gzip && { "Content-Encoding": "gzip" }),
-    });
-    if (req.method === "HEAD") {
-      res.end();
-      return;
-    }
-
-    const stream = fs.createReadStream(file);
-    if (gzip) stream.pipe(zlib.createGzip()).pipe(res);
-    else stream.pipe(res);
+    const file = resolveFile(root, pathname);
+    sendFile(req, res, file ?? path.join(root, "404.html"), file ? 200 : 404);
   };
 }
 
 const astroHandler = fs.existsSync(entry) ? (await import(pathToFileURL(entry).href)).handler : undefined;
 const serveStatic = astroHandler ? undefined : staticHandler(outDir);
+const clientDir = path.join(outDir, "client");
 
 const server = http.createServer((req, res) => {
   const { pathname } = new URL(req.url ?? "/", "http://localhost");
@@ -151,8 +153,17 @@ const server = http.createServer((req, res) => {
     res.setHeader = (name, value) => (name.toLowerCase() === "cache-control" ? res : setHeader(name, value));
   }
 
-  if (astroHandler) astroHandler(req, res);
-  else serveStatic(req, res, pathname);
+  if (!astroHandler) {
+    serveStatic(req, res, pathname);
+    return;
+  }
+
+  // Astro server (contact mode "local"): built CSS/JS and other text assets are sent from the
+  // client folder here, gzip-compressed like the Caddy sites (Astro's handler does not compress);
+  // pages, the API and 404s stay with Astro.
+  const asset = (req.method === "GET" || req.method === "HEAD") && pathname !== "/" && !pathname.endsWith(".html") ? resolveFile(clientDir, pathname) : undefined;
+  if (asset && COMPRESSIBLE.has(path.extname(asset)) && path.extname(asset) !== ".html") sendFile(req, res, asset);
+  else astroHandler(req, res);
 });
 
 server.listen(port, host, () => {
