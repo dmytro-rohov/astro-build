@@ -8,13 +8,13 @@ export default {
   },
 
   days: {
-    mo: { short: "seg", long: "Segunda-feira" },
-    tu: { short: "ter", long: "Terça-feira" },
-    we: { short: "qua", long: "Quarta-feira" },
-    th: { short: "qui", long: "Quinta-feira" },
-    fr: { short: "sex", long: "Sexta-feira" },
-    sa: { short: "sáb", long: "Sábado" },
-    su: { short: "dom", long: "Domingo" },
+    mo: { short: "seg", long: "Segunda-feira", on: "à segunda-feira" },
+    tu: { short: "ter", long: "Terça-feira", on: "à terça-feira" },
+    we: { short: "qua", long: "Quarta-feira", on: "à quarta-feira" },
+    th: { short: "qui", long: "Quinta-feira", on: "à quinta-feira" },
+    fr: { short: "sex", long: "Sexta-feira", on: "à sexta-feira" },
+    sa: { short: "sáb", long: "Sábado", on: "ao sábado" },
+    su: { short: "dom", long: "Domingo", on: "ao domingo" },
   },
 
   sections: {
@@ -37,12 +37,28 @@ export default {
     embedNotice: "Este conteúdo é carregado a partir de {provider}. Depois de clicar, {provider} poderá definir cookies e receber o seu endereço IP.",
     embedOpen: "Abrir em {provider}",
     step: "Passo {number}",
+    directions: "Obter direções",
+    openNow: "Aberto agora",
+    openUntil: "até às {time}",
+    opensToday: "abre hoje às {time}",
+    opensTomorrow: "abre amanhã às {time}",
+    opensOn: "abre {day} às {time}",
+    today: "Hoje",
+    mapLoad: "Mostrar o mapa",
+    mapTitle: "Mapa: {place}",
+    planPrice: "Preço",
+    planIncluded: "Incluído",
+    planExcluded: "Não incluído",
+    gallery: "Galeria",
+    reviews: { one: "{count} avaliação", few: "{count} avaliações", many: "{count} avaliações", other: "{count} avaliações" },
   },
 
   slider: {
     previous: "Anterior",
     next: "Seguinte",
     label: "Lista deslizante",
+    page: "Mostrar {number} de {count}",
+    pause: "Pausar o deslizamento",
   },
 
   common: {
@@ -67,6 +83,7 @@ export default {
     copyright: "© {year} {siteName}. Todos os direitos reservados.",
     madeBy: "Site criado por",
     console: "Este site foi criado por Mytko.dev — sites rápidos e acessíveis para empresas e profissionais. Quer um? https://mytko.dev",
+    contact: "Contacto",
   },
 
   cookies: {
@@ -115,6 +132,11 @@ export default {
       messageTooLong: "A mensagem pode ter, no máximo, {max} caracteres.",
       privacyRequired: "Tem de aceitar a política de privacidade.",
     },
+    callTitle: "Ligue-nos",
+    writeTitle: "Envie-nos um e-mail",
+    visitTitle: "Visite-nos",
+    directions: "Obter direções",
+    mapTitle: "Mapa: {place}",
   },
 
   email: {
@@ -175,5 +197,26 @@ export default {
       title: "Contacto",
       description: "Entre em contacto connosco através do formulário de contacto.",
     },
+  },
+  faq: {
+    contactTitle: "Tem outra pergunta?",
+    contactText: "Teremos todo o gosto em responder — contacte-nos.",
+    other: "Outras",
+    searchLabel: "Pesquisar nas perguntas",
+    searchPlaceholder: "O que procura?",
+    filters: "Temas das perguntas",
+    all: "Todas",
+    results: { one: "{count} pergunta encontrada", few: "{count} perguntas encontradas", many: "{count} perguntas encontradas", other: "{count} perguntas encontradas" },
+    noResults: "Nenhuma pergunta corresponde a «{query}».",
+    askLead: "Não encontrou a sua pergunta?",
+    ask: "Pergunte-nos",
+  },
+
+  lightbox: {
+    label: "Visualizador de fotografias",
+    close: "Fechar",
+    previous: "Fotografia anterior",
+    next: "Fotografia seguinte",
+    status: "Fotografia {number} de {count}",
   },
 } satisfies Dictionary;

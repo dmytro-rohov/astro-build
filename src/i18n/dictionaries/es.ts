@@ -8,13 +8,13 @@ export default {
   },
 
   days: {
-    mo: { short: "lun", long: "Lunes" },
-    tu: { short: "mar", long: "Martes" },
-    we: { short: "mié", long: "Miércoles" },
-    th: { short: "jue", long: "Jueves" },
-    fr: { short: "vie", long: "Viernes" },
-    sa: { short: "sáb", long: "Sábado" },
-    su: { short: "dom", long: "Domingo" },
+    mo: { short: "lun", long: "Lunes", on: "el lunes" },
+    tu: { short: "mar", long: "Martes", on: "el martes" },
+    we: { short: "mié", long: "Miércoles", on: "el miércoles" },
+    th: { short: "jue", long: "Jueves", on: "el jueves" },
+    fr: { short: "vie", long: "Viernes", on: "el viernes" },
+    sa: { short: "sáb", long: "Sábado", on: "el sábado" },
+    su: { short: "dom", long: "Domingo", on: "el domingo" },
   },
 
   sections: {
@@ -37,12 +37,28 @@ export default {
     embedNotice: "Este contenido se carga desde {provider}. Al hacer clic, {provider} puede instalar cookies y recibirá tu dirección IP.",
     embedOpen: "Abrir en {provider}",
     step: "Paso {number}",
+    directions: "Cómo llegar",
+    openNow: "Abierto ahora",
+    openUntil: "hasta las {time}",
+    opensToday: "abre hoy a las {time}",
+    opensTomorrow: "abre mañana a las {time}",
+    opensOn: "abre {day} a las {time}",
+    today: "Hoy",
+    mapLoad: "Mostrar el mapa",
+    mapTitle: "Mapa: {place}",
+    planPrice: "Precio",
+    planIncluded: "Incluido",
+    planExcluded: "No incluido",
+    gallery: "Galería",
+    reviews: { one: "{count} reseña", few: "{count} reseñas", many: "{count} reseñas", other: "{count} reseñas" },
   },
 
   slider: {
     previous: "Anterior",
     next: "Siguiente",
     label: "Lista desplazable",
+    page: "Mostrar {number} de {count}",
+    pause: "Pausar el desplazamiento",
   },
 
   common: {
@@ -67,6 +83,7 @@ export default {
     copyright: "© {year} {siteName}. Todos los derechos reservados.",
     madeBy: "Web creada por",
     console: "Este sitio web lo ha creado Mytko.dev: webs rápidas y accesibles para empresas y profesionales. ¿Quieres una? https://mytko.dev",
+    contact: "Contacto",
   },
 
   cookies: {
@@ -115,6 +132,11 @@ export default {
       messageTooLong: "El mensaje puede tener como máximo {max} caracteres.",
       privacyRequired: "Debes aceptar la política de privacidad.",
     },
+    callTitle: "Llámanos",
+    writeTitle: "Escríbenos un correo",
+    visitTitle: "Visítanos",
+    directions: "Cómo llegar",
+    mapTitle: "Mapa: {place}",
   },
 
   email: {
@@ -175,5 +197,26 @@ export default {
       title: "Contacto",
       description: "Ponte en contacto con nosotros a través del formulario de contacto.",
     },
+  },
+  faq: {
+    contactTitle: "¿Tienes otra pregunta?",
+    contactText: "Te responderemos con gusto: escríbenos o llámanos.",
+    other: "Otras",
+    searchLabel: "Buscar en las preguntas",
+    searchPlaceholder: "¿Qué buscas?",
+    filters: "Temas de las preguntas",
+    all: "Todas",
+    results: { one: "{count} pregunta encontrada", few: "{count} preguntas encontradas", many: "{count} preguntas encontradas", other: "{count} preguntas encontradas" },
+    noResults: "Ninguna pregunta coincide con «{query}».",
+    askLead: "¿No has encontrado tu pregunta?",
+    ask: "Pregúntanos",
+  },
+
+  lightbox: {
+    label: "Visor de fotos",
+    close: "Cerrar",
+    previous: "Foto anterior",
+    next: "Foto siguiente",
+    status: "Foto {number} de {count}",
   },
 } satisfies Dictionary;

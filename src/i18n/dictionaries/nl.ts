@@ -8,13 +8,13 @@ export default {
   },
 
   days: {
-    mo: { short: "ma", long: "Maandag" },
-    tu: { short: "di", long: "Dinsdag" },
-    we: { short: "wo", long: "Woensdag" },
-    th: { short: "do", long: "Donderdag" },
-    fr: { short: "vr", long: "Vrijdag" },
-    sa: { short: "za", long: "Zaterdag" },
-    su: { short: "zo", long: "Zondag" },
+    mo: { short: "ma", long: "Maandag", on: "op maandag" },
+    tu: { short: "di", long: "Dinsdag", on: "op dinsdag" },
+    we: { short: "wo", long: "Woensdag", on: "op woensdag" },
+    th: { short: "do", long: "Donderdag", on: "op donderdag" },
+    fr: { short: "vr", long: "Vrijdag", on: "op vrijdag" },
+    sa: { short: "za", long: "Zaterdag", on: "op zaterdag" },
+    su: { short: "zo", long: "Zondag", on: "op zondag" },
   },
 
   sections: {
@@ -37,12 +37,28 @@ export default {
     embedNotice: "Deze inhoud wordt geladen via {provider}. Na je klik kan {provider} cookies plaatsen en je IP-adres ontvangen.",
     embedOpen: "Openen in {provider}",
     step: "Stap {number}",
+    directions: "Route plannen",
+    openNow: "Nu geopend",
+    openUntil: "tot {time}",
+    opensToday: "opent vandaag om {time}",
+    opensTomorrow: "opent morgen om {time}",
+    opensOn: "opent {day} om {time}",
+    today: "Vandaag",
+    mapLoad: "Kaart tonen",
+    mapTitle: "Kaart: {place}",
+    planPrice: "Prijs",
+    planIncluded: "Inbegrepen",
+    planExcluded: "Niet inbegrepen",
+    gallery: "Galerij",
+    reviews: { one: "{count} review", few: "{count} reviews", many: "{count} reviews", other: "{count} reviews" },
   },
 
   slider: {
     previous: "Vorige",
     next: "Volgende",
     label: "Scrollbare lijst",
+    page: "Toon {number} van {count}",
+    pause: "Scrollen pauzeren",
   },
 
   common: {
@@ -67,6 +83,7 @@ export default {
     copyright: "© {year} {siteName}. Alle rechten voorbehouden.",
     madeBy: "Website door",
     console: "Deze site is gebouwd door Mytko.dev — snelle, toegankelijke websites voor bedrijven en specialisten. Ook zo’n site? https://mytko.dev",
+    contact: "Contact",
   },
 
   cookies: {
@@ -115,6 +132,11 @@ export default {
       messageTooLong: "Bericht mag maximaal {max} tekens bevatten.",
       privacyRequired: "Je moet akkoord gaan met het privacybeleid.",
     },
+    callTitle: "Bel ons",
+    writeTitle: "Stuur een e-mail",
+    visitTitle: "Kom langs",
+    directions: "Route plannen",
+    mapTitle: "Kaart: {place}",
   },
 
   email: {
@@ -175,5 +197,26 @@ export default {
       title: "Contact",
       description: "Neem contact met ons op via het contactformulier.",
     },
+  },
+  faq: {
+    contactTitle: "Nog een vraag?",
+    contactText: "We beantwoorden hem graag — neem contact met ons op.",
+    other: "Overig",
+    searchLabel: "Zoeken in de vragen",
+    searchPlaceholder: "Waar ben je naar op zoek?",
+    filters: "Onderwerpen",
+    all: "Alle",
+    results: { one: "{count} vraag gevonden", few: "{count} vragen gevonden", many: "{count} vragen gevonden", other: "{count} vragen gevonden" },
+    noResults: "Geen vraag past bij ‘{query}’.",
+    askLead: "Staat je vraag er niet tussen?",
+    ask: "Stel je vraag",
+  },
+
+  lightbox: {
+    label: "Fotoviewer",
+    close: "Sluiten",
+    previous: "Vorige foto",
+    next: "Volgende foto",
+    status: "Foto {number} van {count}",
   },
 } satisfies Dictionary;

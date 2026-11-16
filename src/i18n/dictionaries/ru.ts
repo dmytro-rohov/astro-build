@@ -8,13 +8,13 @@ export default {
   },
 
   days: {
-    mo: { short: "Пн", long: "Понедельник" },
-    tu: { short: "Вт", long: "Вторник" },
-    we: { short: "Ср", long: "Среда" },
-    th: { short: "Чт", long: "Четверг" },
-    fr: { short: "Пт", long: "Пятница" },
-    sa: { short: "Сб", long: "Суббота" },
-    su: { short: "Вс", long: "Воскресенье" },
+    mo: { short: "Пн", long: "Понедельник", on: "в понедельник" },
+    tu: { short: "Вт", long: "Вторник", on: "во вторник" },
+    we: { short: "Ср", long: "Среда", on: "в среду" },
+    th: { short: "Чт", long: "Четверг", on: "в четверг" },
+    fr: { short: "Пт", long: "Пятница", on: "в пятницу" },
+    sa: { short: "Сб", long: "Суббота", on: "в субботу" },
+    su: { short: "Вс", long: "Воскресенье", on: "в воскресенье" },
   },
 
   sections: {
@@ -37,12 +37,28 @@ export default {
     embedNotice: "Этот контент загружается из сервиса {provider}. После нажатия {provider} может установить файлы cookie и получит ваш IP-адрес.",
     embedOpen: "Открыть в {provider}",
     step: "Шаг {number}",
+    directions: "Проложить маршрут",
+    openNow: "Сейчас открыто",
+    openUntil: "до {time}",
+    opensToday: "откроемся сегодня в {time}",
+    opensTomorrow: "откроемся завтра в {time}",
+    opensOn: "откроемся {day} в {time}",
+    today: "Сегодня",
+    mapLoad: "Показать карту",
+    mapTitle: "Карта: {place}",
+    planPrice: "Цена",
+    planIncluded: "Входит",
+    planExcluded: "Не входит",
+    gallery: "Галерея",
+    reviews: { one: "{count} отзыв", few: "{count} отзыва", many: "{count} отзывов", other: "{count} отзыва" },
   },
 
   slider: {
     previous: "Назад",
     next: "Далее",
     label: "Прокручиваемый список",
+    page: "Показать {number} из {count}",
+    pause: "Остановить прокрутку",
   },
 
   common: {
@@ -67,6 +83,7 @@ export default {
     copyright: "© {year} {siteName}. Все права защищены.",
     madeBy: "Сайт разработан",
     console: "Этот сайт создан Mytko.dev — быстрые и доступные сайты для бизнеса и специалистов. Хотите такой же? https://mytko.dev",
+    contact: "Контакты",
   },
 
   cookies: {
@@ -115,6 +132,11 @@ export default {
       messageTooLong: "Сообщение может содержать не более {max} символов.",
       privacyRequired: "Необходимо принять политику конфиденциальности.",
     },
+    callTitle: "Позвоните нам",
+    writeTitle: "Напишите нам",
+    visitTitle: "Приходите к нам",
+    directions: "Проложить маршрут",
+    mapTitle: "Карта: {place}",
   },
 
   email: {
@@ -175,5 +197,26 @@ export default {
       title: "Контакты",
       description: "Свяжитесь с нами через контактную форму.",
     },
+  },
+  faq: {
+    contactTitle: "Остался вопрос?",
+    contactText: "Мы с радостью ответим — свяжитесь с нами.",
+    other: "Другое",
+    searchLabel: "Поиск по вопросам",
+    searchPlaceholder: "Что вы ищете?",
+    filters: "Темы вопросов",
+    all: "Все",
+    results: { one: "Найден {count} вопрос", few: "Найдено {count} вопроса", many: "Найдено {count} вопросов", other: "Найдено {count} вопроса" },
+    noResults: "По запросу «{query}» вопросов не найдено.",
+    askLead: "Не нашли свой вопрос?",
+    ask: "Спросите нас",
+  },
+
+  lightbox: {
+    label: "Просмотр фотографий",
+    close: "Закрыть",
+    previous: "Предыдущее фото",
+    next: "Следующее фото",
+    status: "Фото {number} из {count}",
   },
 } satisfies Dictionary;
