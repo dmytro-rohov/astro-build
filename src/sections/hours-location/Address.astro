@@ -1,0 +1,13 @@
+---
+/**
+ * The address in one line ("ul. Długa 42, 31-146 Kraków"): every part an inline block, so a
+ * narrow column breaks between the street and the postal code, never inside "31-146".
+ */
+import { site } from "virtual:site";
+import { addressLines } from "@/site/hours";
+
+const lines = addressLines(site.business.address);
+const last = lines.length - 1;
+---
+
+{lines.map((line, index) => (index < last ? <><span class="s-hours-address">{line},</span> </> : <span class="s-hours-address">{line}</span>))}

@@ -1,10 +1,13 @@
 ---
+/** Two cards side by side: the grouped hours and the address; one centered card when the other has no data. */
 import SectionShell from "@/sections/_shared/SectionShell.astro";
 import SectionHeader from "@/sections/_shared/SectionHeader.astro";
 import Details from "@/sections/hours-location/Details.astro";
 import Stack from "@/components/layouts/Stack.astro";
 import Card from "@/components/ui/Card.astro";
+import { site } from "virtual:site";
 import { t } from "@/i18n";
+import { addressLines } from "@/site/hours";
 import type { SectionOf } from "@/site/types";
 
 export interface Props {
@@ -14,15 +17,18 @@ export interface Props {
 
 const { section, headingLevel } = Astro.props;
 const { content, props } = section;
+const { business } = site;
 const inner = headingLevel === "h1" ? "h2" : "h3";
+const hasHours = business.hours.length > 0;
+const hasPlace = addressLines(business.address).length > 0 || Boolean(content.showPhone && business.phone);
 ---
 
 <SectionShell id={section.id} type="hours-location" variant="card" tone={props.tone} spacing={props.spacing}>
   <Stack space="xl">
     <SectionHeader eyebrow={content.eyebrow} title={content.title ?? t.sections.hoursTitle} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
-    <div class="s-hours-location__cards">
-      <Card variant="elevated" padding="lg"><Details part="hours" showPhone={content.showPhone} headingLevel={inner} /></Card>
-      <Card variant="elevated" padding="lg"><Details part="address" mapUrl={content.mapUrl} showPhone={content.showPhone} headingLevel={inner} /></Card>
+    <div class:list={["s-hours-location__cards", !(hasHours && hasPlace) && "s-hours-location__cards--single"]}>
+      {hasHours && <Card variant="elevated" padding="lg"><Details part="hours" showPhone={content.showPhone} headingLevel={inner} /></Card>}
+      {hasPlace && <Card variant="elevated" padding="lg"><Details part="address" mapUrl={content.mapUrl} showPhone={content.showPhone} headingLevel={inner} /></Card>}
     </div>
   </Stack>
 </SectionShell>

@@ -378,69 +378,6 @@
   .s-faq-columns__question {
     font-size: var(--font-size-lg);
   }
-
-  // ---------- hours + location ----------
-  .s-hours-location__cards,
-  .s-hours-location__band {
-    display: grid;
-    gap: var(--spacing-lg);
-  }
-
-  @include mq(md) {
-    .s-hours-location__cards,
-    .s-hours-location__band {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  .s-hours,
-  .s-location {
-    display: grid;
-    gap: var(--spacing-md);
-    align-content: start;
-  }
-
-  .s-hours__title,
-  .s-location__title {
-    font-size: var(--font-size-xl);
-  }
-
-  .s-hours__table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .s-hours__table th,
-  .s-hours__table td {
-    padding-block: var(--spacing-xs);
-    border-block-end: 1px solid var(--color-border-default);
-    text-align: start;
-  }
-
-  .s-hours__table th {
-    font-weight: var(--font-weight-bold);
-  }
-
-  .s-hours__table abbr {
-    text-decoration: none;
-  }
-
-  .s-hours__table td {
-    text-align: end;
-  }
-
-  .s-hours__row--closed td {
-    color: var(--color-text-secondary);
-  }
-
-  .s-location__address {
-    display: grid;
-    font-style: normal;
-  }
-
-  .s-location__label {
-    color: var(--color-text-secondary);
-  }
 }
 
 // ---------- header variants ----------

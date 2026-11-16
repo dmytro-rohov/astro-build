@@ -1,0 +1,92 @@
+---
+/**
+ * Live "open now" status ("Otwarte teraz · do 18:00", "Zamknięte · otwieramy jutro o 9:00").
+ * The build cannot know the time: the element stays hidden in the HTML and the script fills it
+ * in the business time zone, every minute. It also marks today in the same section: the
+ * element with its `data-day` gets aria-current="date" and its `[data-today]` tag is shown.
+ * Without JavaScript (or business hours) nothing is shown.
+ */
+import { site } from "virtual:site";
+import { t } from "@/i18n";
+import { openDays, timeZoneOf } from "@/site/hours";
+import { DAYS } from "@/site/schema/fields";
+
+export interface Props {
+  /** "band": large, on top of a card; "pill": a compact badge. */
+  look: "band" | "pill";
+  class?: string;
+}
+
+const { look, class: className } = Astro.props;
+const { business } = site;
+const texts = {
+  open: t.sections.openNow,
+  closed: t.sections.closed,
+  until: t.sections.openUntil,
+  today: t.sections.opensToday,
+  tomorrow: t.sections.opensTomorrow,
+  on: t.sections.opensOn,
+  days: Object.fromEntries(DAYS.map((day) => [day, t.days[day].on])),
+};
+---
+
+{business.hours.length > 0 && (
+  <p
+    class:list={["s-open-status", `s-open-status--${look}`, className]}
+    data-open-status
+    data-hours={JSON.stringify(openDays(business.hours))}
+    data-zone={timeZoneOf(business.address?.country)}
+    data-texts={JSON.stringify(texts)}
+    hidden
+  >
+    <span class="s-open-status__dot" aria-hidden="true"></span>
+    <span class="s-open-status__label" data-status-label></span>
+    <span class="s-open-status__detail" data-status-detail></span>
+  </p>
+)}
+
+<script>
+  import { clock, momentIn, openStatus, type Moment, type OpenDay } from "@/site/open-now";
+
+  type Texts = Record<"open" | "closed" | "until" | "today" | "tomorrow" | "on", string> & { days: Record<string, string> };
+
+  const fill = (template: string, values: Record<string, string>) => template.replace(/\{(\w+)\}/g, (match, key: string) => values[key] ?? match);
+
+  for (const status of document.querySelectorAll<HTMLElement>("[data-open-status]")) {
+    const hours = JSON.parse(status.dataset.hours ?? "[]") as OpenDay[];
+    const texts = JSON.parse(status.dataset.texts ?? "{}") as Texts;
+    const section = status.closest("[data-section-type]") ?? document;
+    const label = status.querySelector("[data-status-label]")!;
+    const detail = status.querySelector("[data-status-detail]")!;
+
+    const update = () => {
+      let now: Moment;
+      try {
+        now = momentIn(new Date(), status.dataset.zone ?? "Europe/Warsaw");
+      } catch {
+        return; // a time zone the browser does not know: no status
+      }
+
+      const state = openStatus(hours, now);
+      const next = state.open ? undefined : state.next;
+      const when = next && (next.days === 0 ? texts.today : next.days === 1 ? texts.tomorrow : texts.on);
+
+      status.dataset.state = state.open ? "open" : "closed";
+      label.textContent = state.open ? texts.open : texts.closed;
+      detail.textContent = state.open
+        ? fill(texts.until, { time: clock(state.closes, true) })
+        : next && when ? fill(when, { day: texts.days[next.day], time: clock(next.opens) }) : "";
+      status.hidden = false;
+
+      for (const day of section.querySelectorAll<HTMLElement>("[data-day]")) {
+        const today = day.dataset.day === now.day;
+        if (today) day.setAttribute("aria-current", "date");
+        else day.removeAttribute("aria-current");
+        day.querySelector<HTMLElement>("[data-today]")?.toggleAttribute("hidden", !today);
+      }
+    };
+
+    update();
+    setInterval(update, 60_000);
+  }
+</script>

@@ -1,0 +1,40 @@
+---
+/**
+ * Drawn map (decoration): streets, a park, a river and the route to a pin in the middle, in the
+ * theme's colors. Stands in for the real map until the visitor loads it, or for good when there
+ * is no embed link. The pin's tip is the middle of the picture, and `slice` keeps it in the
+ * middle of the box at any proportions.
+ */
+export interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+// Streets: [path, main street?]
+const streets: [string, boolean][] = [
+  ["M-20 92H820", false],
+  ["M-20 196H820", false],
+  ["M-20 404H820", false],
+  ["M-20 470H820", false],
+  ["M88-20V540", false],
+  ["M250-20V540", false],
+  ["M560-20V540", false],
+  ["M716-20V540", false],
+  ["M-20 300H820", true],
+  ["M400-20V540", true],
+  ["M-30 520L330 -20", true],
+];
+---
+
+<svg class:list={["s-map-art", className]} viewBox="0 0 800 520" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  <rect class="s-map-art__land" width="800" height="520" />
+  <rect class="s-map-art__park" x="584" y="112" width="116" height="68" rx="10" />
+  <rect class="s-map-art__park" x="104" y="316" width="130" height="72" rx="10" />
+  <path class="s-map-art__river" d="M-40 560C120 470 210 500 330 456S520 380 600 330 760 250 860 240" />
+  {streets.map(([d, main]) => <path class:list={["s-map-art__casing", main && "s-map-art__casing--main"]} d={d} />)}
+  {streets.map(([d, main]) => <path class:list={["s-map-art__street", main && "s-map-art__street--main"]} d={d} />)}
+  <path class="s-map-art__route" d="M88 540V404H250V300H400V262" />
+  <ellipse class="s-map-art__shadow" cx="400" cy="262" rx="20" ry="6" />
+  <path class="s-map-art__pin" d="M400 162c-25 0-45 20-45 45 0 32 45 53 45 53s45-21 45-53c0-25-20-45-45-45Z" />
+  <circle class="s-map-art__pin-dot" cx="400" cy="207" r="15" />
+</svg>

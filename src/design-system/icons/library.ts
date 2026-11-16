@@ -196,7 +196,7 @@ export type IconName = keyof typeof icons;
 export const ICON_NAMES = Object.keys(icons) as [IconName, ...IconName[]];
 
 /** Icons the engine itself renders (always in the sprite). */
-export const ENGINE_ICONS: readonly IconName[] = ["arrow-right", "check", "mail", "map-pin", "phone"];
+export const ENGINE_ICONS: readonly IconName[] = ["arrow-right", "check", "clock", "mail", "map-pin", "navigation", "phone"];
 
 /** File name in lucide-static/icons/ for an icon. */
 export const lucideName = (name: IconName): string => ("lucide" in icons[name] ? (icons[name] as IconEntry).lucide! : name);
