@@ -21,6 +21,22 @@
     inset-block-start: 0;
   }
 
+  // v3.3: slides up while scrolling down (Header script sets data-hidden). Only a hidden header
+  // has a transform: a transform on a visible one would trap the fixed phone menu inside it.
+  .site-header--hide-on-scroll {
+    transition: transform var(--motion-duration-normal) var(--motion-easing-standard);
+  }
+
+  .site-header--hide-on-scroll[data-hidden] {
+    transform: translateY(-100%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-header--hide-on-scroll {
+      transition: none;
+    }
+  }
+
   .site-header__inner {
     display: flex;
     align-items: center;

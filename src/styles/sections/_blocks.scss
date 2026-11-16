@@ -28,8 +28,37 @@
   }
 
   .s-hero-panel__media {
-    order: -1;
     min-height: 16rem;
+  }
+
+  // v3.3, phones and tablets: headline first, then the photo edge to edge, then the buttons and
+  // facts — the text blocks dissolve into one grid on the section's tone.
+  @include mq-down(lg) {
+    .s-hero-panel {
+      gap: var(--spacing-xl);
+      padding-block: calc(var(--spacing-3xl) * var(--section-fluid));
+    }
+
+    .s-hero-panel__text,
+    .s-hero-panel__content {
+      display: contents;
+    }
+
+    .s-hero-panel__content > * {
+      padding-inline: var(--spacing-md);
+    }
+
+    .s-hero-panel__media {
+      order: 1;
+    }
+
+    .s-hero-panel__content > .s-actions {
+      order: 2;
+    }
+
+    .s-hero-panel__content > .s-highlights {
+      order: 3;
+    }
   }
 
   .s-hero-panel__image {

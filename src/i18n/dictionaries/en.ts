@@ -71,6 +71,7 @@ export const en = {
     privacyPolicy: "Privacy policy",
     cookieSettings: "Cookie settings",
     copyright: "© {year} {siteName}. All rights reserved.",
+    contact: "Contact",
     madeBy: "Website by",
     console: "This site was built by Mytko.dev — fast, accessible websites for businesses and specialists. Want one? https://mytko.dev",
   },

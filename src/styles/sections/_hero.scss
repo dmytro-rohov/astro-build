@@ -34,6 +34,26 @@
     max-width: 42rem;
   }
 
+  // v3.3, phones: eyebrow, headline, text, then the picture, then the buttons — the first screen
+  // shows the headline and the photo together. The text block dissolves into the split grid.
+  @include mq-down(md) {
+    .hero--with-media .split {
+      --split-gap: var(--spacing-lg);
+    }
+
+    .hero--with-media .hero__content {
+      display: contents;
+    }
+
+    .hero--with-media .hero__media {
+      order: 1;
+    }
+
+    .hero--with-media .hero__actions {
+      order: 2;
+    }
+  }
+
   .hero--align-center .hero__content {
     margin-inline: auto;
     text-align: center;

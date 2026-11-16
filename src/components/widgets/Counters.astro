@@ -39,7 +39,8 @@
   };
 
   const run = (counter: Counter) => {
-    const duration = 1400;
+    // v3.3: a calmer count (was 1.4 s).
+    const duration = 2200;
     const start = performance.now();
     const step = (now: number) => {
       const progress = Math.min(1, (now - start) / duration);

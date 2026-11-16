@@ -25,7 +25,8 @@
     "navbar": {
       "variant": "simple",
       "props": {
-        "sticky": true
+        "sticky": true,
+        "hideOnScroll": true
       },
       "content": {}
     },

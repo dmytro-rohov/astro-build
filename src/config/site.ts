@@ -89,6 +89,8 @@ export const siteConfig = {
     nav,
     cta: site.layout.navbar.content.cta as SiteLink | undefined,
     sticky: site.layout.navbar.props.sticky ?? true,
+    hideOnScroll: site.layout.navbar.props.hideOnScroll ?? false,
+    menuButton: site.layout.navbar.props.menuButton ?? "label",
   },
 
   footer: {

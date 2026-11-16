@@ -65,6 +65,7 @@ export default {
     privacyPolicy: "Polityka prywatności",
     cookieSettings: "Ustawienia cookies",
     copyright: "© {year} {siteName}. Wszelkie prawa zastrzeżone.",
+    contact: "Kontakt",
     madeBy: "Strona wykonana przez",
     console: "Tę stronę zbudowało Mytko.dev — szybkie, dostępne strony dla firm i specjalistów. Chcesz taką? https://mytko.dev",
   },

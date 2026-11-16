@@ -65,6 +65,7 @@ export default {
     privacyPolicy: "Політика конфіденційності",
     cookieSettings: "Налаштування cookie",
     copyright: "© {year} {siteName}. Усі права захищено.",
+    contact: "Контакти",
     madeBy: "Сайт створено",
     console: "Цей сайт створила команда Mytko.dev — швидкі, доступні сайти для бізнесу й фахівців. Хочете такий? https://mytko.dev",
   },
