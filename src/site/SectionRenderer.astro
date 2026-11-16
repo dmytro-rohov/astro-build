@@ -1,9 +1,10 @@
 ---
 /**
  * Renders the sections of one page from site.json.
- * The first section gets the page's only <h1>.
+ * The first section gets the page's only <h1>. The components come from
+ * "virtual:section-components": only the variants the site uses, so only their CSS.
  */
-import { sectionComponents } from "@/site/components";
+import { sectionComponents } from "virtual:section-components";
 import type { Page } from "@/site/schema/site";
 
 export interface Props {
