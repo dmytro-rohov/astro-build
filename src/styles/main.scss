@@ -70,4 +70,5 @@
 @use "./sections/schedule";
 @use "./sections/hours-location";
 @use "./sections/testimonials";
+@use "./sections/contact";
 @layer reset, tokens, base, layout, components, widgets, utilities, state;

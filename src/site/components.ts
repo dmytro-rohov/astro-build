@@ -5,8 +5,12 @@
  */
 import AboutCentered from "@/sections/about/Centered.astro";
 import AboutImageSide from "@/sections/about/ImageSide.astro";
+import ContactBigCard from "@/sections/contact/BigCard.astro";
 import ContactFormCentered from "@/sections/contact/FormCentered.astro";
 import ContactFormSplit from "@/sections/contact/FormSplit.astro";
+import ContactInfoColumns from "@/sections/contact/InfoColumns.astro";
+import ContactMap from "@/sections/contact/Map.astro";
+import ContactMethods from "@/sections/contact/Methods.astro";
 import CtaBandCard from "@/sections/cta/BandCard.astro";
 import CtaBanner from "@/sections/cta/Banner.astro";
 import CtaBoxed from "@/sections/cta/Boxed.astro";
@@ -90,7 +94,7 @@ export const sectionComponents: Record<string, Record<string, SectionComponent>>
   pricing: { cards: PricingCards, compact: PricingCompact, "featured-center": PricingFeaturedCenter, table: PricingTable, split: PricingSplit, minimal: PricingMinimal },
   faq: { accordion: FaqAccordion, "two-column": FaqTwoColumn, "split-contact": FaqSplitContact, categories: FaqCategories, "with-image": FaqWithImage, search: FaqSearch },
   cta: { boxed: CtaBoxed, banner: CtaBanner, rings: CtaRings, "gradient-cards": CtaGradientCards, faces: CtaFaces, "band-card": CtaBandCard },
-  contact: { "form-split": ContactFormSplit, "form-centered": ContactFormCentered },
+  contact: { "form-split": ContactFormSplit, "form-centered": ContactFormCentered, "info-columns": ContactInfoColumns, "big-card": ContactBigCard, methods: ContactMethods, map: ContactMap },
   "hours-location": { card: HoursCard, compact: HoursCompact, today: HoursToday, map: HoursMap, "image-side": HoursImageSide, "week-strip": HoursWeekStrip },
   schedule: { week: ScheduleWeek, table: ScheduleTable, "day-columns": ScheduleDayColumns, matrix: ScheduleMatrix, tabs: ScheduleTabs, agenda: ScheduleAgenda },
   team: { cards: TeamCards, compact: TeamCompact, "social-cards": TeamSocialCards, spotlight: TeamSpotlight, "color-tiles": TeamColorTiles, directory: TeamDirectory },

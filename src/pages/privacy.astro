@@ -11,13 +11,12 @@ import Link from "@/components/ui/Link.astro";
 import { ANALYTICS_CONFIG } from "@/config/analytics";
 import { format, lang, t } from "@/i18n";
 import { site } from "virtual:site";
-import { embedProvider } from "@/site/embeds";
-import { embedUrls } from "@/site/csp";
+import { embedProvider, siteEmbedUrls } from "@/site/embeds";
 
 const p = t.pages.privacy;
 const { business } = site;
 // Providers of the site's embeds (maps, booking, video).
-const embedProviders = [...new Set(embedUrls(site).map((url) => embedProvider(url)?.label ?? ""))].filter(Boolean);
+const embedProviders = [...new Set(siteEmbedUrls(site).map((url) => embedProvider(url)?.label ?? ""))].filter(Boolean);
 const name = business.name ?? site.meta.name;
 const address = [business.address?.street, [business.address?.postalCode, business.address?.city].filter(Boolean).join(" ")]
   .filter(Boolean)

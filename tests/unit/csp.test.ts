@@ -1,5 +1,6 @@
 import { expect, test } from "vitest";
-import { cspForSite, embedOrigins, embedUrls } from "../../src/site/csp";
+import { cspForSite, embedOrigins } from "../../src/site/csp";
+import { siteEmbedUrls } from "../../src/site/embeds";
 
 const local = { contact: { mode: "local" as const }, pages: [] };
 
@@ -30,13 +31,21 @@ test("frames are allowed only for the providers of the site's embeds", () => {
   expect(cspForSite(site, "").directives).toContain("frame-src https://calendly.com https://www.youtube-nocookie.com");
 });
 
-
 test("the hours-location map variant allows its map provider; other variants keep the link unloaded", () => {
   const osm = "https://www.openstreetmap.org/export/embed.html?bbox=19.93%2C50.06%2C19.94%2C50.07&layer=mapnik";
   const hours = (variant: string) => ({ type: "hours-location", variant, content: { mapEmbed: osm } });
   const site = (variant: string) => ({ ...local, pages: [{ sections: [hours(variant)] }] }) as never;
 
-  expect(embedUrls(site("map"))).toEqual([osm]);
+  expect(siteEmbedUrls(site("map"))).toEqual([osm]);
   expect(cspForSite(site("map"), "").directives).toContain("frame-src https://www.openstreetmap.org");
   expect(cspForSite(site("card"), "").directives).toContain("frame-src 'none'");
+});
+
+test("the contact map is framed only in the map variant", () => {
+  const mapUrl = "https://www.openstreetmap.org/export/embed.html?bbox=19.93%2C50.05%2C19.95%2C50.07";
+  const contact = (variant: string) => ({ type: "contact", variant, content: { mapUrl } });
+  const site = (variant: string) => ({ ...local, pages: [{ sections: [contact(variant)] }] }) as never;
+
+  expect(embedOrigins(site("map"))).toEqual(["https://www.openstreetmap.org"]);
+  expect(cspForSite(site("form-split"), "").directives).toContain("frame-src 'none'");
 });

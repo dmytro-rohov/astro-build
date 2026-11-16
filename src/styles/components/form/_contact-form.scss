@@ -1,89 +1,25 @@
-@use "../../abstracts/mixins" as *;
-
 @layer widgets {
-  .contact-form-section__content {
-    max-width: 34rem;
-  }
-
-  // The details stay in view next to a long form.
-  @include mq(md) {
-    .contact-form-section__content {
-      position: sticky;
-      inset-block-start: calc(var(--header-offset, 4.5rem) + var(--spacing-lg));
-    }
-  }
-
-  .contact-form-section__eyebrow {
-    margin: 0;
-    color: var(--color-action-primary);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-normal);
-    letter-spacing: var(--letter-spacing-wide);
-    text-transform: uppercase;
-  }
-
-  .contact-form-section__title {
-    font-size: clamp(
-      var(--font-size-3xl),
-      5vw,
-      var(--font-size-5xl)
-    );
-    line-height: var(--line-height-tight);
-    letter-spacing: var(--letter-spacing-tight);
-  }
-
-  .contact-form-section__description {
-    margin: 0;
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-lg);
-    line-height: var(--line-height-relaxed);
-  }
-
-  .contact-form-section__info {
-    display: grid;
-    gap: var(--spacing-md);
-  }
-
-  .contact-form-section__info-title {
-    margin: 0;
-    color: var(--color-text-primary);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-snug);
-  }
-
-  .contact-form-section__info-list {
-    display: grid;
-    gap: var(--spacing-md);
-    padding: 0;
-    margin: 0;
-    list-style: none;
-  }
-
-  .contact-form-section__info-item {
-    display: grid;
-    gap: var(--spacing-xs);
-  }
-
-  .contact-form-section__info-label {
-    color: var(--color-text-muted);
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-normal);
-  }
-
-  .contact-form-section__info-value,
-  .contact-form-section__info-link {
-    font-size: var(--font-size-base);
-    line-height: var(--line-height-normal);
-  }
-
-  .contact-form-card {
-    width: 100%;
-  }
-
+  // The form lays itself out by its own width, in every contact variant: name and e-mail
+  // side by side once it is wide enough, one column on phones and in narrow columns.
   .contact-form {
+    container-type: inline-size;
     width: 100%;
+  }
+
+  @container (min-width: 34rem) {
+    // Fields of a row start together (the e-mail hint makes its field taller).
+    .contact-form__fields {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+    }
+
+    .contact-form__fields > * {
+      grid-column: 1 / -1;
+    }
+
+    .contact-form__fields > .contact-form__field--half {
+      grid-column: auto;
+    }
   }
 
   .contact-form__honeypot {
@@ -124,7 +60,4 @@
   .contact-form__submit {
     width: 100%;
   }
-
-
-
 }

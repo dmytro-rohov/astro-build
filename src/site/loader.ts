@@ -260,6 +260,13 @@ export function loadSite(dir = resolveSiteDir()): LoadedSite {
         ];
       }),
     ),
+    ...site.pages.flatMap((page, pageIndex) =>
+      page.sections.flatMap((section, sectionIndex) =>
+        section.type === "contact" && section.variant === "map" && !section.content.mapUrl && !site.business.address?.street && !site.business.address?.city
+          ? [`pages[${pageIndex}].sections[${sectionIndex}]: the "map" variant has no place to show (no mapUrl, no business.address) — add one or use "form-split".`]
+          : [],
+      ),
+    ),
   ];
 
   return { dir, site, assets, warnings };

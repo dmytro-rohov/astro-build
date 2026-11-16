@@ -1,0 +1,35 @@
+---
+/**
+ * Contact details as icon rows (label + value; phone, e-mail and address are links).
+ * Looks: "badges" (tinted icon badges), "brand" (on the brand color), "compact" (small icons, labels for screen readers only).
+ */
+import Icon from "@/components/media/Icon.astro";
+import Link from "@/components/ui/Link.astro";
+import type { ContactDetail } from "@/sections/contact/details";
+
+export interface Props {
+  details: ContactDetail[];
+  look?: "badges" | "brand" | "compact";
+  class?: string;
+}
+
+const { details, look = "badges", class: className } = Astro.props;
+---
+
+<ul class:list={["s-contact-details", `s-contact-details--${look}`, className]}>
+  {details.map((detail) => (
+    <li class="s-contact-details__item">
+      <span class="s-contact-details__icon"><Icon name={detail.icon} size={look === "compact" ? "1.125rem" : "1.25rem"} /></span>
+      <span class="s-contact-details__text">
+        <span class:list={["s-contact-details__label", look === "compact" && "visually-hidden"]}>{detail.label}</span>
+        {detail.href ? (
+          <Link href={detail.href} class="s-contact-details__value s-contact-details__value--link">{detail.value}</Link>
+        ) : detail.lines ? (
+          <span class="s-contact-details__value">{detail.lines.map((line) => <span class="s-contact-details__line">{line}</span>)}</span>
+        ) : (
+          <span class="s-contact-details__value">{detail.value}</span>
+        )}
+      </span>
+    </li>
+  ))}
+</ul>
