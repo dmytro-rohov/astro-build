@@ -61,6 +61,23 @@ export const en = {
     reviews: { one: "{count} review", few: "{count} reviews", many: "{count} reviews", other: "{count} reviews" },
   },
 
+  /** faq variants: split-contact card, categories, search. */
+  faq: {
+    contactTitle: "Still have a question?",
+    contactText: "We will gladly answer it — get in touch.",
+    /** Questions without a category when the others have one. */
+    other: "Other",
+    searchLabel: "Search the questions",
+    searchPlaceholder: "What are you looking for?",
+    filters: "Question topics",
+    all: "All",
+    /** Result count while searching, by plural category (Intl.PluralRules). */
+    results: { one: "{count} question found", few: "{count} questions found", many: "{count} questions found", other: "{count} questions found" },
+    noResults: "No question matches “{query}”.",
+    askLead: "Didn't find your question?",
+    ask: "Ask us",
+  },
+
   slider: {
     previous: "Previous",
     next: "Next",

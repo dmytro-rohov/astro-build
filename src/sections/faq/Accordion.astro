@@ -4,7 +4,7 @@ import SectionShell from "@/sections/_shared/SectionShell.astro";
 import Stack from "@/components/layouts/Stack.astro";
 import Tag from "@/components/ui/Tag.astro";
 import Accordion from "@/components/ui/Accordion.astro";
-import { faqSchema, serializeJsonLd } from "@/lib/seo/schema";
+import JsonLd from "@/sections/faq/JsonLd.astro";
 import { renderRichTextLite, richTextLiteToPlain } from "@/site/richtext";
 import type { VariantOf } from "@/site/types";
 
@@ -24,9 +24,6 @@ const items = content.items.map((item, index) => ({
   contentHtml: renderRichTextLite(item.answer),
   open: props.openFirst === true && index === 0,
 }));
-
-// One faq section per page (schema rule), so one FAQPage block.
-const faqJsonLd = serializeJsonLd(faqSchema(items.map((item) => ({ question: item.title, answer: item.content }))));
 ---
 
 <SectionShell id={section.id} type="faq" variant="accordion" tone={props.tone} spacing={props.spacing} width="md" class:list={["faq", `faq--align-${align}`]}>
@@ -41,4 +38,4 @@ const faqJsonLd = serializeJsonLd(faqSchema(items.map((item) => ({ question: ite
   </Stack>
 </SectionShell>
 
-<script is:inline type="application/ld+json" set:html={faqJsonLd} />
+<JsonLd items={content.items} />

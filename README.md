@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **17 section types, 75 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **17 section types, 79 variants**, 3 navbars and 3 footers, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -165,7 +165,7 @@ the migrated site is validated like any build.
 | `testimonials` | `cards` (a slider over 3 reviews), `spotlight` (first three, stacked), `carousel` (one quote at a time on a brand panel, arrows + dots), `portraits` (photo tile + brand quote card, checkerboard), `quote-cards` (quote mark in a curved corner, one card on the brand color), `rating` (overall score + review rows); without a photo the initials are shown, stars only for a real `rating`; optional `ratingAverage`, `ratingCount`, `ratingSource`, `ratingLink` from a review profile (Google…) |
 | `gallery` | `grid`, `mosaic` |
 | `pricing` | `cards`, `compact`, `featured-center` (recommended plan in the middle, on the brand color), `table` (comparison: features × plans), `split` (intro left, plan rows right), `minimal` (typographic columns, thin rules) |
-| `faq` | `accordion`, `two-column` (both publish FAQPage JSON-LD) |
+| `faq` | `accordion`, `two-column`, `split-contact` (title and a contact card with phone and e-mail from `business`, optional photo and button), `categories` (a category menu switching the questions; without categories the questions are the menu), `with-image` (numbered questions beside a photo or a brand question-mark panel), `search` (brand panel with a search field, category pills and a live result count) — all publish FAQPage JSON-LD and list everything without JavaScript; optional `items[].category`, `image`, `action` |
 | `cta` | `boxed` (glow over a dot grid), `banner` (edge-to-edge band, brand bar, stacked actions), `rings` (brand card, concentric circles), `gradient-cards` (gradient band with wave lines, facts on floating cards), `faces` (light card, round photos around it — tinted dots without them), `band-card` (light card on a brand band, spaced uppercase title); optional `highlights` (gradient-cards) and `images` (faces); `description` optional |
 | `contact` | `form-split`, `form-centered` (details from `business`) |
 | `hours-location` | `card`, `compact` (one-row contact bar), `today` (door sign: the week day by day, today marked, live "open now" status), `map` (side panel + a map loaded after a click from the optional `mapEmbed`, a drawn map without it), `image-side` (photo of the place with an overlapping card, optional `image`), `week-strip` (seven day tiles with a 24-hour track) — hours, address, phone from `business`; days with the same hours are grouped ("Pn–Pt"); the status is computed in the browser in the business time zone (from `address.country`, default Europe/Warsaw) |

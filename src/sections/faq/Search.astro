@@ -1,0 +1,125 @@
+---
+/**
+ * Help desk: a brand-colored panel with the title, a search field and (with categories) filter
+ * pills; below it the questions, filtered as you type, a live result count and "ask us" pointing
+ * to contact (the action, else the site's contact section, e-mail or phone), brought forward
+ * when nothing matches. The field and the pills appear with the script: without JavaScript
+ * every question is listed.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Button from "@/components/ui/Button.astro";
+import JsonLd from "@/sections/faq/JsonLd.astro";
+import Questions from "@/sections/faq/Questions.astro";
+import { site } from "virtual:site";
+import { lang, t } from "@/i18n";
+import { contactHref, faqGroups } from "@/sections/faq/layout";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"faq", "search">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const groups = faqGroups(content.items, t.faq.other);
+// Questions without a category are filtered as the "other" group.
+const items = content.items.map((item) => ({ ...item, category: groups.length ? item.category?.trim() || t.faq.other : undefined }));
+const ask = contactHref(content.action, site.pages, site.business);
+const inputId = `${section.id}-search`;
+---
+
+<SectionShell id={section.id} type="faq" variant="search" tone={props.tone} spacing={props.spacing}>
+  <div class="s-faq-desk" data-faq-search data-lang={lang} data-results={JSON.stringify(t.faq.results)} data-no-results={t.faq.noResults}>
+    <div class="s-faq-desk__panel">
+      <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} class="s-faq-desk__header" />
+      <div class="s-faq-desk__tools" hidden data-faq-tools>
+        <div class="s-faq-desk__search" role="search">
+          <label class="visually-hidden" for={inputId}>{t.faq.searchLabel}</label>
+          <svg class="s-faq-desk__magnifier" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-4-4" />
+          </svg>
+          <input class="s-faq-desk__input" id={inputId} type="search" placeholder={t.faq.searchPlaceholder} autocomplete="off" spellcheck="false" data-faq-query />
+        </div>
+        {groups.length > 0 && (
+          <div class="s-faq-desk__filters" role="group" aria-label={t.faq.filters}>
+            <button type="button" class="s-faq-desk__filter" aria-pressed="true" data-faq-filter="">{t.faq.all}</button>
+            {groups.map((group) => (
+              <button type="button" class="s-faq-desk__filter" aria-pressed="false" data-faq-filter={group.name}>{group.name}</button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+    <div class="s-faq-desk__results">
+      <p class="s-faq-desk__status" role="status" data-faq-status></p>
+      <Questions items={items} look="lines" searchable class="s-faq-desk__questions" />
+      {ask && (
+        <div class="s-faq-desk__ask">
+          <p class="s-faq-desk__ask-lead">{t.faq.askLead}</p>
+          <Button href={ask} variant="secondary" size="sm">{content.action?.label ?? t.faq.ask}</Button>
+        </div>
+      )}
+    </div>
+  </div>
+</SectionShell>
+
+<JsonLd items={content.items} />
+
+<script>
+  import { matchesSearch, normalizeSearch } from "@/sections/faq/layout";
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-faq-search]")) {
+    const tools = root.querySelector<HTMLElement>("[data-faq-tools]");
+    const input = root.querySelector<HTMLInputElement>("[data-faq-query]");
+    const status = root.querySelector<HTMLElement>("[data-faq-status]");
+    const items = [...root.querySelectorAll<HTMLElement>("[data-faq-item]")].map((element) => ({
+      element,
+      category: element.dataset.category ?? "",
+      // The category's name counts too: "płatności" finds every question about payments.
+      text: normalizeSearch(`${element.dataset.category ?? ""} ${element.textContent ?? ""}`),
+    }));
+    // A single question needs no search.
+    if (!tools || !input || !status || items.length < 2) continue;
+
+    const filters = [...root.querySelectorAll<HTMLButtonElement>("[data-faq-filter]")];
+    const plural = new Intl.PluralRules(root.dataset.lang);
+    const results = JSON.parse(root.dataset.results ?? "{}") as Record<string, string>;
+    let category = "";
+
+    const update = () => {
+      const query = input.value.trim();
+      let count = 0;
+      for (const item of items) {
+        const shown = (!category || item.category === category) && matchesSearch(item.text, query);
+        item.element.hidden = !shown;
+        if (shown) count++;
+      }
+
+      // The count is announced once the visitor filters; no match brings the "ask us" box forward.
+      const message = count ? (results[plural.select(count)] ?? results.other).replace("{count}", String(count)) : root.dataset.noResults?.replace("{query}", query);
+      status.textContent = query || category ? (message ?? "") : "";
+      root.classList.toggle("s-faq-desk--empty", !count);
+    };
+
+    input.addEventListener("input", update);
+    // Escape clears the field (the browser's own clear button does the same).
+    input.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !input.value) return;
+      input.value = "";
+      update();
+    });
+    filters.forEach((filter) =>
+      filter.addEventListener("click", () => {
+        category = filter.dataset.faqFilter ?? "";
+        filters.forEach((other) => other.setAttribute("aria-pressed", String(other === filter)));
+        update();
+      }),
+    );
+
+    tools.hidden = false;
+    update();
+  }
+</script>

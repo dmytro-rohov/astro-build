@@ -353,31 +353,6 @@
       grid-row: span 2;
     }
   }
-
-  // ---------- faq: two columns ----------
-  .s-faq-columns {
-    display: grid;
-    gap: var(--spacing-xl) var(--spacing-2xl);
-    padding: 0;
-    margin: 0;
-    list-style: none;
-  }
-
-  @include mq(md) {
-    .s-faq-columns {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  .s-faq-columns__item {
-    display: grid;
-    gap: var(--spacing-sm);
-    align-content: start;
-  }
-
-  .s-faq-columns__question {
-    font-size: var(--font-size-lg);
-  }
 }
 
 // ---------- header variants ----------

@@ -1,0 +1,14 @@
+---
+/** FAQPage JSON-LD of the section's questions (one faq section per page, so one block). */
+import { faqSchema, serializeJsonLd } from "@/lib/seo/schema";
+import { richTextLiteToPlain } from "@/site/richtext";
+
+export interface Props {
+  items: { question: string; answer: string }[];
+}
+
+const { items } = Astro.props;
+const jsonLd = serializeJsonLd(faqSchema(items.map((item) => ({ question: item.question, answer: richTextLiteToPlain(item.answer) }))));
+---
+
+<script is:inline type="application/ld+json" set:html={jsonLd} />

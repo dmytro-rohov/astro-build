@@ -52,6 +52,20 @@ export default {
     reviews: { one: "{count} opinia", few: "{count} opinie", many: "{count} opinii", other: "{count} opinii" },
   },
 
+  faq: {
+    contactTitle: "Masz inne pytanie?",
+    contactText: "Chętnie odpowiemy — skontaktuj się z nami.",
+    other: "Pozostałe",
+    searchLabel: "Szukaj w pytaniach",
+    searchPlaceholder: "Czego szukasz?",
+    filters: "Tematy pytań",
+    all: "Wszystkie",
+    results: { one: "Znaleziono {count} pytanie", few: "Znaleziono {count} pytania", many: "Znaleziono {count} pytań", other: "Znaleziono {count} pytania" },
+    noResults: "Brak pytań pasujących do „{query}”.",
+    askLead: "Nie ma tu Twojego pytania?",
+    ask: "Zapytaj nas",
+  },
+
   slider: {
     previous: "Poprzednie",
     next: "Następne",
