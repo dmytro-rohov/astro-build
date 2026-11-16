@@ -6,6 +6,8 @@ import Avatar from "@/sections/team/Avatar.astro";
 import Stack from "@/components/layouts/Stack.astro";
 import { balancedRow } from "@/sections/team/layout";
 import type { SectionOf } from "@/site/types";
+import "@/styles/sections/team/_shared.scss";
+import "@/styles/sections/team/_compact.scss";
 
 export interface Props {
   section: SectionOf<"team">;

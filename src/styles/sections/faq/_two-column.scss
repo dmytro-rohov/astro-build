@@ -1,0 +1,35 @@
+// FAQ: two-column (TwoColumn.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Everything open, editorial: a hairline over every answer with a short brand stroke on it.
+  .s-faq-columns {
+    display: grid;
+    gap: var(--spacing-xl) var(--spacing-3xl);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  @include mq(md) {
+    .s-faq-columns {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .s-faq-columns__item {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-sm);
+    padding-block-start: var(--spacing-lg);
+    background: linear-gradient(var(--color-action-primary), var(--color-action-primary)) 0 0 / 2.5rem 3px no-repeat;
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-faq-columns__question {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-snug);
+    hyphens: auto;
+  }
+}

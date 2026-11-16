@@ -12,6 +12,8 @@ import Img from "@/components/media/Img.astro";
 import { t } from "@/i18n";
 import { getAsset } from "@/site/assets";
 import type { VariantOf } from "@/site/types";
+import "@/styles/sections/hours-location/_shared.scss";
+import "@/styles/sections/hours-location/_image-side.scss";
 
 export interface Props {
   section: VariantOf<"hours-location", "image-side">;

@@ -1,0 +1,50 @@
+// CTA: band-card (BandCard.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // The section is a band of the brand color (muted sections keep their gray) with a light
+  // card in the middle and a spaced uppercase title. On the brand color of an accent section
+  // the card is the ink.
+  .s-cta--band-card:is(.section--tone-default, .section--tone-inverse) {
+    background: var(--cta-brand);
+  }
+
+  .s-cta-band {
+    max-width: 50rem;
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    margin-inline: auto;
+    background: var(--color-background-surface);
+    border-radius: var(--radius-card);
+    box-shadow: 0 2rem 4rem -2rem rgb(0 0 0 / 35%);
+  }
+
+  .s-cta--band-card.section--tone-accent .s-cta-band {
+    @include on-color(var(--cta-brand), var(--cta-ink));
+
+    background: var(--cta-brand);
+  }
+
+  .s-cta-band__copy {
+    max-width: 40rem;
+  }
+
+  .s-cta-band__copy .s-cta-copy__title {
+    color: var(--color-action-primary);
+    font-size: clamp(var(--font-size-2xl), 3.2vw, var(--font-size-4xl));
+    line-height: var(--line-height-snug);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .s-cta-band__copy .s-cta-copy__description {
+    font-size: var(--font-size-base);
+  }
+
+  @include mq(md) {
+    .s-cta-band {
+      padding: var(--spacing-3xl) var(--spacing-2xl);
+    }
+  }
+}

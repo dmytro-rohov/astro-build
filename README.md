@@ -68,7 +68,7 @@ src/
 ├─ i18n/dictionaries/ one file per language (cs, de, en, es, fr, it, nl, pl, pt, ru, tr, uk)
 ├─ lib/contact/       contact form validation and delivery
 ├─ pages/             [...slug].astro (all site pages), privacy, contact results, 404/500
-└─ styles/
+└─ styles/           main.scss (what every page needs), sections/<type>/ (one sheet per variant)
 
 scripts/
 ├─ site/              CLI: validate, build, preview, screenshot, report, migrate,
@@ -195,8 +195,15 @@ Common section props: `tone` (`default`, `muted`, `inverse`; `accent` for hero, 
 
 **Adding a variant:** add it to `variants` in `src/sections/<type>/schema.ts` (description,
 used optional fields, own props), create `src/sections/<type>/<Variant>.astro` with
-`SectionShell` + `SectionHeader`, register it in `src/site/components.ts` and add styles in
-`src/styles/sections/`. Content stays the type's content — never add variant-only content fields.
+`SectionShell` + `SectionHeader`, register it in `src/site/components.ts` and add its styles in
+`src/styles/sections/<type>/_<variant>.scss`, imported by the component. Content stays the type's
+content — never add variant-only content fields.
+
+**CSS per site:** a build imports only the components of the variants its pages use
+(`virtual:section-components`, `src/site/vite-plugin.ts`), and each component imports its own
+stylesheets (widgets like `Slider` and `Lightbox` too), so a site ships the CSS of its variants
+only; `main.scss` keeps what every page needs (tokens, base, layout primitives, header, footer,
+hero). Every split stylesheet starts with the cascade layer order (`abstracts/_layers.scss`).
 
 **Boundary tests:** `scripts/site/make-catalog.ts` generates a site from the schemas with every
 variant twice — minimum and maximum content (every field at its limit, long Polish words).

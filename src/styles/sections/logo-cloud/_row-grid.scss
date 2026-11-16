@@ -1,0 +1,126 @@
+// Logo cloud: row and grid (LogoCloud.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Balanced rows: --sm / --md / --lg logos per row (logoRows), each in an equal slot, so a short
+  // last row is centered and a few logos stay together instead of spreading over the page.
+  .s-logos {
+    --per-row: var(--sm);
+    --slot: 11rem;
+    --gap: var(--spacing-lg);
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-xl) var(--gap);
+    width: 100%;
+    max-width: calc(var(--per-row) * (var(--slot) + var(--gap)));
+    padding: 0;
+    margin: 0 auto;
+    list-style: none;
+  }
+
+  @for $count from 1 through 6 {
+    .s-logos--sm-#{$count} {
+      --sm: #{$count};
+    }
+
+    .s-logos--md-#{$count} {
+      --md: #{$count};
+    }
+
+    .s-logos--lg-#{$count} {
+      --lg: #{$count};
+    }
+  }
+
+  @include mq(md) {
+    .s-logos {
+      --per-row: var(--md);
+    }
+  }
+
+  @include mq(lg) {
+    .s-logos {
+      --per-row: var(--lg);
+    }
+  }
+
+  .s-logos__item {
+    display: flex;
+    flex: 0 0 calc((100% - (var(--per-row) - 1) * var(--gap)) / var(--per-row));
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  // Row: muted to one tone (gray on light, light on dark), full strength on hover.
+  .s-logos--row {
+    --logo-size: 2.5rem;
+  }
+
+  @include mq(md) {
+    .s-logos--row {
+      --logo-size: 3.5rem;
+    }
+  }
+
+  .s-logos--row .s-logo {
+    opacity: var(--logo-opacity);
+    filter: var(--logo-filter);
+    mix-blend-mode: var(--logo-blend);
+    transition:
+      opacity var(--motion-duration-fast) var(--motion-easing-standard),
+      filter var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .s-logos--row .s-logo-link:is(:hover, :focus-visible) .s-logo {
+    opacity: 1;
+    filter: var(--logo-filter-hover);
+  }
+
+  // Grid: equal light tiles (3:2) in the logos' own colors; a linked tile is clickable as a whole.
+  .s-logos--grid {
+    --logo-size: 2.75rem;
+    --slot: 15rem;
+    --gap: var(--spacing-md);
+
+    row-gap: var(--gap);
+  }
+
+  .s-logos--grid .s-logos__item {
+    aspect-ratio: 3 / 2;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--logo-tile);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    transition:
+      border-color var(--motion-duration-fast) var(--motion-easing-standard),
+      box-shadow var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .s-logos--grid .s-logos__item:has(> .s-logo-link) {
+    padding: 0;
+  }
+
+  .s-logos--grid .s-logo-link {
+    display: grid;
+    flex: 1;
+    place-items: center;
+    align-self: stretch;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: inherit;
+  }
+
+  .s-logos--grid .s-logos__item:has(> .s-logo-link:hover) {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  @include mq(md) {
+    .s-logos--grid {
+      --logo-size: 4rem;
+    }
+  }
+}

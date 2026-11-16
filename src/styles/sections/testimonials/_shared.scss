@@ -1,0 +1,70 @@
+// Section type testimonials (v3.3: carousel, portraits, quote-cards and rating added, cards and
+// spotlight reworked).
+// This one, every variant: name and role, quote mark (QuoteMark.astro), stars (Stars.astro),
+// avatar (Avatar.astro).
+@use "../../abstracts/layers";
+
+@layer widgets {
+  .s-testimonials {
+    --brand: var(--color-action-primary);
+    --ink: var(--color-action-primary-text);
+  }
+
+  .s-testimonial__name {
+    display: block;
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-testimonial__role {
+    display: block;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  // QuoteMark.astro: the width sets the size.
+  .s-quote-mark {
+    display: block;
+    flex: none;
+    width: 2rem;
+    height: auto;
+  }
+
+  .s-stars {
+    display: flex;
+    gap: 0.125rem;
+    color: var(--color-text-muted);
+  }
+
+  .s-stars__star {
+    flex: none;
+    width: var(--star, 1rem);
+    height: var(--star, 1rem);
+  }
+
+  .s-stars__star--on,
+  .s-stars__part {
+    color: var(--color-action-primary);
+  }
+
+  // Photo or initials (Avatar.astro); the size comes from --avatar on a parent.
+  .s-avatar {
+    flex: none;
+    width: var(--avatar, 3rem);
+    height: var(--avatar, 3rem);
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  // Like .tag--primary: the initials stay 4.5:1 on the tint.
+  .s-avatar--initials {
+    display: inline-grid;
+    place-items: center;
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    background: color-mix(in srgb, var(--color-action-primary) 12%, transparent);
+    font-family: var(--font-family-heading);
+    font-size: calc(var(--avatar, 3rem) * 0.36);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+}

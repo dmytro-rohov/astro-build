@@ -13,6 +13,8 @@ import Stack from "@/components/layouts/Stack.astro";
 import Slider from "@/components/widgets/Slider.astro";
 import { quoteSize } from "@/sections/testimonials/layout";
 import type { VariantOf } from "@/site/types";
+import "@/styles/sections/testimonials/_shared.scss";
+import "@/styles/sections/testimonials/_carousel.scss";
 
 export interface Props {
   section: VariantOf<"testimonials", "carousel">;

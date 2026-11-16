@@ -13,6 +13,8 @@ import Button from "@/components/ui/Button.astro";
 import { format, lang, t } from "@/i18n";
 import { ratingSummary } from "@/sections/testimonials/layout";
 import type { VariantOf } from "@/site/types";
+import "@/styles/sections/testimonials/_shared.scss";
+import "@/styles/sections/testimonials/_rating.scss";
 
 export interface Props {
   section: VariantOf<"testimonials", "rating">;

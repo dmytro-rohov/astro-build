@@ -1,0 +1,115 @@
+// Stats: row and cards (Stats.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-stats__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    gap: var(--spacing-xl);
+    margin: 0;
+  }
+
+  .s-stats__item {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: var(--spacing-xs);
+    min-width: 0;
+  }
+
+  .s-stats__value {
+    margin: 0;
+    font-family: var(--font-family-heading);
+    font-size: clamp(var(--font-size-3xl), 5vw, var(--font-size-5xl));
+    font-weight: var(--heading-weight);
+    line-height: var(--line-height-none);
+    overflow-wrap: anywhere;
+  }
+
+  .s-stats__label {
+    color: var(--color-text-secondary);
+  }
+
+  .s-stats__list--row {
+    text-align: center;
+  }
+
+  // v3.3: the band's numbers in the brand color, a size larger.
+  .s-stats__list--row .s-stats__value {
+    color: var(--color-action-primary);
+    font-size: clamp(var(--font-size-4xl), 5.5vw, var(--font-size-6xl));
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  .s-stats__list--row .s-stats__item {
+    gap: var(--spacing-sm);
+  }
+
+  .s-stats__list--row .s-stats__item + .s-stats__item {
+    padding-block-start: var(--spacing-xl);
+    border-block-start: 1px solid var(--stats-line);
+  }
+
+  @include mq(md) {
+    .s-stats__list--row {
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
+      grid-template-columns: none;
+    }
+
+    .s-stats__list--row .s-stats__item + .s-stats__item {
+      padding-block-start: 0;
+      padding-inline-start: var(--spacing-xl);
+      border-block-start: 0;
+      border-inline-start: 1px solid var(--stats-line);
+    }
+  }
+
+  .s-stats__list--cards .s-stats__item {
+    padding: var(--spacing-lg);
+    background: var(--color-background-surface);
+    border: 1px solid var(--stats-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  // The description is a second <dd>: keep it under the value. v3.3: a short brand-colored
+  // mark above the number.
+  .s-stats__list--cards .s-stats__item {
+    display: grid;
+    grid-template-areas: "mark" "value" "label" "description";
+    place-content: start stretch;
+    gap: var(--spacing-xs);
+  }
+
+  .s-stats__list--cards .s-stats__item::before {
+    grid-area: mark;
+    width: 2rem;
+    height: 3px;
+    margin-block-end: var(--spacing-md);
+    background: var(--color-action-primary);
+    border-radius: var(--radius-pill);
+    content: "";
+  }
+
+  .s-stats__list--cards .s-stats__value {
+    margin-block-end: var(--spacing-xs);
+  }
+
+  .s-stats__list--cards .s-stats__value { grid-area: value; }
+
+  .s-stats__list--cards .s-stats__label {
+    grid-area: label;
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-stats__description {
+    grid-area: description;
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    text-wrap: pretty;
+  }
+}

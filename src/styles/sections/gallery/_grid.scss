@@ -1,0 +1,60 @@
+// Gallery: grid (Grid.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Columns: 2 on phones (1 for two or three photos), up to 3 on tablets, --2 / --3 / --4 on wide
+  // screens. A wrapping flex row, so a short last row is centered.
+  .s-gallery-grid {
+    --columns: 2;
+    --column-gap: var(--spacing-sm);
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-lg) var(--column-gap);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-gallery-grid > li {
+    flex: 0 0 calc((100% - (var(--columns) - 1) * var(--column-gap)) / var(--columns));
+    min-width: 0;
+  }
+
+  .s-gallery-grid--few {
+    --columns: 1;
+  }
+
+  .s-gallery-grid__figure {
+    display: grid;
+    gap: var(--spacing-sm);
+    margin: 0;
+  }
+
+  .s-gallery-grid__caption {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
+  }
+
+  @include mq(md) {
+    .s-gallery-grid {
+      --columns: 3;
+      --column-gap: var(--spacing-md);
+    }
+
+    .s-gallery-grid--2 {
+      --columns: 2;
+    }
+  }
+
+  @include mq(lg) {
+    .s-gallery-grid--4 {
+      --columns: 4;
+      --column-gap: var(--spacing-lg);
+    }
+  }
+}

@@ -1,0 +1,100 @@
+// Section type team: cards and compact (v3.1, polished in v3.3) and the v3.3 variants
+// social-cards, spotlight, color-tiles and directory. A person without a photo gets their
+// initials in the same frame, so mixed teams line up.
+// This one, every variant: columns, photo or initials (Avatar.astro), links (MemberLinks.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Columns: 1 on phones, 2 on tablets, --3 / --4 on wide screens, --1 for one person. A wrapping
+  // flex row (not a grid), so a short last row is centered.
+  .s-team-cols {
+    --columns: 1;
+    --column-gap: var(--spacing-lg);
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-xl) var(--column-gap);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-team-cols > li {
+    flex: 0 0 calc((100% - (var(--columns) - 1) * var(--column-gap)) / var(--columns));
+    min-width: 0;
+  }
+
+  .s-team-cols--1 > li {
+    max-width: 48rem;
+  }
+
+  @include mq(md) {
+    .s-team-cols {
+      --columns: 2;
+    }
+
+    .s-team-cols--1 {
+      --columns: 1;
+    }
+  }
+
+  @include mq(lg) {
+    .s-team-cols--3 {
+      --columns: 3;
+    }
+
+    .s-team-cols--4 {
+      --columns: 4;
+    }
+  }
+
+  .s-team-photo {
+    display: block;
+    object-fit: cover;
+  }
+
+  // Initials instead of a missing photo: the accent tint with a darker accent (like .tag--primary).
+  .s-team-initials {
+    display: grid;
+    place-items: center;
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    background: color-mix(in srgb, var(--color-action-primary) 14%, var(--color-background-surface));
+    font-family: var(--font-family-heading);
+    font-weight: var(--heading-weight);
+    line-height: 1;
+    letter-spacing: 0.04em;
+    user-select: none;
+  }
+
+  // Icon links: a row of small buttons in the archetype's button shape.
+  .s-team-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-team-links__link {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-button);
+    transition:
+      color var(--motion-duration-fast) var(--motion-easing-standard),
+      background-color var(--motion-duration-fast) var(--motion-easing-standard),
+      border-color var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .s-team-links__link:hover {
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    border-color: var(--color-action-primary);
+  }
+}

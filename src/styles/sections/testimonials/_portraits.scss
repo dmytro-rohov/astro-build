@@ -1,0 +1,197 @@
+// Testimonials: portraits (Portraits.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // A pair per review: portrait tile + caption, and the quote card. Phones: a small portrait
+  // beside the name, the card below. Tablets: one pair per row, sides alternating. Wide screens:
+  // two pairs per row, every second row mirrored — a checkerboard of photos and cards.
+  .s-portraits {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-2xl) var(--spacing-lg);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-portraits__item {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .s-portrait {
+    display: grid;
+    grid-template-columns: 6rem minmax(0, 1fr);
+    grid-template-areas:
+      "media caption"
+      "card card";
+    gap: var(--spacing-md);
+    height: 100%;
+    margin: 0;
+  }
+
+  .s-portrait__media {
+    grid-area: media;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-image);
+  }
+
+  .s-portrait__photo {
+    height: 100%;
+    object-fit: cover;
+  }
+
+  // No photo: the initials, large, on a tint of the accent.
+  .s-portrait__initials {
+    display: grid;
+    place-items: center;
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    background:
+      radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--color-action-primary) 18%, transparent), transparent 70%),
+      color-mix(in srgb, var(--color-action-primary) 8%, var(--color-background-surface));
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--heading-weight);
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  .s-portrait__caption {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.125rem;
+    grid-area: caption;
+    min-width: 0;
+  }
+
+  .s-portrait__name {
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-portrait__role {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  .s-portrait__card {
+    @include brand-surface;
+
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    grid-area: card;
+    padding: var(--spacing-lg);
+    overflow: hidden;
+    border-radius: var(--radius-card);
+  }
+
+  .s-portrait__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+  }
+
+  .s-portrait__mark {
+    width: 2.5rem;
+    margin-inline-start: auto;
+    opacity: 0.4;
+  }
+
+  .s-portrait__quote {
+    margin: 0;
+    line-height: var(--line-height-relaxed);
+  }
+
+  .s-portrait__quote--lg {
+    font-family: var(--font-family-heading);
+    font-size: clamp(var(--font-size-lg), 1.8vw, var(--font-size-2xl));
+    line-height: var(--line-height-snug);
+  }
+
+  .s-portrait__quote--md {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-normal);
+  }
+
+  @include mq(md) {
+    .s-portrait {
+      grid-template:
+        "media card" minmax(0, 1fr)
+        "caption card" auto / minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--spacing-sm) var(--spacing-lg);
+    }
+
+    .s-portrait__media {
+      height: 100%;
+    }
+
+    .s-portrait__initials {
+      font-size: clamp(var(--font-size-4xl), 6vw, var(--font-size-6xl));
+    }
+
+    .s-portrait__card {
+      padding: var(--spacing-xl);
+    }
+
+    // The quote sits in the middle of the card's free height.
+    .s-portrait__quote {
+      margin-block: auto;
+    }
+
+    .s-portraits__item:nth-child(even) .s-portrait {
+      grid-template-areas:
+        "card media"
+        "card caption";
+    }
+  }
+
+  @include mq(lg) {
+    .s-portraits__item {
+      flex: 0 0 calc((100% - var(--spacing-lg)) / 2);
+    }
+
+    .s-portraits--one .s-portraits__item {
+      flex-basis: 52rem;
+    }
+
+    .s-portraits--one .s-portrait {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    }
+
+    // A single review gets the wide card and a larger quote.
+    .s-portraits--one .s-portrait__quote {
+      font-family: var(--font-family-heading);
+      font-size: var(--font-size-xl);
+      line-height: var(--line-height-snug);
+    }
+
+    .s-portraits--one .s-portrait__quote--lg {
+      font-size: var(--font-size-3xl);
+    }
+
+    .s-portraits--one .s-portrait__quote--md {
+      font-size: var(--font-size-2xl);
+    }
+
+    .s-portraits__item:nth-child(even) .s-portrait {
+      grid-template-areas:
+        "media card"
+        "caption card";
+    }
+
+    .s-portraits__item:nth-child(4n + 3) .s-portrait,
+    .s-portraits__item:nth-child(4n + 4) .s-portrait {
+      grid-template-areas:
+        "card media"
+        "card caption";
+    }
+  }
+}

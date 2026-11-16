@@ -13,6 +13,8 @@ import Img from "@/components/media/Img.astro";
 import { getAsset } from "@/site/assets";
 import { initials, quoteSize } from "@/sections/testimonials/layout";
 import type { VariantOf } from "@/site/types";
+import "@/styles/sections/testimonials/_shared.scss";
+import "@/styles/sections/testimonials/_portraits.scss";
 
 export interface Props {
   section: VariantOf<"testimonials", "portraits">;

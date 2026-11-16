@@ -1,0 +1,155 @@
+// Stats: bento (Bento.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // One grid of tiles: the header tile (or, without a header, the first number) is the big one;
+  // the others are sized by the number of tiles so the rows always close (4 columns on desktops,
+  // 2 below). The <dl> lets its tiles join the grid of the header tile (display: contents).
+  .s-stats-bento {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-sm);
+  }
+
+  .s-stats-bento__list {
+    display: contents;
+  }
+
+  .s-stats-bento__tile {
+    display: grid;
+    grid-template-rows: 1fr auto auto;
+    grid-template-areas: "value" "label" "description";
+    min-width: 0;
+    min-height: 9rem;
+    padding: var(--spacing-md);
+    background: var(--color-background-muted);
+    border: 1px solid transparent;
+    border-radius: var(--radius-card);
+  }
+
+  .section--tone-muted .s-stats-bento__tile {
+    background: var(--color-background-surface);
+  }
+
+  // On the brand color every background is the brand color: outlined tiles instead.
+  .section--tone-accent .s-stats-bento__tile {
+    border-color: var(--stats-line);
+  }
+
+  // Lead tile and the last tile of an odd row: full width.
+  .s-stats-bento > :first-child,
+  .s-stats-bento--tiles-2 .s-stats-bento__tile:last-child,
+  .s-stats-bento--tiles-4 .s-stats-bento__tile:last-child,
+  .s-stats-bento--tiles-6 .s-stats-bento__tile:last-child {
+    grid-column: span 2;
+  }
+
+  // Without a header the lead tile is the first number inside the <dl>.
+  .s-stats-bento--no-header .s-stats-bento__tile:first-child {
+    grid-column: span 2;
+  }
+
+  @include mq(md) {
+    .s-stats-bento {
+      gap: var(--spacing-md);
+    }
+
+    .s-stats-bento__tile {
+      min-height: 11rem;
+      padding: var(--spacing-lg);
+    }
+  }
+
+  @include mq(lg) {
+    .s-stats-bento {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-auto-rows: minmax(12.5rem, auto);
+    }
+
+    // Reset the 2-column spans, then: 2 tiles → 2 + 2; 3 → 2 + 1 + 1; 4 → lead 2×2 + 1 + 1 + 2;
+    // 5 → 2 + 1 + 1 / 2 + 2; 6 → 2 + 1 + 1 / 1 + 1 + 2; 7 → lead 2×2 + 1 + 1 + 1 + 1 / 2 + 2.
+    .s-stats-bento .s-stats-bento__tile {
+      grid-column: span 1;
+    }
+
+    .s-stats-bento > :first-child,
+    .s-stats-bento--no-header .s-stats-bento__tile:first-child,
+    .s-stats-bento--tiles-2 .s-stats-bento__tile:last-child,
+    .s-stats-bento--tiles-4 .s-stats-bento__tile:last-child,
+    .s-stats-bento--tiles-5 .s-stats-bento__tile:nth-last-child(-n + 2),
+    .s-stats-bento--tiles-6 .s-stats-bento__tile:last-child,
+    .s-stats-bento--tiles-7 .s-stats-bento__tile:nth-last-child(-n + 2) {
+      grid-column: span 2;
+    }
+
+    .s-stats-bento--tiles-4 > :first-child,
+    .s-stats-bento--tiles-7 > :first-child,
+    .s-stats-bento--no-header.s-stats-bento--tiles-4 .s-stats-bento__tile:first-child,
+    .s-stats-bento--no-header.s-stats-bento--tiles-7 .s-stats-bento__tile:first-child {
+      grid-row: span 2;
+    }
+  }
+
+  // Header tile: the eyebrow at the top, title and intro at the bottom (a tall tile stays full).
+  .s-stats-bento__tile--header {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .s-stats-bento__header {
+    flex: 1;
+    max-width: 32rem;
+  }
+
+  .s-stats-bento__header .s-header__eyebrow {
+    margin-block-end: auto;
+  }
+
+  .s-stats-bento__value {
+    grid-area: value;
+    margin: 0 0 var(--spacing-lg);
+    font-family: var(--font-family-heading);
+    font-size: clamp(var(--font-size-3xl), 4vw, var(--font-size-6xl));
+    font-weight: var(--heading-weight);
+    line-height: var(--line-height-none);
+    letter-spacing: var(--heading-tracking);
+  }
+
+  .s-stats-bento__value--long {
+    font-size: clamp(var(--font-size-2xl), 3vw, var(--font-size-4xl));
+  }
+
+  // Without a header the first number leads the grid: a size larger.
+  .s-stats-bento--no-header .s-stats-bento__tile:first-child .s-stats-bento__value:not(.s-stats-bento__value--long) {
+    font-size: clamp(var(--font-size-4xl), 6vw, var(--font-size-7xl));
+  }
+
+  .s-stats-bento__label {
+    grid-area: label;
+    padding-block-start: var(--spacing-sm);
+    border-block-start: 1px solid color-mix(in srgb, currentcolor 30%, transparent);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-stats-bento__description {
+    grid-area: description;
+    margin: var(--spacing-xs) 0 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  // The first number on the brand color (the accent pair is checked for 4.5:1).
+  .s-stats-bento__tile--accent {
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+  }
+
+  .section--tone-muted .s-stats-bento__tile--accent {
+    background: var(--color-action-primary);
+  }
+
+  .s-stats-bento__tile--accent .s-stats-bento__description {
+    color: inherit;
+  }
+}

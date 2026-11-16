@@ -14,6 +14,8 @@ import Slider from "@/components/widgets/Slider.astro";
 import { SLIDER_TILES, sliderPages, type SliderTile } from "@/sections/gallery/layout";
 import { format, t } from "@/i18n";
 import type { VariantOf } from "@/site/types";
+import "@/styles/sections/gallery/_shared.scss";
+import "@/styles/sections/gallery/_slider.scss";
 
 export interface Props {
   section: VariantOf<"gallery", "slider">;

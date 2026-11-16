@@ -7,6 +7,8 @@ import Stack from "@/components/layouts/Stack.astro";
 import Icon from "@/components/media/Icon.astro";
 import { autoColumns, highlightIndex } from "@/sections/features/layout";
 import type { VariantOf } from "@/site/types";
+import "@/styles/sections/features/_shared.scss";
+import "@/styles/sections/features/_spotlight.scss";
 
 export interface Props {
   section: VariantOf<"features", "spotlight">;

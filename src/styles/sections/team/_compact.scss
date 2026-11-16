@@ -1,0 +1,103 @@
+// Team: compact (Compact.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Balanced rows (8 → 4 + 4): --row-N on wide screens, --tablet-N from md, two on phones.
+  .s-people {
+    --columns: 2;
+    --column-gap: var(--spacing-lg);
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-xl) var(--column-gap);
+    max-width: calc(var(--columns) * 14rem + (var(--columns) - 1) * var(--column-gap));
+    padding: 0;
+    margin: 0 auto;
+    list-style: none;
+    text-align: center;
+  }
+
+  .s-people__item {
+    display: grid;
+    flex: 0 0 calc((100% - (var(--columns) - 1) * var(--column-gap)) / var(--columns));
+    align-content: start;
+    justify-items: center;
+    gap: var(--spacing-xs);
+    min-width: 0;
+  }
+
+  .s-people__photo {
+    width: 7rem;
+    height: 7rem;
+    margin-block-end: var(--spacing-sm);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-3xl);
+  }
+
+  .s-people__name {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-people__role {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  @include mq(md) {
+    @for $count from 1 through 4 {
+      .s-people--tablet-#{$count} {
+        --columns: #{$count};
+      }
+    }
+
+    .s-people__photo {
+      width: 8rem;
+      height: 8rem;
+    }
+  }
+
+  @include mq(lg) {
+    @for $count from 1 through 6 {
+      .s-people--row-#{$count} {
+        --columns: #{$count};
+      }
+    }
+  }
+
+  // v3.2: one or two people — a horizontal card per person (photo next to the name and role),
+  // centered, instead of two small portraits and an empty row.
+  @include mq(md) {
+    .s-people--few {
+      flex-wrap: nowrap;
+      gap: var(--spacing-xl);
+      max-width: none;
+      text-align: start;
+    }
+
+    .s-people--few .s-people__item {
+      flex: 0 1 24rem;
+      grid-template-columns: 8rem minmax(0, 1fr);
+      grid-template-rows: auto auto 1fr;
+      place-items: start;
+      column-gap: var(--spacing-lg);
+      max-width: 24rem;
+      padding: var(--spacing-lg);
+      background: var(--color-background-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-card);
+    }
+
+    .s-people--few .s-people__photo {
+      grid-row: 1 / -1;
+      margin: 0;
+    }
+
+    .s-people--few .s-people__name {
+      align-self: end;
+      margin-block-start: var(--spacing-md);
+    }
+  }
+}

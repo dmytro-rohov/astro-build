@@ -1,12 +1,14 @@
 ---
 /**
  * Stats "bento": a title tile and number tiles of different sizes in one grid, the first number
- * on the brand color. The tile sizes follow the number of tiles (see _stats.scss), so every
+ * on the brand color. The tile sizes follow the number of tiles (see stats/_bento.scss), so every
  * count from 2 to 7 tiles fills whole rows.
  */
 import SectionShell from "@/sections/_shared/SectionShell.astro";
 import SectionHeader from "@/sections/_shared/SectionHeader.astro";
 import type { SectionOf } from "@/site/types";
+import "@/styles/sections/stats/_shared.scss";
+import "@/styles/sections/stats/_bento.scss";
 
 export interface Props {
   section: SectionOf<"stats">;

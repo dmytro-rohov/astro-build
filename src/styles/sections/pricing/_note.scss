@@ -1,0 +1,10 @@
+// Pricing: the note under the plans of cards, compact, featured-center and table.
+@use "../../abstracts/layers";
+
+@layer widgets {
+  .s-plans__note {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    text-align: center;
+  }
+}

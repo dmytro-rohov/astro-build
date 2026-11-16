@@ -1,0 +1,77 @@
+// Contact: form-centered: brand panel + form in one card (FormCentered.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-contact-centered {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  .s-contact-centered__card {
+    display: grid;
+    width: 100%;
+    max-width: 44rem;
+    margin-inline: auto;
+    overflow: hidden;
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-contact-centered__card--with-panel {
+    max-width: 68rem;
+  }
+
+  .s-contact-centered__panel {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-xl);
+    padding: clamp(var(--spacing-lg), 4vw, var(--spacing-2xl));
+    overflow: hidden;
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+  }
+
+  .s-contact-centered__panel-title {
+    color: inherit;
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-contact-centered__form {
+    padding: clamp(var(--spacing-lg), 4vw, var(--spacing-2xl));
+  }
+
+  @include mq(lg) {
+    .s-contact-centered__card--with-panel {
+      grid-template-columns: minmax(0, 0.8fr) minmax(28rem, 1.2fr);
+    }
+
+    // Two soft rings in the panel's free lower corner (the details stay at the top).
+    .s-contact-centered__panel::before,
+    .s-contact-centered__panel::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      border: 1.75rem solid color-mix(in oklab, var(--color-action-primary-text) 9%, transparent);
+      border-radius: 50%;
+    }
+
+    .s-contact-centered__panel::before {
+      inset: auto -6rem -7rem auto;
+      width: 20rem;
+      height: 20rem;
+    }
+
+    .s-contact-centered__panel::after {
+      inset: auto 8rem -4rem auto;
+      width: 8rem;
+      height: 8rem;
+      border-width: 1rem;
+    }
+  }
+}

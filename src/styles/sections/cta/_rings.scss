@@ -1,0 +1,81 @@
+// CTA: rings (Rings.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // A brand card; concentric circles (nested, each a white veil that adds up toward a light
+  // middle) grow out of its right edge, on phones out of the lower corner under the buttons.
+  // On the white card of an accent section the veils are the brand color instead.
+  .s-cta-rings {
+    @include on-color(var(--cta-brand), var(--cta-ink));
+
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    padding: var(--spacing-2xl) var(--spacing-lg) 11rem;
+    background: var(--cta-brand);
+    border-radius: calc(var(--radius-card) * 1.5);
+    box-shadow: 0 2rem 4rem -2.5rem color-mix(in srgb, var(--cta-brand) 80%, transparent);
+  }
+
+  .s-cta-rings__copy .s-cta-copy__title {
+    font-size: clamp(var(--font-size-3xl), 4vw, var(--font-size-5xl));
+  }
+
+  .s-cta-rings__deco {
+    position: absolute;
+    z-index: -1;
+    inset-block-end: -9rem;
+    inset-inline-end: -7rem;
+    width: 20rem;
+    aspect-ratio: 1;
+  }
+
+  .s-cta-rings__ring {
+    position: absolute;
+    inset: 0;
+    background: rgb(255 255 255 / 16%);
+    border-radius: 50%;
+    box-shadow: 0 0 2.5rem -0.5rem color-mix(in srgb, var(--cta-brand) 60%, rgb(0 0 0 / 40%));
+  }
+
+  .s-cta-rings__ring .s-cta-rings__ring {
+    inset: 12%;
+  }
+
+  .section--tone-accent .s-cta-rings__ring {
+    background: color-mix(in srgb, var(--cta-ink) 16%, transparent);
+  }
+
+  @include mq(md) {
+    .s-cta-rings {
+      display: flex;
+      align-items: center;
+      min-height: 22rem;
+      padding: var(--spacing-3xl) var(--spacing-2xl);
+    }
+
+    .s-cta-rings__copy {
+      max-width: min(36rem, 62%);
+    }
+
+    .s-cta-rings__deco {
+      inset-block: 50% auto;
+      inset-inline-end: -14rem;
+      width: 36rem;
+      translate: 0 -50%;
+    }
+  }
+
+  @include mq(lg) {
+    .s-cta-rings {
+      padding-inline: var(--spacing-3xl);
+    }
+
+    .s-cta-rings__deco {
+      inset-inline-end: -10rem;
+      width: 40rem;
+    }
+  }
+}

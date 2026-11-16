@@ -1,0 +1,86 @@
+// Services: price-list (PriceList.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // v3.2: prices are what clients study longest — each item is a card with an accent edge,
+  // the price a tinted badge; six or more items go into two columns on wide screens.
+  .s-price-list {
+    display: grid;
+    gap: var(--spacing-md);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  @include mq(lg) {
+    .s-price-list:has(> :nth-child(6)) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .s-price-list__item {
+    position: relative;
+    padding: var(--spacing-md) var(--spacing-lg) var(--spacing-md) calc(var(--spacing-lg) + 0.25rem);
+    background: var(--color-background-surface);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    transition:
+      border-color var(--motion-duration-normal) var(--motion-easing-standard),
+      box-shadow var(--motion-duration-normal) var(--motion-easing-standard),
+      transform var(--motion-duration-normal) var(--motion-easing-standard);
+  }
+
+  .s-price-list__item::before {
+    content: "";
+    position: absolute;
+    inset-block: var(--spacing-md);
+    inset-inline-start: 0;
+    width: 0.25rem;
+    background: var(--color-action-primary);
+    border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+    opacity: 0.85;
+  }
+
+  .s-price-list__item:hover {
+    border-color: color-mix(in srgb, var(--color-action-primary) 45%, var(--color-border-default));
+    box-shadow: var(--card-shadow);
+    transform: translateY(-2px);
+  }
+
+  .s-price-list__row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-sm);
+  }
+
+  .s-price-list__title {
+    min-width: 0;
+    font-size: var(--font-size-lg);
+  }
+
+  .s-price-list__leader {
+    flex: 1;
+    min-width: var(--spacing-lg);
+    border-block-end: 1px dotted var(--color-border-strong);
+    transform: translateY(-0.3em);
+  }
+
+  .s-price-list__price {
+    flex-shrink: 0;
+    max-width: 50%;
+    padding: 0.125rem var(--spacing-sm);
+
+    // Accent, pulled toward the text color: stays AA on the tinted badge in every archetype.
+    color: color-mix(in srgb, var(--color-action-primary) 70%, var(--color-text-primary));
+    background: color-mix(in srgb, var(--color-action-primary) 8%, transparent);
+    border-radius: var(--radius-pill);
+    font-weight: var(--font-weight-bold);
+    text-align: end;
+  }
+
+  .s-price-list__description {
+    margin-block-start: var(--spacing-xs);
+    color: var(--color-text-secondary);
+  }
+}

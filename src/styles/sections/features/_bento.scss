@@ -1,0 +1,145 @@
+// Features: bento (Bento.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Tiles: 1 column on phones; on tablets the first tile spans both columns; on wide
+  // screens 4 columns with the first tile 2 × 2 (sizes from layout.ts fill every row).
+  // Icon on top, text at the bottom of each tile.
+  .s-features-bento {
+    display: grid;
+    gap: var(--spacing-md);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-features-bento__item {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--spacing-xl);
+    min-width: 0;
+    padding: var(--spacing-lg);
+    overflow: hidden;
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-features-bento__icon {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .s-features-bento__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    margin-block-start: auto;
+  }
+
+  .s-features-bento__title {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-features-bento__description {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .s-features-bento .s-features-link {
+    margin-block-start: var(--spacing-xs);
+  }
+
+  .s-features-bento__item--lead {
+    background:
+      radial-gradient(90% 70% at 100% 100%, color-mix(in srgb, var(--color-action-primary) 12%, transparent), transparent 70%),
+      var(--color-background-surface);
+  }
+
+  .s-features-bento__item--lead .s-features-bento__title {
+    font-size: clamp(var(--font-size-xl), 2.4vw, var(--font-size-3xl));
+    line-height: var(--line-height-tight);
+  }
+
+  .s-features-bento__item--lead .s-features-bento__description {
+    max-width: 32rem;
+    font-size: var(--font-size-base);
+  }
+
+  .s-features-bento__watermark {
+    display: none;
+    position: absolute;
+    z-index: -1;
+    inset-block-start: calc(-1 * var(--spacing-md));
+    inset-inline-end: calc(-1 * var(--spacing-2xl));
+    color: var(--color-action-primary);
+    opacity: 0.08;
+    rotate: -12deg;
+  }
+
+  // The accent tile: brand background, its button text color for everything inside.
+  .s-features-bento__item--accent {
+    --color-focus-ring: var(--color-action-primary-text);
+
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    border-color: transparent;
+  }
+
+  .s-features-bento__item--accent :is(.s-features-bento__title, .s-features-bento__description, .s-features-eyebrow, .s-features-link, .s-features-bento__icon, .s-features-bento__watermark) {
+    color: inherit;
+  }
+
+  // A ring, not a tint: the number keeps the tile's own 4.5:1.
+  .s-features-bento__item--accent .s-features-bento__icon {
+    background: none;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, currentcolor 45%, transparent);
+  }
+
+  @include mq(md) {
+    .s-features-bento {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .s-features-bento__item--lead,
+    .s-features-bento__item--fill {
+      grid-column: span 2;
+    }
+
+    .s-features-bento__watermark {
+      display: block;
+    }
+  }
+
+  @include mq(lg) {
+    .s-features-bento {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-auto-rows: minmax(11rem, auto);
+    }
+
+    .s-features-bento__item--fill {
+      grid-column: auto;
+    }
+
+    .s-features-bento__item--lead,
+    .s-features-bento__item--pair {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    .s-features-bento__item--tall {
+      grid-row: span 2;
+    }
+
+    .s-features-bento__item--wide {
+      grid-column: span 2;
+    }
+  }
+}

@@ -1,4 +1,6 @@
 // Progress ring and bar (components/ui/Progress.astro), v3.3.
+@use "../abstracts/layers";
+
 @layer components {
   .progress {
     // Bar thickness; the ring's stroke is in its own viewBox units.

@@ -1,0 +1,96 @@
+// Stats: rings (Rings.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Rings in centered rows (a short last row stays centered): 2 per row on phones, up to 4 on
+  // tablets and 5 on desktops; 5 and 6 rings split into rows of 3.
+  .s-stats-rings {
+    --rings-per-row: 2;
+    --rings-gap: var(--spacing-lg);
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-2xl) var(--rings-gap);
+
+    // At most 17rem per ring: few rings stay a compact, centered group.
+    width: 100%;
+    max-width: calc(var(--rings-per-row) * 17rem + (var(--rings-per-row) - 1) * var(--rings-gap));
+    margin: 0 auto;
+  }
+
+  @include mq(md) {
+    .s-stats-rings { --rings-gap: var(--spacing-xl); }
+
+    .s-stats-rings--count-3,
+    .s-stats-rings--count-5,
+    .s-stats-rings--count-6 { --rings-per-row: 3; }
+    .s-stats-rings--count-4 { --rings-per-row: 4; }
+  }
+
+  @include mq(lg) {
+    .s-stats-rings--count-5 { --rings-per-row: 5; }
+  }
+
+  .s-stats-rings__item {
+    display: grid;
+    flex: 0 1 calc((100% - (var(--rings-per-row) - 1) * var(--rings-gap)) / var(--rings-per-row));
+    grid-template-areas: "figure" "label" "description";
+    align-content: start;
+    justify-items: center;
+    gap: var(--spacing-sm);
+    min-width: 0;
+    text-align: center;
+  }
+
+  .s-stats-rings__figure {
+    grid-area: figure;
+    width: min(100%, 8.5rem);
+    margin: 0 0 var(--spacing-sm);
+  }
+
+  @include mq(md) {
+    .s-stats-rings__figure { width: min(100%, 10rem); }
+  }
+
+  // A ring without a share: a full, softer ring — a frame, not a value.
+  .s-stats-rings__ring--frame {
+    --progress-fill: color-mix(in srgb, var(--color-action-primary) 35%, transparent);
+  }
+
+  .s-stats-rings__value {
+    color: var(--color-text-primary);
+    font-family: var(--font-family-heading);
+    font-size: 22cqi;
+    font-weight: var(--heading-weight);
+    line-height: var(--line-height-none);
+    letter-spacing: var(--heading-tracking);
+  }
+
+  .s-stats-rings__value--long {
+    font-size: 14cqi;
+    line-height: var(--line-height-tight);
+  }
+
+  .s-stats-rings__value--longer {
+    font-size: 11cqi;
+  }
+
+  .s-stats-rings__label {
+    grid-area: label;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-stats-rings__description {
+    grid-area: description;
+    max-width: 22rem;
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    text-wrap: pretty;
+  }
+}

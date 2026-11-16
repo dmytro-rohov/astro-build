@@ -9,6 +9,8 @@ import Stack from "@/components/layouts/Stack.astro";
 import { quoteSize } from "@/sections/testimonials/layout";
 import { SPOTLIGHT_ITEMS } from "@/sections/testimonials/schema";
 import type { SectionOf } from "@/site/types";
+import "@/styles/sections/testimonials/_shared.scss";
+import "@/styles/sections/testimonials/_spotlight.scss";
 
 export interface Props {
   section: SectionOf<"testimonials">;

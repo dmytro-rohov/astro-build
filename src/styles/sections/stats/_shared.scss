@@ -1,0 +1,21 @@
+// Stats ("Liczby"): row and cards (v3.1), rings, bars, chart-cards, highlight and bento (v3.3).
+// This one: every variant.
+@use "../../abstracts/layers";
+
+@layer widgets {
+  // Lines and tracks use the border tokens; on the brand color they are a tint of the text
+  // instead (the accent palette's borders are mixed in OKLCH and can drift in hue).
+  .s-stats {
+    --stats-line: var(--color-border-default);
+    --stats-rule: var(--color-border-strong);
+  }
+
+  .s-stats.section--tone-accent {
+    --stats-line: color-mix(in srgb, currentcolor 28%, transparent);
+    --stats-rule: color-mix(in srgb, currentcolor 55%, transparent);
+  }
+
+  .s-stats .progress {
+    --progress-track: var(--stats-line);
+  }
+}

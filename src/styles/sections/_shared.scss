@@ -45,4 +45,9 @@
   .s :where(h1, h2, h3, p, li, blockquote, figcaption, dd, dt, td, th) {
     overflow-wrap: anywhere;
   }
+
+  // Count-up numbers (components/widgets/Counters.astro): digits of equal width, no jumping.
+  [data-counter] {
+    font-variant-numeric: tabular-nums;
+  }
 }

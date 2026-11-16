@@ -13,15 +13,12 @@
 @use "./components/media/picture";
 @use "./components/media/figure";
 
-// ui
+// ui (slider, lightbox, progress and accordion come with their components)
 @use "./components/button";
 @use "./components/link";
 @use "./components/card";
-@use "./components/slider";
-@use "./components/lightbox";
 @use "./components/tag";
 @use "./components/divider";
-@use "./components/progress";
 
 // primitive layouts
 @use "./layouts/container";
@@ -54,25 +51,9 @@
 @use "./layouts/error-page";
 
 // shared components used by sections
-@use "./components/accordion";
 @use "./components/form/contact-form";
 
-// sections (cascade layer "widgets")
-@use "./sections/hero";
-@use "./sections/features";
-@use "./sections/cta";
-@use "./sections/faq";
+// sections (cascade layer "widgets"): what every page needs; the styles of each section type
+// come with its components (src/styles/sections/<type>/, imported in src/sections/)
 @use "./sections/shared";
-@use "./sections/sections";
-@use "./sections/blocks";
-@use "./sections/pricing";
-@use "./sections/process";
-@use "./sections/stats";
-@use "./sections/team";
-@use "./sections/schedule";
-@use "./sections/hours-location";
-@use "./sections/testimonials";
-@use "./sections/contact";
-@use "./sections/gallery";
-@use "./sections/logo-cloud";
-@use "./sections/suggestion";
+@use "./sections/hero";

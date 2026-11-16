@@ -8,6 +8,8 @@ import Icon from "@/components/media/Icon.astro";
 import { autoColumns } from "@/sections/features/layout";
 import { toneFor } from "@/site/theme";
 import type { VariantOf } from "@/site/types";
+import "@/styles/sections/features/_shared.scss";
+import "@/styles/sections/features/_icon-badge.scss";
 
 export interface Props {
   section: VariantOf<"features", "icon-badge">;

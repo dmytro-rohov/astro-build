@@ -15,6 +15,8 @@ import Button from "@/components/ui/Button.astro";
 import { getAsset } from "@/site/assets";
 import { format, t } from "@/i18n";
 import type { VariantOf } from "@/site/types";
+import "@/styles/sections/gallery/_shared.scss";
+import "@/styles/sections/gallery/_checkerboard.scss";
 
 export interface Props {
   section: VariantOf<"gallery", "checkerboard">;

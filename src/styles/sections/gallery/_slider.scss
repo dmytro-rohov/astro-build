@@ -1,0 +1,127 @@
+// Gallery: slider (Slider.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Pages in the Slider (one per view). Phones: a 4:5 page of two columns; wider screens: a wide
+  // page — 5 photos tall | wide over two small | tall, 4 tall | two wide | tall, 3 big | two
+  // wide, 2 halves. The tiles take the grid areas a–e in order.
+  .s-gallery-slider--one {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-gallery-slider__page {
+    --gap: var(--spacing-sm);
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: var(--gap);
+    aspect-ratio: 4 / 5;
+  }
+
+  .s-gallery-slider__page--5 {
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+    grid-template-areas:
+      "a b"
+      "a c"
+      "d e";
+  }
+
+  .s-gallery-slider__page--4 {
+    grid-template-areas:
+      "a b"
+      "c d";
+  }
+
+  .s-gallery-slider__page--3 {
+    grid-template-areas:
+      "a a"
+      "b c";
+  }
+
+  .s-gallery-slider__page--2 {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "a"
+      "b";
+  }
+
+  @each $index, $area in (1: a, 2: b, 3: c, 4: d, 5: e) {
+    .s-gallery-slider__tile:nth-child(#{$index}) {
+      grid-area: $area;
+    }
+  }
+
+  .s-gallery-slider__tile {
+    position: relative;
+    min-height: 0;
+    margin: 0;
+  }
+
+  // Captions appear on hover and focus (and always in the viewer).
+  .s-gallery-slider__caption {
+    opacity: 0;
+    transition: opacity var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .s-gallery-slider__tile:hover .s-gallery-slider__caption,
+  .s-gallery-slider__tile:focus-within .s-gallery-slider__caption {
+    opacity: 1;
+  }
+
+  // Dashes instead of dots.
+  .s-gallery-slider .slider__dot {
+    width: 2.25rem;
+  }
+
+  .s-gallery-slider .slider__dot::before {
+    width: 1.25rem;
+    height: 0.1875rem;
+  }
+
+  .s-gallery-slider .slider__dot[aria-current="true"]::before {
+    width: 2rem;
+  }
+
+  @include mq(md) {
+    .s-gallery-slider__page {
+      --gap: var(--spacing-md);
+
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      aspect-ratio: 2 / 1;
+    }
+
+    .s-gallery-slider__page--5 {
+      grid-template:
+        "a b b e" minmax(0, 1fr)
+        "a c d e" minmax(0, 1fr) / minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr);
+    }
+
+    .s-gallery-slider__page--4 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-areas:
+        "a b d"
+        "a c d";
+    }
+
+    .s-gallery-slider__page--3 {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      grid-template-areas:
+        "a b"
+        "a c";
+    }
+
+    .s-gallery-slider__page--2 {
+      grid-template: "a b" minmax(0, 1fr) / minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+
+  @include mq(lg) {
+    .s-gallery-slider__page {
+      aspect-ratio: 12 / 5;
+    }
+  }
+}

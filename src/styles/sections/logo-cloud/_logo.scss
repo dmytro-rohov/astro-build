@@ -1,0 +1,38 @@
+// Section type logo-cloud: row and grid (v3.1, reworked in v3.3) and the v3.3 variants coverflow,
+// split-image, marquee and color-tiles. Every logo is a .s-logo (Logo.astro) with a size class
+// from its proportions. Logos are blended into the surface behind them (multiply on light,
+// inverted and screened on dark: --logo-blend), so a white plate behind a logo disappears —
+// a moving or transformed box blends only with itself, so it carries the surface color.
+// This one: one logo (Logo.astro), every variant.
+@use "../../abstracts/layers";
+
+@layer widgets {
+  // --logo-size is the height of a square mark; wider logos get lower (a little more area than a
+  // square: their strokes are thinner), and never wider than 3.6 squares or their box.
+  .s-logo {
+    --logo-scale: 1;
+
+    display: block;
+    width: auto;
+    max-width: min(100%, calc(var(--logo-size, 3rem) * 3.6));
+    height: calc(var(--logo-size, 3rem) * var(--logo-scale));
+    object-fit: contain;
+  }
+
+  @each $shape, $scale in (tall: 1.1, landscape: 0.82, wide: 0.72, wider: 0.62, widest: 0.54) {
+    .s-logo--#{$shape} {
+      --logo-scale: #{$scale};
+    }
+  }
+
+  .s-logo-link {
+    display: block;
+    border-radius: var(--radius-control);
+  }
+
+  // On light tiles (grid, coverflow, split-image) logos keep their colors; the tile stays light
+  // in dark schemes too (--logo-tile).
+  :is(.s-logos--grid, .s-coverflow, .s-logo-split__tiles) .s-logo {
+    mix-blend-mode: multiply;
+  }
+}

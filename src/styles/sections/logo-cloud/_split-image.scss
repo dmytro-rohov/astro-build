@@ -1,0 +1,145 @@
+// Logo cloud: split-image (SplitImage.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Phones: photo, title, tiles. Wide screens: the photo fills one half next to the title and
+  // the tiles, which sit in the middle of its height; without a photo the title is on the left.
+  .s-logo-split {
+    display: grid;
+    grid-template-areas:
+      "media"
+      "header"
+      "logos";
+    gap: var(--spacing-xl);
+  }
+
+  .s-logo-split--text {
+    grid-template-areas:
+      "header"
+      "logos";
+  }
+
+  // Neither a photo nor a header: the tiles alone, centered.
+  .s-logo-split--logos {
+    grid-template-areas: "logos";
+    width: 100%;
+    max-width: 44rem;
+    margin-inline: auto;
+  }
+
+  .s-logo-split__header {
+    grid-area: header;
+  }
+
+  .s-logo-split__logos {
+    grid-area: logos;
+    min-width: 0;
+  }
+
+  .s-logo-split__media {
+    display: flex;
+    grid-area: media;
+  }
+
+  .s-logo-split__image {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border: var(--image-border);
+    border-radius: var(--radius-image);
+    box-shadow: var(--image-shadow);
+  }
+
+  // Tiles on a tint of the accent, logos in their own colors: two columns on phones (three for
+  // three logos), three from tablets up (two for two or four logos).
+  .s-logo-split__tiles {
+    --columns: 2;
+    --logo-size: 2.5rem;
+
+    display: grid;
+    grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+    gap: var(--spacing-sm);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-logo-split__tiles--3 {
+    --columns: 3;
+  }
+
+  .s-logo-split__tile {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 3 / 2;
+    padding: var(--spacing-md);
+    background: color-mix(in oklab, var(--color-action-primary) 9%, var(--logo-tile));
+    border-radius: var(--radius-card);
+  }
+
+  .s-logo-split__tile:has(> .s-logo-link) {
+    padding: 0;
+  }
+
+  .s-logo-split__tile .s-logo-link {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    padding: var(--spacing-md);
+    border-radius: inherit;
+  }
+
+  .s-logo-split__logos .slider__track {
+    padding-block-start: 0;
+  }
+
+  .s-logo-split:not(.s-logo-split--logos) .slider__controls {
+    justify-content: flex-start;
+  }
+
+  @include mq(md) {
+    .s-logo-split__tiles:not(.s-logo-split__tiles--2, .s-logo-split__tiles--4) {
+      --columns: 3;
+    }
+
+    .s-logo-split__tiles {
+      --logo-size: 3.5rem;
+    }
+  }
+
+  @include mq(lg) {
+    .s-logo-split {
+      grid-template:
+        "media ." 1fr
+        "media header" auto
+        "media logos" auto
+        "media ." 1fr / minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--spacing-xl) var(--spacing-3xl);
+    }
+
+    .s-logo-split--image-right {
+      grid-template-areas:
+        ". media"
+        "header media"
+        "logos media"
+        ". media";
+    }
+
+    .s-logo-split--text {
+      grid-template: "header logos" auto / minmax(0, 2fr) minmax(0, 3fr);
+      align-items: center;
+    }
+
+    .s-logo-split--logos {
+      grid-template: "logos" auto / minmax(0, 1fr);
+    }
+
+    .s-logo-split__image {
+      height: 100%;
+      min-height: 24rem;
+      aspect-ratio: auto;
+    }
+  }
+}

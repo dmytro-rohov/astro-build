@@ -1,0 +1,183 @@
+// Pricing: split (Split.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // v3.3: the intro stays in view next to the plans, which are rows of one panel.
+  .s-plan-split {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  @include mq(lg) {
+    .s-plan-split {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      align-items: start;
+      gap: var(--spacing-3xl);
+    }
+
+    .s-plan-split__intro {
+      position: sticky;
+      inset-block-start: calc(var(--header-offset, 4.5rem) + var(--spacing-lg));
+    }
+  }
+
+  .s-plan-split__intro {
+    display: grid;
+    gap: var(--spacing-xl);
+    align-content: start;
+  }
+
+  .s-plan-split__note {
+    max-width: 32rem;
+    padding-block-start: var(--spacing-md);
+    color: var(--color-text-secondary);
+    border-block-start: 1px solid var(--color-border-default);
+    font-size: var(--font-size-sm);
+  }
+
+  .s-plan-rows {
+    padding: 0;
+    margin: 0;
+    overflow: clip;
+    list-style: none;
+    background: var(--color-background-surface);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-plan-row {
+    position: relative;
+    display: grid;
+    align-items: center;
+    gap: var(--spacing-lg) var(--spacing-xl);
+    padding: var(--spacing-lg);
+  }
+
+  .s-plan-row + .s-plan-row {
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-plan-row--highlighted {
+    background: color-mix(in srgb, var(--color-action-primary) 6%, var(--color-background-surface));
+  }
+
+  .s-plan-row--highlighted::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 0.25rem;
+    background: var(--color-action-primary);
+  }
+
+  .s-plan-row__main {
+    display: grid;
+    gap: var(--spacing-sm);
+    align-content: start;
+  }
+
+  .s-plan-row__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .s-plan-row__name {
+    font-size: var(--font-size-xl);
+  }
+
+  .s-plan-row__badge {
+    padding: 0.125rem var(--spacing-sm);
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    border-radius: var(--radius-button);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-plan-row__description,
+  .s-plan-row__period {
+    color: var(--color-text-secondary);
+  }
+
+  .s-plan-row__features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs) var(--spacing-lg);
+    padding: 0;
+    margin: var(--spacing-xs) 0 0;
+    list-style: none;
+    font-size: var(--font-size-sm);
+  }
+
+  .s-plan-row__feature {
+    display: flex;
+    gap: var(--spacing-xs);
+    min-width: 0;
+  }
+
+  .s-plan-row__check {
+    flex-shrink: 0;
+    margin-block-start: 0.2em;
+    color: var(--color-action-primary);
+  }
+
+  .s-plan-row__side {
+    display: grid;
+    gap: var(--spacing-md);
+    align-content: start;
+  }
+
+  .s-plan-row__price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--spacing-xs);
+  }
+
+  .s-plan-row__amount {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--heading-weight);
+    line-height: var(--line-height-none);
+  }
+
+  .s-plan-row__period {
+    font-size: var(--font-size-sm);
+  }
+
+  // From tablets the price and the button sit on the right of every row, in one column
+  // as wide as the widest of them (subgrid), so the rows line up.
+  @include mq(md) {
+    .s-plan-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+      padding: var(--spacing-xl);
+    }
+
+    @supports (grid-template-columns: subgrid) {
+      .s-plan-rows {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+      }
+
+      .s-plan-row {
+        grid-column: 1 / -1;
+        grid-template-columns: subgrid;
+      }
+    }
+
+    .s-plan-row__side {
+      max-width: 15rem;
+      justify-items: end;
+      text-align: end;
+    }
+
+    .s-plan-row__price {
+      flex-direction: column;
+      align-items: flex-end;
+    }
+  }
+}

@@ -1,0 +1,251 @@
+// Pricing: table (Table.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // v3.3: plans are columns (the highlighted one tinted, with an accent edge), features rows.
+  .s-plan-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .s-plan-table th,
+  .s-plan-table td {
+    padding: var(--spacing-md);
+    text-align: center;
+    vertical-align: middle;
+    border-block-end: 1px solid var(--color-border-default);
+  }
+
+  .s-plan-table__corner,
+  .s-plan-table .s-plan-table__label {
+    width: 34%;
+    text-align: start;
+  }
+
+  .s-plan-table--count-1 .s-plan-table__corner {
+    width: 50%;
+  }
+
+  .s-plan-table__label {
+    font-weight: var(--font-weight-regular);
+  }
+
+  .s-plan-table thead > tr > * {
+    vertical-align: bottom;
+    border-block-end-color: var(--color-border-strong);
+  }
+
+  .s-plan-table__head {
+    padding-block-start: var(--spacing-lg);
+  }
+
+  .s-plan-table__badge {
+    display: block;
+    width: fit-content;
+    margin: 0 auto var(--spacing-sm);
+    padding: 0.125rem var(--spacing-sm);
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    border-radius: var(--radius-button);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-plan-table__name {
+    display: block;
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-xl);
+    font-weight: var(--heading-weight);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-plan-table .s-plan-table__prices > * {
+    padding-block: var(--spacing-lg);
+    vertical-align: top;
+  }
+
+  .s-plan-table__prices > .s-plan-table__label {
+    color: var(--color-text-secondary);
+  }
+
+  .s-plan-table__amount {
+    display: block;
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--heading-weight);
+    line-height: var(--line-height-none);
+  }
+
+  .s-plan-table__period,
+  .s-plan-table__description {
+    display: block;
+    margin-block-start: var(--spacing-xs);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  .s-plan-table__description {
+    margin-block-start: var(--spacing-sm);
+  }
+
+  .s-plan-table__yes {
+    display: inline-block;
+    color: var(--color-action-primary);
+    vertical-align: middle;
+  }
+
+  .s-plan-table__no {
+    display: inline-block;
+    width: 0.75rem;
+    height: 2px;
+    background: var(--color-text-secondary);
+    border-radius: var(--radius-pill);
+    opacity: 0.6;
+    vertical-align: middle;
+  }
+
+  .s-plan-table .s-plan-table__actions > * {
+    padding-block: var(--spacing-lg);
+    border-block-end: 0;
+  }
+
+  .s-plan-table__actions .button {
+    width: 100%;
+    padding-inline: var(--spacing-sm);
+  }
+
+  .s-plan-table__plan--highlighted {
+    background: color-mix(in srgb, var(--color-action-primary) 7%, transparent);
+  }
+
+  .s-plan-table__head.s-plan-table__plan--highlighted {
+    border-start-start-radius: var(--radius-card);
+    border-start-end-radius: var(--radius-card);
+    box-shadow: inset 0 3px 0 var(--color-action-primary);
+  }
+
+  .s-plan-table__actions > .s-plan-table__plan--highlighted {
+    border-end-start-radius: var(--radius-card);
+    border-end-end-radius: var(--radius-card);
+  }
+
+  // Tablets: a narrower label column and smaller type, so four plans fit their columns.
+  @include mq-down(lg) {
+    .s-plan-table__corner,
+    .s-plan-table .s-plan-table__label {
+      width: 28%;
+    }
+
+    .s-plan-table th,
+    .s-plan-table td {
+      padding-inline: var(--spacing-sm);
+    }
+
+    .s-plan-table__name {
+      font-size: var(--font-size-lg);
+    }
+
+    .s-plan-table__amount {
+      font-size: var(--font-size-2xl);
+    }
+  }
+
+  // Phones: every feature is a line of its own, its marks below it in the plans' columns.
+  @include mq-down(md) {
+    .s-plan-table {
+      --plan-columns: 1;
+
+      table-layout: auto;
+    }
+
+    .s-plan-table--count-2 { --plan-columns: 2; }
+    .s-plan-table--count-3 { --plan-columns: 3; }
+    .s-plan-table--count-4 { --plan-columns: 4; }
+
+    .s-plan-table tr {
+      display: grid;
+      grid-template-columns: repeat(var(--plan-columns), minmax(0, 1fr));
+    }
+
+    .s-plan-table th,
+    .s-plan-table td {
+      padding: var(--spacing-sm) var(--spacing-xs);
+      border: 0;
+    }
+
+    .s-plan-table__feature > td {
+      padding-block: var(--spacing-xs) var(--spacing-sm);
+    }
+
+    .s-plan-table thead > tr,
+    .s-plan-table__feature {
+      border-block-end: 1px solid var(--color-border-default);
+    }
+
+    .s-plan-table__corner {
+      display: none;
+    }
+
+    .s-plan-table .s-plan-table__label {
+      grid-column: 1 / -1;
+      width: auto;
+      padding: var(--spacing-md) 0 0;
+      font-size: var(--font-size-sm);
+    }
+
+    .s-plan-table__prices > .s-plan-table__label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    .s-plan-table__name {
+      font-size: var(--font-size-base);
+    }
+
+    .s-plan-table__amount {
+      font-size: var(--font-size-xl);
+    }
+
+    .s-plan-table__description {
+      display: none;
+    }
+
+    .s-plan-table__actions .button {
+      padding-inline: var(--spacing-xs);
+    }
+
+    // Four columns of ~70px: smaller type, and the badge is left to the tinted column
+    // (its text stays for screen readers).
+    .s-plan-table--count-4 :is(th, td) {
+      padding-inline: 0.125rem;
+    }
+
+    .s-plan-table--count-4 .s-plan-table__name {
+      font-size: var(--font-size-sm);
+    }
+
+    .s-plan-table--count-4 .s-plan-table__amount {
+      font-size: var(--font-size-lg);
+    }
+
+    .s-plan-table--count-4 .s-plan-table__badge {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    .s-plan-table--count-4 .s-plan-table__actions .button {
+      padding-inline: 0;
+      font-size: var(--font-size-xs);
+    }
+  }
+}

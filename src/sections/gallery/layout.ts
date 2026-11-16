@@ -41,7 +41,7 @@ export function sliderPages(count: number): number[] {
   return Array.from({ length: pages }, (_, index) => Math.floor(count / pages) + (index < count % pages ? 1 : 0));
 }
 
-/** Tiles of a slider page on wide screens, by the number of photos on it (see _gallery.scss). */
+/** Tiles of a slider page on wide screens, by the number of photos on it (see gallery/_slider.scss). */
 export type SliderTile = "big" | "wide" | "tall" | "small" | "half";
 
 export const SLIDER_TILES: Record<number, readonly SliderTile[]> = {

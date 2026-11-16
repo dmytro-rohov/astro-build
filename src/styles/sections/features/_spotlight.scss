@@ -1,0 +1,96 @@
+// Features: spotlight (Spotlight.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // One card is raised above and below its row (negative margins on a stretched card),
+  // with a stronger icon and an accent bar at the bottom.
+  .s-features-spotlight {
+    --lift: 0rem;
+
+    row-gap: calc(var(--spacing-xl) + var(--lift));
+    padding-block: var(--lift);
+  }
+
+  .s-features-spotlight__item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xl) var(--spacing-lg);
+    overflow: hidden;
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-features-spotlight--center .s-features-spotlight__item {
+    align-items: center;
+    text-align: center;
+  }
+
+  .s-features-spotlight--center .s-features-link {
+    align-self: center;
+  }
+
+  .s-features-spotlight__icon {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-block-end: var(--spacing-sm);
+
+    // Like .tag--primary: the item number stays 4.5:1 on the tint.
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    background: color-mix(in srgb, var(--color-action-primary) 12%, transparent);
+    border-radius: 50%;
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-features-spotlight__title {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-features-spotlight__item--active {
+    z-index: 1;
+    border-color: var(--color-border-default);
+    box-shadow: var(--elevation-card-hover);
+  }
+
+  .s-features-spotlight__item--active::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 0.3rem;
+    background: var(--color-action-primary);
+  }
+
+  // Filled icon with a double ring.
+  .s-features-spotlight__item--active .s-features-spotlight__icon {
+    width: 4.25rem;
+    height: 4.25rem;
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    box-shadow:
+      0 0 0 0.25rem var(--color-background-surface),
+      0 0 0 0.375rem var(--color-action-primary);
+  }
+
+  .s-features-spotlight__item--active .s-features-spotlight__title {
+    font-size: var(--font-size-xl);
+  }
+
+  @include mq(md) {
+    .s-features-spotlight {
+      --lift: var(--spacing-lg);
+    }
+
+    .s-features-spotlight__item--active {
+      margin-block: calc(-1 * var(--lift));
+      padding-block: calc(var(--spacing-xl) + var(--lift));
+    }
+  }
+}

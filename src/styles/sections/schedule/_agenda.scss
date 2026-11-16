@@ -1,0 +1,154 @@
+// Schedule: agenda (Agenda.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // v3.3: a row per day (the name on the left stays in view while its classes scroll by), the
+  // classes on a thin timeline: time, a dot on the line, the class. Phones: the name on top.
+  .s-agenda {
+    --agenda-time: 4.25rem;
+    --agenda-gap: var(--spacing-xl);
+
+    display: grid;
+    border-block-end: 1px solid var(--color-border-default);
+  }
+
+  .s-agenda__day {
+    display: grid;
+    gap: var(--spacing-md);
+    padding-block: var(--spacing-lg);
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-agenda__day-name {
+    font-size: var(--font-size-xl);
+    overflow-wrap: anywhere;
+  }
+
+  @include mq(md) {
+    .s-agenda__day {
+      grid-template-columns: 11rem minmax(0, 1fr);
+      gap: var(--spacing-xl);
+      padding-block: var(--spacing-xl);
+    }
+
+    .s-agenda__day-name {
+      position: sticky;
+      inset-block-start: calc(var(--header-offset, 4.5rem) + var(--spacing-lg));
+      align-self: start;
+    }
+  }
+
+  .s-agenda__list {
+    display: grid;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-agenda__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--agenda-time) minmax(0, 1fr);
+    gap: var(--spacing-xs) var(--agenda-gap);
+    padding-block: var(--spacing-xs) var(--spacing-lg);
+  }
+
+  .s-agenda__item:last-child {
+    padding-block-end: 0;
+  }
+
+  // The timeline in the gap between the time and the class: a line and a dot at every start.
+  .s-agenda__item::before,
+  .s-agenda__item::after {
+    content: "";
+    position: absolute;
+    inset-inline-start: calc(var(--agenda-time) + var(--agenda-gap) / 2);
+  }
+
+  .s-agenda__item::before {
+    inset-block: 0;
+    width: 2px;
+    margin-inline-start: -1px;
+    background: var(--color-border-default);
+  }
+
+  .s-agenda__item:first-child::before {
+    inset-block-start: 0.85rem;
+  }
+
+  .s-agenda__item:last-child::before {
+    inset-block-end: auto;
+    height: 0.85rem;
+  }
+
+  .s-agenda__item:only-child::before {
+    display: none;
+  }
+
+  .s-agenda__item::after {
+    inset-block-start: calc(var(--spacing-xs) + 0.45rem);
+    width: 0.75rem;
+    height: 0.75rem;
+    margin-inline-start: -0.375rem;
+    background: var(--color-action-primary);
+    border-radius: var(--radius-full);
+  }
+
+  .s-agenda__time {
+    display: grid;
+    align-content: start;
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-agenda__end {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+  }
+
+  .s-agenda__body {
+    display: grid;
+    gap: 0.125rem;
+    min-width: 0;
+  }
+
+  .s-agenda__title {
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
+  }
+
+  .s-agenda__meta {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    overflow-wrap: anywhere;
+  }
+
+  .s-agenda__level {
+    grid-column: 2;
+    justify-self: start;
+    max-width: 100%;
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+  }
+
+  @include mq(md) {
+    .s-agenda__item {
+      grid-template-columns: var(--agenda-time) minmax(0, 1fr) auto;
+    }
+
+    .s-agenda__level {
+      grid-column: auto;
+      justify-self: end;
+      max-width: 10rem;
+      text-align: end;
+    }
+  }
+}

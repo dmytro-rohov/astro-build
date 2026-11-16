@@ -117,4 +117,193 @@
     object-fit: cover;
   }
 
+  // ---------- hero: centered ----------
+  .s-hero__header .s-header__title {
+    font-size: clamp(var(--font-size-4xl), 7vw, var(--font-size-6xl));
+    line-height: var(--line-height-none);
+  }
+
+  .s-hero-centered .s-header {
+    max-width: none;
+  }
+
+  // ---------- hero: cover image ----------
+  .s-hero--cover-image {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+  }
+
+  .s-hero--cover-image.s-hero-cover--with-image {
+    min-height: var(--hero-min-height);
+    display: grid;
+    align-items: center;
+  }
+
+  .s-hero-cover__media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  .s-hero-cover__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  // Overlay keeps light text readable (≥ 4.5:1) on any photo.
+  .s-hero-cover__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-background-primary) 82%, transparent);
+  }
+
+  .s-hero-cover__content {
+    max-width: 42rem;
+  }
+
+  .s-hero-cover__content--center {
+    margin-inline: auto;
+  }
+
+  // ---------- hero: panel ----------
+  .s-hero--panel {
+    padding-block: 0;
+  }
+
+  .s-hero--panel > .container {
+    width: 100%;
+  }
+
+  .s-hero-panel {
+    display: grid;
+  }
+
+  .s-hero-panel__text {
+    display: flex;
+    align-items: center;
+    padding: calc(var(--spacing-3xl) * var(--section-fluid)) var(--spacing-md);
+  }
+
+  .s-hero-panel__content {
+    width: 100%;
+    max-width: 36rem;
+  }
+
+  .s-hero-panel__media {
+    min-height: 16rem;
+  }
+
+  // v3.3, phones and tablets: headline first, then the photo edge to edge, then the buttons and
+  // facts — the text blocks dissolve into one grid on the section's tone.
+  @include mq-down(lg) {
+    .s-hero-panel {
+      gap: var(--spacing-xl);
+      padding-block: calc(var(--spacing-3xl) * var(--section-fluid));
+    }
+
+    .s-hero-panel__text,
+    .s-hero-panel__content {
+      display: contents;
+    }
+
+    .s-hero-panel__content > * {
+      padding-inline: var(--spacing-md);
+    }
+
+    .s-hero-panel__media {
+      order: 1;
+    }
+
+    .s-hero-panel__content > .s-actions {
+      order: 2;
+    }
+
+    .s-hero-panel__content > .s-highlights {
+      order: 3;
+    }
+  }
+
+  .s-hero-panel__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @include mq(lg) {
+    .s-hero-panel {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      min-height: var(--hero-min-height);
+    }
+
+    .s-hero-panel__media {
+      order: 0;
+    }
+
+    .s-hero-panel__text {
+      justify-content: flex-end;
+      padding: var(--spacing-4xl) var(--spacing-3xl);
+    }
+
+    .s-hero-panel--image-left .s-hero-panel__media {
+      order: -1;
+    }
+
+    .s-hero-panel--image-left .s-hero-panel__text {
+      justify-content: flex-start;
+    }
+
+    .s-hero-panel--no-image .s-hero-panel {
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+
+    .s-hero-panel--no-image .s-hero-panel__text {
+      justify-content: center;
+    }
+  }
+
+  // ---------- hero: minimal ----------
+  .s-hero-minimal__header {
+    max-width: none;
+  }
+
+  .s-hero-minimal__header .s-header__title {
+    max-width: 18ch;
+    font-size: clamp(var(--font-size-4xl), 9vw, var(--font-size-7xl));
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  .s-hero-minimal__rule {
+    height: 1px;
+    background: var(--color-border-strong);
+  }
+
+  .s-hero-minimal__bottom {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  .s-hero-minimal__description {
+    max-width: 38rem;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .s-hero-minimal .s-highlights {
+    padding-block-start: 0;
+    border-block-start: 0;
+  }
+
+  @include mq(lg) {
+    .s-hero-minimal__bottom {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      align-items: end;
+    }
+  }
 }

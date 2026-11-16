@@ -16,6 +16,8 @@ import { t } from "@/i18n";
 import { clock } from "@/site/open-now";
 import { addressLines, directionsUrl, weekHours } from "@/site/hours";
 import type { SectionOf } from "@/site/types";
+import "@/styles/sections/hours-location/_shared.scss";
+import "@/styles/sections/hours-location/_week-strip.scss";
 
 export interface Props {
   section: SectionOf<"hours-location">;

@@ -1,0 +1,125 @@
+// Schedule: Sass helpers of the variants (no CSS output).
+@use "../../abstracts/mixins" as *;
+
+// Hidden but read by screen readers (the utility class, for elements that are visible on other screens).
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+// Week, desktops: one column per day under one row of header strips.
+@mixin week-columns($board) {
+  #{$board} {
+    grid-template-columns: repeat(var(--week-days, 1), minmax(0, 1fr));
+  }
+
+  #{$board} .s-week__day {
+    grid-template-columns: none;
+  }
+
+  #{$board} .s-week__day + .s-week__day {
+    border-block-start: 0;
+    border-inline-start: 1px solid var(--color-border-default);
+  }
+
+  #{$board} .s-week__day-title {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: center;
+  }
+
+  #{$board} .s-week__list {
+    grid-template-columns: none;
+    padding: var(--spacing-sm);
+  }
+}
+
+// Matrix rows as cards (phones and tablets, with six or seven days also small laptops): a line
+// per day with the day name, free days left out.
+@mixin matrix-cards($table) {
+  #{$table},
+  #{$table} tbody {
+    display: grid;
+    align-items: start;
+    gap: var(--spacing-md);
+  }
+
+  #{$table} thead {
+    @include visually-hidden;
+  }
+
+  #{$table} tr {
+    display: grid;
+    align-content: start;
+    overflow: clip;
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  #{$table} tbody > tr > * {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: 0;
+  }
+
+  #{$table} .s-matrix__name {
+    background: color-mix(in srgb, var(--color-action-primary) 13%, transparent);
+    font-size: var(--font-size-lg);
+  }
+
+  #{$table} tbody .s-matrix__cell {
+    display: grid;
+    gap: var(--spacing-xs) var(--spacing-md);
+    text-align: start;
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  #{$table} tbody .s-matrix__cell--empty {
+    display: none;
+  }
+
+  #{$table} .s-matrix__cell-day {
+    display: block;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+
+  #{$table} .s-matrix__slots {
+    gap: var(--spacing-sm);
+  }
+
+  // Wider phones: the day name in a column of its own; from tablets two cards a row.
+  @include mq(sm) {
+    #{$table} tbody .s-matrix__cell {
+      grid-template-columns: 8rem minmax(0, 1fr);
+    }
+
+    #{$table} .s-matrix__cell-day {
+      padding-block-start: 0.15em;
+    }
+  }
+
+  @include mq(md) {
+    #{$table} tbody {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+// Tabs: the short day name instead of the long one (which stays for screen readers).
+@mixin short-day-names($tabs) {
+  #{$tabs} .s-day-tabs__long {
+    @include visually-hidden;
+  }
+
+  #{$tabs} .s-day-tabs__short {
+    display: inline;
+  }
+}

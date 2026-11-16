@@ -8,6 +8,8 @@ import Stack from "@/components/layouts/Stack.astro";
 import Card from "@/components/ui/Card.astro";
 import { teamColumns } from "@/sections/team/layout";
 import type { SectionOf } from "@/site/types";
+import "@/styles/sections/team/_shared.scss";
+import "@/styles/sections/team/_cards.scss";
 
 export interface Props {
   section: SectionOf<"team">;

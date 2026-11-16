@@ -7,6 +7,8 @@ import MemberLinks from "@/sections/team/MemberLinks.astro";
 import Stack from "@/components/layouts/Stack.astro";
 import { spotlightOrder, teamColumns } from "@/sections/team/layout";
 import type { VariantOf } from "@/site/types";
+import "@/styles/sections/team/_shared.scss";
+import "@/styles/sections/team/_spotlight.scss";
 
 export interface Props {
   section: VariantOf<"team", "spotlight">;

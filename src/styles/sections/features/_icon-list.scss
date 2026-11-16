@@ -1,0 +1,52 @@
+// Features: icon-list (IconList.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // v3.3: a hairline above every item gives the list rows without turning it into cards.
+  .s-icon-list {
+    display: grid;
+    gap: var(--spacing-lg) var(--spacing-2xl);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  @include mq(md) {
+    .s-icon-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .s-icon-list__item {
+    display: flex;
+    gap: var(--spacing-md);
+    padding-block-start: var(--spacing-lg);
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-icon-list__icon {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: var(--color-action-primary);
+    background: color-mix(in srgb, var(--color-action-primary) 12%, transparent);
+    border-radius: var(--radius-button);
+  }
+
+  .s-icon-list__text {
+    display: grid;
+    gap: var(--spacing-xs);
+    min-width: 0;
+  }
+
+  .s-icon-list__title {
+    font-size: var(--font-size-lg);
+  }
+
+  .s-icon-list__description {
+    color: var(--color-text-secondary);
+  }
+}

@@ -1,0 +1,183 @@
+// Section type pricing (v3.3: four more layouts), one stylesheet per variant.
+// This one: cards and compact (Plans.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-plans {
+    display: grid;
+    gap: var(--spacing-xl);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  // v3.3: one or two cards do not stretch over the whole container.
+  .s-plans--cards.s-plans--count-1 {
+    width: 100%;
+    max-width: 30rem;
+    margin-inline: auto;
+  }
+
+  .s-plans--cards.s-plans--count-2 {
+    width: 100%;
+    max-width: 52rem;
+    margin-inline: auto;
+  }
+
+  @include mq(md) {
+    .s-plans--cards.s-plans--count-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .s-plans--cards.s-plans--count-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .s-plans--cards.s-plans--count-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @include mq(lg) {
+    .s-plans--cards.s-plans--count-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+
+  .s-plan {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-xl);
+    overflow: hidden;
+    background: var(--color-background-surface);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+    transition:
+      transform var(--motion-duration-normal) var(--motion-easing-standard),
+      box-shadow var(--motion-duration-normal) var(--motion-easing-standard);
+  }
+
+  // An accent strip on top of every plan; the highlighted one is framed and lifted.
+  .s-plan::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 0.25rem;
+    background: color-mix(in srgb, var(--color-action-primary) 55%, transparent);
+  }
+
+  .s-plan:hover {
+    transform: translateY(-3px);
+  }
+
+  .s-plan--highlighted {
+    border: 2px solid var(--color-action-primary);
+    background:
+      radial-gradient(120% 60% at 100% 0%, color-mix(in srgb, var(--color-action-primary) 9%, transparent), transparent 70%),
+      var(--color-background-surface);
+  }
+
+  .s-plan--highlighted::before {
+    background: var(--color-action-primary);
+  }
+
+  @include mq(md) {
+    .s-plans--cards .s-plan--highlighted {
+      transform: translateY(-0.5rem);
+    }
+
+    .s-plans--cards .s-plan--highlighted:hover {
+      transform: translateY(-0.75rem);
+    }
+  }
+
+  .s-plan__badge {
+    place-self: start;
+    padding: 0.125rem var(--spacing-sm);
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    border-radius: var(--radius-button);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-plan__head {
+    display: grid;
+    gap: var(--spacing-xs);
+  }
+
+  .s-plan__name {
+    font-size: var(--font-size-xl);
+  }
+
+  .s-plan__description,
+  .s-plan__period {
+    color: var(--color-text-secondary);
+  }
+
+  .s-plan__price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--spacing-xs);
+  }
+
+  .s-plan__amount {
+    color: var(--color-action-primary);
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--heading-weight);
+    line-height: var(--line-height-none);
+    overflow-wrap: anywhere;
+  }
+
+  .s-plan__features {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg) 0 0;
+    margin: 0;
+    list-style: none;
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-plan__feature {
+    display: flex;
+    gap: var(--spacing-sm);
+  }
+
+  .s-plan__check {
+    flex-shrink: 0;
+    margin-block-start: 0.25em;
+    color: var(--color-action-primary);
+  }
+
+  .s-plan__action {
+    margin-block-start: auto;
+  }
+
+  // Cards end with full-width buttons on one line.
+  .s-plans--cards .s-plan__action .button {
+    width: 100%;
+  }
+
+  .s-plans--compact .s-plan {
+    display: grid;
+    gap: var(--spacing-md) var(--spacing-lg);
+  }
+
+  @include mq(md) {
+    .s-plans--compact .s-plan {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .s-plans--compact .s-plan__price {
+      justify-content: flex-end;
+    }
+
+    .s-plans--compact .s-plan__badge,
+    .s-plans--compact .s-plan__features,
+    .s-plans--compact .s-plan__action {
+      grid-column: 1 / -1;
+    }
+
+    // v3.3: features in two columns, so a long list does not leave the right half empty.
+    .s-plans--compact .s-plan__features {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--spacing-xl);
+    }
+  }
+}

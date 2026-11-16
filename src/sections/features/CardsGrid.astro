@@ -9,6 +9,8 @@ import Card from "@/components/ui/Card.astro";
 import { autoColumns } from "@/sections/features/layout";
 import { toneFor } from "@/site/theme";
 import type { VariantOf } from "@/site/types";
+import "@/styles/sections/features/_shared.scss";
+import "@/styles/sections/features/_cards-grid.scss";
 
 export interface Props {
   section: VariantOf<"features", "cards-grid">;

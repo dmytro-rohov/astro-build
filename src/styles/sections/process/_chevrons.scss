@@ -1,0 +1,132 @@
+// Process: chevrons (Chevrons.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // Ring tint from a light accent (first step) to the full accent (last one).
+  .s-process__step--tone-0 { --tone: 30%; }
+  .s-process__step--tone-1 { --tone: 47%; }
+  .s-process__step--tone-2 { --tone: 65%; }
+  .s-process__step--tone-3 { --tone: 82%; }
+  .s-process__step--tone-4 { --tone: 100%; }
+
+  // Centered rings and text: one column on phones and tablets, rows on wide screens.
+  .s-process__list--chevrons {
+    --ring: 5rem;
+
+    gap: var(--spacing-md);
+    text-align: center;
+  }
+
+  .s-process__list--chevrons .s-process__step {
+    --tint: color-mix(in srgb, var(--color-action-primary) var(--tone), var(--color-background-surface));
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .s-process__ring {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: var(--ring);
+    height: var(--ring);
+    color: var(--color-action-primary);
+    background: var(--color-background-surface);
+    border: calc(var(--ring) * 0.08) solid var(--tint);
+    border-radius: var(--radius-full);
+    box-shadow: var(--elevation-card);
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--line-height-none);
+  }
+
+  .s-process__arrow {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    color: var(--color-action-primary);
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-bold);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--line-height-none);
+    white-space: nowrap;
+  }
+
+  .s-process__chevron {
+    flex-shrink: 0;
+    width: 0.875rem;
+    height: 1.75rem;
+    fill: none;
+    stroke: var(--tint);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .s-process__list--chevrons .s-process__body {
+    max-width: 32rem;
+    margin-block-start: var(--spacing-md);
+  }
+
+  // Phones and tablets: the number under the ring, a chevron pointing down to the next step.
+  @include mq-down(lg) {
+    .s-process__arrow {
+      margin-block-start: var(--spacing-sm);
+    }
+
+    .s-process__arrow:not(:has(.s-process__arrow-number)),
+    .s-process__chevron {
+      display: none;
+    }
+
+    .s-process__list--chevrons .s-process__step:not(:last-child)::after {
+      width: 0.875rem;
+      height: 0.875rem;
+      margin-block-start: var(--spacing-lg);
+      border: solid var(--tint);
+      border-width: 0 0.1875rem 0.1875rem 0;
+      transform: rotate(45deg);
+      content: "";
+    }
+  }
+
+  // Wide screens: rings in a row, "01 ›" centered between neighbours (right after the ring at
+  // the end of a row).
+  @include mq(lg) {
+    .s-process__list--chevrons {
+      --ring: 6rem;
+
+      gap: var(--spacing-2xl) 0;
+    }
+
+    .s-process__arrow {
+      position: absolute;
+      inset-block-start: calc(var(--ring) / 2);
+      inset-inline-start: 100%;
+      width: max-content;
+      font-size: var(--font-size-lg);
+      transform: translate(-50%, -50%);
+    }
+
+    @include row-ends(".s-process__list--chevrons", " .s-process__arrow") {
+      inset-inline-start: calc(50% + var(--ring) / 2 + var(--spacing-sm));
+      transform: translateY(-50%);
+    }
+
+    .s-process__list--chevrons .s-process__body {
+      margin-block-start: var(--spacing-lg);
+      padding-inline: var(--spacing-md);
+    }
+  }
+
+  @include mq(xl) {
+    .s-process__list--chevrons {
+      --ring: 7rem;
+    }
+  }
+}

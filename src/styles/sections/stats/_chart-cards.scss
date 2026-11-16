@@ -1,0 +1,121 @@
+// Stats: chart-cards (ChartCards.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // 12 columns on desktops: 2, 3, 4 or 6 cards fill rows evenly; 5 cards are 3 + 2 wider ones.
+  .s-stats-chart {
+    display: grid;
+    gap: var(--spacing-lg);
+    margin: 0;
+  }
+
+  @include mq(md) {
+    .s-stats-chart {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .s-stats-chart--count-3 .s-stats-chart__card:last-child,
+    .s-stats-chart--count-5 .s-stats-chart__card:last-child {
+      grid-column: span 2;
+    }
+  }
+
+  @include mq(lg) {
+    .s-stats-chart {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    // Also resets the tablet span of an odd last card.
+    .s-stats-chart__card,
+    .s-stats-chart--count-3 .s-stats-chart__card:last-child,
+    .s-stats-chart--count-5 .s-stats-chart__card:last-child { grid-column: span 4; }
+    .s-stats-chart--count-2 .s-stats-chart__card { grid-column: span 6; }
+    .s-stats-chart--count-4 .s-stats-chart__card { grid-column: span 3; }
+    .s-stats-chart--count-5 .s-stats-chart__card:nth-child(n + 4) { grid-column: span 6; }
+  }
+
+  .s-stats-chart__card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: var(--spacing-lg);
+    background: var(--color-background-surface);
+    border: 1px solid var(--stats-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-stats-chart__label {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .s-stats-chart__value {
+    margin: var(--spacing-sm) 0 0;
+    font-family: var(--font-family-heading);
+    font-size: clamp(var(--font-size-4xl), 4vw, var(--font-size-5xl));
+    font-weight: var(--heading-weight);
+    line-height: var(--line-height-none);
+    letter-spacing: var(--heading-tracking);
+  }
+
+  .s-stats-chart__description {
+    margin: var(--spacing-sm) 0 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  // The chart sits at the bottom, so charts line up across a row of cards.
+  .s-stats-chart__chart {
+    margin: auto 0 0;
+    padding-block-start: var(--spacing-xl);
+  }
+
+  .s-stats-chart__svg {
+    display: block;
+    width: 100%;
+    height: 3.5rem;
+    overflow: visible;
+  }
+
+  @include mq(md) {
+    .s-stats-chart__svg { height: 4.5rem; }
+  }
+
+  .s-stats-chart__bar {
+    fill: color-mix(in srgb, var(--color-action-primary) 22%, transparent);
+  }
+
+  .s-stats-chart__bar--last {
+    fill: var(--color-action-primary);
+  }
+
+  .s-stats-chart__area {
+    fill: color-mix(in srgb, var(--color-action-primary) 12%, transparent);
+  }
+
+  .s-stats-chart__line {
+    fill: none;
+    stroke: var(--color-action-primary);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .s-stats-chart__dot-ring,
+  .s-stats-chart__dot {
+    stroke-linecap: round;
+  }
+
+  .s-stats-chart__dot-ring {
+    stroke: var(--color-background-surface);
+    stroke-width: 14;
+  }
+
+  .s-stats-chart__dot {
+    stroke: var(--color-action-primary);
+    stroke-width: 8;
+  }
+}

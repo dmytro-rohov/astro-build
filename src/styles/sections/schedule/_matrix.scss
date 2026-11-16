@@ -1,0 +1,136 @@
+// Schedule: matrix (Matrix.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // v3.3, "printed timetable": rows × days under a tinted header band, hairlines between the
+  // days. Below lg (with six or seven days below xl, their columns do not fit) every row becomes
+  // a card with a line per day: the day name in the cell stands in for the hidden column headers.
+  .s-matrix {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  // One or two day columns do not stretch over the whole width.
+  .s-matrix--days-1 {
+    max-width: 36rem;
+  }
+
+  .s-matrix--days-2 {
+    max-width: 52rem;
+  }
+
+  .s-matrix th,
+  .s-matrix td {
+    padding: var(--spacing-md) var(--spacing-sm);
+    vertical-align: top;
+    overflow-wrap: anywhere;
+  }
+
+  .s-matrix thead th {
+    padding-block: var(--spacing-sm);
+    color: var(--color-text-primary);
+    background: color-mix(in srgb, var(--color-action-primary) 13%, transparent);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-align: center;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
+
+  .s-matrix thead th:first-child {
+    width: 18%;
+    padding-inline-start: var(--spacing-lg);
+    text-align: start;
+    border-start-start-radius: var(--radius-button);
+    border-end-start-radius: var(--radius-button);
+  }
+
+  .s-matrix thead th:last-child {
+    border-start-end-radius: var(--radius-button);
+    border-end-end-radius: var(--radius-button);
+  }
+
+  .s-matrix tbody > tr > * {
+    border-block-end: 1px solid var(--color-border-default);
+  }
+
+  .s-matrix__name {
+    padding-inline-start: var(--spacing-lg);
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-base);
+    font-weight: var(--heading-weight);
+    line-height: var(--line-height-snug);
+    text-align: start;
+    hyphens: auto;
+  }
+
+  // Instructor names are short: larger, like a printed timetable (class names may be long).
+  .s-matrix--by-instructor .s-matrix__name {
+    font-size: var(--font-size-lg);
+  }
+
+  .s-matrix__cell {
+    text-align: center;
+    border-inline-start: 1px solid var(--color-border-default);
+  }
+
+  // A short dash marks a free day (decoration: the cell itself is empty).
+  .s-matrix__cell--empty::before {
+    content: "";
+    display: block;
+    width: 0.75rem;
+    height: 2px;
+    margin: 0.65em auto 0;
+    background: var(--color-border-strong);
+    border-radius: var(--radius-pill);
+  }
+
+  .s-matrix__cell-day {
+    display: none;
+  }
+
+  .s-matrix__slots {
+    display: grid;
+    gap: var(--spacing-md);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-matrix__slot {
+    display: grid;
+    gap: 0.125rem;
+    line-height: var(--line-height-snug);
+  }
+
+  .s-matrix__time {
+    font-size: var(--font-size-sm);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-matrix__lead {
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    hyphens: auto;
+  }
+
+  .s-matrix__meta {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+  }
+
+  @include mq-down(lg) {
+    @include matrix-cards(".s-matrix");
+  }
+
+  @include mq-down(xl) {
+    @include matrix-cards(":is(.s-matrix--days-6, .s-matrix--days-7)");
+  }
+}

@@ -1,0 +1,167 @@
+// Gallery: checkerboard (Checkerboard.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // A pair per photo: the photo and its text tile (tinted surface, a notch pointing at the
+  // photo). Phones: text under the photo; from 640px side by side, one pair per row with every
+  // other pair mirrored (--flip-md); from 1024px two pairs per row, every other row mirrored
+  // (--flip-lg). A photo without any text, not even alt text (--photo), spans the pair.
+  .s-checker {
+    --gap: var(--spacing-sm);
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-lg) var(--gap);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-checker__pair {
+    display: grid;
+    flex: 0 0 100%;
+    grid-template-areas:
+      "photo"
+      "text";
+    gap: var(--gap);
+    min-width: 0;
+  }
+
+  .s-checker__photo {
+    grid-area: photo;
+    aspect-ratio: 4 / 3;
+  }
+
+  .s-checker__pair--photo .s-checker__photo {
+    aspect-ratio: 2 / 1;
+  }
+
+  .s-checker__text {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    grid-area: text;
+    min-width: 0;
+    padding: var(--spacing-lg);
+    background: color-mix(in oklab, var(--color-action-primary) 9%, var(--color-background-surface));
+    border-radius: var(--radius-card);
+  }
+
+  // The notch: a small square turned 45°, half out of the tile, toward the photo.
+  .s-checker__text::before {
+    content: "";
+    position: absolute;
+    inset-block-start: -0.4rem;
+    inset-inline-start: calc(50% - 0.5rem);
+    width: 1rem;
+    height: 1rem;
+    background: inherit;
+    border-radius: 0.125rem;
+    rotate: 45deg;
+  }
+
+  .s-checker__caption {
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+  }
+
+  .s-checker__title {
+    font-size: clamp(var(--font-size-lg), 2vw, var(--font-size-2xl));
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  .s-checker__title--note {
+    font-weight: var(--font-weight-medium);
+    font-size: clamp(var(--font-size-base), 1.6vw, var(--font-size-xl));
+  }
+
+  .s-checker__description {
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+    overflow-wrap: anywhere;
+  }
+
+  .s-checker__link {
+    margin-block-start: var(--spacing-xs);
+  }
+
+  @include mq(sm) {
+    .s-checker {
+      row-gap: var(--gap);
+    }
+
+    .s-checker__pair {
+      grid-template: "photo text" / minmax(0, 1fr) minmax(0, 1fr);
+      aspect-ratio: 2 / 1;
+    }
+
+    .s-checker__pair--flip-md {
+      grid-template-areas: "text photo";
+    }
+
+    .s-checker__photo {
+      aspect-ratio: auto;
+    }
+
+    .s-checker__text {
+      align-items: center;
+      padding: var(--spacing-xl) var(--spacing-lg);
+      text-align: center;
+    }
+
+    .s-checker__text::before {
+      inset-block-start: calc(50% - 0.5rem);
+      inset-inline-start: -0.4rem;
+    }
+
+    .s-checker__pair--flip-md .s-checker__text::before {
+      inset-inline: auto -0.4rem;
+    }
+  }
+
+  @include mq(md) {
+    .s-checker {
+      --gap: var(--spacing-md);
+    }
+  }
+
+  @include mq(lg) {
+    .s-checker__pair {
+      flex-basis: calc((100% - var(--gap)) / 2);
+      grid-template-areas: "photo text";
+    }
+
+    .s-checker__pair--flip-lg {
+      grid-template-areas: "text photo";
+    }
+
+    .s-checker__pair .s-checker__text::before {
+      inset-inline: -0.4rem auto;
+    }
+
+    .s-checker__pair--flip-lg .s-checker__text::before {
+      inset-inline: auto -0.4rem;
+    }
+  }
+
+  @include mq(sm) {
+    .s-checker__pair--photo {
+      grid-template-areas: "photo photo";
+    }
+
+    .s-checker__pair--photo .s-checker__photo {
+      aspect-ratio: auto;
+    }
+  }
+}

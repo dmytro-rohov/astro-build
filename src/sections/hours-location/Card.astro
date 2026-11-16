@@ -9,6 +9,8 @@ import { site } from "virtual:site";
 import { t } from "@/i18n";
 import { addressLines } from "@/site/hours";
 import type { SectionOf } from "@/site/types";
+import "@/styles/sections/hours-location/_shared.scss";
+import "@/styles/sections/hours-location/_card.scss";
 
 export interface Props {
   section: SectionOf<"hours-location">;

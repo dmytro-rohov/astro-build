@@ -1,0 +1,141 @@
+// Team: color-tiles (ColorTiles.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Every tile gets a soft color of its own: the accent's hue turned around the color wheel in
+  // five steps at low chroma (an achromatic accent gives soft greys); light or dark per scheme.
+  // --hue is a plain number: relative colors give their channels as numbers. The portrait
+  // stands in an arch at the bottom of the tile.
+  .s-team-tiles__item {
+    --hue: 0;
+    --tile: light-dark(
+      oklch(from var(--color-action-primary) 93% calc(c * 0.3) calc(h + var(--hue))),
+      oklch(from var(--color-action-primary) 30% calc(c * 0.3) calc(h + var(--hue)))
+    );
+    --arch: light-dark(
+      oklch(from var(--color-action-primary) 86% calc(c * 0.4) calc(h + var(--hue))),
+      oklch(from var(--color-action-primary) 42% calc(c * 0.4) calc(h + var(--hue)))
+    );
+    --arch-ink: light-dark(
+      oklch(from var(--color-action-primary) 36% calc(c * 0.6) calc(h + var(--hue))),
+      oklch(from var(--color-action-primary) 93% calc(c * 0.25) calc(h + var(--hue)))
+    );
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  @each $step, $hue in (2: 72, 3: 144, 4: 216, 5: 288) {
+    .s-team-tiles__item:nth-child(5n + #{$step}) {
+      --hue: #{$hue};
+    }
+  }
+
+  // Landscape on phones (a shorter column), square from md.
+  .s-team-tiles__tile {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--tile);
+    border-radius: var(--radius-card);
+  }
+
+  .s-team-tiles__portrait {
+    width: auto;
+    height: 87.5%;
+    aspect-ratio: 4 / 5;
+    border-radius: 999px 999px 0 0;
+  }
+
+  @include mq(md) {
+    .s-team-tiles__tile {
+      aspect-ratio: 1;
+    }
+  }
+
+  .s-team-tiles__portrait.s-team-initials {
+    padding-block-start: 10%;
+    color: var(--arch-ink);
+    background: var(--arch);
+    font-size: clamp(var(--font-size-4xl), 4vw, var(--font-size-5xl));
+  }
+
+  .s-team-tiles.s-team-cols--3 {
+    max-width: 64rem;
+    margin-inline: auto;
+  }
+
+  .s-team-tiles__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  .s-team-tiles__name {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-team-tiles__role {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-team-tiles__bio {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .s-team-tiles__links {
+    margin-block-start: auto;
+    padding-block-start: var(--spacing-sm);
+  }
+
+  .s-team-tiles__links .s-team-links__link {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  // One or two people: the tile beside the text.
+  @include mq(md) {
+    .s-team-tiles--wide {
+      --columns: 1;
+    }
+
+    .s-team-tiles--wide > .s-team-tiles__item {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--spacing-2xl);
+      max-width: 48rem;
+    }
+
+    .s-team-tiles--wide .s-team-tiles__tile {
+      flex: 0 0 42%;
+    }
+
+    .s-team-tiles--wide .s-team-tiles__text {
+      flex: 1;
+    }
+
+    .s-team-tiles--wide .s-team-tiles__name {
+      font-size: var(--font-size-2xl);
+    }
+
+    .s-team-tiles--wide .s-team-tiles__links {
+      margin-block-start: 0;
+    }
+  }
+
+  @include mq(lg) {
+    .s-team-tiles--wide.s-team-cols--2 {
+      --columns: 2;
+    }
+  }
+}

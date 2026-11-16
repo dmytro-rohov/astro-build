@@ -16,6 +16,7 @@ import { site } from "virtual:site";
 import { format, t } from "@/i18n";
 import { addressLine, contactDetails, contactHeader, directionsHref } from "@/sections/contact/details";
 import type { VariantOf } from "@/site/types";
+import "@/styles/sections/contact/_map.scss";
 
 export interface Props {
   section: VariantOf<"contact", "map">;

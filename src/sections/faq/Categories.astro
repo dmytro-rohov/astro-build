@@ -15,6 +15,7 @@ import Questions from "@/sections/faq/Questions.astro";
 import { t } from "@/i18n";
 import { faqGroups } from "@/sections/faq/layout";
 import type { VariantOf } from "@/site/types";
+import "@/styles/sections/faq/_categories.scss";
 
 export interface Props {
   section: VariantOf<"faq", "categories">;

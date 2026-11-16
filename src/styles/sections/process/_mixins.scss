@@ -1,0 +1,30 @@
+// Process: Sass helpers of the variants (no CSS output).
+
+// Wide rows: the last step of each row (rows of `cols-N`, see layout.ts), e.g. to drop the
+// connector that would point past the end of the row.
+@mixin row-ends($list, $tail: "") {
+  #{$list}.s-process__list--cols-2 > :nth-child(2n)#{$tail},
+  #{$list}.s-process__list--cols-3 > :nth-child(3n)#{$tail},
+  #{$list}.s-process__list--cols-4 > :nth-child(4n)#{$tail},
+  #{$list}.s-process__list--cols-5 > :nth-child(5n)#{$tail},
+  #{$list} > :last-child#{$tail} {
+    @content;
+  }
+}
+
+// … and the first step of each row.
+@mixin row-starts($list, $tail: "") {
+  #{$list}.s-process__list--cols-3 > :nth-child(3n + 1)#{$tail},
+  #{$list}.s-process__list--cols-4 > :nth-child(4n + 1)#{$tail},
+  #{$list} > :first-child#{$tail} {
+    @content;
+  }
+}
+
+// Every row after the first one (the flowing variants are subgrids, so rows get a margin, not a gap).
+@mixin later-rows($list) {
+  #{$list}.s-process__list--cols-3 > :nth-child(n + 4),
+  #{$list}.s-process__list--cols-4 > :nth-child(n + 5) {
+    @content;
+  }
+}

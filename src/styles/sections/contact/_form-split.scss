@@ -1,0 +1,66 @@
+// Contact: form-split (FormSplit.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-contact-split {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  .s-contact-split__aside {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-2xl);
+  }
+
+  .s-contact-split__details {
+    display: grid;
+    gap: var(--spacing-lg);
+    padding-block-start: var(--spacing-xl);
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-contact-split__details-title {
+    color: var(--color-text-secondary);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+
+  .s-contact-split__form {
+    padding: clamp(var(--spacing-lg), 4vw, var(--spacing-2xl));
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  // Tablets: the details in two columns above the form.
+  @include mq(md) {
+    .s-contact-split .s-contact-details {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--spacing-lg);
+    }
+  }
+
+  @include mq(lg) {
+    .s-contact-split {
+      grid-template-columns: minmax(0, 0.85fr) minmax(28rem, 1.15fr);
+      align-items: start;
+      gap: var(--spacing-3xl);
+    }
+
+    // The details stay in view next to a long form.
+    .s-contact-split__aside {
+      position: sticky;
+      inset-block-start: calc(var(--header-offset, 4.5rem) + var(--spacing-lg));
+    }
+
+    .s-contact-split .s-contact-details {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+}

@@ -11,6 +11,8 @@ import Icon from "@/components/media/Icon.astro";
 import { t } from "@/i18n";
 import { featureRows } from "@/site/pricing";
 import type { SectionOf } from "@/site/types";
+import "@/styles/sections/pricing/_note.scss";
+import "@/styles/sections/pricing/_table.scss";
 
 export interface Props {
   section: SectionOf<"pricing">;

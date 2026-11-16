@@ -1,0 +1,105 @@
+// Team: cards (Cards.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-team__card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .s-team__photo {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+  }
+
+  // Initials fill the same 4:5 frame (cards side by side line up), on a soft diagonal of the
+  // accent. Shorter where nothing has to line up: on phones (one column) and when nobody has a photo.
+  .s-team__photo.s-team-initials {
+    aspect-ratio: 16 / 9;
+    background: linear-gradient(
+      150deg,
+      color-mix(in srgb, var(--color-action-primary) 22%, var(--color-background-surface)),
+      color-mix(in srgb, var(--color-action-primary) 7%, var(--color-background-surface))
+    );
+    font-size: clamp(var(--font-size-5xl), 6vw, var(--font-size-6xl));
+  }
+
+  @include mq(md) {
+    .s-team__photo.s-team-initials {
+      aspect-ratio: 4 / 5;
+    }
+
+    .s-team__list--initials .s-team__photo.s-team-initials {
+      aspect-ratio: 3 / 2;
+    }
+  }
+
+  .s-team__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-lg);
+  }
+
+  .s-team__name {
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-team__role {
+    color: var(--color-action-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-team__bio {
+    margin-block-start: var(--spacing-xs);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .s-team__links {
+    margin-block-start: auto;
+    padding-block-start: var(--spacing-md);
+  }
+
+  // One or two people: the photo beside the text, one card per row until both fit side by side.
+  @include mq(md) {
+    .s-team__list--wide {
+      --columns: 1;
+    }
+
+    .s-team__list--wide > .s-team__card {
+      flex-direction: row;
+      max-width: 48rem;
+    }
+
+    .s-team__list--wide .s-team__photo {
+      flex: 0 0 40%;
+      align-self: stretch;
+    }
+
+    .s-team__list--wide .s-team__body {
+      justify-content: center;
+      padding: var(--spacing-xl);
+    }
+
+    .s-team__list--wide .s-team__name {
+      font-size: var(--font-size-2xl);
+    }
+
+    .s-team__list--wide .s-team__links {
+      margin-block-start: 0;
+    }
+  }
+
+  @include mq(lg) {
+    .s-team__list--wide.s-team-cols--2 {
+      --columns: 2;
+    }
+  }
+}

@@ -2,11 +2,12 @@
 /**
  * Click-to-load frame of an allowed embed (src/site/embeds.ts), used by the embed section and
  * the contact map. Nothing is loaded from the provider until the visitor clicks (privacy);
- * without JavaScript the link opens it in a new tab. Styles: `s-embed__*` in _blocks.scss.
+ * without JavaScript the link opens it in a new tab. Styles: _embed-frame.scss.
  */
 import Stack from "@/components/layouts/Stack.astro";
 import { format, t } from "@/i18n";
 import { embedProvider } from "@/site/embeds";
+import "@/styles/sections/_embed-frame.scss";
 
 export interface Props {
   /** Embed URL, validated by the schema. */

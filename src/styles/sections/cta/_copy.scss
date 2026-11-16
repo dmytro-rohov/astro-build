@@ -1,0 +1,71 @@
+// CTA: the text block of rings, gradient-cards, faces and band-card (Copy.astro).
+@use "../../abstracts/layers";
+
+@layer widgets {
+  // The brand pair of the section's palette. In accent sections it is already swapped (the
+  // accent palette's action color is the ink), so a brand card there turns into the ink (white
+  // on most accents) with brand-colored text, and the light cards ("paper") do the same.
+  .s-cta {
+    --cta-brand: var(--color-action-primary);
+    --cta-ink: var(--color-action-primary-text);
+  }
+
+  .s-cta-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    max-width: 40rem;
+  }
+
+  .s-cta-copy--center {
+    align-items: center;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .s-cta-copy__title {
+    font-size: clamp(var(--font-size-3xl), 4vw, var(--font-size-5xl));
+    line-height: var(--line-height-tight);
+    text-wrap: balance;
+    hyphens: auto;
+  }
+
+  .s-cta-copy__description {
+    max-width: 36rem;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .s-cta-copy__actions {
+    align-self: stretch;
+    margin-block-start: var(--spacing-sm);
+  }
+
+  // The knob at the end of the main button: the button's colors swapped.
+  .s-cta-copy__arrowed {
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding-inline-end: 0.375rem;
+  }
+
+  .s-cta-copy__knob {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--color-action-primary);
+    background: var(--color-action-primary-text);
+    border-radius: var(--radius-button);
+  }
+
+  .s-cta-copy__knob svg {
+    transition: translate var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .s-cta-copy__arrowed:hover .s-cta-copy__knob svg {
+    translate: 0.15em 0;
+  }
+}

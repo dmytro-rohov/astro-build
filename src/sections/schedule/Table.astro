@@ -9,6 +9,8 @@ import Stack from "@/components/layouts/Stack.astro";
 import { t } from "@/i18n";
 import { scheduleByDay } from "@/site/schedule";
 import type { SectionOf } from "@/site/types";
+import "@/styles/sections/schedule/_shared.scss";
+import "@/styles/sections/schedule/_table.scss";
 
 export interface Props {
   section: SectionOf<"schedule">;

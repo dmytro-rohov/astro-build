@@ -1,0 +1,134 @@
+// Process: steps (Process.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // Phones: icon (a dot without one) and a line down the left, the big number next to the icon.
+  .s-process__list--steps {
+    gap: 0;
+  }
+
+  .s-process__list--steps .s-process__step {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    column-gap: var(--spacing-md);
+    padding-block-end: var(--spacing-xl);
+  }
+
+  .s-process__list--steps .s-process__step:last-child {
+    padding-block-end: 0;
+  }
+
+  .s-process__list--steps .s-process__marker {
+    display: contents;
+  }
+
+  .s-process__list--steps .s-process__icon {
+    display: grid;
+    grid-area: 1 / 1;
+    place-items: center;
+    place-self: center;
+    width: 3rem;
+    height: 3rem;
+    color: var(--color-action-primary);
+    background: color-mix(in srgb, var(--color-action-primary) 12%, transparent);
+    border-radius: var(--radius-full);
+  }
+
+  .s-process__list--steps .s-process__icon--dot {
+    width: 0.875rem;
+    height: 0.875rem;
+    background: var(--color-action-primary);
+    box-shadow: 0 0 0 0.3125rem color-mix(in srgb, var(--color-action-primary) 18%, transparent);
+  }
+
+  .s-process__list--steps .s-process__index {
+    grid-area: 1 / 2;
+    align-self: center;
+    color: var(--color-action-primary);
+    font-family: var(--font-family-heading);
+    font-size: clamp(var(--font-size-3xl), 4vw, var(--font-size-5xl));
+    font-weight: var(--heading-weight);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--line-height-none);
+    letter-spacing: -0.02em;
+  }
+
+  .s-process__list--steps .s-process__body {
+    grid-area: 2 / 2;
+    padding-block-start: var(--spacing-sm);
+  }
+
+  // The connecting line: down to the next icon here, on to the next step on wider screens.
+  .s-process__list--steps .s-process__marker::after {
+    grid-area: 2 / 1;
+    justify-self: center;
+    width: 2px;
+    margin-block: var(--spacing-sm) calc(var(--spacing-sm) - var(--spacing-xl));
+    background: linear-gradient(var(--color-action-primary), var(--color-border-default));
+    content: "";
+  }
+
+  .s-process__list--steps .s-process__step:last-child .s-process__marker::after {
+    display: none;
+  }
+
+  @include mq(md) {
+    .s-process__list--steps {
+      gap: var(--spacing-2xl) var(--spacing-xl);
+    }
+
+    .s-process__list--steps .s-process__step {
+      display: block;
+      padding: 0;
+    }
+
+    // Icon, number and a line through the column gap up to the next step's icon.
+    .s-process__list--steps .s-process__marker {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      margin-block-end: var(--spacing-lg);
+      margin-inline-end: calc(-1 * var(--spacing-xl));
+    }
+
+    .s-process__list--steps .s-process__icon--dot {
+      display: none;
+    }
+
+    .s-process__list--steps .s-process__marker::after {
+      flex: 1;
+      height: 2px;
+      margin: 0 var(--spacing-md) 0 0;
+      background: linear-gradient(to right, var(--color-action-primary), var(--color-border-default));
+    }
+
+    .s-process__list--steps .s-process__body {
+      padding: 0;
+    }
+  }
+
+  @include mq(md) {
+    @include mq-down(lg) {
+      .s-process__list--steps > :is(:nth-child(2n), :last-child) .s-process__marker {
+        margin-inline-end: 0;
+      }
+
+      .s-process__list--steps > :nth-child(2n) .s-process__marker::after {
+        visibility: hidden;
+      }
+    }
+  }
+
+  @include mq(lg) {
+    @include row-ends(".s-process__list--steps", " .s-process__marker") {
+      margin-inline-end: 0;
+    }
+
+    @include row-ends(".s-process__list--steps", " .s-process__marker::after") {
+      visibility: hidden;
+    }
+  }
+}

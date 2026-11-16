@@ -1,0 +1,93 @@
+// Section type cta: boxed and banner (v2, reworked in v3.3) and the v3.3 variants rings,
+// gradient-cards, faces and band-card, which share the text block of Copy.astro (_copy.scss).
+// This one: boxed (Boxed.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .cta {
+    position: relative;
+  }
+
+  .cta__box {
+    position: relative;
+  }
+
+  // v3.3: a glow of the brand color from the top edge over a fine dot grid that fades out
+  // toward the bottom, behind the centered text.
+  .cta__box--boxed {
+    --box-glow: color-mix(in srgb, var(--color-action-primary) 18%, transparent);
+
+    isolation: isolate;
+    overflow: clip;
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 0, var(--box-glow), transparent),
+      var(--color-background-surface);
+    border: 1px solid var(--color-border-default);
+    border-radius: calc(var(--radius-card) * 1.5);
+    box-shadow: var(--elevation-card);
+  }
+
+  .cta__box--boxed::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background-image: radial-gradient(color-mix(in srgb, var(--color-text-primary) 22%, transparent) 1px, transparent 1.5px);
+    background-size: 1.25rem 1.25rem;
+    mask-image: radial-gradient(ellipse 80% 90% at 50% 0, #000, transparent);
+  }
+
+  @include mq(md) {
+    .cta__box--boxed {
+      padding: var(--spacing-3xl) var(--spacing-2xl);
+    }
+  }
+
+  .cta__content {
+    max-width: 46rem;
+  }
+
+  .cta--align-center .cta__content {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .cta--align-center .cta__eyebrow {
+    margin-inline: auto;
+  }
+
+  .cta__title {
+    font-size: clamp(
+      var(--font-size-3xl),
+      5vw,
+      var(--font-size-5xl)
+    );
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  .cta__description {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .cta--align-center .cta__description {
+    margin-inline: auto;
+  }
+
+  .cta__actions {
+    align-items: center;
+  }
+
+  .cta--tone-inverse .cta__box--boxed {
+    --box-glow: color-mix(in srgb, var(--color-action-primary) 26%, transparent);
+
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 0, var(--box-glow), transparent),
+      color-mix(in srgb, var(--color-background-primary) 92%, var(--color-text-primary));
+  }
+}

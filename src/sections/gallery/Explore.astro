@@ -14,6 +14,8 @@ import Lightbox from "@/components/widgets/Lightbox.astro";
 import { tileSizes } from "@/sections/gallery/layout";
 import { format, t } from "@/i18n";
 import type { VariantOf } from "@/site/types";
+import "@/styles/sections/gallery/_shared.scss";
+import "@/styles/sections/gallery/_explore.scss";
 
 export interface Props {
   section: VariantOf<"gallery", "explore">;

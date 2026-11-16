@@ -30,7 +30,7 @@ test("pages of six; marquee loops of at least sixteen logos", () => {
   expect(pages([1, 2, 3, 4, 5, 6, 7, 8], 6)).toEqual([[1, 2, 3, 4, 5, 6], [7, 8]]);
   expect(pages([1, 2], 6)).toEqual([[1, 2]]);
   expect([2, 3, 5, 12, 16, 24].map((count) => marqueeRepeats(count))).toEqual([8, 6, 4, 2, 1, 1]);
-  // _logo-cloud.scss has a speed class for loops of 16–30 logos.
+  // logo-cloud/_marquee.scss has a speed class for loops of 16–30 logos.
   const loops = Array.from({ length: 23 }, (_, index) => (index + 2) * marqueeRepeats(index + 2));
   expect([Math.min(...loops), Math.max(...loops)]).toEqual([16, 30]);
 });

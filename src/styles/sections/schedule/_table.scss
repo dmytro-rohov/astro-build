@@ -1,0 +1,119 @@
+// Schedule: table (Table.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // v3.3: the table sits in a card; every day is a tinted header row with an accent edge.
+  .s-timetable__frame {
+    overflow: clip;
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-timetable {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .s-timetable th,
+  .s-timetable td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: start;
+    vertical-align: top;
+    border-block-start: 1px solid var(--color-border-default);
+    overflow-wrap: anywhere;
+  }
+
+  .s-timetable thead th {
+    padding-block: var(--spacing-md);
+    color: var(--color-text-secondary);
+    border-block-start: 0;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+
+  .s-timetable .s-timetable__day-title {
+    padding-block: var(--spacing-sm);
+    color: var(--color-text-primary);
+    background: color-mix(in srgb, var(--color-action-primary) 9%, transparent);
+    border-inline-start: 3px solid var(--color-action-primary);
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-lg);
+    font-weight: var(--heading-weight);
+  }
+
+  .s-timetable__time {
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-semibold);
+    white-space: nowrap;
+  }
+
+  .s-timetable__class {
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-timetable__meta {
+    color: var(--color-text-secondary);
+  }
+
+  @include mq(md) {
+    .s-timetable th:first-child,
+    .s-timetable td:first-child {
+      padding-inline-start: var(--spacing-lg);
+    }
+
+    .s-timetable th:last-child,
+    .s-timetable td:last-child {
+      padding-inline-end: var(--spacing-lg);
+    }
+  }
+
+  // Phones: every class becomes a small block (no horizontal scrolling).
+  @include mq-down(md) {
+    .s-timetable thead {
+      @include visually-hidden;
+    }
+
+    .s-timetable tr {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0.125rem var(--spacing-md);
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-block-start: 1px solid var(--color-border-default);
+    }
+
+    .s-timetable tr.s-timetable__day-row {
+      padding: 0;
+    }
+
+    .s-timetable__day:first-of-type > .s-timetable__day-row {
+      border-block-start: 0;
+    }
+
+    .s-timetable th,
+    .s-timetable td {
+      padding: 0;
+      border: 0;
+    }
+
+    .s-timetable .s-timetable__day-title {
+      grid-column: 1 / -1;
+      padding: var(--spacing-sm) var(--spacing-md);
+    }
+
+    .s-timetable__meta {
+      grid-column: 2;
+      font-size: var(--font-size-sm);
+    }
+
+    .s-timetable__meta:empty {
+      display: none;
+    }
+  }
+}

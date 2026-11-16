@@ -1,0 +1,73 @@
+// Gallery: masonry (Masonry.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // A grid of fine rows (--unit = a twentieth of a column width) with a column and a row span
+  // for every photo, phones (--c / --s, 2 columns) and wider screens (--wc / --ws, 2 or 3
+  // columns), from layout.ts. Dense placement fills each column from the top in content order.
+  .s-masonry {
+    container-type: inline-size;
+  }
+
+  .s-masonry__list {
+    --gap: var(--spacing-sm);
+    --unit: calc((100cqi - var(--gap)) / 40);
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: var(--unit);
+    grid-auto-flow: dense;
+    column-gap: var(--gap);
+    padding: 0;
+    margin: 0 0 calc(var(--gap) * -1);
+    list-style: none;
+  }
+
+  .s-masonry__item {
+    min-height: 0;
+    padding-block-end: var(--gap);
+  }
+
+  .s-masonry__figure {
+    position: relative;
+    height: 100%;
+    margin: 0;
+  }
+
+  @for $column from 1 through 2 {
+    .s-masonry__item--c#{$column} {
+      grid-column: $column;
+    }
+  }
+
+  @for $span from 12 through 32 {
+    .s-masonry__item--s#{$span} {
+      grid-row-end: span $span;
+    }
+  }
+
+  @include mq(md) {
+    .s-masonry__list {
+      --gap: var(--spacing-md);
+    }
+
+    .s-masonry--3 .s-masonry__list {
+      --unit: calc((100cqi - var(--gap) * 2) / 60);
+
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    @for $column from 1 through 3 {
+      .s-masonry__item--wc#{$column} {
+        grid-column: $column;
+      }
+    }
+
+    @for $span from 12 through 32 {
+      .s-masonry__item--ws#{$span} {
+        grid-row-end: span $span;
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+// CTA: Sass helpers of the variants (no CSS output).
+
+// A surface in one color with one ink (a brand card, a white card on the brand color): the
+// pair is a palette's accent and its button text, checked ≥ 4.5:1 like an accent section. The
+// tokens inside follow, so the eyebrow, buttons and focus rings turn into the ink.
+@mixin on-color($background, $ink) {
+  --color-text-primary: #{$ink};
+  --color-text-secondary: #{$ink};
+  --color-border-default: color-mix(in srgb, #{$ink} 30%, transparent);
+  --color-action-primary: #{$ink};
+  --color-action-primary-hover: color-mix(in srgb, #{$ink} 88%, #{$background});
+  --color-action-primary-text: #{$background};
+  --color-action-secondary: transparent;
+  --color-action-secondary-hover: color-mix(in srgb, #{$ink} 12%, transparent);
+  --color-action-secondary-text: #{$ink};
+  --color-background-muted: color-mix(in srgb, #{$ink} 12%, #{$background});
+  --color-focus-ring: #{$ink};
+
+  color: #{$ink};
+
+  // A tint of the ink under small text would cost contrast: outline only (as in accent sections).
+  .tag--primary {
+    background: transparent;
+    border-color: color-mix(in srgb, #{$ink} 45%, transparent);
+  }
+}

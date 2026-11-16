@@ -11,6 +11,8 @@ import Details from "@/sections/schedule/Details.astro";
 import { t } from "@/i18n";
 import { scheduleMatrix } from "@/site/schedule";
 import type { VariantOf } from "@/site/types";
+import "@/styles/sections/schedule/_shared.scss";
+import "@/styles/sections/schedule/_matrix.scss";
 
 export interface Props {
   section: VariantOf<"schedule", "matrix">;

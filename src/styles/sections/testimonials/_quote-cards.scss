@@ -1,0 +1,139 @@
+// Testimonials: quote-cards (QuoteCards.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // Centered cards with a quarter circle in the top corner holding the quote mark; one card on
+  // the brand color. Columns from cardColumns() (layout.ts): one row up to three, four as 2 × 2.
+  .s-quote-cards {
+    --columns: 1;
+    --gap: var(--spacing-lg);
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-xl) var(--gap);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-quote-cards > li {
+    flex: 0 0 calc((100% - (var(--columns) - 1) * var(--gap)) / var(--columns));
+    min-width: 0;
+  }
+
+  .s-quote-cards--1 > li {
+    max-width: 34rem;
+  }
+
+  .s-quote-cards--2 {
+    max-width: 56rem;
+    margin-inline: auto;
+  }
+
+  @include mq(md) {
+    .s-quote-cards--2,
+    .s-quote-cards--3 {
+      --columns: 2;
+    }
+  }
+
+  @include mq(lg) {
+    .s-quote-cards--3 {
+      --columns: 3;
+    }
+  }
+
+  .s-quote-card {
+    --corner: 4.5rem;
+    --avatar: 4rem;
+    --ring: var(--brand);
+    --ring-gap: var(--color-background-surface);
+
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-quote-card__figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    width: 100%;
+    margin: 0;
+    padding: calc(var(--corner) + var(--spacing-xs)) var(--spacing-lg) var(--spacing-xl);
+    text-align: center;
+  }
+
+  .s-quote-card__corner {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    width: var(--corner);
+    height: var(--corner);
+    padding: 1.1rem 0 0 1rem;
+    color: var(--ink);
+    background: var(--brand);
+    border-end-end-radius: 100%;
+  }
+
+  .s-quote-card__corner .s-quote-mark {
+    width: 1.75rem;
+  }
+
+  .s-quote-card__quote {
+    margin: 0;
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .s-quote-card__author {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.125rem;
+    margin-block-start: auto;
+    padding-block-start: var(--spacing-md);
+  }
+
+  .s-quote-card__avatar {
+    margin-block-end: var(--spacing-sm);
+    box-shadow:
+      0 0 0 0.2rem var(--ring-gap),
+      0 0 0 0.325rem var(--ring);
+  }
+
+  .s-quote-card__name {
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-lg);
+    font-weight: var(--heading-weight);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-quote-card__role {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  .s-quote-card--featured {
+    @include brand-surface;
+
+    --ring: var(--ink);
+    --ring-gap: var(--brand);
+
+    border-color: transparent;
+    box-shadow: 0 1.75rem 3.5rem -1.75rem color-mix(in srgb, var(--brand) 70%, transparent);
+  }
+
+  .s-quote-card--featured .s-quote-card__corner {
+    background: color-mix(in srgb, var(--ink) 16%, transparent);
+  }
+}

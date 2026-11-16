@@ -1,0 +1,121 @@
+// Section type contact (v3.3: four more layouts), one stylesheet per variant. The form itself
+// (fields, status, button) is styled in components/form/_contact-form.scss.
+// This one: the contact details as icon rows (DetailList.astro).
+@use "../../abstracts/layers";
+
+@layer widgets {
+  .s-contact-details {
+    display: grid;
+    gap: var(--spacing-md);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-contact-details__item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    min-width: 0;
+  }
+
+  .s-contact-details__icon {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: var(--color-action-primary);
+    background: color-mix(in oklab, var(--color-action-primary) 12%, transparent);
+    border-radius: var(--radius-card);
+  }
+
+  .s-contact-details__text {
+    display: grid;
+    min-width: 0;
+  }
+
+  .s-contact-details__label {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-contact-details__value {
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
+  }
+
+  .s-contact-details__line {
+    display: block;
+  }
+
+  .s-contact-details__value--link {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentcolor 30%, transparent);
+  }
+
+  .s-contact-details__value--link:hover {
+    color: var(--color-action-primary);
+    text-decoration-color: currentcolor;
+  }
+
+  // On the brand color: the brand's ink for everything (the contrast of a button's text).
+  .s-contact-details--brand {
+    gap: var(--spacing-lg);
+  }
+
+  .s-contact-details--brand .s-contact-details__icon {
+    color: var(--color-action-primary-text);
+    background: color-mix(in oklab, var(--color-action-primary-text) 16%, transparent);
+  }
+
+  .s-contact-details--brand .s-contact-details__label,
+  .s-contact-details--brand .s-contact-details__value {
+    color: var(--color-action-primary-text);
+  }
+
+  .s-contact-details--brand .s-contact-details__label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+
+  .s-contact-details--brand .s-contact-details__value--link {
+    text-decoration-color: color-mix(in srgb, currentcolor 45%, transparent);
+  }
+
+  .s-contact-details--brand .s-contact-details__value--link:hover {
+    color: var(--color-action-primary-text);
+    text-decoration-color: currentcolor;
+  }
+
+  // Compact: a small icon in front of the text, labels for screen readers only.
+  .s-contact-details--compact {
+    gap: var(--spacing-sm);
+  }
+
+  .s-contact-details--compact .s-contact-details__item {
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .s-contact-details--compact .s-contact-details__icon {
+    width: auto;
+    height: calc(1em * var(--line-height-snug));
+    background: none;
+  }
+
+  .s-contact-details--compact .s-contact-details__value {
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-regular);
+  }
+
+  .s-contact-details--compact .s-contact-details__value--link {
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-medium);
+  }
+}

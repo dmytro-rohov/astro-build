@@ -1,0 +1,116 @@
+// Logo cloud: color-tiles (ColorTiles.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Strong tiles made from the accent, five colors in turn (OKLCH: --light and the hue turned by
+  // --turn). "brand": shades near the accent's hue; "spectrum": hues around the color wheel.
+  // The chroma falls away for an achromatic accent (graphite tiles). A dark yellow turns olive:
+  // hues near yellow get lighter, and brand shades turn away from yellow (--away).
+  .s-logo-tiles {
+    --columns: 2;
+    --gap: var(--spacing-sm);
+    --logo-size: 3.25rem;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--gap);
+    max-width: calc(var(--columns) * 19rem);
+    padding: 0;
+    margin: 0 auto;
+    list-style: none;
+  }
+
+  .s-logo-tiles__tile {
+    --light: 0.5;
+    --turn: 0;
+    --away: 1;
+    --chroma: calc(min(c * 8, 1) * clamp(0.1, c, 0.18));
+    --hue: calc(h + var(--turn) * var(--away));
+    --yellow: max(0, cos((var(--hue) - 105) * 1deg));
+
+    display: grid;
+    flex: 0 0 calc((100% - (var(--columns) - 1) * var(--gap)) / var(--columns));
+    place-items: center;
+    min-width: 0;
+    aspect-ratio: 4 / 3;
+    padding: var(--spacing-lg);
+    background: oklch(from var(--color-action-primary) calc(var(--light) + 0.08 * var(--yellow)) var(--chroma) var(--hue));
+    border-radius: var(--radius-card);
+  }
+
+  // Turned up to 36° away from yellow (h ≈ 100): fully for red or green, barely for blue or gold.
+  .s-logo-tiles--brand .s-logo-tiles__tile {
+    --away: sin((h - 100) * 1deg);
+  }
+
+  @each $step, $light, $turn in (2 0.36 14, 3 0.58 26, 4 0.3 6, 5 0.44 36) {
+    .s-logo-tiles--brand .s-logo-tiles__tile:nth-child(5n + #{$step}) {
+      --light: #{$light};
+      --turn: #{$turn};
+    }
+  }
+
+  .s-logo-tiles--spectrum .s-logo-tiles__tile {
+    --light: 0.55;
+    --chroma: calc(0.16 + 0.03 * var(--yellow));
+  }
+
+  @each $step, $turn in (2: 72, 3: 144, 4: 216, 5: 288) {
+    .s-logo-tiles--spectrum .s-logo-tiles__tile:nth-child(5n + #{$step}) {
+      --turn: #{$turn};
+    }
+  }
+
+  .s-logo-tiles__tile:has(> .s-logo-link) {
+    padding: 0;
+  }
+
+  .s-logo-tiles .s-logo-link {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    padding: var(--spacing-lg);
+    border-radius: inherit;
+  }
+
+  // Knocked out by lightness: dark ink turns white, white (details, a plate) turns into the tile.
+  .s-logo-tiles .s-logo {
+    filter: grayscale(1) invert(1) brightness(2);
+    mix-blend-mode: screen;
+    transition: scale var(--motion-duration-normal) var(--motion-easing-standard);
+  }
+
+  .s-logo-tiles .s-logo-link:hover .s-logo {
+    scale: 1.06;
+  }
+
+  // Columns from tileColumns (layout.ts): --md-* on tablets, --lg-* on wide screens.
+  @include mq(md) {
+    .s-logo-tiles {
+      --logo-size: 4.25rem;
+    }
+
+    @each $columns in (2, 3) {
+      .s-logo-tiles--md-#{$columns} {
+        --columns: #{$columns};
+      }
+    }
+  }
+
+  @include mq(lg) {
+    @each $columns in (2, 3, 4, 6) {
+      .s-logo-tiles--lg-#{$columns} {
+        --columns: #{$columns};
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .s-logo-tiles .s-logo {
+      transition: none;
+    }
+  }
+}
