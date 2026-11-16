@@ -313,47 +313,6 @@
     color: var(--color-text-secondary);
   }
 
-  // ---------- gallery ----------
-  // The list has its own block name: .s-gallery / .s-gallery--<variant> are on the <section>.
-  .s-gallery__list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
-    gap: var(--spacing-md);
-    padding: 0;
-    margin: 0;
-    list-style: none;
-  }
-
-  .s-gallery__figure {
-    display: grid;
-    gap: var(--spacing-xs);
-    height: 100%;
-    margin: 0;
-  }
-
-  .s-gallery__image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: var(--radius-image);
-  }
-
-  .s-gallery__caption {
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-sm);
-  }
-
-  @include mq(lg) {
-    .s-gallery__list--mosaic {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
-    .s-gallery__item--large {
-      grid-column: span 2;
-      grid-row: span 2;
-    }
-  }
-
   // ---------- faq: two columns ----------
   .s-faq-columns {
     display: grid;

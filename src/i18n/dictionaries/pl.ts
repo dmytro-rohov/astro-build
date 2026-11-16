@@ -40,6 +40,7 @@ export default {
     embedNotice: "Ta treść pochodzi z serwisu {provider}. Po kliknięciu {provider} może zapisać pliki cookie i otrzyma Twój adres IP.",
     embedOpen: "Otwórz w {provider}",
     step: "Krok {number}",
+    gallery: "Galeria",
     reviews: { one: "{count} opinia", few: "{count} opinie", many: "{count} opinii", other: "{count} opinii" },
   },
 

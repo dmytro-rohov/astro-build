@@ -46,6 +46,7 @@ export const en = {
     embedNotice: "This content is loaded from {provider}. After you click, {provider} may set cookies and receive your IP address.",
     embedOpen: "Open in {provider}",
     step: "Step {number}",
+    gallery: "Gallery",
     /** Review count under an overall rating, by plural category (Intl.PluralRules). */
     reviews: { one: "{count} review", few: "{count} reviews", many: "{count} reviews", other: "{count} reviews" },
   },
