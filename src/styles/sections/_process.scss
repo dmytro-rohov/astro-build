@@ -376,7 +376,9 @@
       inset-inline-start: calc(50% - 1px);
     }
 
+    // Above the card connectors, which run under it to the line.
     .s-process__list--timeline .s-process__icon {
+      z-index: 1;
       grid-area: 1 / 2;
     }
 
@@ -402,26 +404,38 @@
       grid-area: 1 / 3;
     }
 
-    // A small pointer from the card to its marker.
-    .s-process__list--timeline .s-process__body::before {
+    // A connector from the line to the card, ending in a dot on the card's edge: drawn in
+    // line and accent colors, so it shows on every background whether cards have a border
+    // or only a shadow (a pointer in the card's own color vanished on the default one).
+    .s-process__list--timeline .s-process__body::before,
+    .s-process__list--timeline .s-process__body::after {
       position: absolute;
-      inset-block-start: calc(var(--timeline-marker) / 2 - 0.5rem);
-      inset-inline-end: calc(-0.5rem - 1px);
-      width: 1rem;
-      height: 1rem;
-      background: var(--color-background-surface);
-      border: 1px solid var(--card-border-color);
-      border-block-end-color: transparent;
-      border-inline-start-color: transparent;
-      transform: rotate(45deg);
       content: "";
     }
 
+    .s-process__list--timeline .s-process__body::before {
+      inset-block-start: calc(var(--timeline-marker) / 2 - 1px);
+      inset-inline-start: calc(100% + 1px);
+      width: calc(var(--spacing-xl) + var(--timeline-marker) / 2);
+      height: 2px;
+      background: var(--color-border-default);
+    }
+
+    .s-process__list--timeline .s-process__body::after {
+      inset-block-start: calc(var(--timeline-marker) / 2 - 0.25rem);
+      inset-inline-start: calc(100% + 1px - 0.25rem);
+      width: 0.5rem;
+      height: 0.5rem;
+      background: var(--color-action-primary);
+      border-radius: var(--radius-full);
+    }
+
     .s-process__list--timeline .s-process__step:nth-child(even) .s-process__body::before {
-      inset-inline: calc(-0.5rem - 1px) auto;
-      border-color: var(--card-border-color);
-      border-block-start-color: transparent;
-      border-inline-end-color: transparent;
+      inset-inline: auto calc(100% + 1px);
+    }
+
+    .s-process__list--timeline .s-process__step:nth-child(even) .s-process__body::after {
+      inset-inline: auto calc(100% + 1px - 0.25rem);
     }
   }
 
