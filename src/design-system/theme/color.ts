@@ -2,9 +2,11 @@
  * Color math for themes: hex ↔ OKLCH and WCAG contrast.
  * OKLCH keeps hue and chroma stable while lightness changes, so an accent can be
  * darkened or lightened for contrast without looking like a different color.
+ * Mixes use OKLab, the same space with cartesian a/b axes instead of chroma and hue.
  */
 
 export type Oklch = { l: number; c: number; h: number };
+type Oklab = { l: number; a: number; b: number };
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 
@@ -20,18 +22,24 @@ function rgbToHex([r, g, b]: [number, number, number]): string {
 const toLinear = (value: number) => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
 const fromLinear = (value: number) => (value <= 0.0031308 ? value * 12.92 : 1.055 * value ** (1 / 2.4) - 0.055);
 
-export function hexToOklch(hex: string): Oklch {
+function hexToOklab(hex: string): Oklab {
   const [r, g, b] = hexToRgb(hex).map(toLinear);
 
   const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
   const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
   const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
 
-  const L = 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s;
-  const A = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
-  const B = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+  return {
+    l: 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
+    a: 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
+    b: 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s,
+  };
+}
 
-  return { l: L, c: Math.sqrt(A * A + B * B), h: ((Math.atan2(B, A) * 180) / Math.PI + 360) % 360 };
+const labToLch = ({ l, a, b }: Oklab): Oklch => ({ l, c: Math.sqrt(a * a + b * b), h: ((Math.atan2(b, a) * 180) / Math.PI + 360) % 360 });
+
+export function hexToOklch(hex: string): Oklch {
+  return labToLch(hexToOklab(hex));
 }
 
 function oklchToLinearRgb({ l, c, h }: Oklch): [number, number, number] {
@@ -75,17 +83,23 @@ export function contrast(a: string, b: string): number {
   return (light + 0.05) / (dark + 0.05);
 }
 
-/** Mixes two colors in OKLCH (amount 0 → a, 1 → b). */
+/**
+ * Mixes two colors in OKLab (amount 0 → a, 1 → b), like CSS color-mix(in oklab).
+ * Not in OKLCH: white, black and greys have no real hue there (chroma ≈ 0, any
+ * angle), so the accent's hue turned towards that angle (blue + white → teal).
+ * In OKLab a neutral only moves lightness and chroma, the hue stays the accent's.
+ */
 export function mix(a: string, b: string, amount: number): string {
-  const x = hexToOklch(a);
-  const y = hexToOklch(b);
-  const hueDelta = ((((y.h - x.h) % 360) + 540) % 360) - 180;
+  const x = hexToOklab(a);
+  const y = hexToOklab(b);
 
-  return oklchToHex({
-    l: x.l + (y.l - x.l) * amount,
-    c: x.c + (y.c - x.c) * amount,
-    h: (x.h + hueDelta * amount + 360) % 360,
-  });
+  return oklchToHex(
+    labToLch({
+      l: x.l + (y.l - x.l) * amount,
+      a: x.a + (y.a - x.a) * amount,
+      b: x.b + (y.b - x.b) * amount,
+    }),
+  );
 }
 
 /** Same hue and chroma with a different OKLCH lightness. */
