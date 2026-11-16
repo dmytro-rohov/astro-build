@@ -69,4 +69,5 @@
 @use "./sections/team";
 @use "./sections/schedule";
 @use "./sections/testimonials";
+@use "./sections/logo-cloud";
 @layer reset, tokens, base, layout, components, widgets, utilities, state;

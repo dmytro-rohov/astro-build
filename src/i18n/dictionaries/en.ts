@@ -55,6 +55,8 @@ export const en = {
     next: "Next",
     label: "Scrollable list",
     page: "Show {number} of {count}",
+    /** Toggle of a moving band of logos (pressed = stopped). */
+    pause: "Pause scrolling",
   },
 
   common: {

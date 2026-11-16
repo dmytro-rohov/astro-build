@@ -48,6 +48,7 @@ export default {
     next: "Następne",
     label: "Przewijana lista",
     page: "Pokaż {number} z {count}",
+    pause: "Zatrzymaj przewijanie",
   },
 
   common: {

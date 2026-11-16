@@ -69,11 +69,21 @@ const allTokens = {
 /**
  * Partner logos (logo-cloud) are made for light backgrounds: on a dark palette
  * the muted row turns them into light silhouettes, and grid tiles stay light.
+ * v3.3: logos are blended into what is behind them ("logo-blend"), so a white plate
+ * behind a logo disappears: multiplied on light; on dark the logo is inverted by its
+ * lightness first (dark ink turns light, the white plate black) and screened — inner
+ * details stay cut out instead of filling up like a silhouette.
  */
 const logoVars = (palette: SemanticPalette): Record<string, TokenValue> =>
   relativeLuminance(palette.background.primary) < 0.2
-    ? { "logo-filter": "grayscale(1) brightness(0) invert(1)", "logo-filter-hover": "brightness(0) invert(1)", "logo-opacity": "0.8", "logo-tile": "#f5f5f4" }
-    : { "logo-filter": "grayscale(1)", "logo-filter-hover": "none", "logo-opacity": "0.75", "logo-tile": palette.background.surface };
+    ? {
+        "logo-filter": "grayscale(1) invert(1) brightness(1.8)",
+        "logo-filter-hover": "grayscale(1) invert(1) brightness(2)",
+        "logo-blend": "screen",
+        "logo-opacity": "0.8",
+        "logo-tile": "#f5f5f4",
+      }
+    : { "logo-filter": "grayscale(1)", "logo-filter-hover": "none", "logo-blend": "multiply", "logo-opacity": "0.75", "logo-tile": palette.background.surface };
 
 const shape = shapeTokens(theme.archetype);
 const flatTokens = { ...flatten(allTokens as unknown as TokenObject), ...logoVars(theme.light), ...shape };

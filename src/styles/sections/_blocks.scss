@@ -1,5 +1,5 @@
-// Section types added in v3.1: logo-cloud, embed, and the hero variants panel and minimal
-// (v3.3: stats, process, team and schedule have their own partials).
+// Section types added in v3.1: embed and the hero variants panel and minimal
+// (v3.3: stats, process, team, schedule and logo-cloud have their own partials).
 @use "../abstracts/mixins" as *;
 
 @layer widgets {
@@ -140,59 +140,6 @@
       grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
       align-items: end;
     }
-  }
-
-  // ---------- logo cloud ----------
-  .s-logos {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: var(--spacing-lg) var(--spacing-2xl);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .s-logos__image {
-    display: block;
-    width: auto;
-    max-width: 10rem;
-    height: 3rem;
-    object-fit: contain;
-  }
-
-  .s-logos--row .s-logos__image {
-    opacity: var(--logo-opacity);
-    filter: var(--logo-filter);
-    transition: opacity var(--motion-duration-fast) var(--motion-easing-standard), filter var(--motion-duration-fast) var(--motion-easing-standard);
-  }
-
-  .s-logos--row .s-logos__link:hover .s-logos__image,
-  .s-logos--row .s-logos__link:focus-visible .s-logos__image {
-    opacity: 1;
-    filter: var(--logo-filter-hover);
-  }
-
-  .s-logos--grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
-    gap: var(--spacing-md);
-  }
-
-  .s-logos--grid .s-logos__item {
-    display: grid;
-    place-items: center;
-    min-height: 6rem;
-    padding: var(--spacing-md);
-    background: var(--logo-tile);
-    border: 1px solid var(--color-border-default);
-    border-radius: var(--radius-card);
-  }
-
-  .s-logos__link {
-    display: block;
-    border-radius: var(--radius-control);
   }
 
   // ---------- embed ----------
