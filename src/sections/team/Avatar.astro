@@ -1,0 +1,36 @@
+---
+/** A member's photo, or their initials on a tinted shape when there is none (no empty frames). */
+import Img from "@/components/media/Img.astro";
+import { initials } from "@/sections/team/layout";
+import { getAsset } from "@/site/assets";
+
+export interface Props {
+  name: string;
+  /** Asset reference ("asset:…"). */
+  photo?: string;
+  aspect?: readonly [number, number];
+  widths: number[];
+  sizes: string;
+  /** Small avatars beside the name repeat it: decorative. Large portraits keep their alt text. */
+  decorative?: boolean;
+  class?: string;
+}
+
+const { name, photo: ref, aspect = [1, 1], widths, sizes, decorative = false, class: className } = Astro.props;
+const photo = ref ? getAsset(ref) : undefined;
+---
+
+{photo ? (
+  <Img
+    src={photo.image}
+    alt={photo.alt || name}
+    kind={decorative ? "decorative" : "content"}
+    aspect={aspect}
+    focal={photo.focal}
+    widths={widths}
+    sizes={sizes}
+    class={["s-team-photo", className].filter(Boolean).join(" ")}
+  />
+) : (
+  <span class:list={["s-team-initials", className]} aria-hidden="true">{initials(name)}</span>
+)}

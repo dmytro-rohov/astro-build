@@ -27,7 +27,11 @@ import HeroMinimal from "@/sections/hero/Minimal.astro";
 import ScheduleWeek from "@/sections/schedule/Week.astro";
 import ScheduleTable from "@/sections/schedule/Table.astro";
 import TeamCards from "@/sections/team/Cards.astro";
+import TeamColorTiles from "@/sections/team/ColorTiles.astro";
 import TeamCompact from "@/sections/team/Compact.astro";
+import TeamDirectory from "@/sections/team/Directory.astro";
+import TeamSocialCards from "@/sections/team/SocialCards.astro";
+import TeamSpotlight from "@/sections/team/Spotlight.astro";
 import Stats from "@/sections/stats/Stats.astro";
 import StatsBars from "@/sections/stats/Bars.astro";
 import StatsBento from "@/sections/stats/Bento.astro";
@@ -69,7 +73,7 @@ export const sectionComponents: Record<string, Record<string, SectionComponent>>
   contact: { "form-split": ContactFormSplit, "form-centered": ContactFormCentered },
   "hours-location": { card: HoursCard, compact: HoursCompact },
   schedule: { week: ScheduleWeek, table: ScheduleTable },
-  team: { cards: TeamCards, compact: TeamCompact },
+  team: { cards: TeamCards, compact: TeamCompact, "social-cards": TeamSocialCards, spotlight: TeamSpotlight, "color-tiles": TeamColorTiles, directory: TeamDirectory },
   stats: { row: Stats, cards: Stats, rings: StatsRings, bars: StatsBars, "chart-cards": StatsChartCards, highlight: StatsHighlight, bento: StatsBento },
   process: { steps: Process, timeline: Process, cards: Process, wave: ProcessWave, snake: ProcessSnake, chevrons: ProcessChevrons },
   "logo-cloud": { row: LogoCloud, grid: LogoCloud },

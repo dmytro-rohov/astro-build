@@ -1,10 +1,12 @@
 ---
+/** Portrait cards: photo 4:5 (initials on a tile without one), name, role, bio, links; 1–2 people get wide cards. */
 import SectionShell from "@/sections/_shared/SectionShell.astro";
 import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Avatar from "@/sections/team/Avatar.astro";
+import MemberLinks from "@/sections/team/MemberLinks.astro";
 import Stack from "@/components/layouts/Stack.astro";
 import Card from "@/components/ui/Card.astro";
-import Img from "@/components/media/Img.astro";
-import { getAsset } from "@/site/assets";
+import { teamColumns } from "@/sections/team/layout";
 import type { SectionOf } from "@/site/types";
 
 export interface Props {
@@ -14,26 +16,35 @@ export interface Props {
 
 const { section, headingLevel } = Astro.props;
 const { content, props } = section;
+const count = content.members.length;
+const initialsOnly = content.members.every((member) => !member.photo);
 const NameHeading = headingLevel === "h1" ? "h2" : "h3";
 ---
 
 <SectionShell id={section.id} type="team" variant="cards" tone={props.tone} spacing={props.spacing}>
-  <Stack space="xl">
+  <Stack space="2xl">
     <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
-    <ul class:list={["s-team__list", `s-team__list--count-${Math.min(content.members.length, 4)}`]}>
-      {content.members.map((member) => {
-        const photo = member.photo ? getAsset(member.photo) : undefined;
-        return (
-          <Card as="li" variant="elevated" padding="none" class="s-team__card">
-            {photo && <Img src={photo.image} alt={photo.alt || member.name} aspect={[4, 5]} focal={photo.focal} widths={[320, 480, 640]} sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" class="s-team__photo" />}
-            <Stack space="xs" class="s-team__body">
-              <NameHeading class="s-team__name">{member.name}</NameHeading>
-              <p class="s-team__role">{member.role}</p>
-              {member.bio && <p class="s-team__bio">{member.bio}</p>}
-            </Stack>
-          </Card>
-        );
-      })}
+    <ul class:list={["s-team-cols", `s-team-cols--${teamColumns(count)}`, "s-team__list", count <= 2 && "s-team__list--wide", initialsOnly && "s-team__list--initials"]}>
+      {content.members.map((member) => (
+        <Card as="li" variant="elevated" padding="none" class="s-team__card">
+          <Avatar
+            name={member.name}
+            photo={member.photo}
+            aspect={[4, 5]}
+            widths={[320, 480, 640]}
+            sizes={count <= 2 ? "(min-width: 768px) 20rem, 100vw" : "(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"}
+            class="s-team__photo"
+          />
+          <div class="s-team__body">
+            <NameHeading class="s-team__name" id={`${section.id}-${member.id}-name`}>{member.name}</NameHeading>
+            <p class="s-team__role">{member.role}</p>
+            {member.bio && <p class="s-team__bio">{member.bio}</p>}
+            {member.socials && member.socials.length > 0 && (
+              <MemberLinks links={member.socials} describedBy={`${section.id}-${member.id}-name`} class="s-team__links" />
+            )}
+          </div>
+        </Card>
+      ))}
     </ul>
   </Stack>
 </SectionShell>
