@@ -7,16 +7,19 @@
  *                         with the full Zod schema, errors go back to the AI)
  * - catalog.json          section and layout types, variants ("fits"), content
  *                         fields with limits, archetypes, font pairs, icons,
- *                         reserved slugs — everything an orchestrator needs to
- *                         pick two clearly different designs for a brief
+ *                         reserved slugs, site languages — everything an
+ *                         orchestrator needs to pick two clearly different
+ *                         designs for a brief
  *
  * Usage: npm run catalog [-- --out dist-catalog]
  */
+import fs from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import { z } from "zod";
 import { archetypes } from "../../src/design-system/archetypes";
 import { ACCENT_FAMILIES, accentFamily } from "../../src/design-system/theme/families";
-import { fontFamilies, fontPairs, pairScripts, type FontPairId } from "../../src/design-system/fonts/library";
+import { fontFamilies, fontPairs, pairScripts, scriptsForLanguage, type FontPairId } from "../../src/design-system/fonts/library";
 import { icons } from "../../src/design-system/icons/library";
 import { ENGINE_VERSION } from "../../src/site/engine";
 import { layoutTypes, sectionTypes } from "../../src/site/registry";
@@ -101,6 +104,26 @@ const variantsOf = (type: (typeof sectionTypes)[number] | (typeof layoutTypes)[k
     props: "props" in variant && variant.props ? z.toJSONSchema(variant.props as z.ZodType, { io: "input" }) : undefined,
   }));
 
+/**
+ * Site languages: one dictionary file per language (src/i18n/dictionaries/<code>.ts, the same list the site build
+ * uses). Names come from Intl, so adding a dictionary is all it takes for a language to show up here.
+ */
+const dictionaryDir = path.resolve("src/i18n/dictionaries");
+const languages = await Promise.all(
+  fs.readdirSync(dictionaryDir).filter((file) => file.endsWith(".ts") && file !== "index.ts").sort().map(async (file) => {
+    const code = file.slice(0, -3);
+    const { default: dictionary } = (await import(pathToFileURL(path.join(dictionaryDir, file)).href)) as { default: { meta: { ogLocale: string; dir: string } } };
+    return {
+      code,
+      name: new Intl.DisplayNames([code], { type: "language" }).of(code) ?? code,
+      englishName: new Intl.DisplayNames(["en"], { type: "language" }).of(code) ?? code,
+      ogLocale: dictionary.meta.ogLocale,
+      dir: dictionary.meta.dir,
+      scripts: scriptsForLanguage(code),
+    };
+  }),
+);
+
 const catalog = {
   engineVersion: ENGINE_VERSION,
   schemaVersion: SCHEMA_VERSION,
@@ -158,6 +181,7 @@ const catalog = {
   accentFamilies: ACCENT_FAMILIES,
   icons: Object.entries(icons).map(([name, icon]) => ({ name, category: icon.category, keywords: icon.keywords })),
   reservedSlugs: RESERVED_SLUGS,
+  languages,
 };
 
 const fullSchema = z.toJSONSchema(SiteSchema, { io: "input", unrepresentable: "any" }) as Record<string, unknown>;

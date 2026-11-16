@@ -40,6 +40,11 @@ test("catalog.json describes every section, variant and archetype; the LLM schem
   expect(catalog.archetypes.map((archetype: { id: string }) => archetype.id)).toEqual(ARCHETYPE_IDS);
   expect(catalog.fontPairs.length).toBeGreaterThan(0);
   expect(catalog.icons.length).toBeGreaterThan(0);
+  // Every dictionary is a site language, with its own name, Open Graph locale and the scripts its fonts need.
+  const languages = new Map(catalog.languages.map((language: { code: string }) => [language.code, language]));
+  expect(languages.get("pl")).toMatchObject({ name: "polski", englishName: "Polish", ogLocale: "pl_PL", dir: "ltr", scripts: ["latin", "latin-ext"] });
+  expect(languages.get("uk")).toMatchObject({ name: "українська", scripts: ["latin", "cyrillic"] });
+  expect([...languages.keys()]).toEqual(fs.readdirSync("src/i18n/dictionaries").filter((file) => file !== "index.ts").map((file) => file.replace(/\.ts$/, "")).sort());
   expect(full.properties.pages).toBeDefined();
   expect(llm).not.toMatch(/"pattern"/);
   expect(llm).toMatch(/max \d+ characters/);
