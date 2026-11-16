@@ -3,8 +3,8 @@
  * Location first: one framed widget with a side panel (address, route planner, phone, grouped
  * hours) next to a large map. The map is drawn (MapArt) until the visitor clicks "Show the map":
  * only then the mapEmbed provider is loaded (privacy; the CSP allows it for this variant only).
- * Without mapEmbed the drawn map stays, with the street at the pin; without an address only
- * the panel is shown.
+ * Without mapEmbed the drawn map stays, with the street at the pin; without an address and
+ * mapEmbed only the panel is shown.
  */
 import SectionShell from "@/sections/_shared/SectionShell.astro";
 import SectionHeader from "@/sections/_shared/SectionHeader.astro";
@@ -32,11 +32,12 @@ const rows = hoursRows(business.hours, t);
 const lines = addressLines(business.address);
 const directions = directionsUrl(business.address);
 const phone = content.showPhone ? business.phone : undefined;
-const hasMap = Boolean(directions);
 // Validated by the schema (a map provider); the provider decides the frame URL.
 const provider = content.mapEmbed ? embedProvider(content.mapEmbed) : undefined;
 const frameUrl = provider?.frameUrl(new URL(content.mapEmbed!));
+const hasMap = Boolean(directions || frameUrl);
 const vars = { provider: provider?.label ?? "" };
+const place = lines.join(", ") || (business.name ?? site.meta.name);
 const marker = business.address?.street ?? business.address?.city;
 ---
 
@@ -82,7 +83,7 @@ const marker = business.address?.street ?? business.address?.city;
         )}
       </div>
       {hasMap && (
-        <div class="s-hours-map__map" data-hours-map data-map-src={frameUrl} data-map-title={format(t.sections.mapTitle, { place: lines.join(", ") })}>
+        <div class="s-hours-map__map" data-hours-map data-map-src={frameUrl} data-map-title={format(t.sections.mapTitle, { place })}>
           <div class="s-hours-map__canvas">
             <MapArt class="s-hours-map__art" />
             {marker && <p class="s-hours-map__marker" aria-hidden="true">{marker}</p>}

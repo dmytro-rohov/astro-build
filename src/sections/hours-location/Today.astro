@@ -34,7 +34,7 @@ const phone = content.showPhone ? business.phone : undefined;
 <SectionShell id={section.id} type="hours-location" variant="today" tone={props.tone} spacing={props.spacing} width="md">
   <Stack space="xl">
     <SectionHeader eyebrow={content.eyebrow} title={content.title ?? t.sections.hoursTitle} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
-    <div class="s-open-sign">
+    <div class:list={["s-open-sign", props.align === "left" && "s-open-sign--start"]}>
       <Status look="band" />
       {week.length > 0 && (
         <table class="s-open-sign__week">

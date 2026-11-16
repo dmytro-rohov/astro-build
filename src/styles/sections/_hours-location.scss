@@ -227,6 +227,14 @@
       border-block-start: 0;
       border-inline-start: 1px solid var(--color-border-default);
     }
+
+    // Tablets: three cells of ~230px, the icon above the fact (rows of hours keep one line).
+    @include mq-down(lg) {
+      .s-info-bar__item {
+        grid-template-columns: none;
+        align-content: start;
+      }
+    }
   }
 
   @include mq(lg) {
@@ -316,6 +324,11 @@
     max-width: 34rem;
     margin-inline: auto;
     overflow: clip;
+  }
+
+  // Under a left-aligned header (prop align).
+  .s-open-sign--start {
+    margin-inline: 0;
   }
 
   .s-open-status--band {
@@ -1072,6 +1085,10 @@
     justify-content: center;
     gap: var(--spacing-sm) var(--spacing-xl);
     font-style: normal;
+  }
+
+  .s-week-strip__place--start {
+    justify-content: flex-start;
   }
 
   .s-week-strip__fact {

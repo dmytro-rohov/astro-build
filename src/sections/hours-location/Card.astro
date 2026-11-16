@@ -27,8 +27,8 @@ const hasPlace = addressLines(business.address).length > 0 || Boolean(content.sh
   <Stack space="xl">
     <SectionHeader eyebrow={content.eyebrow} title={content.title ?? t.sections.hoursTitle} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
     <div class:list={["s-hours-location__cards", !(hasHours && hasPlace) && "s-hours-location__cards--single"]}>
-      {hasHours && <Card variant="elevated" padding="lg" class="s-hours-location__card"><Details part="hours" showPhone={content.showPhone} headingLevel={inner} /></Card>}
-      {hasPlace && <Card variant="elevated" padding="lg" class="s-hours-location__card"><Details part="address" mapUrl={content.mapUrl} showPhone={content.showPhone} headingLevel={inner} /></Card>}
+      {hasHours && <Card variant="elevated" padding="lg"><Details part="hours" showPhone={content.showPhone} headingLevel={inner} /></Card>}
+      {hasPlace && <Card variant="elevated" padding="lg"><Details part="address" mapUrl={content.mapUrl} showPhone={content.showPhone} headingLevel={inner} /></Card>}
     </div>
   </Stack>
 </SectionShell>

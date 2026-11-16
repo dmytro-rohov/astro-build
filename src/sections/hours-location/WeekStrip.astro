@@ -68,7 +68,7 @@ const span = (opens: string, closes: string) => {
       </dl>
     )}
     {(lines.length > 0 || phone || content.mapUrl) && (
-      <address class="s-week-strip__place">
+      <address class:list={["s-week-strip__place", props.align === "left" && "s-week-strip__place--start"]}>
         {lines.length > 0 && (
           <span class="s-week-strip__fact">
             <Icon name="map-pin" size="1.125rem" class="s-week-strip__icon" />
