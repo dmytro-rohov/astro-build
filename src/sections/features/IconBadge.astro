@@ -1,0 +1,41 @@
+---
+/** Cards with a round icon badge on their top edge (the item number when there is no icon). */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import ItemLink from "@/sections/features/ItemLink.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Icon from "@/components/media/Icon.astro";
+import { autoColumns } from "@/sections/features/layout";
+import { toneFor } from "@/site/theme";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"features", "icon-badge">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const align = props.align ?? "left";
+const columns = props.columns ?? autoColumns(content.items.length);
+const ItemHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="features" variant="icon-badge" tone={props.tone ?? toneFor("features", undefined) ?? "muted"} spacing={props.spacing}>
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <ul class:list={["s-features-cols", `s-features-cols--${columns}`, "s-features-icon-badge", `s-features-icon-badge--${align}`]}>
+      {content.items.map((item, index) => (
+        <li class="s-features-icon-badge__item">
+          <span class="s-features-icon-badge__badge" aria-hidden="true">
+            {item.icon ? <Icon name={item.icon} size="1.5rem" /> : String(index + 1).padStart(2, "0")}
+          </span>
+          {item.eyebrow && <p class="s-features-eyebrow">{item.eyebrow}</p>}
+          <ItemHeading class="s-features-icon-badge__title" id={`${section.id}-${item.id}-title`}>{item.title}</ItemHeading>
+          <p class="s-features-icon-badge__description">{item.description}</p>
+          {item.link && <ItemLink link={item.link} describedBy={`${section.id}-${item.id}-title`} class="s-features-icon-badge__link" />}
+        </li>
+      ))}
+    </ul>
+  </Stack>
+</SectionShell>

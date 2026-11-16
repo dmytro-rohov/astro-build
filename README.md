@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **17 section types, 50 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **17 section types, 55 variants**, 3 navbars and 3 footers, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -161,7 +161,7 @@ the migrated site is validated like any build.
 | `hero` | `split-image`, `centered`, `cover-image` (photo behind text, always the dark palette), `panel` (edge-to-edge split), `minimal` (oversized type + facts) |
 | `about` | `image-side`, `centered` |
 | `services` | `cards`, `price-list` |
-| `features` | `cards-grid`, `icon-list` |
+| `features` | `cards-grid`, `icon-list`, `icon-badge` (round icon on the card edge, link per card), `staggered` (zigzag cards over a colored band), `orbit` (items around a central circle; a list on phones), `spotlight` (one raised card), `bento` (tiles of different sizes, one accent tile) |
 | `testimonials` | `cards`, `spotlight` |
 | `gallery` | `grid`, `mosaic` |
 | `pricing` | `cards`, `compact`, `featured-center` (recommended plan in the middle, on the brand color), `table` (comparison: features × plans), `split` (intro left, plan rows right), `minimal` (typographic columns, thin rules) |
@@ -702,7 +702,7 @@ and English keywords. `catalog.json` lists them for the orchestrator; site.json 
 them by name (`services` and `features` items, footer social links).
 
 `npm run build-icons` (part of `build:system`) puts only the icons the site needs into
-its sprite — the engine's own (`check`, `mail`, `map-pin`, `phone`) plus every `icon`
+its sprite — the engine's own (`arrow-right`, `check`, `mail`, `map-pin`, `phone`) plus every `icon`
 in site.json — so a page downloads a few KB. `ICONS=all npm run build-icons` builds the
 whole set. The Lucide license is copied to `public/icons/LICENSE-lucide.txt`.
 

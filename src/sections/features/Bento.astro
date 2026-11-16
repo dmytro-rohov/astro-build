@@ -1,0 +1,53 @@
+---
+/** Bento grid: a large first tile, one accent tile and smaller tiles that fill every row. */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import ItemLink from "@/sections/features/ItemLink.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Icon from "@/components/media/Icon.astro";
+import { bentoSizes } from "@/sections/features/layout";
+import { toneFor } from "@/site/theme";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"features", "bento">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const count = content.items.length;
+const sizes = bentoSizes(count);
+const accent = props.highlight && props.highlight <= count ? props.highlight - 1 : Math.min(2, count - 1);
+const ItemHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="features" variant="bento" tone={props.tone ?? toneFor("features", undefined) ?? "muted"} spacing={props.spacing}>
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
+    <ul class="s-features-bento">
+      {content.items.map((item, index) => (
+        <li
+          class:list={[
+            "s-features-bento__item",
+            sizes[index] && `s-features-bento__item--${sizes[index]}`,
+            // Tablets (2 columns): the last tile spans the row when it would stand alone.
+            index === count - 1 && count % 2 === 0 && "s-features-bento__item--fill",
+            index === accent && "s-features-bento__item--accent",
+          ]}
+        >
+          <span class="s-features-bento__icon" aria-hidden="true">
+            {item.icon ? <Icon name={item.icon} size="1.25rem" /> : String(index + 1).padStart(2, "0")}
+          </span>
+          <div class="s-features-bento__text">
+            {item.eyebrow && <p class="s-features-eyebrow">{item.eyebrow}</p>}
+            <ItemHeading class="s-features-bento__title" id={`${section.id}-${item.id}-title`}>{item.title}</ItemHeading>
+            <p class="s-features-bento__description">{item.description}</p>
+            {item.link && <ItemLink link={item.link} describedBy={`${section.id}-${item.id}-title`} class="s-features-bento__link" />}
+          </div>
+          {index === 0 && item.icon && <Icon name={item.icon} size="12rem" class="s-features-bento__watermark" />}
+        </li>
+      ))}
+    </ul>
+  </Stack>
+</SectionShell>

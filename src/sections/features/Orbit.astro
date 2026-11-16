@@ -1,0 +1,60 @@
+---
+/**
+ * Items left and right of a central circle that holds the section header (or the
+ * optional image, then the header sits above), joined by thin lines. Below lg it
+ * is a plain list under the header.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Icon from "@/components/media/Icon.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"features", "orbit">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const image = content.image ? getAsset(content.image) : undefined;
+const count = content.items.length;
+// The first half goes left; with an odd count the right side starts half an item lower.
+const half = Math.ceil(count / 2);
+const ItemHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="features" variant="orbit" tone={props.tone} spacing={props.spacing}>
+  <Stack space="2xl">
+    {image && <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align="center" />}
+    <div class:list={["s-features-orbit", count % 2 === 1 && "s-features-orbit--odd"]}>
+      <div class:list={["s-features-orbit__core", image && "s-features-orbit__core--image"]}>
+        {image ? (
+          image.image.format === "svg" ? (
+            <img class="s-features-orbit__logo" src={image.image.src} width={image.image.width} height={image.image.height} alt={image.alt} loading="lazy" decoding="async" />
+          ) : (
+            <Img src={image.image} alt={image.alt} kind={image.alt ? "content" : "decorative"} aspect={[1, 1]} focal={image.focal} widths={[320, 480, 640]} sizes="(min-width: 1024px) 19rem, 10rem" class="s-features-orbit__image" />
+          )
+        ) : (
+          <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align="center" class="s-features-orbit__header" />
+        )}
+      </div>
+      <ul class="s-features-orbit__list">
+        {content.items.map((item, index) => (
+          <li class:list={["s-features-orbit__item", index < half ? "s-features-orbit__item--start" : "s-features-orbit__item--end", index === half && "s-features-orbit__item--turn"]}>
+            <span class="s-features-orbit__icon" aria-hidden="true">
+              {item.icon ? <Icon name={item.icon} size="1.25rem" /> : index + 1}
+            </span>
+            <div class="s-features-orbit__text">
+              {item.eyebrow && <p class="s-features-eyebrow">{item.eyebrow}</p>}
+              <ItemHeading class="s-features-orbit__title">{item.title}</ItemHeading>
+              <p class="s-features-orbit__description">{item.description}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Stack>
+</SectionShell>

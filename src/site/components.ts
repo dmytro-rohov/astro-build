@@ -11,8 +11,13 @@ import CtaBanner from "@/sections/cta/Banner.astro";
 import CtaBoxed from "@/sections/cta/Boxed.astro";
 import FaqAccordion from "@/sections/faq/Accordion.astro";
 import FaqTwoColumn from "@/sections/faq/TwoColumn.astro";
+import FeaturesBento from "@/sections/features/Bento.astro";
 import FeaturesCardsGrid from "@/sections/features/CardsGrid.astro";
+import FeaturesIconBadge from "@/sections/features/IconBadge.astro";
 import FeaturesIconList from "@/sections/features/IconList.astro";
+import FeaturesOrbit from "@/sections/features/Orbit.astro";
+import FeaturesSpotlight from "@/sections/features/Spotlight.astro";
+import FeaturesStaggered from "@/sections/features/Staggered.astro";
 import GalleryGrid from "@/sections/gallery/Grid.astro";
 import HeroCentered from "@/sections/hero/Centered.astro";
 import HeroCoverImage from "@/sections/hero/CoverImage.astro";
@@ -55,7 +60,7 @@ export const sectionComponents: Record<string, Record<string, SectionComponent>>
   hero: { "split-image": HeroSplitImage, centered: HeroCentered, "cover-image": HeroCoverImage, panel: HeroPanel, minimal: HeroMinimal },
   about: { "image-side": AboutImageSide, centered: AboutCentered },
   services: { cards: ServicesCards, "price-list": ServicesPriceList },
-  features: { "cards-grid": FeaturesCardsGrid, "icon-list": FeaturesIconList },
+  features: { "cards-grid": FeaturesCardsGrid, "icon-list": FeaturesIconList, "icon-badge": FeaturesIconBadge, staggered: FeaturesStaggered, orbit: FeaturesOrbit, spotlight: FeaturesSpotlight, bento: FeaturesBento },
   testimonials: { cards: TestimonialsCards, spotlight: TestimonialsSpotlight },
   gallery: { grid: GalleryGrid, mosaic: GalleryGrid },
   pricing: { cards: PricingCards, compact: PricingCompact, "featured-center": PricingFeaturedCenter, table: PricingTable, split: PricingSplit, minimal: PricingMinimal },
