@@ -175,43 +175,40 @@ const sectionsOf = (type: (typeof sectionTypes)[number]) =>
     }),
   );
 
-// Two section types per page (pages are limited to 12). The first type on a
-// page has a required title (it renders the page's h1, also in MIN mode).
+// Sections are packed onto at most 12 pages (the schema's limit). The first section of a page
+// renders its h1, so every page starts with sections of types whose title is required; the
+// types with an optional title fill the remaining room. A type may span several pages.
 const titleRequired = (type: (typeof sectionTypes)[number]) => {
   const title = (type.content.shape as Record<string, z.ZodType>).title;
   return Boolean(title) && !title.safeParse(undefined).success;
 };
 const pageTypes = sectionTypes.filter((type) => !ONE_PER_PAGE_TYPES.includes(type.type));
-const leads = pageTypes.filter(titleRequired);
-const followers = pageTypes.filter((type) => !titleRequired(type));
-const groups: (typeof sectionTypes)[number][][] = [];
+const leadSections = pageTypes.filter(titleRequired).flatMap(sectionsOf);
+const followerSections = pageTypes.filter((type) => !titleRequired(type)).flatMap(sectionsOf);
 
-// A page holds at most 20 sections, and every page may also get a contact and a faq
-// section: two types share a page only when their sections fit in the other 18.
+// A page holds at most 20 sections, and every page may also get a contact and a faq section.
+const MAX_PAGES = 12;
 const PAGE_ROOM = 18;
-const sizeOf = (type: (typeof sectionTypes)[number]) => Object.keys(type.variants).length * 2;
-const take = (types: (typeof sectionTypes)[number][], room: number, fromEnd = false) => {
-  const index = fromEnd ? types.findLastIndex((type) => sizeOf(type) <= room) : types.findIndex((type) => sizeOf(type) <= room);
-  return index < 0 ? undefined : types.splice(index, 1)[0];
-};
-
-while (leads.length) {
-  const lead = leads.shift()!;
-  const room = PAGE_ROOM - sizeOf(lead);
-  const follower = take(followers, room) ?? (leads.length > followers.length ? take(leads, room, true) : undefined);
-  groups.push(follower ? [lead, follower] : [lead]);
+const perPage = Math.ceil(leadSections.length / MAX_PAGES);
+const groups: ReturnType<typeof sectionsOf>[] = [];
+for (let index = 0; index < leadSections.length; index += perPage) groups.push(leadSections.slice(index, index + perPage));
+for (const section of followerSections) {
+  const group = groups.find((sections) => sections.length < PAGE_ROOM);
+  if (!group) throw new Error("make-catalog: optional-title sections left without a page (too many sections)");
+  group.push(section);
 }
-if (followers.length) throw new Error("make-catalog: optional-title types left without a page (too many sections or types)");
 
 type CatalogPage = { id: string; slug: string; title: string; nav: { show: boolean; label: string }; sections: ReturnType<typeof sectionsOf> };
 
-const pages: CatalogPage[] = groups.map((group, index) => ({
-  id: index === 0 ? "home" : group[0].type,
-  slug: index === 0 ? "/" : `/${group[0].type}`,
-  title: group.map((type) => type.label).join(" + "),
-  nav: { show: true, label: group[0].type },
-  sections: group.flatMap(sectionsOf),
-}));
+const typeLabel = (type: string) => sectionTypes.find((entry) => entry.type === type)?.label ?? type;
+const usedSlugs = new Set<string>();
+const pages: CatalogPage[] = groups.map((sections, index) => {
+  const types = [...new Set(sections.map((section) => section.type))];
+  let id = index === 0 ? "home" : types[0];
+  for (let n = 2; usedSlugs.has(id); n++) id = `${types[0]}-${n}`;
+  usedSlugs.add(id);
+  return { id, slug: index === 0 ? "/" : `/${id}`, title: types.map(typeLabel).join(" + ").slice(0, 70), nav: { show: true, label: id }, sections };
+});
 
 // Types allowed once per page (contact, faq): instance N goes onto page N, the home page
 // included. When they have more instances than there are pages, pages holding only them
