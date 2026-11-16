@@ -1,0 +1,195 @@
+// Gallery: polaroid (Polaroid.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // A band of the brand color behind the header (its tokens re-scoped like an accent surface)
+  // reaches down behind the first prints; the section clips it. The prints: paper frames with a
+  // wide lower edge, tilted in a five-step rhythm, overlapping a little; they straighten on hover.
+  .s-gallery--polaroid {
+    --brand: var(--color-action-primary);
+    --ink: var(--color-action-primary-text);
+    --paper: color-mix(in oklab, var(--color-primitive-white) 96%, var(--color-primitive-amber-400));
+
+    overflow: clip;
+    isolation: isolate;
+  }
+
+  .s-polaroids__band {
+    --color-text-primary: var(--ink);
+    --color-text-secondary: var(--ink);
+    --color-action-primary: var(--ink);
+    --color-focus-ring: var(--ink);
+    --band-reach: calc(var(--spacing-2xl) + 4rem);
+
+    position: relative;
+    color: var(--ink);
+  }
+
+  .s-polaroids__band::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -100vh -100vw calc(var(--band-reach) * -1);
+    background: var(--brand);
+  }
+
+  // Like the eyebrow in accent sections: outline only, a tint would cost contrast.
+  .s-polaroids__band .tag--primary {
+    background: transparent;
+    border-color: color-mix(in srgb, var(--ink) 45%, transparent);
+  }
+
+  .s-polaroids {
+    --columns: 2;
+    --overlap: var(--spacing-xs);
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-lg) 0;
+
+    // Room for the tilted corners.
+    padding: var(--spacing-xs) var(--spacing-md);
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-polaroids__item {
+    position: relative;
+    flex: 0 0 calc(100% / var(--columns));
+    min-width: 0;
+  }
+
+  .s-polaroid {
+    --tilt: -2deg;
+    --drop: 0rem;
+
+    display: grid;
+    grid-template-rows: auto minmax(2.5rem, auto);
+    width: calc(100% + var(--overlap) * 2);
+    margin: 0 calc(var(--overlap) * -1);
+    padding: 5% 5% 0;
+    color: var(--color-primitive-gray-800);
+    background: var(--paper);
+    border-radius: 0.125rem;
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 12%),
+      0 0.75rem 1.5rem -0.5rem rgb(0 0 0 / 35%);
+    rotate: var(--tilt);
+    translate: 0 var(--drop);
+  }
+
+  .s-polaroids__item:nth-child(5n + 2) .s-polaroid {
+    --tilt: 2.5deg;
+    --drop: 0.75rem;
+  }
+
+  .s-polaroids__item:nth-child(5n + 3) .s-polaroid {
+    --tilt: -1deg;
+    --drop: -0.25rem;
+  }
+
+  .s-polaroids__item:nth-child(5n + 4) .s-polaroid {
+    --tilt: 3deg;
+    --drop: 0.5rem;
+  }
+
+  .s-polaroids__item:nth-child(5n + 5) .s-polaroid {
+    --tilt: -3deg;
+    --drop: 1rem;
+  }
+
+  // Upright prints are narrower, so a row of mixed prints keeps a similar height.
+  .s-polaroid--portrait {
+    width: 78%;
+    margin-inline: auto;
+  }
+
+  .s-polaroid__photo {
+    border-radius: 0;
+  }
+
+  // Kept clear of the edges, where the next print may overlap.
+  .s-polaroid__caption {
+    align-self: center;
+    padding: var(--spacing-sm) var(--overlap);
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-sm);
+    font-style: italic;
+    line-height: var(--line-height-snug);
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  .s-polaroids__item:hover,
+  .s-polaroids__item:focus-within {
+    z-index: 1;
+  }
+
+  .s-polaroids__item:hover .s-polaroid,
+  .s-polaroids__item:focus-within .s-polaroid {
+    --tilt: 0deg;
+    --drop: -0.25rem;
+
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 12%),
+      0 1.25rem 2.5rem -0.75rem rgb(0 0 0 / 45%);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .s-polaroid {
+      transition:
+        rotate var(--motion-duration-normal) var(--motion-easing-emphasized),
+        translate var(--motion-duration-normal) var(--motion-easing-emphasized),
+        box-shadow var(--motion-duration-normal) var(--motion-easing-standard);
+    }
+  }
+
+  @include mq(md) {
+    .s-polaroids__band {
+      --band-reach: calc(var(--spacing-2xl) + 7rem);
+    }
+
+    .s-polaroids {
+      --columns: 3;
+      --overlap: var(--spacing-sm);
+
+      padding-inline: var(--spacing-lg);
+      row-gap: var(--spacing-xl);
+    }
+
+    .s-polaroids--2 {
+      --columns: 2;
+
+      padding-inline: 12%;
+    }
+
+    .s-polaroids--3 {
+      padding-inline: 6%;
+    }
+
+    .s-polaroid {
+      grid-template-rows: auto minmax(3.5rem, auto);
+    }
+
+    .s-polaroid__caption {
+      font-size: var(--font-size-base);
+    }
+  }
+
+  @include mq(lg) {
+    .s-polaroids {
+      --overlap: 0.75rem;
+    }
+
+    .s-polaroids--4 {
+      --columns: 4;
+    }
+
+    .s-polaroids--2 {
+      padding-inline: 20%;
+    }
+  }
+}

@@ -1,0 +1,48 @@
+---
+/**
+ * Gradient band in the brand color under fine wave lines: the text on the left, up to three
+ * facts (highlights) on light cards floating on the right. Without facts the text is centered
+ * and the lines frame it.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import Copy from "@/sections/cta/Copy.astro";
+import Icon from "@/components/media/Icon.astro";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/cta/_gradient-cards.scss";
+
+export interface Props {
+  section: VariantOf<"cta", "gradient-cards">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const facts = content.highlights ?? [];
+
+// The pattern: one gentle S-curve repeated downwards with a growing swing (stretched to the band).
+const lines = Array.from({ length: 18 }, (_, index) => {
+  const y = 10 + index * 24;
+  const swing = 24 + index * 5;
+  return `M0 ${y} C260 ${y - swing} 460 ${y + swing} 800 ${y - swing / 3}`;
+});
+---
+
+<SectionShell id={section.id} type="cta" variant="gradient-cards" tone={props.tone} spacing={props.spacing} defaultSpacing="md">
+  <div class:list={["s-cta-gradient", facts.length > 0 && "s-cta-gradient--facts"]}>
+    <svg class="s-cta-gradient__pattern" viewBox="0 0 800 440" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      {lines.map((path) => <path d={path} />)}
+    </svg>
+    <Copy content={content} headingLevel={headingLevel} align={facts.length > 0 ? "start" : "center"} secondary="secondary" class="s-cta-gradient__copy" />
+    {facts.length > 0 && (
+      <ul class:list={["s-cta-gradient__facts", `s-cta-gradient__facts--${facts.length}`]}>
+        {facts.map((fact) => (
+          <li class="s-cta-gradient__fact">
+            <span class="s-cta-gradient__badge" aria-hidden="true"><Icon name="check" size="1.25rem" /></span>
+            <span class="s-cta-gradient__value">{fact.value}</span>
+            <span class="s-cta-gradient__label">{fact.label}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</SectionShell>

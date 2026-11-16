@@ -1,0 +1,160 @@
+// Hours and location ("Godziny i dojazd"), v3.3: six layouts of the same business data (hours,
+// address, phone). Rows and the week come from src/site/hours.ts. The live status (Status.astro)
+// stays hidden until its script runs, so every layout reads the same without JavaScript, only
+// without "open now" and today's mark.
+// This one: address (Address.astro), details (Details.astro), live status and the parts several
+// variants share.
+@use "../../abstracts/layers";
+@use "mixins" as *;
+
+@layer widgets {
+  // Hours and address blocks of the card and image-side variants (Details.astro).
+  .s-hours,
+  .s-location {
+    display: grid;
+    gap: var(--spacing-md);
+    align-content: start;
+  }
+
+  .s-hours__head {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .s-hours__badge {
+    @include badge;
+  }
+
+  .s-hours__title {
+    font-size: var(--font-size-xl);
+  }
+
+  .s-hours__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .s-hours__table th,
+  .s-hours__table td {
+    padding-block: var(--spacing-sm);
+    text-align: start;
+    vertical-align: top;
+    border-block-end: 1px dashed var(--color-border-strong);
+  }
+
+  .s-hours__table tr:last-child > * {
+    border-block-end: 0;
+  }
+
+  .s-hours__table th {
+    padding-inline-end: var(--spacing-md);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-hours__table abbr {
+    text-decoration: none;
+  }
+
+  .s-hours__table td {
+    text-align: end;
+    white-space: nowrap;
+  }
+
+  .s-hours__row--closed td {
+    color: var(--color-text-secondary);
+  }
+
+  // An address part (Address.astro) wraps as a whole before it breaks inside ("31-146" stays together).
+  .s-hours-address {
+    display: inline-block;
+    max-width: 100%;
+  }
+
+  .s-location__address {
+    display: grid;
+    font-size: var(--font-size-lg);
+    font-style: normal;
+    line-height: var(--line-height-snug);
+  }
+
+  .s-location__phone {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-location__icon {
+    flex: none;
+    color: var(--color-text-secondary);
+  }
+
+  .s-location__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    padding-block-start: var(--spacing-xs);
+  }
+
+  // Live status: hidden in the HTML, filled by the script. The dot is decoration, the words say it.
+  .s-open-status[hidden] {
+    display: none;
+  }
+
+  .s-open-status__dot {
+    flex: none;
+    width: 0.625rem;
+    height: 0.625rem;
+    background: var(--color-feedback-error);
+    border-radius: var(--radius-full);
+    box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--color-feedback-error) 18%, transparent);
+  }
+
+  .s-open-status[data-state="open"] .s-open-status__dot {
+    background: var(--color-feedback-success);
+    box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--color-feedback-success) 22%, transparent);
+  }
+
+  .s-open-status__label {
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-open-status__detail:empty {
+    display: none;
+  }
+
+  .s-open-status--pill {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs) var(--spacing-sm);
+    max-width: 100%;
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: var(--color-background-surface);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-sm);
+  }
+
+  .s-open-status--pill .s-open-status__dot {
+    margin-inline-end: var(--spacing-xs);
+  }
+
+  // Links of compact, today and week-strip; the "today" mark of today and week-strip.
+  .s-info-bar__link,
+  .s-open-sign__link,
+  .s-week-strip__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-open-sign__today[hidden],
+  .s-week-strip__today[hidden] {
+    display: none;
+  }
+}

@@ -1,0 +1,118 @@
+// Process ("Jak działamy"), v3.3: six layouts of the same steps. Every variant is one <ol>
+// that reads as a single vertical sequence on phones. Lines, paths, rings and big numbers
+// are decoration (pseudo-elements or aria-hidden elements): the text never depends on them.
+// This one: every variant.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-process__list {
+    display: grid;
+    gap: var(--spacing-xl);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .s-process__step {
+    position: relative;
+    min-width: 0;
+  }
+
+  .s-process__body {
+    min-width: 0;
+  }
+
+  .s-process__title {
+    margin-block-end: var(--spacing-xs);
+    font-size: var(--font-size-xl);
+    text-wrap: balance;
+  }
+
+  .s-process__description {
+    color: var(--color-text-secondary);
+  }
+
+  // Optional time label ("30 min", "Tydzień 1"): a small accent pill above the title.
+  .s-process__duration {
+    display: inline-block;
+    margin-block-end: var(--spacing-sm);
+    padding: 0.125rem var(--spacing-sm);
+    color: var(--color-action-primary);
+    border: 1px solid color-mix(in srgb, var(--color-action-primary) 35%, transparent);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-snug);
+  }
+
+  // "Krok 2" + time label in one line (snake, where an icon takes the number's place).
+  .s-process__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-xs) var(--spacing-sm);
+    margin-block-end: var(--spacing-sm);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .s-process__meta .s-process__duration {
+    margin: 0;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
+  // Big faded number (wave): generated content of an aria-hidden element, pure decoration,
+  // so its deliberately low contrast never reaches text checks or screen readers.
+  .s-process__numeral::before {
+    content: attr(data-number);
+  }
+
+  // Wide rows: each step spans two of (2 × steps per row) tracks, so the short last row of
+  // 5 steps (3 + 2) or 7 steps (4 + 3) starts one track in and sits centered.
+  @include mq(lg) {
+    .s-process__list--cols-2 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .s-process__list--cols-3 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .s-process__list--cols-4 { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+    .s-process__list--cols-5 { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+
+    :is(.s-process__list--cols-2, .s-process__list--cols-3, .s-process__list--cols-4, .s-process__list--cols-5) > .s-process__step {
+      grid-column: span 2;
+    }
+
+    .s-process__list--count-5.s-process__list--cols-3 > :nth-child(4),
+    .s-process__list--count-7.s-process__list--cols-4 > :nth-child(5) {
+      grid-column: 2 / span 2;
+    }
+  }
+
+  // Tablets: steps and cards two per row, an odd last one centered.
+  @include mq(md) {
+    @include mq-down(lg) {
+      :is(.s-process__list--steps, .s-process__list--cards) {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      :is(.s-process__list--steps, .s-process__list--cards) > .s-process__step {
+        grid-column: span 2;
+      }
+
+      :is(.s-process__list--steps, .s-process__list--cards) > .s-process__step:last-child:nth-child(odd) {
+        grid-column: 2 / span 2;
+      }
+    }
+  }
+
+  // The flowing variants stay one centered column below lg.
+  @include mq-down(lg) {
+    :is(.s-process__list--wave, .s-process__list--snake, .s-process__list--chevrons) {
+      width: 100%;
+      max-width: 40rem;
+      margin-inline: auto;
+    }
+  }
+}

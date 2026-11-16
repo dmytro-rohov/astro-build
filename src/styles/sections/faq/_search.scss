@@ -1,0 +1,202 @@
+// FAQ: search (Search.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // A brand panel with the title, the field and the filter pills; the results below in one card.
+  // The field keeps the page's own colors (captured on the root, before the panel re-scopes them).
+  .s-faq-desk {
+    --brand: var(--color-action-primary);
+    --ink: var(--color-action-primary-text);
+    --field-text: var(--color-text-primary);
+    --field-muted: var(--color-text-secondary);
+    --field-surface: var(--color-background-surface);
+    --lines-surface: var(--color-background-surface);
+
+    display: grid;
+    gap: var(--spacing-xl);
+  }
+
+  .s-faq-desk__panel {
+    @include brand-surface;
+
+    display: grid;
+    justify-items: center;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    text-align: center;
+    background:
+      radial-gradient(circle at 0% 100%, color-mix(in srgb, var(--ink) 10%, transparent) 0 22%, transparent 22.2%),
+      radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--ink) 8%, transparent) 0 30%, transparent 30.2%),
+      var(--brand);
+    border-radius: var(--radius-card);
+    box-shadow: 0 1.75rem 3.5rem -1.75rem color-mix(in srgb, var(--brand) 70%, transparent);
+  }
+
+  @include mq(md) {
+    .s-faq-desk__panel {
+      padding: var(--spacing-3xl) var(--spacing-2xl);
+    }
+  }
+
+  .s-faq-desk__header .s-header__title {
+    font-size: clamp(var(--font-size-3xl), 5vw, var(--font-size-5xl));
+  }
+
+  // On the brand color a tint under the eyebrow's text would cost contrast: outline only.
+  .s-faq-desk__panel .tag--primary {
+    background: transparent;
+    border-color: color-mix(in srgb, var(--ink) 45%, transparent);
+  }
+
+  .s-faq-desk__tools {
+    display: grid;
+    gap: var(--spacing-lg);
+    width: min(100%, 42rem);
+  }
+
+  .s-faq-desk__tools[hidden] {
+    display: none;
+  }
+
+  .s-faq-desk__search {
+    position: relative;
+  }
+
+  .s-faq-desk__magnifier {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 1.125rem;
+    width: 1.375rem;
+    height: 1.375rem;
+    color: var(--field-muted);
+    fill: none;
+    stroke: currentcolor;
+    stroke-linecap: round;
+    stroke-width: 2.25;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .s-faq-desk__input {
+    width: 100%;
+    min-height: 3.75rem;
+    padding-inline: 3.25rem var(--spacing-lg);
+    color: var(--field-text);
+    background: var(--field-surface);
+    border: 0;
+    border-radius: var(--radius-button);
+    box-shadow: 0 0.75rem 2rem -0.75rem rgb(0 0 0 / 35%);
+    font: inherit;
+    font-size: var(--font-size-lg);
+  }
+
+  .s-faq-desk__input::placeholder {
+    color: var(--field-muted);
+    opacity: 1;
+  }
+
+  .s-faq-desk__input:focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  .s-faq-desk__filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-sm);
+  }
+
+  .s-faq-desk__filter {
+    max-width: 100%;
+    min-height: 2.5rem;
+    padding: var(--spacing-xs) var(--spacing-lg);
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--ink) 50%, transparent);
+    border-radius: var(--radius-pill);
+    font: inherit;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
+    hyphens: auto;
+    cursor: pointer;
+    transition:
+      color var(--motion-duration-fast) var(--motion-easing-standard),
+      background-color var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .s-faq-desk__filter:hover {
+    background: color-mix(in srgb, var(--ink) 12%, transparent);
+  }
+
+  .s-faq-desk__filter[aria-pressed="true"] {
+    color: var(--brand);
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .s-faq-desk__results {
+    display: grid;
+    gap: var(--spacing-lg);
+    width: min(100%, 50rem);
+    margin-inline: auto;
+  }
+
+  .s-faq-desk__status {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    text-align: center;
+  }
+
+  // Empty until the visitor filters: takes no room (it stays in the page for screen readers).
+  .s-faq-desk__status:empty {
+    margin-block-end: calc(var(--spacing-lg) * -1);
+  }
+
+  .s-faq-desk__questions {
+    overflow: clip;
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-faq-desk__questions > .s-questions__item {
+    padding-inline: var(--spacing-lg);
+  }
+
+  .s-faq-desk__ask {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm) var(--spacing-md);
+    text-align: center;
+  }
+
+  .s-faq-desk__ask-lead {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  // Nothing matches: the list goes, the message and "ask us" take its place.
+  .s-faq-desk--empty .s-faq-desk__questions {
+    display: none;
+  }
+
+  .s-faq-desk--empty .s-faq-desk__status {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-lg);
+  }
+
+  .s-faq-desk--empty .s-faq-desk__ask {
+    flex-direction: column;
+    padding: var(--spacing-xl) var(--spacing-lg);
+    background: color-mix(in srgb, var(--color-action-primary) 8%, var(--color-background-surface));
+    border: 1px dashed color-mix(in srgb, var(--color-action-primary) 45%, transparent);
+    border-radius: var(--radius-card);
+  }
+}

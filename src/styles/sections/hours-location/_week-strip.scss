@@ -1,0 +1,243 @@
+// Hours and location: week-strip (WeekStrip.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // v3.3: the week as seven tiles: opening time big, closing time under it, a 24-hour track
+  // with the open hours; closed days dashed and muted, today's tile on the brand color. Phones:
+  // a tile per row (name left, hours right, no track).
+  .s-week-strip__intro {
+    display: grid;
+    gap: var(--spacing-lg);
+  }
+
+  .s-header--center + .s-open-status {
+    justify-self: center;
+  }
+
+  .s-header--left + .s-open-status {
+    justify-self: start;
+  }
+
+  .s-week-strip {
+    display: grid;
+    gap: var(--spacing-sm);
+    margin: 0;
+  }
+
+  .s-week-strip__day {
+    @include framed;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--spacing-xs) var(--spacing-md);
+    min-width: 0;
+    padding: var(--spacing-sm) var(--spacing-lg);
+  }
+
+  .s-week-strip__day--closed {
+    background: transparent;
+    border-style: dashed;
+    border-color: var(--color-border-strong);
+    box-shadow: none;
+  }
+
+  .s-week-strip__name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-xs) var(--spacing-sm);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-week-strip__short {
+    display: none;
+  }
+
+  .s-week-strip__today {
+    padding: 0.125rem var(--spacing-sm);
+    color: var(--color-action-primary);
+    background: var(--color-action-primary-text);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+
+  .s-week-strip__hours {
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+  }
+
+  .s-week-strip__opens {
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-week-strip__hours--closed {
+    color: var(--color-text-secondary);
+  }
+
+  .s-week-strip__track {
+    display: none;
+  }
+
+  // Today: the whole tile on the brand color, in the brand's ink.
+  .s-week-strip__day[aria-current="date"] {
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    border: 1px solid var(--color-action-primary);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .s-week-strip__day[aria-current="date"] :is(.s-week-strip__name, .s-week-strip__hours, .s-week-strip__closes) {
+    color: inherit;
+  }
+
+  @include mq(md) {
+    .s-week-strip {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+
+    .s-week-strip__day {
+      position: relative;
+      grid-template-columns: none;
+      align-content: start;
+      justify-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-lg) var(--spacing-sm) var(--spacing-md);
+      text-align: center;
+    }
+
+    // Today's tag sits on the tile's top edge, so the tile keeps the height of the others.
+    .s-week-strip__today {
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline: 0;
+      width: fit-content;
+      margin-inline: auto;
+      border: 2px solid var(--color-action-primary);
+      translate: 0 -50%;
+    }
+
+    .s-week-strip__name {
+      justify-content: center;
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-xs);
+      letter-spacing: var(--letter-spacing-wide);
+      text-transform: uppercase;
+    }
+
+    .s-week-strip__hours {
+      display: grid;
+      justify-items: center;
+      gap: 0.125rem;
+      width: 100%;
+      text-align: center;
+    }
+
+    // Centered, so proportional lining figures (old-style ones of serif heading fonts look uneven).
+    .s-week-strip__opens {
+      font-family: var(--font-family-heading);
+      font-size: var(--font-size-2xl);
+      font-weight: var(--heading-weight);
+      font-variant-numeric: lining-nums proportional-nums;
+      line-height: var(--line-height-tight);
+    }
+
+    .s-week-strip__closes {
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    .s-week-strip__closes time {
+      margin-inline-start: 0.25em;
+    }
+
+    .s-week-strip__hours--closed {
+      align-self: center;
+      padding-block: var(--spacing-sm);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      hyphens: auto;
+    }
+
+    // 24 hours, the open ones filled (decoration: the times say it).
+    .s-week-strip__track {
+      display: grid;
+      grid-template-columns: repeat(24, minmax(0, 1fr));
+      width: 100%;
+      height: 0.375rem;
+      margin-block-start: var(--spacing-sm);
+      overflow: clip;
+      background: color-mix(in srgb, var(--color-text-primary) 9%, transparent);
+      border-radius: var(--radius-pill);
+    }
+
+    .s-week-strip__span {
+      grid-row: 1;
+      background: var(--color-action-primary);
+      border-radius: var(--radius-pill);
+    }
+
+    @for $hour from 0 through 23 {
+      .s-week-strip__span--from-#{$hour} {
+        grid-column-start: $hour + 1;
+      }
+    }
+
+    @for $hour from 1 through 24 {
+      .s-week-strip__span--to-#{$hour} {
+        grid-column-end: $hour + 1;
+      }
+    }
+
+    .s-week-strip__day[aria-current="date"] .s-week-strip__track {
+      background: color-mix(in srgb, var(--color-action-primary-text) 25%, transparent);
+    }
+
+    .s-week-strip__day[aria-current="date"] .s-week-strip__span {
+      background: var(--color-action-primary-text);
+    }
+  }
+
+  // Tiles in a row narrower than ~150px: the short day names (the long ones stay for screen readers).
+  @include mq(md) {
+    @include mq-down(xl) {
+      .s-week-strip__long {
+        @include visually-hidden;
+      }
+
+      .s-week-strip__short {
+        display: inline;
+      }
+    }
+  }
+
+  .s-week-strip__place {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-sm) var(--spacing-xl);
+    font-style: normal;
+  }
+
+  .s-week-strip__place--start {
+    justify-content: flex-start;
+  }
+
+  .s-week-strip__fact {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    max-width: 100%;
+  }
+
+  .s-week-strip__icon {
+    flex: none;
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+  }
+}

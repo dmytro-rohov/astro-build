@@ -1,0 +1,41 @@
+// Section type faq ("Najczęstsze pytania"), v3.3: split-contact, categories, with-image and search
+// added. Questions open natively (details/summary); the menus and the search come with scripts
+// and never hide content without them.
+// This one: accordion (Accordion.astro).
+@use "../../abstracts/layers";
+
+@layer widgets {
+  .faq__header {
+    max-width: 44rem;
+  }
+
+  .faq--align-center .faq__header {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .faq--align-center .faq__eyebrow {
+    margin-inline: auto;
+  }
+
+  .faq__title {
+    font-size: clamp(
+      var(--font-size-3xl),
+      5vw,
+      var(--font-size-5xl)
+    );
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  .faq__description {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .faq--align-center .faq__description {
+    margin-inline: auto;
+  }
+}

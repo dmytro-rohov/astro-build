@@ -1,0 +1,33 @@
+---
+/**
+ * A member's icon links (profiles, e-mail, phone). The label names the link, the member's name
+ * describes it for screen readers; the tooltip helps where a generic icon stands for a brand.
+ */
+import Icon from "@/components/media/Icon.astro";
+
+export interface Props {
+  links: { label: string; href: string; icon: string }[];
+  /** Id of the member's name. */
+  describedBy: string;
+  class?: string;
+}
+
+const { links, describedBy, class: className } = Astro.props;
+---
+
+<ul class:list={["s-team-links", className]}>
+  {links.map((link) => (
+    <li class="s-team-links__item">
+      <a
+        class="s-team-links__link"
+        href={link.href}
+        title={link.label}
+        aria-label={link.label}
+        aria-describedby={describedBy}
+        {...(link.href.startsWith("https:") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      >
+        <Icon name={link.icon} size="1.125rem" />
+      </a>
+    </li>
+  ))}
+</ul>

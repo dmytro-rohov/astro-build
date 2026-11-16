@@ -1,62 +1,139 @@
 /**
- * Component registry: section type + variant → Astro component.
+ * Component registry: section type + variant → Astro component (module path).
  * Schemas live in src/site/registry.ts; every variant there needs an entry here
- * (checked by tests/unit/registry.test.ts).
+ * (checked by tests/unit/registry.test.ts). A build imports only the components its
+ * site uses ("virtual:section-components", src/site/vite-plugin.ts), and every
+ * component imports its own styles, so a site ships the CSS of its variants only.
+ * A component may serve several variants (stats, process, logo-cloud, embed).
  */
-import AboutCentered from "@/sections/about/Centered.astro";
-import AboutImageSide from "@/sections/about/ImageSide.astro";
-import ContactFormCentered from "@/sections/contact/FormCentered.astro";
-import ContactFormSplit from "@/sections/contact/FormSplit.astro";
-import CtaBanner from "@/sections/cta/Banner.astro";
-import CtaBoxed from "@/sections/cta/Boxed.astro";
-import SuggestionBox from "@/sections/suggestion/Box.astro";
-import FaqAccordion from "@/sections/faq/Accordion.astro";
-import FaqTwoColumn from "@/sections/faq/TwoColumn.astro";
-import FeaturesCardsGrid from "@/sections/features/CardsGrid.astro";
-import FeaturesIconList from "@/sections/features/IconList.astro";
-import GalleryGrid from "@/sections/gallery/Grid.astro";
-import HeroCentered from "@/sections/hero/Centered.astro";
-import HeroCoverImage from "@/sections/hero/CoverImage.astro";
-import HeroSplitImage from "@/sections/hero/SplitImage.astro";
-import HeroPanel from "@/sections/hero/Panel.astro";
-import HeroMinimal from "@/sections/hero/Minimal.astro";
-import ScheduleWeek from "@/sections/schedule/Week.astro";
-import ScheduleTable from "@/sections/schedule/Table.astro";
-import TeamCards from "@/sections/team/Cards.astro";
-import TeamCompact from "@/sections/team/Compact.astro";
-import Stats from "@/sections/stats/Stats.astro";
-import Process from "@/sections/process/Process.astro";
-import LogoCloud from "@/sections/logo-cloud/LogoCloud.astro";
-import Embed from "@/sections/embed/Embed.astro";
-import HoursCard from "@/sections/hours-location/Card.astro";
-import HoursCompact from "@/sections/hours-location/Compact.astro";
-import PricingCards from "@/sections/pricing/Cards.astro";
-import PricingCompact from "@/sections/pricing/Compact.astro";
-import ServicesCards from "@/sections/services/Cards.astro";
-import ServicesPriceList from "@/sections/services/PriceList.astro";
-import TestimonialsCards from "@/sections/testimonials/Cards.astro";
-import TestimonialsSpotlight from "@/sections/testimonials/Spotlight.astro";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type SectionComponent = (props: any) => any;
-
-export const sectionComponents: Record<string, Record<string, SectionComponent>> = {
-  hero: { "split-image": HeroSplitImage, centered: HeroCentered, "cover-image": HeroCoverImage, panel: HeroPanel, minimal: HeroMinimal },
-  about: { "image-side": AboutImageSide, centered: AboutCentered },
-  services: { cards: ServicesCards, "price-list": ServicesPriceList },
-  features: { "cards-grid": FeaturesCardsGrid, "icon-list": FeaturesIconList },
-  testimonials: { cards: TestimonialsCards, spotlight: TestimonialsSpotlight },
-  gallery: { grid: GalleryGrid, mosaic: GalleryGrid },
-  pricing: { cards: PricingCards, compact: PricingCompact },
-  faq: { accordion: FaqAccordion, "two-column": FaqTwoColumn },
-  cta: { boxed: CtaBoxed, banner: CtaBanner },
-  contact: { "form-split": ContactFormSplit, "form-centered": ContactFormCentered },
-  "hours-location": { card: HoursCard, compact: HoursCompact },
-  schedule: { week: ScheduleWeek, table: ScheduleTable },
-  team: { cards: TeamCards, compact: TeamCompact },
-  stats: { row: Stats, cards: Stats },
-  process: { steps: Process, timeline: Process },
-  "logo-cloud": { row: LogoCloud, grid: LogoCloud },
-  embed: { full: Embed, split: Embed },
-  suggestion: { box: SuggestionBox },
+export const sectionComponentPaths: Record<string, Record<string, string>> = {
+  hero: {
+    "split-image": "@/sections/hero/SplitImage.astro",
+    centered: "@/sections/hero/Centered.astro",
+    "cover-image": "@/sections/hero/CoverImage.astro",
+    panel: "@/sections/hero/Panel.astro",
+    minimal: "@/sections/hero/Minimal.astro",
+  },
+  about: {
+    "image-side": "@/sections/about/ImageSide.astro",
+    centered: "@/sections/about/Centered.astro",
+  },
+  services: {
+    cards: "@/sections/services/Cards.astro",
+    "price-list": "@/sections/services/PriceList.astro",
+  },
+  features: {
+    "cards-grid": "@/sections/features/CardsGrid.astro",
+    "icon-list": "@/sections/features/IconList.astro",
+    "icon-badge": "@/sections/features/IconBadge.astro",
+    staggered: "@/sections/features/Staggered.astro",
+    orbit: "@/sections/features/Orbit.astro",
+    spotlight: "@/sections/features/Spotlight.astro",
+    bento: "@/sections/features/Bento.astro",
+  },
+  testimonials: {
+    cards: "@/sections/testimonials/Cards.astro",
+    spotlight: "@/sections/testimonials/Spotlight.astro",
+    carousel: "@/sections/testimonials/Carousel.astro",
+    portraits: "@/sections/testimonials/Portraits.astro",
+    "quote-cards": "@/sections/testimonials/QuoteCards.astro",
+    rating: "@/sections/testimonials/Rating.astro",
+  },
+  gallery: {
+    grid: "@/sections/gallery/Grid.astro",
+    mosaic: "@/sections/gallery/Mosaic.astro",
+    slider: "@/sections/gallery/Slider.astro",
+    masonry: "@/sections/gallery/Masonry.astro",
+    polaroid: "@/sections/gallery/Polaroid.astro",
+    checkerboard: "@/sections/gallery/Checkerboard.astro",
+    explore: "@/sections/gallery/Explore.astro",
+  },
+  pricing: {
+    cards: "@/sections/pricing/Cards.astro",
+    compact: "@/sections/pricing/Compact.astro",
+    "featured-center": "@/sections/pricing/FeaturedCenter.astro",
+    table: "@/sections/pricing/Table.astro",
+    split: "@/sections/pricing/Split.astro",
+    minimal: "@/sections/pricing/Minimal.astro",
+  },
+  faq: {
+    accordion: "@/sections/faq/Accordion.astro",
+    "two-column": "@/sections/faq/TwoColumn.astro",
+    "split-contact": "@/sections/faq/SplitContact.astro",
+    categories: "@/sections/faq/Categories.astro",
+    "with-image": "@/sections/faq/WithImage.astro",
+    search: "@/sections/faq/Search.astro",
+  },
+  cta: {
+    boxed: "@/sections/cta/Boxed.astro",
+    banner: "@/sections/cta/Banner.astro",
+    rings: "@/sections/cta/Rings.astro",
+    "gradient-cards": "@/sections/cta/GradientCards.astro",
+    faces: "@/sections/cta/Faces.astro",
+    "band-card": "@/sections/cta/BandCard.astro",
+  },
+  contact: {
+    "form-split": "@/sections/contact/FormSplit.astro",
+    "form-centered": "@/sections/contact/FormCentered.astro",
+    "info-columns": "@/sections/contact/InfoColumns.astro",
+    "big-card": "@/sections/contact/BigCard.astro",
+    methods: "@/sections/contact/Methods.astro",
+    map: "@/sections/contact/Map.astro",
+  },
+  "hours-location": {
+    card: "@/sections/hours-location/Card.astro",
+    compact: "@/sections/hours-location/Compact.astro",
+    today: "@/sections/hours-location/Today.astro",
+    map: "@/sections/hours-location/Map.astro",
+    "image-side": "@/sections/hours-location/ImageSide.astro",
+    "week-strip": "@/sections/hours-location/WeekStrip.astro",
+  },
+  schedule: {
+    week: "@/sections/schedule/Week.astro",
+    table: "@/sections/schedule/Table.astro",
+    "day-columns": "@/sections/schedule/DayColumns.astro",
+    matrix: "@/sections/schedule/Matrix.astro",
+    tabs: "@/sections/schedule/Tabs.astro",
+    agenda: "@/sections/schedule/Agenda.astro",
+  },
+  team: {
+    cards: "@/sections/team/Cards.astro",
+    compact: "@/sections/team/Compact.astro",
+    "social-cards": "@/sections/team/SocialCards.astro",
+    spotlight: "@/sections/team/Spotlight.astro",
+    "color-tiles": "@/sections/team/ColorTiles.astro",
+    directory: "@/sections/team/Directory.astro",
+  },
+  stats: {
+    row: "@/sections/stats/Stats.astro",
+    cards: "@/sections/stats/Stats.astro",
+    rings: "@/sections/stats/Rings.astro",
+    bars: "@/sections/stats/Bars.astro",
+    "chart-cards": "@/sections/stats/ChartCards.astro",
+    highlight: "@/sections/stats/Highlight.astro",
+    bento: "@/sections/stats/Bento.astro",
+  },
+  process: {
+    steps: "@/sections/process/Process.astro",
+    timeline: "@/sections/process/Process.astro",
+    cards: "@/sections/process/Process.astro",
+    wave: "@/sections/process/Wave.astro",
+    snake: "@/sections/process/Snake.astro",
+    chevrons: "@/sections/process/Chevrons.astro",
+  },
+  "logo-cloud": {
+    row: "@/sections/logo-cloud/LogoCloud.astro",
+    grid: "@/sections/logo-cloud/LogoCloud.astro",
+    coverflow: "@/sections/logo-cloud/Coverflow.astro",
+    "split-image": "@/sections/logo-cloud/SplitImage.astro",
+    marquee: "@/sections/logo-cloud/Marquee.astro",
+    "color-tiles": "@/sections/logo-cloud/ColorTiles.astro",
+  },
+  embed: {
+    full: "@/sections/embed/Embed.astro",
+    split: "@/sections/embed/Embed.astro",
+  },
+  suggestion: {
+    box: "@/sections/suggestion/Box.astro",
+  },
 };

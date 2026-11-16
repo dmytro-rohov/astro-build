@@ -1,0 +1,70 @@
+---
+/**
+ * Title and the overall score on the left (stays in view), compact review rows on the right.
+ * The score is the business profile's (ratingAverage…) or the average of the rated reviews;
+ * with nothing rated the left column is the title alone.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Avatar from "@/sections/testimonials/Avatar.astro";
+import QuoteMark from "@/sections/testimonials/QuoteMark.astro";
+import Stars from "@/sections/testimonials/Stars.astro";
+import Button from "@/components/ui/Button.astro";
+import { format, lang, t } from "@/i18n";
+import { ratingSummary } from "@/sections/testimonials/layout";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/testimonials/_shared.scss";
+import "@/styles/sections/testimonials/_rating.scss";
+
+export interface Props {
+  section: VariantOf<"testimonials", "rating">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const summary = ratingSummary(content);
+const score = summary && new Intl.NumberFormat(lang, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(summary.average);
+const reviews =
+  summary?.count &&
+  format(t.sections.reviews[new Intl.PluralRules(lang).select(summary.count) as keyof typeof t.sections.reviews] ?? t.sections.reviews.other, {
+    count: new Intl.NumberFormat(lang).format(summary.count),
+  });
+const basis = [reviews, summary?.source].filter(Boolean).join(" · ");
+---
+
+<SectionShell id={section.id} type="testimonials" variant="rating" tone={props.tone} spacing={props.spacing}>
+  <div class="s-rating">
+    <div class="s-rating__intro">
+      <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
+      {!summary && <QuoteMark class="s-rating__mark" />}
+      {summary && (
+        <div class="s-rating__score">
+          <p class="s-rating__value" aria-hidden="true">{score}<span class="s-rating__scale">/5</span></p>
+          <div class="s-rating__detail">
+            <Stars rating={summary.average} class="s-rating__stars" />
+            {basis && <p class="s-rating__basis">{basis}</p>}
+          </div>
+        </div>
+      )}
+      {content.ratingLink && <Button href={content.ratingLink.href} variant="secondary" class="s-rating__link">{content.ratingLink.label}</Button>}
+    </div>
+    <ul class="s-rating__list">
+      {content.items.map((item) => (
+        <li class="s-rating__item">
+          <figure class="s-review">
+            <figcaption class="s-review__author">
+              <Avatar author={item.author} avatar={item.avatar} size="2.75rem" widths={[88, 160]} />
+              <span class="s-review__who">
+                <span class="s-testimonial__name">{item.author}</span>
+                {item.role && <span class="s-testimonial__role">{item.role}</span>}
+              </span>
+              {item.rating && <Stars rating={item.rating} class="s-review__stars" />}
+            </figcaption>
+            <blockquote class="s-review__quote"><p>{item.quote}</p></blockquote>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </div>
+</SectionShell>

@@ -1,8 +1,19 @@
 ---
+/**
+ * Contact bar: one framed row of facts (grouped hours, address with the route link, phone),
+ * each under an icon and a small label, hairlines between them; stacked on phones. The section
+ * title stays for screen readers only.
+ */
 import SectionShell from "@/sections/_shared/SectionShell.astro";
-import Details from "@/sections/hours-location/Details.astro";
+import Address from "@/sections/hours-location/Address.astro";
+import Icon from "@/components/media/Icon.astro";
+import Link from "@/components/ui/Link.astro";
+import { site } from "virtual:site";
 import { t } from "@/i18n";
+import { addressLines, directionsUrl, hoursRows } from "@/site/hours";
 import type { SectionOf } from "@/site/types";
+import "@/styles/sections/hours-location/_shared.scss";
+import "@/styles/sections/hours-location/_compact.scss";
 
 export interface Props {
   section: SectionOf<"hours-location">;
@@ -11,14 +22,57 @@ export interface Props {
 
 const { section, headingLevel } = Astro.props;
 const { content, props } = section;
+const { business } = site;
 const Heading = headingLevel;
-const inner = headingLevel === "h1" ? "h2" : "h3";
+const Label = headingLevel === "h1" ? "h2" : "h3";
+const rows = hoursRows(business.hours, t);
+const lines = addressLines(business.address);
+const directions = directionsUrl(business.address);
+const phone = content.showPhone ? business.phone : undefined;
 ---
 
 <SectionShell id={section.id} type="hours-location" variant="compact" tone={props.tone} spacing={props.spacing} defaultSpacing="md">
   <Heading class="visually-hidden">{content.title ?? t.sections.hoursTitle}</Heading>
-  <div class="s-hours-location__band">
-    <Details part="hours" showPhone={content.showPhone} headingLevel={inner} />
-    <Details part="address" mapUrl={content.mapUrl} showPhone={content.showPhone} headingLevel={inner} />
+  <div class="s-info-bar">
+    {rows.length > 0 && (
+      <div class="s-info-bar__item">
+        <span class="s-info-bar__icon"><Icon name="clock" size="1.25rem" /></span>
+        <div class="s-info-bar__body">
+          <Label class="s-info-bar__label">{t.sections.hoursTitle}</Label>
+          <dl class="s-info-bar__hours">
+            {rows.map((row) => (
+              <div class:list={["s-info-bar__row", row.closed && "s-info-bar__row--closed"]}>
+                <dt><abbr title={row.daysLong}>{row.days}</abbr></dt>
+                <dd>{row.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    )}
+    {(lines.length > 0 || content.mapUrl) && (
+      <div class="s-info-bar__item">
+        <span class="s-info-bar__icon"><Icon name="map-pin" size="1.25rem" /></span>
+        <div class="s-info-bar__body">
+          <Label class="s-info-bar__label">{t.sections.address}</Label>
+          {lines.length > 0 && <address class="s-info-bar__value"><Address /></address>}
+          {(directions || content.mapUrl) && (
+            <div class="s-info-bar__links">
+              {directions && <Link href={directions} class="s-info-bar__link">{t.sections.directions}<Icon name="arrow-right" size="1rem" /></Link>}
+              {content.mapUrl && <Link href={content.mapUrl} class="s-info-bar__link">{t.sections.openInMaps}<Icon name="arrow-right" size="1rem" /></Link>}
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+    {phone && (
+      <div class="s-info-bar__item">
+        <span class="s-info-bar__icon"><Icon name="phone" size="1.25rem" /></span>
+        <div class="s-info-bar__body">
+          <Label class="s-info-bar__label">{t.sections.phone}</Label>
+          <p class="s-info-bar__value"><Link href={`tel:${phone.replace(/[^\d+]/g, "")}`} class="s-info-bar__phone">{phone}</Link></p>
+        </div>
+      </div>
+    )}
   </div>
 </SectionShell>

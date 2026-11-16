@@ -1,0 +1,87 @@
+---
+/**
+ * "Door sign": one centered card with the live status on top (filled in the browser), the
+ * whole week day by day with today's row marked, and the address and phone at the bottom.
+ * Without JavaScript the card is the plain week.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Address from "@/sections/hours-location/Address.astro";
+import Status from "@/sections/hours-location/Status.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Icon from "@/components/media/Icon.astro";
+import Link from "@/components/ui/Link.astro";
+import { site } from "virtual:site";
+import { t } from "@/i18n";
+import { clock } from "@/site/open-now";
+import { addressLines, directionsUrl, weekHours } from "@/site/hours";
+import type { SectionOf } from "@/site/types";
+import "@/styles/sections/hours-location/_shared.scss";
+import "@/styles/sections/hours-location/_today.scss";
+
+export interface Props {
+  section: SectionOf<"hours-location">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const { business } = site;
+const week = business.hours.length > 0 ? weekHours(business.hours, t) : [];
+const lines = addressLines(business.address);
+const directions = directionsUrl(business.address);
+const phone = content.showPhone ? business.phone : undefined;
+---
+
+<SectionShell id={section.id} type="hours-location" variant="today" tone={props.tone} spacing={props.spacing} width="md">
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title ?? t.sections.hoursTitle} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <div class:list={["s-open-sign", props.align === "left" && "s-open-sign--start"]}>
+      <Status look="band" />
+      {week.length > 0 && (
+        <table class="s-open-sign__week">
+          <caption class="visually-hidden">{t.sections.hoursTitle}</caption>
+          <tbody>
+            {week.map((day) => (
+              <tr class:list={["s-open-sign__day", day.closed && "s-open-sign__day--closed"]} data-day={day.day}>
+                <th scope="row">
+                  {t.days[day.day].long}
+                  <span class="s-open-sign__today" data-today hidden>{t.sections.today}</span>
+                </th>
+                <td>
+                  {day.closed ? day.value : (
+                    <><time datetime={day.opens}>{clock(day.opens!)}</time>–<time datetime={day.closes}>{clock(day.closes!, true)}</time></>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      {(lines.length > 0 || phone) && (
+        <address class="s-open-sign__place">
+          {lines.length > 0 && (
+            <p class="s-open-sign__line">
+              <Icon name="map-pin" size="1.125rem" class="s-open-sign__icon" />
+              <span class="visually-hidden">{t.sections.address}: </span>
+              <span><Address /></span>
+            </p>
+          )}
+          {phone && (
+            <p class="s-open-sign__line">
+              <Icon name="phone" size="1.125rem" class="s-open-sign__icon" />
+              <span class="visually-hidden">{t.sections.phone}: </span>
+              <Link href={`tel:${phone.replace(/[^\d+]/g, "")}`}>{phone}</Link>
+            </p>
+          )}
+          {(directions || content.mapUrl) && (
+            <div class="s-open-sign__links">
+              {directions && <Link href={directions} class="s-open-sign__link">{t.sections.directions}<Icon name="arrow-right" size="1rem" /></Link>}
+              {content.mapUrl && <Link href={content.mapUrl} class="s-open-sign__link">{t.sections.openInMaps}<Icon name="arrow-right" size="1rem" /></Link>}
+            </div>
+          )}
+        </address>
+      )}
+    </div>
+  </Stack>
+</SectionShell>

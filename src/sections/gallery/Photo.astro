@@ -1,0 +1,53 @@
+---
+/**
+ * A gallery photo cropped for its tile, in a frame that fills the tile. With the lightbox the
+ * frame is a link to the whole photo (up to 1600px): the viewer opens it, without JavaScript
+ * the browser shows the image.
+ */
+import { getImage } from "astro:assets";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+
+export interface Props {
+  image: string;
+  /** Shown under the photo in the viewer. */
+  caption?: string;
+  lightbox: boolean;
+  aspect?: readonly [number, number];
+  widths: number[];
+  sizes: string;
+  /** Name of the link when the photo has no alt text, e.g. "Zdjęcie 3 z 8". */
+  label: string;
+  class?: string;
+}
+
+const { image, caption, lightbox, aspect, widths, sizes, label, class: className } = Astro.props;
+const photo = getAsset(image);
+const width = Math.min(photo.image.width, 1600);
+const height = Math.round((width * photo.image.height) / photo.image.width);
+const large = lightbox ? await getImage({ src: photo.image, width, height, format: "webp", quality: 80 }) : undefined;
+const Frame = large ? "a" : "span";
+const frameProps = large
+  ? {
+      href: large.src,
+      "data-lightbox-item": "",
+      "data-width": width,
+      "data-height": height,
+      "data-caption": caption,
+      "aria-label": photo.alt ? undefined : (caption ?? label),
+    }
+  : {};
+---
+
+<Frame class:list={["s-gallery__frame", className]} {...frameProps}>
+  <Img
+    src={photo.image}
+    alt={photo.alt}
+    kind={photo.alt ? "content" : "decorative"}
+    aspect={aspect}
+    focal={photo.focal}
+    widths={widths}
+    sizes={sizes}
+    class="s-gallery__image"
+  />
+</Frame>

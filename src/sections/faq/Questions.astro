@@ -1,0 +1,36 @@
+---
+/**
+ * Expandable questions (native details/summary, open and close without JavaScript) shared by
+ * the newer faq variants. `look`: separate cards with a round plus, numbered cards with a
+ * square brand button, or rows divided by hairlines with a chevron.
+ */
+import RichText from "@/sections/_shared/RichText.astro";
+import "@/styles/sections/faq/_questions.scss";
+
+export interface Props {
+  items: { id: string; question: string; answer: string; category?: string }[];
+  look: "cards" | "numbered" | "lines";
+  openFirst?: boolean;
+  /** Marks every question for the search script (data-faq-item, data-category). */
+  searchable?: boolean;
+  class?: string;
+}
+
+const { items, look, openFirst = false, searchable = false, class: className } = Astro.props;
+const List = look === "numbered" ? "ol" : "ul";
+---
+
+<List class:list={["s-questions", `s-questions--${look}`, className]}>
+  {items.map((item, index) => (
+    <li class="s-questions__item" data-faq-item={searchable ? item.id : undefined} data-category={searchable ? item.category : undefined}>
+      <details class="s-question" open={openFirst && index === 0}>
+        <summary class="s-question__summary">
+          {look === "numbered" && <span class="s-question__number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>}
+          <span class="s-question__text">{item.question}</span>
+          <span class="s-question__icon" aria-hidden="true"></span>
+        </summary>
+        <RichText text={item.answer} class="s-question__answer" />
+      </details>
+    </li>
+  ))}
+</List>

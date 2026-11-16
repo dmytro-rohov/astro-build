@@ -1,0 +1,197 @@
+// Pricing: featured-center (FeaturedCenter.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // v3.3, "three tiles": the featured plan in the middle is wider, taller and on the brand color
+  // (it swaps the accent and its text color, checked ≥ 4.5:1, like an accent section); the tiles
+  // beside it start lower, end higher and stay quiet.
+  .s-tiers {
+    --tier-accent: var(--color-action-primary);
+    --tier-ink: var(--color-action-primary-text);
+
+    display: grid;
+    gap: var(--spacing-xl);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  @include mq(md) {
+    .s-tiers {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-lg);
+    }
+
+    .s-tier {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    .s-tier--featured {
+      flex-grow: 1.25;
+    }
+
+    .s-tiers--count-1 {
+      justify-content: center;
+    }
+
+    .s-tiers--count-1 > .s-tier {
+      flex: 0 1 30rem;
+    }
+
+    .s-tiers--count-2 {
+      max-width: 54rem;
+      margin-inline: auto;
+    }
+
+    // Four tiles: two rows on tablets, one row from lg.
+    .s-tiers--count-4 > .s-tier {
+      flex-basis: calc(50% - var(--spacing-lg));
+    }
+
+    .s-tiers:not(.s-tiers--count-4) > .s-tier:not(.s-tier--featured) {
+      margin-block: var(--spacing-xl);
+    }
+  }
+
+  @include mq(lg) {
+    .s-tiers--count-4 {
+      flex-wrap: nowrap;
+    }
+
+    .s-tiers--count-4 > .s-tier {
+      flex-basis: 0;
+    }
+
+    .s-tiers--count-4 > .s-tier:not(.s-tier--featured) {
+      margin-block: var(--spacing-xl);
+    }
+  }
+
+  .s-tier {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-xl) var(--spacing-lg);
+    background: var(--color-background-surface);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+  }
+
+  .s-tier--featured {
+    --color-text-primary: var(--tier-ink);
+    --color-text-secondary: var(--tier-ink);
+    --color-border-default: color-mix(in srgb, var(--tier-ink) 30%, transparent);
+    --color-action-primary: var(--tier-ink);
+    --color-action-primary-hover: color-mix(in srgb, var(--tier-ink) 88%, var(--tier-accent));
+    --color-action-primary-text: var(--tier-accent);
+    --color-focus-ring: var(--tier-ink);
+
+    padding-block: var(--spacing-2xl);
+    color: var(--color-text-primary);
+    background: var(--tier-accent);
+    border-color: var(--tier-accent);
+    box-shadow: 0 1.75rem 3.5rem -1.75rem color-mix(in srgb, var(--tier-accent) 75%, transparent);
+  }
+
+  @include mq(md) {
+    .s-tier {
+      padding-inline: var(--spacing-xl);
+    }
+  }
+
+  .s-tier__badge {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    width: fit-content;
+    max-width: calc(100% - var(--spacing-xl));
+    margin-inline: auto;
+    padding: var(--spacing-xs) var(--spacing-md);
+    color: var(--tier-accent);
+    background: var(--tier-ink);
+    border-radius: var(--radius-button);
+    box-shadow: var(--elevation-card);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-align: center;
+    text-transform: uppercase;
+    transform: translateY(-50%);
+  }
+
+  .s-tier__head {
+    display: grid;
+    gap: var(--spacing-sm);
+    justify-items: center;
+    text-align: center;
+  }
+
+  .s-tier__name {
+    color: var(--color-text-secondary);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+
+  .s-tier__price {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    gap: var(--spacing-xs);
+    margin-block-start: var(--spacing-xs);
+  }
+
+  .s-tier__amount {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-4xl);
+    font-weight: var(--heading-weight);
+    line-height: var(--line-height-none);
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  .s-tier--featured .s-tier__amount {
+    font-size: clamp(var(--font-size-4xl), 4vw, var(--font-size-5xl));
+  }
+
+  .s-tier__period,
+  .s-tier__description {
+    color: var(--color-text-secondary);
+  }
+
+  .s-tier__description {
+    max-width: 22rem;
+    font-size: var(--font-size-sm);
+  }
+
+  .s-tier__action {
+    width: 100%;
+  }
+
+  .s-tier__features {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg) 0 0;
+    margin: 0;
+    list-style: none;
+    border-block-start: 1px solid var(--color-border-default);
+    font-size: var(--font-size-sm);
+  }
+
+  .s-tier__feature {
+    display: flex;
+    gap: var(--spacing-sm);
+  }
+
+  .s-tier__check {
+    flex-shrink: 0;
+    margin-block-start: 0.15em;
+    color: var(--color-action-primary);
+  }
+}

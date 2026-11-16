@@ -1,0 +1,14 @@
+// Features: cards-grid (CardsGrid.astro).
+@use "../../abstracts/layers";
+
+@layer widgets {
+  .s-features-cards__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .s-features-cards__icon {
+    margin-block-end: var(--spacing-sm);
+  }
+}

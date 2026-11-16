@@ -66,6 +66,34 @@ test.describe("mobile menu", () => {
   });
 });
 
+// v3.3: the demo site's header has hideOnScroll.
+test.describe("header that hides on scroll", () => {
+  test("slides away when scrolling down and comes back when scrolling up", async ({ page }) => {
+    await page.goto("/");
+    await page.locator("[data-consent-reject]").click();
+    const header = page.locator(".site-header");
+
+    await page.evaluate(() => window.scrollBy(0, 1200));
+    await expect(header).toHaveAttribute("data-hidden", "");
+    await expect.poll(async () => (await header.boundingBox())?.y ?? 0).toBeLessThan(0);
+
+    await page.evaluate(() => window.scrollBy(0, -300));
+    await expect(header).not.toHaveAttribute("data-hidden");
+    await expect.poll(async () => Math.round((await header.boundingBox())?.y ?? -1)).toBe(0);
+  });
+
+  test("comes back when keyboard focus moves into it", async ({ page }) => {
+    await page.goto("/");
+    await page.locator("[data-consent-reject]").click();
+    await page.evaluate(() => window.scrollBy(0, 1200));
+    const header = page.locator(".site-header");
+    await expect(header).toHaveAttribute("data-hidden", "");
+
+    await page.locator(".site-header a").first().focus();
+    await expect(header).not.toHaveAttribute("data-hidden");
+  });
+});
+
 test.describe("without JavaScript", () => {
   test.use({ javaScriptEnabled: false });
 

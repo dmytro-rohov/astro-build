@@ -1,0 +1,138 @@
+// Testimonials: rating (Rating.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // The title and the score (a card with the big average) on the left, sticky next to a long
+  // list; the reviews as rows divided by hairlines on the right.
+  .s-rating {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  .s-rating__intro {
+    display: grid;
+    gap: var(--spacing-xl);
+    align-content: start;
+    justify-items: start;
+  }
+
+  // Nothing rated: a large quote mark under the title instead of the score (wide screens).
+  .s-rating__mark {
+    display: none;
+    width: 5rem;
+    color: var(--color-action-primary);
+    opacity: 0.25;
+  }
+
+  .s-rating__score {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-sm) var(--spacing-lg);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-rating__value {
+    font-family: var(--font-family-heading);
+    font-size: clamp(var(--font-size-5xl), 6vw, var(--font-size-7xl));
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--heading-weight);
+    letter-spacing: var(--letter-spacing-tight);
+    line-height: var(--line-height-none);
+  }
+
+  .s-rating__scale {
+    margin-inline-start: 0.1em;
+    color: var(--color-text-secondary);
+    font-size: 0.35em;
+    letter-spacing: normal;
+  }
+
+  .s-rating__detail {
+    display: grid;
+    gap: var(--spacing-xs);
+  }
+
+  .s-rating__stars {
+    --star: 1.5rem;
+  }
+
+  .s-rating__basis {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  .s-rating__list {
+    display: grid;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-rating__item {
+    padding-block: var(--spacing-lg);
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-rating__item:first-child {
+    padding-block-start: 0;
+    border-block-start: 0;
+  }
+
+  .s-rating__item:last-child {
+    padding-block-end: 0;
+  }
+
+  .s-review {
+    --avatar: 2.75rem;
+
+    display: grid;
+    gap: var(--spacing-sm);
+    margin: 0;
+  }
+
+  .s-review__author {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .s-review__who {
+    flex: 1 1 10rem;
+    min-width: 0;
+  }
+
+  .s-review__quote {
+    margin: 0;
+    line-height: var(--line-height-relaxed);
+  }
+
+  @include mq(md) {
+    .s-review__quote {
+      padding-inline-start: calc(var(--avatar) + var(--spacing-md));
+    }
+  }
+
+  @include mq(lg) {
+    .s-rating {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      gap: var(--spacing-3xl);
+      align-items: start;
+    }
+
+    .s-rating__intro {
+      position: sticky;
+      inset-block-start: calc(var(--header-offset, 4.5rem) + var(--spacing-lg));
+    }
+
+    .s-rating__mark {
+      display: block;
+    }
+  }
+}

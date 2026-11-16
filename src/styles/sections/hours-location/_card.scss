@@ -1,0 +1,21 @@
+// Hours and location: card (Card.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // v3.3: icon badges, dashed rules between the hour rows, the route planner as the main button.
+  .s-hours-location__cards {
+    display: grid;
+    gap: var(--spacing-lg);
+  }
+
+  @include mq(md) {
+    .s-hours-location__cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .s-hours-location__cards--single {
+      grid-template-columns: minmax(0, 34rem);
+    }
+  }
+}

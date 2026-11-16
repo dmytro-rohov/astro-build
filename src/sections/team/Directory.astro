@@ -1,0 +1,46 @@
+---
+/** Dense grid of small cards: a small round photo beside name and role, short bio and icon links. */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Avatar from "@/sections/team/Avatar.astro";
+import MemberLinks from "@/sections/team/MemberLinks.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import { teamColumns } from "@/sections/team/layout";
+import { toneFor } from "@/site/theme";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/team/_shared.scss";
+import "@/styles/sections/team/_directory.scss";
+
+export interface Props {
+  section: VariantOf<"team", "directory">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const count = content.members.length;
+const NameHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="team" variant="directory" tone={props.tone ?? toneFor("team", undefined) ?? "muted"} spacing={props.spacing}>
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <ul class:list={["s-team-cols", `s-team-cols--${teamColumns(count)}`, "s-team-directory"]}>
+      {content.members.map((member) => (
+        <li class="s-team-directory__item">
+          <div class="s-team-directory__head">
+            <Avatar name={member.name} photo={member.photo} widths={[96, 192]} sizes="4rem" decorative class="s-team-directory__avatar" />
+            <div class="s-team-directory__who">
+              <NameHeading class="s-team-directory__name" id={`${section.id}-${member.id}-name`}>{member.name}</NameHeading>
+              <p class="s-team-directory__role">{member.role}</p>
+            </div>
+          </div>
+          {member.bio && <p class="s-team-directory__bio">{member.bio}</p>}
+          {member.socials && member.socials.length > 0 && (
+            <MemberLinks links={member.socials} describedBy={`${section.id}-${member.id}-name`} class="s-team-directory__links" />
+          )}
+        </li>
+      ))}
+    </ul>
+  </Stack>
+</SectionShell>

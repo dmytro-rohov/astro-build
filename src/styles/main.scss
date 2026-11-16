@@ -1,3 +1,4 @@
+@use "./abstracts/layers";
 @use "./abstracts/functions" as *;
 @use "./abstracts/mixins";
 @use "./abstracts/variables";
@@ -12,11 +13,10 @@
 @use "./components/media/picture";
 @use "./components/media/figure";
 
-// ui
+// ui (slider, lightbox, progress and accordion come with their components)
 @use "./components/button";
 @use "./components/link";
 @use "./components/card";
-@use "./components/slider";
 @use "./components/tag";
 @use "./components/divider";
 
@@ -51,16 +51,9 @@
 @use "./layouts/error-page";
 
 // shared components used by sections
-@use "./components/accordion";
 @use "./components/form/contact-form";
 
-// sections (cascade layer "widgets")
-@use "./sections/hero";
-@use "./sections/feature-grid";
-@use "./sections/cta";
-@use "./sections/faq";
+// sections (cascade layer "widgets"): what every page needs; the styles of each section type
+// come with its components (src/styles/sections/<type>/, imported in src/sections/)
 @use "./sections/shared";
-@use "./sections/sections";
-@use "./sections/blocks";
-@use "./sections/suggestion";
-@layer reset, tokens, base, layout, components, widgets, utilities, state;
+@use "./sections/hero";

@@ -1,0 +1,54 @@
+---
+/**
+ * Typographic columns without cards, divided by thin rules: big prices, quiet feature
+ * lists; the highlighted plan gets an accent line and its label instead of a frame.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Button from "@/components/ui/Button.astro";
+import { t } from "@/i18n";
+import type { SectionOf } from "@/site/types";
+import "@/styles/sections/pricing/_minimal.scss";
+
+export interface Props {
+  section: SectionOf<"pricing">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const PlanHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="pricing" variant="minimal" tone={props.tone} spacing={props.spacing}>
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
+    <ul class:list={["s-plan-columns", `s-plan-columns--count-${content.plans.length}`]}>
+      {content.plans.map((plan) => (
+        <li class:list={["s-plan-column", plan.highlighted && "s-plan-column--highlighted"]}>
+          <div class="s-plan-column__head">
+            <PlanHeading class="s-plan-column__name">{plan.name}</PlanHeading>
+            {plan.highlighted && <p class="s-plan-column__badge">{t.sections.popularPlan}</p>}
+          </div>
+          <p class="s-plan-column__price">
+            <span class="s-plan-column__amount">{plan.price}</span>
+            {plan.period && <span class="s-plan-column__period">{plan.period}</span>}
+          </p>
+          {plan.description && <p class="s-plan-column__description">{plan.description}</p>}
+          {plan.features.length > 0 && (
+            <ul class="s-plan-column__features">
+              {plan.features.map((feature) => <li>{feature}</li>)}
+            </ul>
+          )}
+          {plan.action && (
+            <div class="s-plan-column__action">
+              <Button href={plan.action.href} variant={plan.highlighted ? "primary" : "secondary"}>{plan.action.label}</Button>
+            </div>
+          )}
+        </li>
+      ))}
+    </ul>
+    {content.note && <p class="s-plan-columns__note">{content.note}</p>}
+  </Stack>
+</SectionShell>

@@ -1,0 +1,111 @@
+// Section type features: cards-grid, icon-list and the v3.3 variants icon-badge, staggered,
+// orbit, spotlight and bento.
+// This one, every variant but icon-list: columns, item eyebrow and link (ItemLink.astro), and the
+// item parts several variants share.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Card columns: 1 on phones, 2 on tablets, --3 / --4 on wide screens. A wrapping flex row
+  // (not a grid), so a short last row is centered and odd counts look intentional.
+  .s-features-cols {
+    --columns: 1;
+    --column-gap: var(--spacing-lg);
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-lg) var(--column-gap);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-features-cols > li {
+    flex: 0 0 calc((100% - (var(--columns) - 1) * var(--column-gap)) / var(--columns));
+    min-width: 0;
+  }
+
+  @include mq(md) {
+    .s-features-cols {
+      --columns: 2;
+    }
+  }
+
+  @include mq(lg) {
+    .s-features-cols--3 {
+      --columns: 3;
+    }
+
+    .s-features-cols--4 {
+      --columns: 4;
+    }
+  }
+
+  // Small label above an item title: the accent pulled toward the text color keeps 4.5:1.
+  .s-features-eyebrow {
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.08em;
+    line-height: var(--line-height-snug);
+    text-transform: uppercase;
+  }
+
+  .s-features-link {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: var(--spacing-xs);
+    min-height: 1.5rem;
+    margin-block-start: auto;
+    padding-block-start: var(--spacing-xs);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentcolor 35%, transparent);
+  }
+
+  .s-features-link:hover {
+    text-decoration-color: currentcolor;
+  }
+
+  .s-features-link__arrow {
+    flex-shrink: 0;
+    transition: translate var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .s-features-link:hover .s-features-link__arrow {
+    translate: 0.2em 0;
+  }
+
+  // Item parts several variants share: the icon tile, the title and the description.
+  .s-features-cards__icon,
+  .s-features-bento__icon {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+
+    // Like .tag--primary: the item number stays 4.5:1 on the tint.
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    background: color-mix(in srgb, var(--color-action-primary) 12%, transparent);
+    border-radius: var(--radius-control);
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-features-cards__title,
+  .s-features-icon-badge__title {
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-features-cards__description,
+  .s-features-icon-badge__description,
+  .s-features-staggered__description,
+  .s-features-spotlight__description {
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+  }
+}

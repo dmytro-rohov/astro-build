@@ -1,10 +1,10 @@
 ---
-import Section from "@/components/layouts/Section.astro";
-import Container from "@/components/layouts/Container.astro";
-import Split from "@/components/layouts/Split.astro";
-import Stack from "@/components/layouts/Stack.astro";
-
-import Card from "@/components/ui/Card.astro";
+/**
+ * The contact form: fields, consent, honeypot, status line and the script that sends it
+ * with fetch (server field errors next to the fields, focus on the first invalid one).
+ * Without JavaScript the browser posts it and the server redirects to a result page.
+ * The section layouts around it are the contact variants (src/sections/contact/).
+ */
 import Link from "@/components/ui/Link.astro";
 import Button from "@/components/ui/Button.astro";
 
@@ -22,257 +22,153 @@ import { t } from "@/i18n";
 
 const m = t.contactForm;
 
-export type ContactInfoItem = {
-  label: string;
-  value: string;
-  href?: string;
-};
-
 export interface Props {
-  /** Section id, used as an anchor (e.g. /#features). */
-  id?: string;
-  eyebrow?: string;
-  title?: string;
-  /** Use "h1" when the form is the main section of the page (e.g. /contact). */
-  headingLevel?: "h1" | "h2";
-  description?: string;
-  contactInfo?: ContactInfoItem[];
   action?: string;
   method?: "post";
   submitLabel?: string;
   privacyHref?: string;
-  tone?: "default" | "muted" | "inverse" | "accent";
   /** Extra hidden fields sent with the form (e.g. siteId for the form service). */
   hiddenFields?: Record<string, string>;
-  /** split: text + details beside the form; centered: one narrow column. */
-  layout?: "split" | "centered";
   class?: string;
 }
 
 const {
-  eyebrow = m.eyebrow,
-  title = m.title,
-  headingLevel = "h2",
-  description = m.description,
-  contactInfo = [
-    {
-      label: m.emailLabel,
-      value: "hello@example.com",
-      href: "mailto:hello@example.com",
-    },
-  ],
   action = "/api/contact",
   method = "post",
   submitLabel = m.submit,
   privacyHref = "/privacy",
-  tone = "default",
-  layout = "split",
   hiddenFields = {},
   class: className,
-  ...restProps
 } = Astro.props;
-
-const hasContactInfo = contactInfo.length > 0;
-// v3.2: always two columns — text and contact details (sticky) next to the form, which gets the
-// wider column; "centered" only centers the heading on phones.
-const Layout = Split;
-const layoutProps = { ratio: "media-text", gap: "2xl", align: "start" } as const;
-const Heading = headingLevel;
-const SubHeading = headingLevel === "h1" ? "h2" : "h3";
 ---
 
-<Section
-  {...restProps}
-  spacing="lg"
-  tone={tone}
-  class:list={[
-    "contact-form-section",
-    `contact-form-section--tone-${tone}`,
-    className,
-  ]}
+<form
+  class:list={["contact-form", className]}
+  action={action}
+  method={method}
+  data-contact-form
+  data-msg-sending={m.sending}
+  data-msg-success={m.success}
+  data-msg-correct-fields={m.correctFields}
+  data-msg-generic-error={m.genericError}
 >
-  <Container size="lg">
-    <Layout {...layoutProps} class:list={[layout === "centered" && "contact-form-section--centered"]}>
-      <Stack class="contact-form-section__content" space="lg">
-        <Stack space="md">
-          {eyebrow && (
-            <p class="contact-form-section__eyebrow">
-              {eyebrow}
-            </p>
-          )}
+  <FormGroup gap="lg" class="contact-form__fields">
+    <FormField class="contact-form__field--half">
+      <Label for="contact-name" required>
+        {m.nameLabel}
+      </Label>
 
-          <Heading class="contact-form-section__title">
-            {title}
-          </Heading>
+      <Input
+        id="contact-name"
+        name="name"
+        type="text"
+        autocomplete="name"
+        maxlength={CONTACT_LIMITS.nameMax}
+        required
+        describedby="contact-name-error"
+      />
 
-          {description && (
-            <p class="contact-form-section__description">
-              {description}
-            </p>
-          )}
-        </Stack>
+      <FieldError id="contact-name-error" class="contact-form__error" data-error-for="name" />
+    </FormField>
 
-        {hasContactInfo && (
-          <div class="contact-form-section__info">
-            <SubHeading class="contact-form-section__info-title">
-              {m.detailsTitle}
-            </SubHeading>
+    <FormField class="contact-form__field--half">
+      <Label for="contact-email" required>
+        {m.emailLabel}
+      </Label>
 
-            <ul class="contact-form-section__info-list">
-              {contactInfo.map((item) => (
-                <li class="contact-form-section__info-item">
-                  <span class="contact-form-section__info-label">
-                    {item.label}
-                  </span>
+      <Input
+        id="contact-email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        maxlength={CONTACT_LIMITS.emailMax}
+        required
+        describedby="contact-email-hint contact-email-error"
+      />
 
-                  {item.href ? (
-                    <Link href={item.href} class="contact-form-section__info-link">
-                      {item.value}
-                    </Link>
-                  ) : (
-                    <span class="contact-form-section__info-value">
-                      {item.value}
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </Stack>
+      <FieldHint id="contact-email-hint">
+        {m.emailHint}
+      </FieldHint>
 
-      <Card as="div" variant="elevated" padding="lg" class="contact-form-card">
-        <form
-          class="contact-form"
-          action={action}
-          method={method}
-          data-contact-form
-          data-msg-sending={m.sending}
-          data-msg-success={m.success}
-          data-msg-correct-fields={m.correctFields}
-          data-msg-generic-error={m.genericError}
-        >
-          <FormGroup gap="lg">
-            <FormField>
-              <Label for="contact-name" required>
-                {m.nameLabel}
-              </Label>
+      <FieldError id="contact-email-error" class="contact-form__error" data-error-for="email" />
+    </FormField>
 
-              <Input
-                id="contact-name"
-                name="name"
-                type="text"
-                autocomplete="name"
-                maxlength={CONTACT_LIMITS.nameMax}
-                required
-                describedby="contact-name-error"
-              />
+    <FormField>
+      <Label for="contact-subject">
+        {m.subjectLabel}
+      </Label>
 
-              <FieldError id="contact-name-error" class="contact-form__error" data-error-for="name" />
-            </FormField>
+      <Input
+        id="contact-subject"
+        name="subject"
+        type="text"
+        autocomplete="off"
+        maxlength={CONTACT_LIMITS.subjectMax}
+        describedby="contact-subject-error"
+      />
 
-            <FormField>
-              <Label for="contact-email" required>
-                {m.emailLabel}
-              </Label>
+      <FieldError id="contact-subject-error" class="contact-form__error" data-error-for="subject" />
+    </FormField>
 
-              <Input
-                id="contact-email"
-                name="email"
-                type="email"
-                autocomplete="email"
-                maxlength={CONTACT_LIMITS.emailMax}
-                required
-                describedby="contact-email-hint contact-email-error"
-              />
+    <FormField>
+      <Label for="contact-message" required>
+        {m.messageLabel}
+      </Label>
 
-              <FieldHint id="contact-email-hint">
-                {m.emailHint}
-              </FieldHint>
+      <Textarea
+        id="contact-message"
+        name="message"
+        rows={6}
+        maxlength={CONTACT_LIMITS.messageMax}
+        required
+        describedby="contact-message-error"
+      />
 
-              <FieldError id="contact-email-error" class="contact-form__error" data-error-for="email" />
-            </FormField>
+      <FieldError id="contact-message-error" class="contact-form__error" data-error-for="message" />
+    </FormField>
 
-            <FormField>
-              <Label for="contact-subject">
-                {m.subjectLabel}
-              </Label>
+    {Object.entries(hiddenFields).map(([name, value]) => (
+      <input type="hidden" name={name} value={value} />
+    ))}
 
-              <Input
-                id="contact-subject"
-                name="subject"
-                type="text"
-                autocomplete="off"
-                maxlength={CONTACT_LIMITS.subjectMax}
-                describedby="contact-subject-error"
-              />
+    <div class="contact-form__honeypot" aria-hidden="true">
+      <Label for="contact-website">
+        {m.honeypotLabel}
+      </Label>
 
-              <FieldError id="contact-subject-error" class="contact-form__error" data-error-for="subject" />
-            </FormField>
+      <Input
+        id="contact-website"
+        name="website"
+        type="text"
+        tabindex="-1"
+        autocomplete="off"
+      />
+    </div>
 
-            <FormField>
-              <Label for="contact-message" required>
-                {m.messageLabel}
-              </Label>
+    <FormField>
+      <Checkbox
+        id="contact-privacy"
+        name="privacy"
+        required
+        describedby="contact-privacy-error"
+      >
+        {m.privacyBefore}{" "}
+        <Link href={privacyHref}>
+          {m.privacyLink}
+        </Link>
+        {m.privacyAfter}
+      </Checkbox>
 
-              <Textarea
-                id="contact-message"
-                name="message"
-                rows={6}
-                maxlength={CONTACT_LIMITS.messageMax}
-                required
-                describedby="contact-message-error"
-              />
+      <FieldError id="contact-privacy-error" class="contact-form__error" data-error-for="privacy" />
+    </FormField>
 
-              <FieldError id="contact-message-error" class="contact-form__error" data-error-for="message" />
-            </FormField>
+    <p class="contact-form__status" data-contact-status aria-live="polite"></p>
 
-            {Object.entries(hiddenFields).map(([name, value]) => (
-              <input type="hidden" name={name} value={value} />
-            ))}
-
-            <div class="contact-form__honeypot" aria-hidden="true">
-              <Label for="contact-website">
-                {m.honeypotLabel}
-              </Label>
-
-              <Input
-                id="contact-website"
-                name="website"
-                type="text"
-                tabindex="-1"
-                autocomplete="off"
-              />
-            </div>
-
-            <FormField>
-              <Checkbox
-                id="contact-privacy"
-                name="privacy"
-                required
-                describedby="contact-privacy-error"
-              >
-                {m.privacyBefore}{" "}
-                <Link href={privacyHref}>
-                  {m.privacyLink}
-                </Link>
-                {m.privacyAfter}
-              </Checkbox>
-
-              <FieldError id="contact-privacy-error" class="contact-form__error" data-error-for="privacy" />
-            </FormField>
-
-            <p class="contact-form__status" data-contact-status aria-live="polite"></p>
-
-            <Button type="submit" size="lg" class="contact-form__submit">
-              {submitLabel}
-            </Button>
-          </FormGroup>
-        </form>
-      </Card>
-    </Layout>
-  </Container>
-</Section>
+    <Button type="submit" size="lg" class="contact-form__submit">
+      {submitLabel}
+    </Button>
+  </FormGroup>
+</form>
 
 <script>
   const forms = document.querySelectorAll("[data-contact-form]");

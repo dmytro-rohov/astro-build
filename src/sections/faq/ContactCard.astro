@@ -1,0 +1,56 @@
+---
+/**
+ * "Still have a question?" card of the split-contact variant: a round photo (the section's
+ * image) or a brand badge, the business phone and e-mail, and the section's action as a button.
+ * Nothing is rendered when the site has neither contact details nor an action.
+ */
+import Button from "@/components/ui/Button.astro";
+import Icon from "@/components/media/Icon.astro";
+import Img from "@/components/media/Img.astro";
+import { site } from "virtual:site";
+import { t } from "@/i18n";
+import { getAsset } from "@/site/assets";
+
+export interface Props {
+  image?: string;
+  action?: { label: string; href: string };
+  headingLevel: "h2" | "h3";
+}
+
+const { image, action, headingLevel } = Astro.props;
+const { business } = site;
+const Heading = headingLevel;
+const photo = image ? getAsset(image) : undefined;
+const contacts = [
+  business.phone && { icon: "phone", label: t.sections.phone, value: business.phone, href: `tel:${business.phone.replace(/[^\d+]/g, "")}` },
+  business.email && { icon: "mail", label: t.sections.email, value: business.email, href: `mailto:${business.email}` },
+].filter((contact): contact is { icon: string; label: string; value: string; href: string } => Boolean(contact));
+---
+
+{(contacts.length > 0 || action) && (
+  <div class="s-faq-contact">
+    <div class="s-faq-contact__head">
+      {photo ? (
+        <Img src={photo.image} alt="" kind="decorative" aspect={[1, 1]} focal={photo.focal} widths={[128, 192]} sizes="4rem" class="s-faq-contact__photo" />
+      ) : (
+        <span class="s-faq-contact__badge" aria-hidden="true">?</span>
+      )}
+      <div class="s-faq-contact__intro">
+        <Heading class="s-faq-contact__title">{t.faq.contactTitle}</Heading>
+        <p class="s-faq-contact__text">{t.faq.contactText}</p>
+      </div>
+    </div>
+    {contacts.length > 0 && (
+      <ul class="s-faq-contact__list">
+        {contacts.map((contact) => (
+          <li class="s-faq-contact__item">
+            <span class="s-faq-contact__icon"><Icon name={contact.icon} /></span>
+            <span class="s-faq-contact__label">{contact.label}</span>
+            <a class="s-faq-contact__link" href={contact.href}>{contact.value}</a>
+          </li>
+        ))}
+      </ul>
+    )}
+    {action && <Button href={action.href} class="s-faq-contact__action">{action.label}</Button>}
+  </div>
+)}

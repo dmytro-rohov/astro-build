@@ -1,0 +1,207 @@
+// Features: orbit (Orbit.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Phones and tablets: the header (or the image) above a plain list.
+  .s-features-orbit {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  .s-features-orbit__core--image {
+    justify-self: center;
+    width: min(100%, 12rem);
+  }
+
+  .s-features-orbit__image,
+  .s-features-orbit__logo {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+  }
+
+  .s-features-orbit__image {
+    object-fit: cover;
+  }
+
+  .s-features-orbit__logo {
+    padding: 18%;
+    object-fit: contain;
+    background: var(--color-background-surface);
+    border: 1px solid var(--color-border-default);
+  }
+
+  .s-features-orbit__list {
+    display: grid;
+    gap: var(--spacing-xl) var(--spacing-2xl);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-features-orbit__item {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  .s-features-orbit__icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    color: var(--color-action-primary);
+    background: var(--color-background-surface);
+    border: 1px solid color-mix(in srgb, var(--color-action-primary) 40%, var(--color-border-default));
+    border-radius: 50%;
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-features-orbit__text {
+    display: grid;
+    gap: var(--spacing-xs);
+    min-width: 0;
+  }
+
+  .s-features-orbit__title {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-features-orbit__description {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+  }
+
+  @include mq(md) {
+    .s-features-orbit__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  // Wide screens: the circle and the list share one grid cell. The list has three columns
+  // (items | circle | items); each item spans two rows, so with an odd count the right side
+  // starts one row lower and both sides stay centered on the circle.
+  @include mq(lg) {
+    .s-features--orbit {
+      --orbit-ground: var(--color-background-primary);
+    }
+
+    .s-features--orbit.section--tone-muted {
+      --orbit-ground: var(--color-background-muted);
+    }
+
+    .s-features-orbit {
+      --core: clamp(15rem, 20vw, 19rem);
+      --gap: clamp(3rem, 5vw, 5rem);
+
+      grid-template-areas: "orbit";
+      place-items: center;
+      gap: 0;
+    }
+
+    .s-features-orbit__core,
+    .s-features-orbit__list {
+      grid-area: orbit;
+    }
+
+    // A circle; a very long title stretches it into a capsule.
+    .s-features-orbit__core {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      place-content: center;
+      width: var(--core);
+      min-height: var(--core);
+      padding: var(--spacing-xl);
+      background: var(--color-background-surface);
+      border-radius: var(--core);
+      box-shadow:
+        0 0 0 0.75rem color-mix(in srgb, var(--color-action-primary) 12%, transparent),
+        0 0 0 1.5rem color-mix(in srgb, var(--color-action-primary) 6%, transparent),
+        var(--card-shadow);
+    }
+
+    .s-features-orbit__core--image {
+      padding: 0;
+      background: none;
+    }
+
+    .s-features-orbit__header .s-header__title {
+      font-size: clamp(var(--font-size-xl), 2vw, var(--font-size-3xl));
+      text-wrap: balance;
+    }
+
+    .s-features-orbit__header .s-header__description {
+      font-size: var(--font-size-sm);
+    }
+
+    .s-features-orbit__list {
+      position: relative;
+      z-index: 1;
+      grid-template-columns: minmax(0, 1fr) calc(var(--core) + 2 * var(--gap)) minmax(0, 1fr);
+      grid-auto-flow: row dense;
+      align-content: space-evenly;
+      gap: var(--spacing-md) 0;
+      width: 100%;
+      min-height: calc(var(--core) + var(--gap));
+    }
+
+    // The orbit: a ring through the middle of the gaps (a capsule when the list is taller),
+    // filled with the section color so the connectors end on it.
+    .s-features-orbit__list::before {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 50%;
+      width: calc(var(--core) + var(--gap));
+      background: var(--orbit-ground);
+      border: 1px dashed color-mix(in srgb, var(--color-action-primary) 45%, var(--color-border-default));
+      border-radius: var(--core);
+      translate: -50% 0;
+    }
+
+    .s-features-orbit__item {
+      grid-row: span 2;
+      align-items: center;
+    }
+
+    .s-features-orbit__item--start {
+      grid-column: 1;
+      flex-direction: row-reverse;
+      text-align: end;
+    }
+
+    .s-features-orbit__item--end {
+      grid-column: 3;
+    }
+
+    .s-features-orbit--odd .s-features-orbit__item--turn {
+      grid-row: 2 / span 2;
+    }
+
+    // Connector from the icon toward the center; the orbit's fill hides its far end.
+    .s-features-orbit__item::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset-block-start: 50%;
+      width: calc(var(--gap) + var(--core) / 2);
+      height: 1px;
+      background: color-mix(in srgb, var(--color-action-primary) 45%, var(--color-border-default));
+    }
+
+    .s-features-orbit__item--start::after {
+      inset-inline-start: 100%;
+    }
+
+    .s-features-orbit__item--end::after {
+      inset-inline-end: 100%;
+    }
+  }
+}

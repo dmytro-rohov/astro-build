@@ -1,0 +1,125 @@
+---
+/**
+ * Location first: one framed widget with a side panel (address, route planner, phone, grouped
+ * hours) next to a large map. The map is drawn (MapArt) until the visitor clicks "Show the map":
+ * only then the mapEmbed provider is loaded (privacy; the CSP allows it for this variant only).
+ * Without mapEmbed the drawn map stays, with the street at the pin; without an address and
+ * mapEmbed only the panel is shown.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import MapArt from "@/sections/hours-location/MapArt.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Button from "@/components/ui/Button.astro";
+import Link from "@/components/ui/Link.astro";
+import Icon from "@/components/media/Icon.astro";
+import { site } from "virtual:site";
+import { format, t } from "@/i18n";
+import { embedProvider } from "@/site/embeds";
+import { addressLines, directionsUrl, hoursRows } from "@/site/hours";
+import type { SectionOf } from "@/site/types";
+import "@/styles/sections/hours-location/_map.scss";
+
+export interface Props {
+  section: SectionOf<"hours-location">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const { business } = site;
+const Heading = headingLevel === "h1" ? "h2" : "h3";
+const rows = hoursRows(business.hours, t);
+const lines = addressLines(business.address);
+const directions = directionsUrl(business.address);
+const phone = content.showPhone ? business.phone : undefined;
+// Validated by the schema (a map provider); the provider decides the frame URL.
+const provider = content.mapEmbed ? embedProvider(content.mapEmbed) : undefined;
+const frameUrl = provider?.frameUrl(new URL(content.mapEmbed!));
+const hasMap = Boolean(directions || frameUrl);
+const vars = { provider: provider?.label ?? "" };
+const place = lines.join(", ") || (business.name ?? site.meta.name);
+const marker = business.address?.street ?? business.address?.city;
+---
+
+<SectionShell id={section.id} type="hours-location" variant="map" tone={props.tone} spacing={props.spacing} width="xl">
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title ?? t.sections.hoursTitle} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
+    <div class:list={["s-hours-map", !hasMap && "s-hours-map--panel-only"]}>
+      <div class="s-hours-map__panel">
+        {lines.length > 0 && (
+          <div class="s-hours-map__block">
+            <Heading class="s-hours-map__label">{t.sections.address}</Heading>
+            <address class="s-hours-map__address">
+              {lines.map((line, index) => <span class:list={[index === 0 && "s-hours-map__street"]}>{line}</span>)}
+            </address>
+            {(directions || content.mapUrl) && (
+              <div class="s-hours-map__actions">
+                {directions && <Button href={directions} variant="primary" size="md"><Icon name="navigation" size="1rem" />{t.sections.directions}</Button>}
+                {content.mapUrl && <Link href={content.mapUrl}>{t.sections.openInMaps}</Link>}
+              </div>
+            )}
+          </div>
+        )}
+        {phone && (
+          <div class="s-hours-map__block">
+            <Heading class="s-hours-map__label">{t.sections.phone}</Heading>
+            <p class="s-hours-map__phone"><Link href={`tel:${phone.replace(/[^\d+]/g, "")}`}>{phone}</Link></p>
+          </div>
+        )}
+        {rows.length > 0 && (
+          <div class="s-hours-map__block">
+            <Heading class="s-hours-map__label">{t.sections.hoursTitle}</Heading>
+            <table class="s-hours-map__hours">
+              <tbody>
+                {rows.map((row) => (
+                  <tr class:list={[row.closed && "s-hours-map__closed"]}>
+                    <th scope="row"><abbr title={row.daysLong}>{row.days}</abbr></th>
+                    <td>{row.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+      {hasMap && (
+        <div class="s-hours-map__map" data-hours-map data-map-src={frameUrl} data-map-title={format(t.sections.mapTitle, { place })}>
+          <div class="s-hours-map__canvas">
+            <MapArt class="s-hours-map__art" />
+            {marker && <p class="s-hours-map__marker" aria-hidden="true">{marker}</p>}
+          </div>
+          {frameUrl && (
+            <div class="s-hours-map__consent">
+              <p class="s-hours-map__notice">{format(t.sections.embedNotice, vars)}</p>
+              <p class="s-hours-map__consent-actions">
+                <button type="button" class="button button--primary button--sm" data-map-load hidden>{t.sections.mapLoad}</button>
+                <a class="link" href={frameUrl} target="_blank" rel="noopener noreferrer">{format(t.sections.embedOpen, vars)}</a>
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  </Stack>
+</SectionShell>
+
+<script>
+  // The drawn map is swapped for the provider's frame only after a click (as the embed section).
+  for (const root of document.querySelectorAll<HTMLElement>("[data-hours-map]")) {
+    const button = root.querySelector<HTMLButtonElement>("[data-map-load]");
+    if (!button || !root.dataset.mapSrc) continue;
+
+    button.hidden = false;
+    button.addEventListener("click", () => {
+      const frame = document.createElement("iframe");
+      frame.src = root.dataset.mapSrc ?? "";
+      frame.title = root.dataset.mapTitle ?? "";
+      frame.className = "s-hours-map__frame";
+      frame.referrerPolicy = "strict-origin-when-cross-origin";
+      root.replaceChildren(frame);
+      root.dataset.mapLoaded = "";
+      frame.focus();
+    });
+  }
+</script>

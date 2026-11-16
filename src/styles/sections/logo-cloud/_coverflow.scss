@@ -1,0 +1,145 @@
+// Logo cloud: coverflow (Coverflow.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Cards on a light tint of the accent. In the slider (more than three logos) every card can
+  // come to the middle — the track is padded by half its width minus half a card — and snaps
+  // there; while it scrolls, a card grows and turns to face the viewer as it nears the middle.
+  .s-coverflow {
+    --card: min(18rem, 66vw);
+    --logo-size: 3.75rem;
+  }
+
+  .s-coverflow__card {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 8 / 5;
+    padding: var(--spacing-lg);
+    background: color-mix(in oklab, var(--color-action-primary) 7%, var(--logo-tile));
+    border: 1px solid color-mix(in oklab, var(--color-action-primary) 16%, transparent);
+    border-radius: var(--radius-card);
+    box-shadow: 0 1.5rem 2.5rem -1.75rem color-mix(in srgb, var(--color-text-primary) 45%, transparent);
+  }
+
+  .s-coverflow__card:has(> .s-logo-link) {
+    padding: 0;
+  }
+
+  .s-coverflow .s-logo-link {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    padding: var(--spacing-lg);
+    border-radius: inherit;
+  }
+
+  .s-coverflow .slider__track {
+    --slider-gap: var(--spacing-md);
+
+    // The start-in-the-middle script measures offsets from the track.
+    position: relative;
+    grid-auto-columns: var(--card);
+    padding: var(--spacing-xl) calc(50% - var(--card) / 2) var(--spacing-2xl);
+  }
+
+  .s-coverflow .slider__track > * {
+    scroll-snap-align: center;
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      // Shrinking side cards make their own gaps.
+      .s-coverflow .slider__track {
+        --slider-gap: 0;
+      }
+
+      // Longhands: the minifier would fold a shorthand and the timeline into one invalid
+      // `animation` declaration.
+      .s-coverflow:not(.s-coverflow--fan) .s-coverflow__card {
+        animation-name: s-coverflow;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view(inline);
+      }
+    }
+  }
+
+  // 0 %: just entered on the right, 50 %: in the middle, 100 %: leaving on the left. Side cards
+  // move in toward the middle one and turn their outer edge away; the far ones fade.
+  @keyframes s-coverflow {
+    0% {
+      opacity: 0.45;
+      transform: perspective(40rem) translateX(-60%) rotateY(60deg) scale(0.62);
+    }
+
+    30% {
+      opacity: 1;
+      transform: perspective(40rem) translateX(-10%) rotateY(40deg) scale(0.8);
+    }
+
+    50% {
+      transform: perspective(40rem) translateX(0) rotateY(0) scale(1);
+    }
+
+    70% {
+      opacity: 1;
+      transform: perspective(40rem) translateX(10%) rotateY(-40deg) scale(0.8);
+    }
+
+    100% {
+      opacity: 0.45;
+      transform: perspective(40rem) translateX(60%) rotateY(-60deg) scale(0.62);
+    }
+  }
+
+  // Two or three logos: a still fan, the middle card in front.
+  .s-coverflow--fan {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md) 0 var(--spacing-xl);
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-coverflow--fan .s-coverflow__item {
+    flex: 0 1 var(--card);
+    min-width: 0;
+  }
+
+  .s-coverflow--3 .s-coverflow__item:nth-child(2) {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 min(var(--card), 52%);
+    margin-inline: -6%;
+  }
+
+  .s-coverflow--3 .s-coverflow__item:first-child .s-coverflow__card {
+    transform: perspective(40rem) rotateY(-32deg) scale(0.8);
+  }
+
+  .s-coverflow--3 .s-coverflow__item:last-child .s-coverflow__card {
+    transform: perspective(40rem) rotateY(32deg) scale(0.8);
+  }
+
+  .s-coverflow--2 {
+    gap: var(--spacing-lg);
+  }
+
+  .s-coverflow--2 .s-coverflow__item:first-child .s-coverflow__card {
+    transform: perspective(40rem) rotateY(-16deg);
+  }
+
+  .s-coverflow--2 .s-coverflow__item:last-child .s-coverflow__card {
+    transform: perspective(40rem) rotateY(16deg);
+  }
+
+  @include mq(md) {
+    .s-coverflow {
+      --card: 18rem;
+      --logo-size: 4.75rem;
+    }
+  }
+}

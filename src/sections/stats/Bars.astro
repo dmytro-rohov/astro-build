@@ -1,0 +1,41 @@
+---
+/**
+ * Stats "bars": label and number on one line, a progress bar below; two columns on wide screens.
+ * An item without a share gets no bar, a thin rule closes it instead.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Progress from "@/components/ui/Progress.astro";
+import type { SectionOf } from "@/site/types";
+import "@/styles/sections/stats/_shared.scss";
+import "@/styles/sections/stats/_bars.scss";
+
+export interface Props {
+  section: SectionOf<"stats">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+---
+
+<SectionShell id={section.id} type="stats" variant="bars" tone={props.tone} spacing={props.spacing} defaultSpacing="md">
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
+    <dl class="s-stats-bars">
+      {content.items.map((item) => (
+        <div class:list={["s-stats-bars__item", { "s-stats-bars__item--plain": item.progress === undefined }]}>
+          <dt class="s-stats-bars__label">{item.label}</dt>
+          <dd class="s-stats-bars__value" data-counter>{item.value}</dd>
+          {item.progress !== undefined && (
+            <dd class="s-stats-bars__bar">
+              <Progress value={item.progress} variant="bar" />
+            </dd>
+          )}
+          {item.description && <dd class="s-stats-bars__description">{item.description}</dd>}
+        </div>
+      ))}
+    </dl>
+  </Stack>
+</SectionShell>

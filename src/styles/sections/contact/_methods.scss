@@ -1,0 +1,140 @@
+// Contact: methods (Methods.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // The form panel sits on a deep brand block that reaches the screen edge (the section clips it).
+  .s-contact--methods {
+    overflow: clip;
+    isolation: isolate;
+  }
+
+  .s-contact-methods {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  .s-contact-methods__intro {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-xl);
+  }
+
+  .s-contact-methods__list {
+    display: grid;
+    gap: var(--spacing-md);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-contact-method {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: var(--color-background-surface);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+    transition:
+      transform var(--motion-duration-normal) var(--motion-easing-standard),
+      border-color var(--motion-duration-normal) var(--motion-easing-standard),
+      box-shadow var(--motion-duration-normal) var(--motion-easing-standard);
+  }
+
+  .s-contact-method:hover {
+    border-color: color-mix(in oklab, var(--color-action-primary) 50%, var(--color-border-default));
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-2px);
+  }
+
+  .s-contact-method__icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    color: var(--color-action-primary);
+    background: color-mix(in oklab, var(--color-action-primary) 12%, transparent);
+    border-radius: var(--radius-card);
+  }
+
+  .s-contact-method__body {
+    display: grid;
+    gap: var(--spacing-xs);
+    min-width: 0;
+  }
+
+  .s-contact-method__title {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-contact-method__line {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+  }
+
+  .s-contact-method__action {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    justify-self: start;
+    margin-block-start: var(--spacing-xs);
+    font-weight: var(--font-weight-semibold);
+    overflow-wrap: anywhere;
+  }
+
+  // The whole card is the link.
+  .s-contact-method__action::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-card);
+  }
+
+  .s-contact-method__arrow {
+    flex-shrink: 0;
+    transition: translate var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .s-contact-method:hover .s-contact-method__arrow {
+    translate: 0.25em 0;
+  }
+
+  .s-contact-methods__panel {
+    position: relative;
+    padding: clamp(var(--spacing-lg), 4vw, var(--spacing-2xl));
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--elevation-card-hover);
+  }
+
+  .s-contact-methods__panel::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: calc(-1 * var(--spacing-xl)) -100vw 45%;
+
+    // A deep shade of the brand on light palettes; the brand itself on dark ones (a darker
+    // shade of a light accent turns muddy there).
+    background: light-dark(color-mix(in oklab, var(--color-action-primary) 70%, black), var(--color-action-primary));
+  }
+
+  @include mq(lg) {
+    .s-contact-methods {
+      grid-template-columns: minmax(0, 0.9fr) minmax(28rem, 1.1fr);
+      align-items: center;
+      gap: var(--spacing-3xl);
+    }
+
+    // From the top of the section, behind the upper part of the panel.
+    .s-contact-methods__panel::before {
+      inset: -100vh -100vw 25% 40%;
+    }
+  }
+}

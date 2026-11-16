@@ -1,0 +1,51 @@
+// An embedded map, video or booking widget behind a consent placeholder
+// (sections/_shared/EmbedFrame.astro): embed and the contact map.
+@use "../abstracts/layers";
+@use "../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-embed__frame {
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: var(--color-background-muted);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-image);
+  }
+
+  .s-embed__frame--wide { aspect-ratio: 16 / 9; }
+  .s-embed__frame--standard { aspect-ratio: 4 / 3; }
+
+  // Wide maps would be taller than the screen in 4:3.
+  @include mq(md) {
+    .s-embed__layout--full .s-embed__frame--standard { aspect-ratio: 16 / 9; }
+  }
+  .s-embed__frame--tall { min-height: 42rem; }
+
+  .s-embed__placeholder {
+    max-width: 28rem;
+    padding: var(--spacing-lg);
+    text-align: center;
+    justify-items: center;
+  }
+
+  .s-embed__notice {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  .s-embed__iframe {
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    border: 0;
+  }
+
+  .s-embed__frame[data-embed-loaded] {
+    display: block;
+  }
+
+  .s-embed__frame--tall .s-embed__iframe {
+    height: 42rem;
+  }
+}

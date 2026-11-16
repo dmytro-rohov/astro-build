@@ -1,0 +1,25 @@
+// Schedule ("Grafik zajęć"), v3.3: six layouts of the same weekly classes. Days and times come
+// sorted from src/site/schedule.ts. Every layout becomes a list of days on phones and never
+// scrolls sideways; long class names wrap anywhere.
+// This one, every variant: notes and class details (Details.astro).
+@use "../../abstracts/layers";
+
+@layer widgets {
+  .s-schedule__note {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  // One detail (level, instructor, room) wraps as a whole before it breaks inside.
+  .s-schedule__detail {
+    display: inline-block;
+    max-width: 100%;
+  }
+
+  .s-schedule__note--center {
+    width: 100%;
+    max-width: 48rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+}

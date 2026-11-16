@@ -1,0 +1,44 @@
+---
+/** Cards with round photos; the featured member (first or `highlight`) moves to the middle, raised, on the brand color. */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Avatar from "@/sections/team/Avatar.astro";
+import MemberLinks from "@/sections/team/MemberLinks.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import { spotlightOrder, teamColumns } from "@/sections/team/layout";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/team/_shared.scss";
+import "@/styles/sections/team/_spotlight.scss";
+
+export interface Props {
+  section: VariantOf<"team", "spotlight">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const columns = teamColumns(content.members.length);
+const { members, featured } = spotlightOrder(content.members, Number(columns), props.highlight);
+const NameHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="team" variant="spotlight" tone={props.tone} spacing={props.spacing}>
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <ul class:list={["s-team-cols", `s-team-cols--${columns}`, "s-team-spotlight"]}>
+      {members.map((member, index) => (
+        <li class:list={["s-team-spotlight__item", index === featured && "s-team-spotlight__item--featured"]}>
+          <Avatar name={member.name} photo={member.photo} widths={[128, 256]} sizes="8rem" decorative class="s-team-spotlight__avatar" />
+          <div class="s-team-spotlight__text">
+            <NameHeading class="s-team-spotlight__name" id={`${section.id}-${member.id}-name`}>{member.name}</NameHeading>
+            <p class="s-team-spotlight__role">{member.role}</p>
+            {member.bio && <p class="s-team-spotlight__bio">{member.bio}</p>}
+            {member.socials && member.socials.length > 0 && (
+              <MemberLinks links={member.socials} describedBy={`${section.id}-${member.id}-name`} class="s-team-spotlight__links" />
+            )}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </Stack>
+</SectionShell>

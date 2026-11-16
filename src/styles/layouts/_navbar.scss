@@ -33,9 +33,25 @@
   }
 
   .navbar__icon {
+    --navbar-icon-gap: 0.2rem;
+
     display: inline-grid;
-    gap: 0.2rem;
+    gap: var(--navbar-icon-gap);
     width: 1rem;
+  }
+
+  // v3.3: the icon alone — a larger burger in a square, quiet button.
+  .navbar__toggle--icon {
+    width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0;
+    border-color: transparent;
+  }
+
+  .navbar__toggle--icon .navbar__icon {
+    --navbar-icon-gap: 0.3rem;
+
+    width: 1.375rem;
   }
 
   .navbar__icon span {
@@ -50,7 +66,7 @@
   }
 
   .navbar[data-open] .navbar__icon span:nth-child(1) {
-    transform: translateY(0.3rem) rotate(45deg);
+    transform: translateY(calc(var(--navbar-icon-gap) + 2px)) rotate(45deg);
   }
 
   .navbar[data-open] .navbar__icon span:nth-child(2) {
@@ -58,7 +74,7 @@
   }
 
   .navbar[data-open] .navbar__icon span:nth-child(3) {
-    transform: translateY(-0.3rem) rotate(-45deg);
+    transform: translateY(calc(-1 * (var(--navbar-icon-gap) + 2px))) rotate(-45deg);
   }
 
   // Phones (v3.2): the menu covers the whole screen under the header and slides in smoothly;
@@ -128,6 +144,36 @@
     .navbar__menu .navbar__cta {
       min-height: 3.25rem;
       font-size: var(--font-size-base);
+    }
+
+    // v3.3: the links sit in the middle of the screen. Auto margins (not justify-content) center
+    // them only while they fit: a long menu starts at the top and scrolls, nothing is cut off.
+    .navbar__menu {
+      align-items: center;
+      text-align: center;
+    }
+
+    .navbar__menu > :first-child {
+      margin-block-start: auto;
+    }
+
+    .navbar__menu > :last-child {
+      margin-block-end: auto;
+    }
+
+    .navbar__menu .navbar__list,
+    .navbar__menu .navbar__contact {
+      justify-items: center;
+      width: 100%;
+    }
+
+    .navbar__menu .navbar__link,
+    .navbar__contact-link {
+      justify-content: center;
+    }
+
+    .navbar__menu .navbar__cta {
+      width: min(100%, 22rem);
     }
   }
 

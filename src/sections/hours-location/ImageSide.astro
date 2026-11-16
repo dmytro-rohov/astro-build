@@ -1,0 +1,46 @@
+---
+/**
+ * Photo of the place with a card overlapping its edge: the section title, the grouped hours and
+ * the address. Without a photo the card sits on a brand-colored panel (dot pattern, a big clock).
+ * Phones: the photo on top, the card pulled up over its lower edge.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Details from "@/sections/hours-location/Details.astro";
+import Icon from "@/components/media/Icon.astro";
+import Img from "@/components/media/Img.astro";
+import { t } from "@/i18n";
+import { getAsset } from "@/site/assets";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/hours-location/_shared.scss";
+import "@/styles/sections/hours-location/_image-side.scss";
+
+export interface Props {
+  section: VariantOf<"hours-location", "image-side">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const inner = headingLevel === "h1" ? "h2" : "h3";
+const image = content.image ? getAsset(content.image) : undefined;
+---
+
+<SectionShell id={section.id} type="hours-location" variant="image-side" tone={props.tone} spacing={props.spacing} width="xl">
+  <div class:list={["s-hours-photo", !image && "s-hours-photo--no-image", props.imagePosition === "right" && "s-hours-photo--image-right"]}>
+    <div class="s-hours-photo__media">
+      {image ? (
+        <Img src={image.image} alt={image.alt} kind={image.alt ? "content" : "decorative"} aspect={[4, 3]} focal={image.focal} sizes="(min-width: 768px) 66vw, 100vw" widths={[480, 720, 960, 1280]} class="s-hours-photo__image" />
+      ) : (
+        <span class="s-hours-photo__mark"><Icon name="clock" size="100%" /></span>
+      )}
+    </div>
+    <div class="s-hours-photo__card">
+      <SectionHeader eyebrow={content.eyebrow} title={content.title ?? t.sections.hoursTitle} description={content.description} headingLevel={headingLevel} align="left" />
+      <div class="s-hours-photo__details">
+        <Details part="hours" showPhone={content.showPhone} headingLevel={inner} />
+        <Details part="address" mapUrl={content.mapUrl} showPhone={content.showPhone} headingLevel={inner} />
+      </div>
+    </div>
+  </div>
+</SectionShell>

@@ -1,50 +1,39 @@
 ---
-import ContactForm from "@/components/form/ContactForm.astro";
+/** Heading and the contact details (icon rows, stay in view) on the left, the form in a card on the right. */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import DetailList from "@/sections/contact/DetailList.astro";
+import Form from "@/sections/contact/Form.astro";
 import { site } from "virtual:site";
 import { t } from "@/i18n";
-import type { SectionOf } from "@/site/types";
-import { toneFor } from "@/site/theme";
+import { contactDetails, contactHeader } from "@/sections/contact/details";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/contact/_form-split.scss";
 
 export interface Props {
-  section: SectionOf<"contact">;
+  section: VariantOf<"contact", "form-split">;
   headingLevel: "h1" | "h2";
-  layout?: "split" | "centered";
 }
 
-const { section, headingLevel, layout = "split" } = Astro.props;
+const { section, headingLevel } = Astro.props;
 const { content, props } = section;
-const { business } = site;
-
-// Local mode posts to this site's /api/contact; remote mode to the form service.
-const remote = site.contact.mode === "remote" ? site.contact : undefined;
-const action = remote ? remote.endpoint : "/api/contact";
-const hiddenFields: Record<string, string> = remote ? { siteId: site.siteId, lang: site.lang } : {};
-
-// Contact details always come from business (one source of truth).
-const address = [business.address?.street, [business.address?.postalCode, business.address?.city].filter(Boolean).join(" ")]
-  .filter(Boolean)
-  .join(", ");
-
-const contactInfo = content.showDetails
-  ? [
-      business.email && { label: t.contactForm.emailLabel, value: business.email, href: `mailto:${business.email}` },
-      business.phone && { label: t.contactForm.phoneLabel, value: business.phone, href: `tel:${business.phone.replace(/[^\d+]/g, "")}` },
-      address && { label: t.contactForm.addressLabel, value: address },
-    ].filter((item): item is { label: string; value: string; href?: string } => Boolean(item))
-  : [];
+const details = content.showDetails ? contactDetails(site.business, t) : [];
+const SubHeading = headingLevel === "h1" ? "h2" : "h3";
 ---
 
-<ContactForm
-  id={section.id}
-  headingLevel={headingLevel}
-  layout={layout}
-  eyebrow={content.eyebrow}
-  title={content.title}
-  description={content.description}
-  contactInfo={contactInfo}
-  tone={toneFor("contact", props.tone)}
-  action={action}
-  hiddenFields={hiddenFields}
-  method="post"
-  privacyHref="/privacy"
-/>
+<SectionShell id={section.id} type="contact" variant="form-split" tone={props.tone} spacing={props.spacing}>
+  <div class="s-contact-split">
+    <div class="s-contact-split__aside">
+      <SectionHeader {...contactHeader(content, t)} headingLevel={headingLevel} align={props.align ?? "left"} />
+      {details.length > 0 && (
+        <div class="s-contact-split__details">
+          <SubHeading class="s-contact-split__details-title">{t.contactForm.detailsTitle}</SubHeading>
+          <DetailList details={details} />
+        </div>
+      )}
+    </div>
+    <div class="s-contact-split__form">
+      <Form />
+    </div>
+  </div>
+</SectionShell>

@@ -1,0 +1,54 @@
+---
+/**
+ * Click-to-load frame of an allowed embed (src/site/embeds.ts), used by the embed section and
+ * the contact map. Nothing is loaded from the provider until the visitor clicks (privacy);
+ * without JavaScript the link opens it in a new tab. Styles: _embed-frame.scss.
+ */
+import Stack from "@/components/layouts/Stack.astro";
+import { format, t } from "@/i18n";
+import { embedProvider } from "@/site/embeds";
+import "@/styles/sections/_embed-frame.scss";
+
+export interface Props {
+  /** Embed URL, validated by the schema. */
+  url: string;
+  /** What the embed shows, for screen readers. */
+  title: string;
+  class?: string;
+}
+
+const { url, title, class: className } = Astro.props;
+// The provider decides the frame URL and proportions.
+const provider = embedProvider(url)!;
+const frameUrl = provider.frameUrl(new URL(url));
+const vars = { provider: provider.label };
+const frameClass = { "16:9": "wide", "4:3": "standard", tall: "tall" }[provider.aspect];
+---
+
+<div class:list={["s-embed__frame", `s-embed__frame--${frameClass}`, className]} data-embed data-embed-src={frameUrl} data-embed-title={title} data-embed-kind={provider.kind}>
+  <Stack space="md" class="s-embed__placeholder">
+    <p class="s-embed__notice">{format(t.sections.embedNotice, vars)}</p>
+    <button type="button" class="button button--primary button--md" data-embed-load hidden>{format(t.sections.embedLoad, vars)}</button>
+    <a class="link" href={frameUrl} target="_blank" rel="noopener noreferrer">{format(t.sections.embedOpen, vars)}</a>
+  </Stack>
+</div>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-embed]")) {
+    const button = root.querySelector<HTMLButtonElement>("[data-embed-load]");
+    if (!button) continue;
+
+    button.hidden = false;
+    button.addEventListener("click", () => {
+      const frame = document.createElement("iframe");
+      frame.src = root.dataset.embedSrc ?? "";
+      frame.title = root.dataset.embedTitle ?? "";
+      frame.className = "s-embed__iframe";
+      frame.referrerPolicy = "strict-origin-when-cross-origin";
+      if (root.dataset.embedKind === "video") frame.allow = "fullscreen; picture-in-picture; encrypted-media";
+      root.replaceChildren(frame);
+      root.dataset.embedLoaded = "";
+      frame.focus();
+    });
+  }
+</script>

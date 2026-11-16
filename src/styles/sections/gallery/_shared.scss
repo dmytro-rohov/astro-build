@@ -1,0 +1,98 @@
+// Section type gallery (v3.3): grid and mosaic reworked, slider, masonry, polaroid, checkerboard
+// and explore added. Every photo sits in a frame (Photo.astro) that is a link to the viewer
+// (Lightbox.astro) when the lightbox is on.
+// This one, every variant: the frame, overlay, label and "more" link.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-gallery__frame {
+    position: relative;
+    display: block;
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--radius-image);
+  }
+
+  .s-gallery__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  // A photo that opens the viewer: a zoom-in cursor, and a ring in the background color inside
+  // the focus outline, so focus shows on any photo.
+  .s-gallery__frame[href] {
+    cursor: zoom-in;
+  }
+
+  .s-gallery__frame[href]:focus-visible::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 3px var(--color-background-primary);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .s-gallery__frame[href] .s-gallery__image {
+      transition: scale var(--motion-duration-slow) var(--motion-easing-standard);
+    }
+
+    .s-gallery__frame[href]:hover .s-gallery__image {
+      scale: 1.04;
+    }
+  }
+
+  // Caption on a photo (masonry, slider): light text on a dark fade, dark whatever the palette,
+  // so it keeps ≥ 4.5:1 on a white photo.
+  .s-gallery__overlay {
+    position: absolute;
+    inset: auto 0 0;
+    padding: var(--spacing-2xl) var(--spacing-md) var(--spacing-sm);
+    color: var(--color-primitive-white);
+    background: linear-gradient(to top, color-mix(in srgb, var(--color-primitive-gray-900) 82%, transparent) 55%, transparent);
+    border-end-start-radius: var(--radius-image);
+    border-end-end-radius: var(--radius-image);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
+    pointer-events: none;
+  }
+
+  // Caption as a label on the photo (mosaic).
+  .s-gallery__label {
+    position: absolute;
+    inset-block-end: var(--spacing-sm);
+    inset-inline-start: var(--spacing-sm);
+    max-width: calc(100% - var(--spacing-sm) * 2);
+    padding: 0.25rem 0.625rem;
+    color: var(--color-text-primary);
+    background: var(--color-background-surface);
+    border-radius: var(--radius-control);
+    box-shadow: var(--shadow-sm);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
+    pointer-events: none;
+  }
+
+  .s-gallery__more {
+    display: flex;
+    justify-content: center;
+  }
+
+  .s-gallery__more--left {
+    justify-content: flex-start;
+  }
+
+  @include mq(md) {
+    .s-gallery__label {
+      inset-block-end: var(--spacing-md);
+      inset-inline-start: var(--spacing-md);
+      max-width: calc(100% - var(--spacing-md) * 2);
+      font-size: var(--font-size-sm);
+    }
+  }
+}

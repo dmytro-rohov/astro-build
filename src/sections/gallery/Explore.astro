@@ -1,0 +1,76 @@
+---
+/**
+ * A tall framed panel with one word set vertically — the eyebrow, else "Galeria" — beside portrait
+ * tiles whose middle column (the second of two) is staggered down; the panel is as tall as the
+ * tiles and the word grows to fill it. With `link` the panel leads to more photos. Phones and
+ * tablets: a band above the photos.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Photo from "@/sections/gallery/Photo.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Icon from "@/components/media/Icon.astro";
+import Lightbox from "@/components/widgets/Lightbox.astro";
+import { tileSizes } from "@/sections/gallery/layout";
+import { format, t } from "@/i18n";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/gallery/_shared.scss";
+import "@/styles/sections/gallery/_explore.scss";
+
+export interface Props {
+  section: VariantOf<"gallery", "explore">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const count = content.items.length;
+const lightbox = props.lightbox ?? true;
+// Three columns, but two (in a narrower block) for two or four photos: no lone tile.
+const columns = count === 2 || count === 4 ? 2 : 3;
+const word = content.eyebrow ?? t.sections.gallery;
+const link = content.link;
+const external = Boolean(link?.href.startsWith("http"));
+// Without an eyebrow or a link the panel is decoration only.
+const Panel = link ? "a" : "div";
+const panelProps = link
+  ? { href: link.href, target: external ? "_blank" : undefined, rel: external ? "noopener noreferrer" : undefined }
+  : { "aria-hidden": content.eyebrow ? undefined : ("true" as const) };
+---
+
+<SectionShell id={section.id} type="gallery" variant="explore" tone={props.tone} spacing={props.spacing} width="xl">
+  <Stack space="2xl">
+    <SectionHeader title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
+    <div class:list={["s-explore", `s-explore--${columns}`]}>
+      <Panel class="s-explore__panel" {...panelProps}>
+        <span class="s-explore__ring" aria-hidden="true"></span>
+        <span class:list={["s-explore__word", `s-explore__word--${Math.min(word.length, 40)}`]} aria-hidden={content.eyebrow ? undefined : "true"}>{word}</span>
+        {link && (
+          <span class="s-explore__more">
+            {link.label}<Icon name="arrow-right" size="1.125em" />
+          </span>
+        )}
+      </Panel>
+      <Lightbox label={content.title} enabled={lightbox}>
+        <ul class="s-explore__grid">
+          {content.items.map((item, index) => (
+            <li>
+              <figure class="s-explore__figure">
+                <Photo
+                  image={item.image}
+                  caption={item.caption}
+                  lightbox={lightbox}
+                  aspect={[4, 5]}
+                  widths={[320, 480, 640]}
+                  sizes={tileSizes(columns + 1, 2)}
+                  label={format(t.lightbox.status, { number: index + 1, count })}
+                />
+                {item.caption && <figcaption class="s-explore__caption">{item.caption}</figcaption>}
+              </figure>
+            </li>
+          ))}
+        </ul>
+      </Lightbox>
+    </div>
+  </Stack>
+</SectionShell>

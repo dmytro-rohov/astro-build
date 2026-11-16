@@ -1,7 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { ARCHETYPE_IDS } from "../../src/design-system/archetypes";
+import { archetypes, ARCHETYPE_IDS } from "../../src/design-system/archetypes";
 import { accentPalette, checkContrast, resolveTheme } from "../../src/design-system/theme";
 import { contrast } from "../../src/design-system/theme/color";
+import { accentFamily } from "../../src/design-system/theme/families";
+import { hueDistance } from "./helpers";
 
 describe.each(ARCHETYPE_IDS)("archetype %s", (archetype) => {
   test("passes WCAG AA with its own accent", () => {
@@ -40,5 +42,21 @@ test.each(ARCHETYPE_IDS)("accent sections of %s keep text and buttons readable",
     expect(contrast(accent.text.primary, accent.background.primary)).toBeGreaterThanOrEqual(4.5);
     expect(contrast(accent.action.primaryText, accent.action.primary)).toBeGreaterThanOrEqual(4.5);
     expect(contrast(accent.border.control, accent.background.primary)).toBeGreaterThanOrEqual(3);
+  }
+});
+
+test.each(ARCHETYPE_IDS)("accent sections of %s keep the accent's hue in borders and hovers", (archetype) => {
+  for (const accent of [undefined, ...archetypes[archetype].recommendedAccents]) {
+    const theme = resolveTheme({ archetype, accent });
+
+    for (const scheme of ["light", "dark"] as const) {
+      const palette = accentPalette(theme[scheme]);
+      // A grey or black accent has no hue to keep.
+      if (accentFamily(palette.background.primary) === "neutral") continue;
+
+      for (const color of [palette.border.default, palette.border.strong, palette.action.secondaryHover]) {
+        expect(hueDistance(color, palette.background.primary), `${accent ?? "own"} ${scheme} ${color}`).toBeLessThan(5);
+      }
+    }
   }
 });

@@ -1,10 +1,10 @@
 /**
  * Content Security Policy built from site.json: only the hosts a site really
  * uses are allowed — Google Analytics when analytics is configured, the form
- * service in remote contact mode, the providers of the site's embed sections
- * (frames are blocked otherwise). Used by astro.config.mjs.
+ * service in remote contact mode, the providers of the site's embeds (embed
+ * sections, contact and hours-location maps; frames are blocked otherwise). Used by astro.config.mjs.
  */
-import { embedProvider } from "./embeds";
+import { embedProvider, siteEmbedUrls } from "./embeds";
 import type { Site } from "./schema/site";
 
 const GA = {
@@ -22,9 +22,9 @@ export type Directive = `${DirectiveName}${string}`;
 
 export type SiteCsp = { directives: Directive[]; scriptResources: string[] };
 
-/** Origins of the embed sections of a site (maps, booking, video). */
+/** Origins of the embeds of a site (maps, booking, video). */
 export function embedOrigins(site: Pick<Site, "pages">): string[] {
-  const urls = site.pages.flatMap((page) => page.sections).flatMap((section) => (section.type === "embed" ? [section.content.url] : []));
+  const urls = siteEmbedUrls(site);
   return [...new Set(urls.map((url) => embedProvider(url)?.origin).filter((origin): origin is string => Boolean(origin)))].sort();
 }
 

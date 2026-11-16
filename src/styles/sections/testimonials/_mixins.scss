@@ -1,0 +1,18 @@
+// Testimonials: Sass helpers of the variants (no CSS output).
+
+// A brand-colored surface (carousel panel, portrait cards, the featured quote card): the accent
+// with its button text color — checked ≥ 4.5:1 like an accent section. The tokens inside follow,
+// so stars, rules, dots and focus rings turn into the ink. --brand / --ink come from the section.
+@mixin brand-surface {
+  --color-text-primary: var(--ink);
+  --color-text-secondary: var(--ink);
+  --color-text-muted: color-mix(in srgb, var(--ink) 45%, transparent);
+  --color-border-default: color-mix(in srgb, var(--ink) 28%, transparent);
+  --color-border-strong: color-mix(in srgb, var(--ink) 55%, transparent);
+  --color-action-primary: var(--ink);
+  --color-action-primary-text: var(--brand);
+  --color-focus-ring: var(--ink);
+
+  color: var(--ink);
+  background: var(--brand);
+}

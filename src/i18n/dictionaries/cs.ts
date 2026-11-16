@@ -8,13 +8,13 @@ export default {
   },
 
   days: {
-    mo: { short: "Po", long: "Pondělí" },
-    tu: { short: "Út", long: "Úterý" },
-    we: { short: "St", long: "Středa" },
-    th: { short: "Čt", long: "Čtvrtek" },
-    fr: { short: "Pá", long: "Pátek" },
-    sa: { short: "So", long: "Sobota" },
-    su: { short: "Ne", long: "Neděle" },
+    mo: { short: "Po", long: "Pondělí", on: "v pondělí" },
+    tu: { short: "Út", long: "Úterý", on: "v úterý" },
+    we: { short: "St", long: "Středa", on: "ve středu" },
+    th: { short: "Čt", long: "Čtvrtek", on: "ve čtvrtek" },
+    fr: { short: "Pá", long: "Pátek", on: "v pátek" },
+    sa: { short: "So", long: "Sobota", on: "v sobotu" },
+    su: { short: "Ne", long: "Neděle", on: "v neděli" },
   },
 
   sections: {
@@ -37,12 +37,28 @@ export default {
     embedNotice: "Tento obsah se načítá ze služby {provider}. Po kliknutí může {provider} ukládat soubory cookie a získat vaši IP adresu.",
     embedOpen: "Otevřít ve službě {provider}",
     step: "Krok {number}",
+    directions: "Naplánovat trasu",
+    openNow: "Nyní otevřeno",
+    openUntil: "do {time}",
+    opensToday: "otevíráme dnes v {time}",
+    opensTomorrow: "otevíráme zítra v {time}",
+    opensOn: "otevíráme {day} v {time}",
+    today: "Dnes",
+    mapLoad: "Zobrazit mapu",
+    mapTitle: "Mapa: {place}",
+    planPrice: "Cena",
+    planIncluded: "V ceně",
+    planExcluded: "Není v ceně",
+    gallery: "Galerie",
+    reviews: { one: "{count} recenze", few: "{count} recenze", many: "{count} recenze", other: "{count} recenzí" },
   },
 
   slider: {
     previous: "Předchozí",
     next: "Další",
     label: "Posuvný seznam",
+    page: "Zobrazit {number} z {count}",
+    pause: "Pozastavit posouvání",
   },
 
   common: {
@@ -67,6 +83,7 @@ export default {
     copyright: "© {year} {siteName}. Všechna práva vyhrazena.",
     madeBy: "Web vytvořil",
     console: "Tento web vytvořilo Mytko.dev — rychlé a přístupné weby pro firmy a specialisty. Chcete také takový? https://mytko.dev",
+    contact: "Kontakt",
   },
 
   cookies: {
@@ -115,6 +132,11 @@ export default {
       messageTooLong: "Zpráva je příliš dlouhá – maximální počet znaků: {max}.",
       privacyRequired: "Musíte souhlasit se zásadami ochrany osobních údajů.",
     },
+    callTitle: "Zavolejte nám",
+    writeTitle: "Napište nám e-mail",
+    visitTitle: "Navštivte nás",
+    directions: "Naplánovat trasu",
+    mapTitle: "Mapa: {place}",
   },
 
   email: {
@@ -175,5 +197,26 @@ export default {
       title: "Kontakt",
       description: "Kontaktujte nás prostřednictvím kontaktního formuláře.",
     },
+  },
+  faq: {
+    contactTitle: "Máte další otázku?",
+    contactText: "Rádi vám odpovíme — ozvěte se nám.",
+    other: "Ostatní",
+    searchLabel: "Hledat v otázkách",
+    searchPlaceholder: "Co hledáte?",
+    filters: "Témata otázek",
+    all: "Vše",
+    results: { one: "Nalezena {count} otázka", few: "Nalezeny {count} otázky", many: "Nalezeno {count} otázky", other: "Nalezeno {count} otázek" },
+    noResults: "Na dotaz „{query}“ jsme nenašli žádnou otázku.",
+    askLead: "Nenašli jste svou otázku?",
+    ask: "Zeptejte se nás",
+  },
+
+  lightbox: {
+    label: "Prohlížeč fotografií",
+    close: "Zavřít",
+    previous: "Předchozí fotografie",
+    next: "Další fotografie",
+    status: "Fotografie {number} z {count}",
   },
 } satisfies Dictionary;

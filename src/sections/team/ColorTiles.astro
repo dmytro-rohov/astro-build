@@ -1,0 +1,52 @@
+---
+/** Portraits in arch frames on soft tiles of rotating colors, text below; 1–2 people get the tile beside the text. */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Avatar from "@/sections/team/Avatar.astro";
+import MemberLinks from "@/sections/team/MemberLinks.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import { teamColumns } from "@/sections/team/layout";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/team/_shared.scss";
+import "@/styles/sections/team/_color-tiles.scss";
+
+export interface Props {
+  section: VariantOf<"team", "color-tiles">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const count = content.members.length;
+const NameHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="team" variant="color-tiles" tone={props.tone} spacing={props.spacing}>
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <ul class:list={["s-team-cols", `s-team-cols--${teamColumns(count)}`, "s-team-tiles", count <= 2 && "s-team-tiles--wide"]}>
+      {content.members.map((member) => (
+        <li class="s-team-tiles__item">
+          <div class="s-team-tiles__tile">
+            <Avatar
+              name={member.name}
+              photo={member.photo}
+              aspect={[4, 5]}
+              widths={[240, 360, 480]}
+              sizes="(min-width: 1024px) 16rem, (min-width: 768px) 36vw, 70vw"
+              class="s-team-tiles__portrait"
+            />
+          </div>
+          <div class="s-team-tiles__text">
+            <NameHeading class="s-team-tiles__name" id={`${section.id}-${member.id}-name`}>{member.name}</NameHeading>
+            <p class="s-team-tiles__role">{member.role}</p>
+            {member.bio && <p class="s-team-tiles__bio">{member.bio}</p>}
+            {member.socials && member.socials.length > 0 && (
+              <MemberLinks links={member.socials} describedBy={`${section.id}-${member.id}-name`} class="s-team-tiles__links" />
+            )}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </Stack>
+</SectionShell>

@@ -1,0 +1,175 @@
+// Contact: info-columns (InfoColumns.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // A strip of the brand color runs behind the lower half of the details band, from edge to
+  // edge and down to the end of the section (the section clips it).
+  .s-contact--info-columns {
+    overflow: clip;
+    isolation: isolate;
+  }
+
+  .s-contact-columns {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  .s-contact-columns__form {
+    width: 100%;
+    max-width: 46rem;
+    margin-inline: auto;
+  }
+
+  .s-contact-columns__band {
+    position: relative;
+    display: grid;
+    gap: var(--spacing-xl) var(--spacing-lg);
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    margin: var(--spacing-xl) 0 0;
+    list-style: none;
+    background: var(--color-background-muted);
+    border-radius: var(--radius-card);
+  }
+
+  // One or two details do not stretch over the whole container.
+  .s-contact-columns__band--count-1 {
+    width: 100%;
+    max-width: 30rem;
+    margin-inline: auto;
+  }
+
+  .s-contact-columns__band--count-2 {
+    width: 100%;
+    max-width: 52rem;
+    margin-inline: auto;
+  }
+
+  // On a muted section the band is a surface (a muted band would disappear).
+  .section--tone-muted .s-contact-columns__band {
+    background: var(--color-background-surface);
+  }
+
+  .s-contact-columns__band::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 50% -100vw -100vh;
+    background: var(--color-action-primary);
+  }
+
+  @include mq(sm) {
+    .s-contact-columns__band {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .s-contact-columns__band--count-1 {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @include mq(lg) {
+    .s-contact-columns__band {
+      padding: var(--spacing-3xl) var(--spacing-2xl);
+    }
+
+    .s-contact-columns__band--count-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .s-contact-columns__band--count-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .s-contact-columns__item {
+    display: grid;
+    align-content: start;
+    justify-items: center;
+    gap: var(--spacing-sm);
+    min-width: 0;
+    text-align: center;
+  }
+
+  .s-contact-columns__icon {
+    display: grid;
+    place-items: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    margin-block-end: var(--spacing-sm);
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    border-radius: 50%;
+    box-shadow: 0 0 0 0.375rem color-mix(in oklab, var(--color-action-primary) 18%, transparent);
+  }
+
+  .s-contact-columns__title {
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+
+  .s-contact-columns__value,
+  .s-contact-columns__hours {
+    max-width: 100%;
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+    overflow-wrap: anywhere;
+  }
+
+  .s-contact-columns__value--link {
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentcolor 30%, transparent);
+  }
+
+  .s-contact-columns__value--link:hover {
+    color: var(--color-action-primary);
+    text-decoration-color: currentcolor;
+  }
+
+  .s-contact-columns__hours {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-contact-columns__hours abbr {
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+  }
+
+  .s-contact-columns__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentcolor 35%, transparent);
+  }
+
+  // Phones: rows with the icon beside the text, so four details do not make a tower.
+  @include mq-down(sm) {
+    .s-contact-columns__band {
+      padding: var(--spacing-xl) var(--spacing-lg);
+    }
+
+    .s-contact-columns__item {
+      grid-template-columns: auto minmax(0, 1fr);
+      justify-items: start;
+      column-gap: var(--spacing-md);
+      text-align: start;
+    }
+
+    .s-contact-columns__icon {
+      grid-row: span 3;
+      width: 3.25rem;
+      height: 3.25rem;
+      margin: 0;
+    }
+  }
+}

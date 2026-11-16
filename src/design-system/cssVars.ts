@@ -129,6 +129,7 @@ export type CssToken =
   | "letter-spacing-wide"
   | "logo-filter"
   | "logo-filter-hover"
+  | "logo-blend"
   | "logo-opacity"
   | "logo-tile"
   | "radius-control"

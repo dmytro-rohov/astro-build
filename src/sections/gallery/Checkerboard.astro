@@ -1,0 +1,86 @@
+---
+/**
+ * Every photo as a pair: the square photo and a text tile — its title (else the caption), text
+ * and link, or the alt text when it has none — with a notch pointing at the photo. Two pairs per row on wide screens, one on
+ * tablets, every other row mirrored: photos and text tiles form a checkerboard. A photo without
+ * any text spans the whole pair; on phones the text sits under its photo.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import MoreLink from "@/sections/gallery/MoreLink.astro";
+import Photo from "@/sections/gallery/Photo.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Lightbox from "@/components/widgets/Lightbox.astro";
+import Button from "@/components/ui/Button.astro";
+import { getAsset } from "@/site/assets";
+import { format, t } from "@/i18n";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/gallery/_shared.scss";
+import "@/styles/sections/gallery/_checkerboard.scss";
+
+export interface Props {
+  section: VariantOf<"gallery", "checkerboard">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const count = content.items.length;
+const lightbox = props.lightbox ?? true;
+const align = props.align ?? "center";
+const TileHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="gallery" variant="checkerboard" tone={props.tone} spacing={props.spacing} width="xl">
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={align} />
+    <Lightbox label={content.title} enabled={lightbox}>
+      <ul class="s-checker">
+        {content.items.map((item, index) => {
+          const heading = item.title ?? item.caption;
+          // No words of its own: the tile repeats the alt text (hidden from screen readers, which
+          // read it on the photo); only a photo without alt text spans the pair.
+          const note = heading || item.text || item.link ? undefined : getAsset(item.image).alt;
+          const text = Boolean(heading || item.text || item.link || note);
+          const headingId = `${section.id}-${item.id}-title`;
+          return (
+            <li
+              class:list={[
+                "s-checker__pair",
+                !text && "s-checker__pair--photo",
+                index % 2 === 1 && "s-checker__pair--flip-md",
+                // A lone last pair is centered (one tile in): mirrored the other way to keep the pattern.
+                (Math.floor(index / 2) % 2 === 1) !== (count % 2 === 1 && index === count - 1) && "s-checker__pair--flip-lg",
+              ]}
+            >
+              <Photo
+                image={item.image}
+                caption={item.caption ?? item.title}
+                lightbox={lightbox}
+                aspect={text ? [1, 1] : [2, 1]}
+                widths={text ? [320, 480, 640, 800] : [480, 800, 1200]}
+                sizes={text ? "(min-width: 1280px) 306px, (min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" : "(min-width: 1280px) 612px, (min-width: 1024px) 50vw, 100vw"}
+                label={format(t.lightbox.status, { number: index + 1, count })}
+                class="s-checker__photo"
+              />
+              {text && (
+                <div class="s-checker__text">
+                  {item.title && item.caption && <p class="s-checker__caption">{item.caption}</p>}
+                  {heading && <TileHeading class="s-checker__title" id={headingId}>{heading}</TileHeading>}
+                  {note && <p class="s-checker__title s-checker__title--note" aria-hidden="true">{note}</p>}
+                  {item.text && <p class="s-checker__description">{item.text}</p>}
+                  {item.link && (
+                    <Button href={item.link.href} variant="secondary" size="sm" class="s-checker__link" aria-describedby={heading ? headingId : undefined}>
+                      {item.link.label}
+                    </Button>
+                  )}
+                </div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </Lightbox>
+    <MoreLink link={content.link} align={align} />
+  </Stack>
+</SectionShell>

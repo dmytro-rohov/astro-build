@@ -1,0 +1,53 @@
+---
+/**
+ * "wave": nodes on a smooth wavy line, text alternating above and below it, a big faded number
+ * in each bend. Every step draws its own piece of the wave (crest or trough, stretched to its
+ * column), so the pieces join into one line in any row; phones get a straight vertical line.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Icon from "@/components/media/Icon.astro";
+import { listClasses, stepNumber } from "@/sections/process/layout";
+import type { SectionOf } from "@/site/types";
+import "@/styles/sections/process/_shared.scss";
+import "@/styles/sections/process/_wave.scss";
+
+export interface Props {
+  section: SectionOf<"process">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const StepHeading = headingLevel === "h1" ? "h2" : "h3";
+
+// Half-period curves in a 100 × 100 box: from the left edge (mid height) up to a crest or down
+// to a trough in the middle and back, with matching slopes where neighbours meet.
+const CREST = "M0 50C12.5 25 25 0 50 0S87.5 25 100 50";
+const TROUGH = "M0 50C12.5 75 25 100 50 100S87.5 75 100 50";
+---
+
+<SectionShell id={section.id} type="process" variant="wave" tone={props.tone} spacing={props.spacing}>
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <ol class:list={listClasses("wave", content.steps.length, 5)}>
+      {content.steps.map((step, index) => (
+        <li class="s-process__step">
+          <svg class="s-process__wave" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <path d={index % 2 === 0 ? CREST : TROUGH} />
+          </svg>
+          <span class:list={["s-process__node", !step.icon && "s-process__node--dot"]} aria-hidden="true">
+            {step.icon && <Icon name={step.icon} size="1.5rem" />}
+          </span>
+          <span class="s-process__numeral" data-number={stepNumber(index)} aria-hidden="true"></span>
+          <div class="s-process__body">
+            {step.duration && <p class="s-process__duration">{step.duration}</p>}
+            <StepHeading class="s-process__title">{step.title}</StepHeading>
+            <p class="s-process__description">{step.description}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </Stack>
+</SectionShell>

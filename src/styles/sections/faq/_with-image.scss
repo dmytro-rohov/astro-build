@@ -1,0 +1,126 @@
+// FAQ: with-image (WithImage.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // Phones: a wide photo over the numbered questions (the question-mark panel is left out).
+  // Tablets and up: the photo or panel beside the questions, exactly as tall as they are (at
+  // least 22rem, at most the screen) and in view while they scroll past.
+  .s-faq-figure {
+    --brand: var(--color-action-primary);
+    --ink: var(--color-action-primary-text);
+
+    display: grid;
+    gap: var(--spacing-xl);
+    align-items: start;
+  }
+
+  .s-faq-figure__image {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border: var(--image-border);
+    border-radius: var(--radius-image);
+    box-shadow: var(--image-shadow);
+  }
+
+  .s-faq-figure__media--mark {
+    display: none;
+  }
+
+  .s-faq-figure__mark {
+    @include brand-surface;
+
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: clip;
+    border-radius: var(--radius-image);
+  }
+
+  // Behind the mark: a wide ring of the ink off the top corner and a solid dot low on the side.
+  .s-faq-figure__mark::before,
+  .s-faq-figure__mark::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+  }
+
+  .s-faq-figure__mark::before {
+    inset-block-start: -4rem;
+    inset-inline-end: -5rem;
+    width: 16rem;
+    aspect-ratio: 1;
+    border: 1.5rem solid color-mix(in srgb, var(--ink) 12%, transparent);
+  }
+
+  .s-faq-figure__mark::after {
+    inset-block-end: 12%;
+    inset-inline-start: 10%;
+    width: 3.5rem;
+    aspect-ratio: 1;
+    background: color-mix(in srgb, var(--ink) 16%, transparent);
+  }
+
+  .s-faq-figure__glyph {
+    position: relative;
+    font-family: var(--font-family-heading);
+    font-size: clamp(9rem, 18vw, 16rem);
+    font-weight: var(--font-weight-bold);
+    line-height: 1;
+  }
+
+  @include mq(md) {
+    // The media is positioned on its grid area: the questions alone set the row height.
+    .s-faq-figure {
+      position: relative;
+      grid-template-rows: minmax(22rem, auto);
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: var(--spacing-2xl);
+    }
+
+    .s-faq-figure__media {
+      position: absolute;
+      inset: 0;
+      grid-row: 1;
+      grid-column: 2;
+    }
+
+    .s-faq-figure__questions {
+      grid-row: 1;
+      grid-column: 1;
+    }
+
+    .s-faq-figure--image-left {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+
+    .s-faq-figure--image-left .s-faq-figure__media {
+      grid-column: 1;
+    }
+
+    .s-faq-figure--image-left .s-faq-figure__questions {
+      grid-column: 2;
+    }
+
+    .s-faq-figure__media--mark {
+      display: block;
+    }
+
+    .s-faq-figure__image,
+    .s-faq-figure__mark {
+      position: sticky;
+      inset-block-start: $sticky-top;
+      width: 100%;
+      height: min(100%, calc(100svh - var(--header-offset, 4.5rem) - var(--spacing-3xl)));
+      aspect-ratio: auto;
+    }
+  }
+
+  @include mq(lg) {
+    .s-faq-figure {
+      gap: var(--spacing-3xl);
+    }
+  }
+}

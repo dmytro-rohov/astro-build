@@ -1,0 +1,236 @@
+// CTA: faces (Faces.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // A light card; photos (or tinted dots without them) float around the text in the empty
+  // space on both sides: eight spots, odd ones on the left, measured from the card edge as
+  // a share of that space (--side) so they never reach the text. On phones they are one
+  // overlapping row above the text.
+  .s-cta--faces {
+    --paper: var(--color-background-surface);
+  }
+
+  .s-cta-faces {
+    --copy: 100%;
+    --side: calc((100% - var(--copy)) / 2);
+
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    display: grid;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    background: var(--paper);
+    border: 1px solid var(--card-border-color);
+    border-radius: calc(var(--radius-card) * 1.5);
+    box-shadow: var(--card-shadow);
+  }
+
+  .section--tone-default .s-cta-faces {
+    background: color-mix(in srgb, var(--color-background-muted) 60%, var(--paper));
+  }
+
+  .s-cta--faces.section--tone-accent .s-cta-faces {
+    @include on-color(var(--cta-brand), var(--cta-ink));
+
+    --paper: var(--cta-brand);
+  }
+
+  .s-cta-faces__spots {
+    display: flex;
+    justify-content: center;
+  }
+
+  .s-cta-faces__spot {
+    position: relative;
+    display: block;
+    flex: none;
+    width: 3.25rem;
+    aspect-ratio: 1;
+    overflow: clip;
+    background: color-mix(in srgb, var(--color-action-primary) 22%, var(--paper));
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 0.1875rem var(--paper),
+      0 0.75rem 1.5rem -0.75rem rgb(0 0 0 / 45%);
+  }
+
+  .s-cta-faces__spot + .s-cta-faces__spot {
+    margin-inline-start: -0.75rem;
+  }
+
+  .s-cta-faces__spot:nth-child(n + 6),
+  .s-cta-faces--photos .s-cta-faces__spot--dot {
+    display: none;
+  }
+
+  // Phones without photos: a row of dots growing toward the middle instead of a stack.
+  @include mq-down(md) {
+    .s-cta-faces:not(.s-cta-faces--photos) .s-cta-faces__spots {
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .s-cta-faces:not(.s-cta-faces--photos) .s-cta-faces__spot {
+      width: 1.25rem;
+      margin: 0;
+      box-shadow: none;
+    }
+
+    .s-cta-faces:not(.s-cta-faces--photos) .s-cta-faces__spot:nth-child(even) {
+      width: 2rem;
+    }
+
+    .s-cta-faces:not(.s-cta-faces--photos) .s-cta-faces__spot:nth-child(3) {
+      width: 2.75rem;
+    }
+  }
+
+  // Dots: the brand in steps, light to strong, so the row reads as one shape.
+  .s-cta-faces__spot--dot:nth-child(3n + 2) {
+    background: color-mix(in srgb, var(--color-action-primary) 45%, var(--paper));
+  }
+
+  .s-cta-faces__spot--dot:nth-child(3n) {
+    background: var(--color-action-primary);
+  }
+
+  .s-cta-faces__photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @include mq(md) {
+    .s-cta-faces {
+      --copy: min(26rem, 60%);
+
+      align-items: center;
+      min-height: 24rem;
+      padding: var(--spacing-3xl) var(--spacing-xl);
+    }
+
+    .s-cta-faces__copy {
+      max-width: var(--copy);
+    }
+
+    .s-cta-faces__spots {
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      display: block;
+    }
+
+    .s-cta-faces__spot {
+      --size: 1;
+      --x: 0.5;
+      --y: 50%;
+
+      position: absolute;
+      inset-block-start: var(--y);
+      width: clamp(2.5rem, calc(var(--side) * 0.3 * var(--size)), calc(5rem * var(--size)));
+      translate: -50% -50%;
+    }
+
+    .s-cta-faces__spot + .s-cta-faces__spot {
+      margin: 0;
+    }
+
+    .s-cta-faces__spot:nth-child(odd) {
+      inset-inline-start: calc(var(--side) * var(--x));
+    }
+
+    .s-cta-faces__spot:nth-child(even) {
+      inset-inline-end: calc(var(--side) * var(--x));
+      translate: 50% -50%;
+    }
+
+    .s-cta-faces__spot:nth-child(n) {
+      display: block;
+    }
+
+    .s-cta-faces__spot:nth-child(1) {
+      --x: 0.6;
+      --y: 24%;
+      --size: 1.1;
+    }
+
+    .s-cta-faces__spot:nth-child(2) {
+      --x: 0.55;
+      --y: 20%;
+      --size: 1.15;
+    }
+
+    .s-cta-faces__spot:nth-child(3) {
+      --x: 0.34;
+      --y: 70%;
+      --size: 1.2;
+    }
+
+    .s-cta-faces__spot:nth-child(4) {
+      --x: 0.36;
+      --y: 68%;
+      --size: 1.05;
+    }
+
+    .s-cta-faces__spot:nth-child(5) {
+      --x: 0.2;
+      --y: 34%;
+      --size: 0.8;
+    }
+
+    .s-cta-faces__spot:nth-child(6) {
+      --x: 0.8;
+      --y: 78%;
+      --size: 0.8;
+    }
+
+    .s-cta-faces__spot:nth-child(7) {
+      --x: 0.78;
+      --y: 80%;
+      --size: 0.75;
+    }
+
+    .s-cta-faces__spot:nth-child(8) {
+      --x: 0.16;
+      --y: 44%;
+      --size: 0.75;
+    }
+
+    // Dots stay a little smaller than photos.
+    .s-cta-faces__spot--dot {
+      scale: 0.8;
+    }
+  }
+
+  @include mq(lg) {
+    .s-cta-faces {
+      --copy: min(32rem, 56%);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .s-cta-faces__spot {
+      animation: s-cta-float 7s var(--motion-easing-standard) infinite alternate;
+    }
+
+    .s-cta-faces__spot:nth-child(3n + 2) {
+      animation-duration: 9s;
+      animation-delay: -3s;
+    }
+
+    .s-cta-faces__spot:nth-child(3n) {
+      animation-duration: 8s;
+      animation-delay: -5s;
+    }
+  }
+
+  @keyframes s-cta-float {
+    to {
+      transform: translateY(-0.5rem);
+    }
+  }
+}

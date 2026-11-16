@@ -1,0 +1,61 @@
+---
+/**
+ * "Three tiles": the featured plan (highlighted, else the middle one) is moved to the middle,
+ * wider, taller and on the brand color; the plans beside it are quieter.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Button from "@/components/ui/Button.astro";
+import Icon from "@/components/media/Icon.astro";
+import { t } from "@/i18n";
+import { featuredOrder } from "@/site/pricing";
+import type { SectionOf } from "@/site/types";
+import "@/styles/sections/pricing/_note.scss";
+import "@/styles/sections/pricing/_featured-center.scss";
+
+export interface Props {
+  section: SectionOf<"pricing">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const PlanHeading = headingLevel === "h1" ? "h2" : "h3";
+const { plans, featured } = featuredOrder(content.plans);
+---
+
+<SectionShell id={section.id} type="pricing" variant="featured-center" tone={props.tone} spacing={props.spacing}>
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <ul class:list={["s-tiers", `s-tiers--count-${plans.length}`]}>
+      {plans.map((plan, index) => (
+        <li class:list={["s-tier", index === featured && "s-tier--featured"]}>
+          {index === featured && plan.highlighted && <p class="s-tier__badge">{t.sections.popularPlan}</p>}
+          <div class="s-tier__head">
+            <PlanHeading class="s-tier__name">{plan.name}</PlanHeading>
+            <p class="s-tier__price">
+              <span class="s-tier__amount">{plan.price}</span>
+              {plan.period && <span class="s-tier__period">{plan.period}</span>}
+            </p>
+            {plan.description && <p class="s-tier__description">{plan.description}</p>}
+          </div>
+          {plan.action && (
+            <Button href={plan.action.href} variant={index === featured ? "primary" : "secondary"} class="s-tier__action">{plan.action.label}</Button>
+          )}
+          {plan.features.length > 0 && (
+            <ul class="s-tier__features">
+              {plan.features.map((feature) => (
+                <li class="s-tier__feature">
+                  <Icon name="check" size="1rem" class="s-tier__check" />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))}
+    </ul>
+    {content.note && <p class="s-plans__note">{content.note}</p>}
+  </Stack>
+</SectionShell>

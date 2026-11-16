@@ -20,6 +20,8 @@ export interface Props {
   cta?: NavAction;
   /** Phone and e-mail of the topbar: on phones the topbar is hidden and they appear in the menu. */
   contact?: { phone?: string; email?: string };
+  /** Phone menu button: the word "Menu" with the icon, or the icon alone (v3.3). */
+  menuButton?: "label" | "icon";
   label?: string;
   class?: string;
 }
@@ -28,6 +30,7 @@ const {
   items,
   cta,
   contact,
+  menuButton = "label",
   label = t.nav.label,
   class: className,
   ...restProps
@@ -61,13 +64,13 @@ function isActiveLink(href: string) {
   data-navbar
 >
   <button
-    class="navbar__toggle"
+    class:list={["navbar__toggle", `navbar__toggle--${menuButton}`]}
     type="button"
     aria-expanded="false"
     aria-controls="navbar-menu"
     data-navbar-toggle
   >
-    <span class="navbar__toggle-text">{t.nav.menu}</span>
+    <span class:list={["navbar__toggle-text", menuButton === "icon" && "visually-hidden"]}>{t.nav.menu}</span>
     <span class="navbar__icon" aria-hidden="true">
       <span></span>
       <span></span>

@@ -1,0 +1,33 @@
+---
+/** One large rounded card on a soft brand gradient: big heading, text and short details on the left, the form on the right. */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import DetailList from "@/sections/contact/DetailList.astro";
+import Form from "@/sections/contact/Form.astro";
+import { site } from "virtual:site";
+import { t } from "@/i18n";
+import { contactDetails, contactHeader } from "@/sections/contact/details";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/contact/_big-card.scss";
+
+export interface Props {
+  section: VariantOf<"contact", "big-card">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const details = content.showDetails ? contactDetails(site.business, t) : [];
+---
+
+<SectionShell id={section.id} type="contact" variant="big-card" tone={props.tone} spacing={props.spacing}>
+  <div class="s-contact-card">
+    <div class="s-contact-card__intro">
+      <SectionHeader {...contactHeader(content, t)} headingLevel={headingLevel} align={props.align ?? "left"} class="s-contact-card__header" />
+      {details.length > 0 && <DetailList details={details} look="compact" class="s-contact-card__details" />}
+    </div>
+    <div class="s-contact-card__form">
+      <Form />
+    </div>
+  </div>
+</SectionShell>

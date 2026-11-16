@@ -1,0 +1,57 @@
+// Contact: big-card (BigCard.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // A soft brand gradient over the tone's background color, one large card on it.
+  .s-contact--big-card {
+    background-image:
+      radial-gradient(60% 80% at 0% 0%, color-mix(in oklab, var(--color-action-primary) 30%, transparent), transparent 75%),
+      radial-gradient(55% 75% at 100% 100%, color-mix(in oklab, var(--color-action-primary) 24%, transparent), transparent 75%),
+      linear-gradient(160deg, color-mix(in oklab, var(--color-action-primary) 12%, transparent), color-mix(in oklab, var(--color-action-primary) 4%, transparent));
+  }
+
+  .s-contact-card {
+    display: grid;
+    gap: var(--spacing-2xl);
+    padding: clamp(var(--spacing-lg), 5vw, var(--spacing-3xl));
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: calc(var(--radius-card) * 2);
+    box-shadow:
+      0 2rem 4rem -1.5rem color-mix(in oklab, var(--color-action-primary) 30%, transparent),
+      var(--card-shadow);
+  }
+
+  .s-contact-card__intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+  }
+
+  .s-contact-card__header .s-header__title {
+    font-size: clamp(var(--font-size-3xl), 5vw, var(--font-size-5xl));
+    line-height: var(--line-height-tight);
+  }
+
+  .s-contact-card__details {
+    margin-block-start: auto;
+    padding-block-start: var(--spacing-lg);
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  // A wide form sends with a button of its own size, as in a letter.
+  @container (min-width: 34rem) {
+    .s-contact-card .contact-form__submit {
+      justify-self: start;
+      width: auto;
+    }
+  }
+
+  @include mq(lg) {
+    .s-contact-card {
+      grid-template-columns: minmax(0, 0.9fr) minmax(28rem, 1.1fr);
+      gap: var(--spacing-3xl);
+    }
+  }
+}

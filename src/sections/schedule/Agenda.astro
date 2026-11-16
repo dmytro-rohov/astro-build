@@ -1,0 +1,51 @@
+---
+/**
+ * Agenda: the day names on the left (above the classes on phones), the classes on a thin
+ * timeline with the time first. Compact, so long schedules stay easy to scan.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Details from "@/sections/schedule/Details.astro";
+import { t } from "@/i18n";
+import { scheduleByDay } from "@/site/schedule";
+import type { SectionOf } from "@/site/types";
+import "@/styles/sections/schedule/_shared.scss";
+import "@/styles/sections/schedule/_agenda.scss";
+
+export interface Props {
+  section: SectionOf<"schedule">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const DayHeading = headingLevel === "h1" ? "h2" : "h3";
+const days = scheduleByDay(content.items);
+---
+
+<SectionShell id={section.id} type="schedule" variant="agenda" tone={props.tone} spacing={props.spacing} width="md">
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
+    <div class="s-agenda">
+      {days.map((group) => (
+        <section class="s-agenda__day" aria-labelledby={`${section.id}-${group.day}`}>
+          <DayHeading class="s-agenda__day-name" id={`${section.id}-${group.day}`}>{t.days[group.day].long}</DayHeading>
+          <ol class="s-agenda__list">
+            {group.items.map((item) => (
+              <li class="s-agenda__item">
+                <p class="s-agenda__time"><time datetime={item.start}>{item.start}</time><span class="s-agenda__end">–<time datetime={item.end}>{item.end}</time></span></p>
+                <div class="s-agenda__body">
+                  <p class="s-agenda__title">{item.title}</p>
+                  <Details parts={[item.instructor, item.room]} class="s-agenda__meta" />
+                </div>
+                {item.level && <p class="s-agenda__level">{item.level}</p>}
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))}
+    </div>
+    {content.note && <p class="s-schedule__note">{content.note}</p>}
+  </Stack>
+</SectionShell>

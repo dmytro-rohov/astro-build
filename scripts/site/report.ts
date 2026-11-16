@@ -112,10 +112,17 @@ if (buildOk) {
     }
 
     if (!skipLighthouse) {
-      const chrome = await chromeLauncher.launch({ chromePath: chromium.executablePath(), chromeFlags: ["--headless=new", "--no-sandbox"] });
+      for (const page of pages) {
+        // A Chrome of its own for every page: in a reused one a run sometimes inherited ~0.5 s of
+        // unattributable blocking time from the previous run. Without the desktop session bus:
+        // where one runs, headless Chrome waited 25 s for it before its first request.
+        const chrome = await chromeLauncher.launch({
+          chromePath: chromium.executablePath(),
+          chromeFlags: ["--headless=new", "--no-sandbox"],
+          envVars: { ...process.env, DBUS_SESSION_BUS_ADDRESS: "disabled:" },
+        });
 
-      try {
-        for (const page of pages) {
+        try {
           // A run that errors (e.g. NO_FCP in a cold headless Chrome) has null scores — retry once.
           let result;
           for (let attempt = 0; attempt < 2; attempt++) {
@@ -134,9 +141,9 @@ if (buildOk) {
             bestPractices: categories["best-practices"]?.score ?? 0,
             seo: categories.seo?.score ?? 0,
           };
+        } finally {
+          await chrome.kill();
         }
-      } finally {
-        await chrome.kill();
       }
     }
   } finally {

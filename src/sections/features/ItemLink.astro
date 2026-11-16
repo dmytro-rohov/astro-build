@@ -1,0 +1,18 @@
+---
+/** "Read more" link under a feature item; the item title describes it for screen readers. */
+import Icon from "@/components/media/Icon.astro";
+import Link from "@/components/ui/Link.astro";
+
+export interface Props {
+  link: { label: string; href: string };
+  /** Id of the item title. */
+  describedBy: string;
+  class?: string;
+}
+
+const { link, describedBy, class: className } = Astro.props;
+---
+
+<Link href={link.href} class={["s-features-link", className].filter(Boolean).join(" ")} aria-describedby={describedBy}>
+  {link.label}<Icon name="arrow-right" size="1em" class="s-features-link__arrow" />
+</Link>

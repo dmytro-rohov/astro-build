@@ -1,0 +1,48 @@
+---
+/**
+ * Centered cards with a quote mark in a curved corner, stars, and the photo (or initials) with
+ * the name at the bottom; one card — the first, or `highlight` — is on the brand color.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Avatar from "@/sections/testimonials/Avatar.astro";
+import QuoteMark from "@/sections/testimonials/QuoteMark.astro";
+import Stars from "@/sections/testimonials/Stars.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import { cardColumns } from "@/sections/testimonials/layout";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/testimonials/_shared.scss";
+import "@/styles/sections/testimonials/_quote-cards.scss";
+
+export interface Props {
+  section: VariantOf<"testimonials", "quote-cards">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const count = content.items.length;
+const featured = props.highlight && props.highlight <= count ? props.highlight - 1 : 0;
+---
+
+<SectionShell id={section.id} type="testimonials" variant="quote-cards" tone={props.tone} spacing={props.spacing}>
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <ul class:list={["s-quote-cards", `s-quote-cards--${cardColumns(count)}`]}>
+      {content.items.map((item, index) => (
+        <li class:list={["s-quote-card", index === featured && "s-quote-card--featured"]}>
+          <figure class="s-quote-card__figure">
+            <span class="s-quote-card__corner" aria-hidden="true"><QuoteMark /></span>
+            {item.rating && <Stars rating={item.rating} />}
+            <blockquote class="s-quote-card__quote"><p>{item.quote}</p></blockquote>
+            <figcaption class="s-quote-card__author">
+              <Avatar author={item.author} avatar={item.avatar} size="4rem" widths={[128, 192]} class="s-quote-card__avatar" />
+              <span class="s-quote-card__name">{item.author}</span>
+              {item.role && <span class="s-quote-card__role">{item.role}</span>}
+            </figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </Stack>
+</SectionShell>

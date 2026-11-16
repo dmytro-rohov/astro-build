@@ -1,0 +1,38 @@
+---
+/**
+ * Illustrated street map behind the contact map (decorative): a slightly turned grid of blocks
+ * with parks, a river and an avenue, colored from the palette in contact/_map.scss. The streets
+ * cross in the middle (320, 320), under the pin.
+ */
+export interface Props {
+  class?: string;
+}
+
+const SIZE = 100;
+const STEP = 120;
+const COUNT = 9;
+// The grid reaches past the edges, so the turned map still covers the whole canvas.
+const START = -270;
+// Blocks that take two cells across, and parks.
+const wide = new Set(["0-1", "1-5", "2-2", "3-6", "5-1", "6-5", "7-2", "8-6"]);
+const parks = new Set(["1-5", "6-2"]);
+
+const blocks = Array.from({ length: COUNT * COUNT }, (_, index) => {
+  const [row, col] = [Math.floor(index / COUNT), index % COUNT];
+  const key = `${row}-${col}`;
+  return wide.has(`${row}-${col - 1}`)
+    ? undefined
+    : { x: START + col * STEP, y: START + row * STEP, width: wide.has(key) ? SIZE + STEP : SIZE, park: parks.has(key) };
+}).filter((block) => block !== undefined);
+---
+
+<svg class={Astro.props.class} viewBox="0 0 640 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  <rect class="s-contact-map__street" x="-320" y="-320" width="1280" height="1280" />
+  <g transform="rotate(-14 320 320)">
+    {blocks.map((block) => (
+      <rect class:list={["s-contact-map__block", block.park && "s-contact-map__block--park"]} x={block.x} y={block.y} width={block.width} height={SIZE} rx="10" />
+    ))}
+  </g>
+  <path class="s-contact-map__river" d="M-60 90 C 80 130 180 210 160 330 S 70 560 200 760" />
+  <path class="s-contact-map__avenue" d="M-60 630 L 700 10" />
+</svg>

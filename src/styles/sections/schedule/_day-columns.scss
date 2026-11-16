@@ -1,0 +1,142 @@
+// Schedule: day-columns (DayColumns.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // v3.3, "poster": separate columns under solid header blocks (the brand color and the inverse
+  // neutral in turn) holding the day name in a pill, classes as striped rows. The name sits on the
+  // surface color, not on the block, so any accent keeps its contrast.
+  .s-day-columns {
+    display: grid;
+    gap: var(--spacing-lg) var(--spacing-md);
+  }
+
+  @include mq(md) {
+    .s-day-columns {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    }
+
+    .s-day-columns--days-1 {
+      width: 100%;
+      max-width: 22rem;
+      margin-inline: auto;
+    }
+
+    .s-day-columns--days-2 {
+      width: 100%;
+      max-width: 44rem;
+      margin-inline: auto;
+    }
+  }
+
+  // Wide screens: the whole week in one row.
+  @include mq(xl) {
+    .s-day-columns {
+      grid-template-columns: repeat(var(--day-columns, 1), minmax(0, 1fr));
+    }
+
+    @for $days from 2 through 7 {
+      .s-day-columns--days-#{$days} {
+        --day-columns: #{$days};
+      }
+    }
+
+    .s-day-columns--days-3 {
+      width: 100%;
+      max-width: 62rem;
+      margin-inline: auto;
+    }
+
+    // Columns of ~165px: tighter rows and smaller type, so class names keep their words.
+    :is(.s-day-columns--days-6, .s-day-columns--days-7) .s-day-column__list {
+      padding: var(--spacing-xs);
+    }
+
+    :is(.s-day-columns--days-6, .s-day-columns--days-7) .s-day-column__item {
+      padding: var(--spacing-sm);
+    }
+
+    :is(.s-day-columns--days-6, .s-day-columns--days-7) .s-day-column__title {
+      font-size: var(--font-size-sm);
+    }
+
+    :is(.s-day-columns--days-6, .s-day-columns--days-7) .s-day-column__meta {
+      font-size: var(--font-size-xs);
+    }
+  }
+
+  .s-day-column {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: clip;
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-day-column__head {
+    display: flex;
+    justify-content: center;
+    padding: var(--spacing-md) var(--spacing-sm);
+    background: var(--color-action-primary);
+    box-shadow: inset 0 -0.25rem 0 rgb(0 0 0 / 14%);
+  }
+
+  .s-day-column:nth-child(even) .s-day-column__head {
+    background: var(--color-background-inverse);
+  }
+
+  .s-day-column__name {
+    max-width: 100%;
+    padding: var(--spacing-xs) var(--spacing-md);
+    color: var(--color-text-primary);
+    background: var(--color-background-surface);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-snug);
+    letter-spacing: var(--letter-spacing-wide);
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .s-day-column__list {
+    display: grid;
+    padding: var(--spacing-sm);
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-day-column__item {
+    display: grid;
+    gap: 0.125rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-control);
+  }
+
+  .s-day-column__item:nth-child(odd) {
+    background: color-mix(in srgb, var(--color-text-primary) 5%, var(--color-background-surface));
+  }
+
+  .s-day-column__time {
+    font-size: var(--font-size-sm);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-day-column__title {
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  .s-day-column__meta {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    overflow-wrap: anywhere;
+  }
+}

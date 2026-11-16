@@ -2,28 +2,46 @@
 /**
  * Horizontal slider (v3.2), reusable: the slotted <li> items scroll sideways with snapping
  * (swipe on phones), with previous/next buttons; 1 item per view on phones, 2 on tablets,
- * 3 on desktops. Without JavaScript it is still a scrollable list.
+ * 3 on desktops — or one on every screen with `single` (v3.3), and a dot per item with `dots`.
+ * Content in the `head` slot (v3.3, e.g. the section header) sits beside the arrows, the dots
+ * move under the track. Without JavaScript it is still a scrollable list (the buttons are hidden then).
  *   <Slider label="Opinie"><li>…</li><li>…</li></Slider>
+ *   <Slider label="Opinie" single dots={items.length}>…</Slider>
+ *   <Slider label="Galeria" single dots={pages}><div slot="head">…</div><li>…</li></Slider>
  */
-import { t } from "@/i18n";
+import { format, t } from "@/i18n";
+import "@/styles/components/_slider.scss";
 
 export interface Props {
   label?: string;
+  /** One item per view on every screen. */
+  single?: boolean;
+  /** Number of items: shows one dot button per item between the arrows. */
+  dots?: number;
   class?: string;
 }
 
-const { label = t.slider.label, class: className } = Astro.props;
+const { label = t.slider.label, single = false, dots = 0, class: className } = Astro.props;
+const head = Astro.slots.has("head");
 ---
 
-<div class:list={["slider", className]} data-slider role="region" aria-roledescription="carousel" aria-label={label}>
+<div class:list={["slider", single && "slider--single", head && "slider--head", className]} data-slider role="region" aria-roledescription="carousel" aria-label={label}>
+  {head && <div class="slider__head"><slot name="head" /></div>}
   <ul class="slider__track" data-slider-track tabindex="0">
     <slot />
   </ul>
   <div class="slider__controls">
-    <button type="button" class="slider__button" data-slider-prev aria-label={t.slider.previous}>
+    <button type="button" class="slider__button slider__button--previous" data-slider-prev aria-label={t.slider.previous}>
       <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="m14.5 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
     </button>
-    <button type="button" class="slider__button" data-slider-next aria-label={t.slider.next}>
+    {dots > 1 && (
+      <div class="slider__dots">
+        {Array.from({ length: dots }, (_, index) => (
+          <button type="button" class="slider__dot" data-slider-dot={index} aria-label={format(t.slider.page, { number: index + 1, count: dots })} aria-current={index === 0 ? "true" : undefined} />
+        ))}
+      </div>
+    )}
+    <button type="button" class="slider__button slider__button--next" data-slider-next aria-label={t.slider.next}>
       <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="m9.5 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
     </button>
   </div>
@@ -34,6 +52,7 @@ const { label = t.slider.label, class: className } = Astro.props;
     const track = slider.querySelector<HTMLElement>("[data-slider-track]");
     const previous = slider.querySelector<HTMLButtonElement>("[data-slider-prev]");
     const next = slider.querySelector<HTMLButtonElement>("[data-slider-next]");
+    const dots = [...slider.querySelectorAll<HTMLButtonElement>("[data-slider-dot]")];
     if (!track || !previous || !next) continue;
 
     // One step = one card plus the gap.
@@ -45,10 +64,14 @@ const { label = t.slider.label, class: className } = Astro.props;
     const update = () => {
       previous.disabled = track.scrollLeft <= 2;
       next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+
+      const current = Math.round(track.scrollLeft / step());
+      dots.forEach((dot, index) => (index === current ? dot.setAttribute("aria-current", "true") : dot.removeAttribute("aria-current")));
     };
 
     previous.addEventListener("click", () => track.scrollBy({ left: -step() }));
     next.addEventListener("click", () => track.scrollBy({ left: step() }));
+    dots.forEach((dot, index) => dot.addEventListener("click", () => track.scrollTo({ left: index * step() })));
     track.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update, { passive: true });
     update();

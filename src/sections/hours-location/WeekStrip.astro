@@ -1,0 +1,100 @@
+---
+/**
+ * Light band: the week as seven day tiles (opening time big, closing time under it, closed days
+ * muted), the live status above them and the address, phone and route link in one line below.
+ * The script marks today's tile. Phones: a tile per row, the day name on the left.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Address from "@/sections/hours-location/Address.astro";
+import Status from "@/sections/hours-location/Status.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Icon from "@/components/media/Icon.astro";
+import Link from "@/components/ui/Link.astro";
+import { site } from "virtual:site";
+import { t } from "@/i18n";
+import { clock } from "@/site/open-now";
+import { addressLines, directionsUrl, weekHours } from "@/site/hours";
+import type { SectionOf } from "@/site/types";
+import "@/styles/sections/hours-location/_shared.scss";
+import "@/styles/sections/hours-location/_week-strip.scss";
+
+export interface Props {
+  section: SectionOf<"hours-location">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const { business } = site;
+const week = business.hours.length > 0 ? weekHours(business.hours, t) : [];
+const lines = addressLines(business.address);
+const directions = directionsUrl(business.address);
+const phone = content.showPhone ? business.phone : undefined;
+// The open hours on a 24-hour track: classes of whole hours (after midnight it runs to the end of the day).
+const hour = (time: string) => Number(time.slice(0, 2)) + Number(time.slice(3)) / 60;
+const span = (opens: string, closes: string) => {
+  const [from, to] = opens === closes ? [0, 24] : [Math.floor(hour(opens)), closes > opens ? Math.ceil(hour(closes)) : 24];
+  return [`s-week-strip__span--from-${from}`, `s-week-strip__span--to-${to}`];
+};
+---
+
+<SectionShell id={section.id} type="hours-location" variant="week-strip" tone={props.tone} spacing={props.spacing} defaultSpacing="md" width="xl">
+  <Stack space="xl">
+    <div class="s-week-strip__intro">
+      <SectionHeader eyebrow={content.eyebrow} title={content.title ?? t.sections.hoursTitle} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+      <Status look="pill" />
+    </div>
+    {week.length > 0 && (
+      <dl class="s-week-strip">
+        {week.map((day) => (
+          <div class:list={["s-week-strip__day", day.closed && "s-week-strip__day--closed"]} data-day={day.day}>
+            <dt class="s-week-strip__name">
+              <span class="s-week-strip__long">{t.days[day.day].long}</span>
+              <span class="s-week-strip__short" aria-hidden="true">{t.days[day.day].short}</span>
+              <span class="s-week-strip__today" data-today hidden>{t.sections.today}</span>
+            </dt>
+            {day.closed ? (
+              <dd class="s-week-strip__hours s-week-strip__hours--closed">{day.value}</dd>
+            ) : (
+              <dd class="s-week-strip__hours">
+                <time class="s-week-strip__opens" datetime={day.opens}>{clock(day.opens!)}</time>
+                <span class="s-week-strip__closes">–<time datetime={day.closes}>{clock(day.closes!, true)}</time></span>
+                <span class="s-week-strip__track" aria-hidden="true">
+                  <span class:list={["s-week-strip__span", span(day.opens!, day.closes!)]}></span>
+                </span>
+              </dd>
+            )}
+          </div>
+        ))}
+      </dl>
+    )}
+    {(lines.length > 0 || phone || content.mapUrl) && (
+      <address class:list={["s-week-strip__place", props.align === "left" && "s-week-strip__place--start"]}>
+        {lines.length > 0 && (
+          <span class="s-week-strip__fact">
+            <Icon name="map-pin" size="1.125rem" class="s-week-strip__icon" />
+            <span class="visually-hidden">{t.sections.address}: </span><span><Address /></span>
+          </span>
+        )}
+        {phone && (
+          <span class="s-week-strip__fact">
+            <Icon name="phone" size="1.125rem" class="s-week-strip__icon" />
+            <span class="visually-hidden">{t.sections.phone}: </span>
+            <Link href={`tel:${phone.replace(/[^\d+]/g, "")}`}>{phone}</Link>
+          </span>
+        )}
+        {directions && (
+          <span class="s-week-strip__fact">
+            <Link href={directions} class="s-week-strip__link">{t.sections.directions}<Icon name="arrow-right" size="1rem" /></Link>
+          </span>
+        )}
+        {content.mapUrl && (
+          <span class="s-week-strip__fact">
+            <Link href={content.mapUrl} class="s-week-strip__link">{t.sections.openInMaps}<Icon name="arrow-right" size="1rem" /></Link>
+          </span>
+        )}
+      </address>
+    )}
+  </Stack>
+</SectionShell>

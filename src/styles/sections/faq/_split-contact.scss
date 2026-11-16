@@ -1,0 +1,181 @@
+// FAQ: split-contact (SplitContact.astro, ContactCard.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // Phones and tablets: title, questions, then the contact card. Desktops: title and card on the
+  // left (the card stays in view along the questions), question cards on the right.
+  .s-faq-split {
+    display: grid;
+    grid-template-areas: "header" "questions" "card";
+    gap: var(--spacing-xl);
+  }
+
+  .s-faq-split > .s-header {
+    grid-area: header;
+  }
+
+  .s-faq-split__questions {
+    grid-area: questions;
+  }
+
+  .s-faq-split > .s-faq-contact {
+    grid-area: card;
+  }
+
+  @include mq(lg) {
+    .s-faq-split {
+      grid-template:
+        "header questions" auto
+        "card questions" 1fr / minmax(0, 5fr) minmax(0, 7fr);
+      gap: var(--spacing-xl) var(--spacing-3xl);
+      align-items: start;
+    }
+
+    .s-faq-split > .s-faq-contact {
+      position: sticky;
+      inset-block-start: $sticky-top;
+    }
+  }
+
+  .s-faq-contact {
+    display: grid;
+    gap: var(--spacing-lg);
+    max-width: 34rem;
+    padding: var(--spacing-xl) var(--spacing-lg);
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  @include mq(sm) {
+    .s-faq-contact {
+      padding: var(--spacing-xl);
+    }
+  }
+
+  .s-faq-contact__head {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .s-faq-contact__photo,
+  .s-faq-contact__badge {
+    flex: none;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+  }
+
+  // A ring of the brand color around the photo, set off by a gap of the card color.
+  .s-faq-contact__photo {
+    object-fit: cover;
+    box-shadow:
+      0 0 0 3px var(--color-background-surface),
+      0 0 0 5px var(--color-action-primary);
+  }
+
+  .s-faq-contact__badge {
+    display: grid;
+    place-items: center;
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    line-height: 1;
+  }
+
+  .s-faq-contact__intro {
+    display: grid;
+    gap: var(--spacing-xs);
+    min-width: 0;
+  }
+
+  .s-faq-contact__title {
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-faq-contact__text {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+  }
+
+  .s-faq-contact__list {
+    display: grid;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg) 0 0;
+    margin: 0;
+    list-style: none;
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-faq-contact__item {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    column-gap: var(--spacing-md);
+    align-items: center;
+  }
+
+  .s-faq-contact__icon {
+    display: grid;
+    grid-row: span 2;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: $brand-ink;
+    background: color-mix(in srgb, var(--color-action-primary) 12%, transparent);
+    border-radius: 50%;
+  }
+
+  .s-faq-contact__label {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+
+  .s-faq-contact__link {
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  .s-faq-contact__link:hover {
+    color: $brand-ink;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .s-faq-contact__action {
+    width: 100%;
+  }
+
+  // Tablets: one wide card, the intro and the button beside the phone and e-mail.
+  @include mq(md) {
+    @include mq-down(lg) {
+      .s-faq-contact {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: var(--spacing-lg) var(--spacing-2xl);
+        align-items: center;
+        max-width: none;
+      }
+
+      .s-faq-contact__list {
+        grid-row: span 2;
+        grid-column: 2;
+        padding: 0;
+        padding-inline-start: var(--spacing-2xl);
+        border-block-start: 0;
+        border-inline-start: 1px solid var(--color-border-default);
+      }
+    }
+  }
+}

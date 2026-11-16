@@ -1,0 +1,41 @@
+// Hours and location: Sass helpers of the variants (no CSS output).
+
+// Hidden but read by screen readers (the utility class, for elements that are visible on other screens).
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: clip;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+// Small uppercase label above a fact (headings styled down).
+@mixin label {
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-snug);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+// Round icon on a tint of the brand color (mixed towards the text color for contrast).
+@mixin badge($size: 2.5rem) {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: $size;
+  height: $size;
+  color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+  background: color-mix(in srgb, var(--color-action-primary) 12%, transparent);
+  border-radius: var(--radius-full);
+}
+
+@mixin framed {
+  background: var(--color-background-surface);
+  border: 1px solid var(--card-border-color);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
+}

@@ -1,0 +1,48 @@
+// Gallery: mosaic (Mosaic.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Square cells sized from the container width (cqi), so rows of small, wide and large tiles
+  // line up exactly; 2 columns on phones, 4 from tablets (layout.ts mosaicTiles).
+  .s-mosaic {
+    container-type: inline-size;
+  }
+
+  .s-mosaic__list {
+    --gap: var(--spacing-sm);
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: calc((100cqi - var(--gap)) / 2);
+    grid-auto-flow: dense;
+    gap: var(--gap);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-mosaic__tile--large {
+    grid-row: span 2;
+    grid-column: span 2;
+  }
+
+  .s-mosaic__tile--wide {
+    grid-column: span 2;
+  }
+
+  .s-mosaic__figure {
+    position: relative;
+    height: 100%;
+    margin: 0;
+  }
+
+  @include mq(md) {
+    .s-mosaic__list {
+      --gap: var(--spacing-md);
+
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-auto-rows: calc((100cqi - var(--gap) * 3) / 4);
+    }
+  }
+}

@@ -6,6 +6,8 @@ import Button from "@/components/ui/Button.astro";
 import Icon from "@/components/media/Icon.astro";
 import { t } from "@/i18n";
 import type { SectionOf } from "@/site/types";
+import "@/styles/sections/pricing/_note.scss";
+import "@/styles/sections/pricing/_plans.scss";
 
 export interface Props {
   section: SectionOf<"pricing">;
@@ -23,8 +25,8 @@ const PlanHeading = headingLevel === "h1" ? "h2" : "h3";
     <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
     <ul class:list={["s-plans", `s-plans--${variant}`, `s-plans--count-${content.plans.length}`]}>
       {content.plans.map((plan) => (
-        <li class:list={["s-plan", plan.highlighted && variant === "cards" && "s-plan--highlighted"]}>
-          {plan.highlighted && variant === "cards" && <p class="s-plan__badge">{t.sections.popularPlan}</p>}
+        <li class:list={["s-plan", plan.highlighted && "s-plan--highlighted"]}>
+          {plan.highlighted && <p class="s-plan__badge">{t.sections.popularPlan}</p>}
           <div class="s-plan__head">
             <PlanHeading class="s-plan__name">{plan.name}</PlanHeading>
             {plan.description && <p class="s-plan__description">{plan.description}</p>}

@@ -1,0 +1,139 @@
+// Schedule: week (Week.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // v3.3, "calendar board": one frame, a column per day under a header strip, classes as tinted
+  // blocks with an accent edge. Tablets: a row per day with the name on the left; phones stack.
+  .s-week {
+    display: grid;
+    overflow: clip;
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-week__day {
+    display: grid;
+    align-content: start;
+    min-width: 0;
+  }
+
+  .s-week__day + .s-week__day {
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-week__day-title {
+    padding: var(--spacing-sm) var(--spacing-md);
+    color: var(--color-text-primary);
+    background: var(--color-background-muted);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-snug);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+
+  .s-week__list {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-week__item {
+    display: grid;
+    align-content: start;
+    gap: 0.125rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: color-mix(in srgb, var(--color-action-primary) 9%, var(--color-background-surface));
+    border-inline-start: 3px solid var(--color-action-primary);
+    border-radius: var(--radius-control);
+  }
+
+  // Mixed towards the text color, so the small time keeps 4.5:1 on the tinted block (as .tag--primary).
+  .s-week__time {
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    font-size: var(--font-size-sm);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-week__title {
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  .s-week__meta {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    overflow-wrap: anywhere;
+  }
+
+  @include mq(md) {
+    .s-week__day {
+      grid-template-columns: 10rem minmax(0, 1fr);
+    }
+
+    .s-week__day-title {
+      padding: var(--spacing-md);
+    }
+
+    .s-week__list {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    }
+  }
+
+  // Desktops: a column per day; six or seven days only from xl (below, their columns are too narrow).
+  @include mq(lg) {
+    @include week-columns(".s-week:not(.s-week--days-6, .s-week--days-7)");
+
+    @for $days from 2 through 7 {
+      .s-week--days-#{$days} {
+        --week-days: #{$days};
+      }
+    }
+
+    // One to three days do not stretch over the whole width.
+    .s-week--days-1 {
+      width: 100%;
+      max-width: 24rem;
+      margin-inline: auto;
+    }
+
+    .s-week--days-2 {
+      width: 100%;
+      max-width: 44rem;
+      margin-inline: auto;
+    }
+
+    .s-week--days-3 {
+      width: 100%;
+      max-width: 62rem;
+      margin-inline: auto;
+    }
+  }
+
+  @include mq(xl) {
+    @include week-columns(":is(.s-week--days-6, .s-week--days-7)");
+
+    // Columns of ~170px: tighter blocks and smaller type, so class names keep their words.
+    :is(.s-week--days-6, .s-week--days-7) .s-week__item {
+      padding: var(--spacing-sm);
+    }
+
+    :is(.s-week--days-6, .s-week--days-7) .s-week__title {
+      font-size: var(--font-size-sm);
+    }
+
+    :is(.s-week--days-6, .s-week--days-7) .s-week__meta {
+      font-size: var(--font-size-xs);
+    }
+  }
+}

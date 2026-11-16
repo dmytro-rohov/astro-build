@@ -1,0 +1,78 @@
+// Testimonials: cards (Cards.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // 1–3 cards sit in one centered row (a third of it each; a single card a bit wider).
+  .s-testimonials__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-testimonials__list > li {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  @include mq(md) {
+    .s-testimonials__list > li {
+      flex: 0 1 calc((100% - var(--spacing-lg)) / 2);
+    }
+
+    .s-testimonials__list--1 > li {
+      flex-basis: 38rem;
+    }
+  }
+
+  @include mq(lg) {
+    .s-testimonials__list > li {
+      flex-basis: calc((100% - var(--spacing-lg) * 2) / 3);
+    }
+
+    .s-testimonials__list--1 > li {
+      flex-basis: 40rem;
+    }
+  }
+
+  .s-testimonial {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    height: 100%;
+    margin: 0;
+  }
+
+  .s-testimonial__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+  }
+
+  .s-testimonial__mark {
+    width: 2.25rem;
+    color: var(--color-action-primary);
+    opacity: 0.3;
+  }
+
+  .s-testimonial__quote {
+    margin: 0;
+    color: var(--color-text-primary);
+    line-height: var(--line-height-relaxed);
+  }
+
+  // The author closes the card under a hairline, aligned across a row.
+  .s-testimonial__author {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-block-start: auto;
+    padding-block-start: var(--spacing-md);
+    border-block-start: 1px solid var(--color-border-default);
+  }
+}

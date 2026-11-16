@@ -1,3 +1,5 @@
+@use "../abstracts/layers";
+
 @layer components {
   .accordion {
     display: grid;

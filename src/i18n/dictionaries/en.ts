@@ -13,14 +13,15 @@ export const en = {
     titleTemplate: "{title} | {siteName}",
   },
 
+  /** `on` completes the hours status "opens {day} at 9:00" (Polish: "w poniedziałek", "we wtorek"). */
   days: {
-    mo: { short: "Mon", long: "Monday" },
-    tu: { short: "Tue", long: "Tuesday" },
-    we: { short: "Wed", long: "Wednesday" },
-    th: { short: "Thu", long: "Thursday" },
-    fr: { short: "Fri", long: "Friday" },
-    sa: { short: "Sat", long: "Saturday" },
-    su: { short: "Sun", long: "Sunday" },
+    mo: { short: "Mon", long: "Monday", on: "on Monday" },
+    tu: { short: "Tue", long: "Tuesday", on: "on Tuesday" },
+    we: { short: "Wed", long: "Wednesday", on: "on Wednesday" },
+    th: { short: "Thu", long: "Thursday", on: "on Thursday" },
+    fr: { short: "Fri", long: "Friday", on: "on Friday" },
+    sa: { short: "Sat", long: "Saturday", on: "on Saturday" },
+    su: { short: "Sun", long: "Sunday", on: "on Sunday" },
   },
 
   sections: {
@@ -30,7 +31,20 @@ export const en = {
     phone: "Phone",
     email: "Email",
     openInMaps: "Open in maps",
+    directions: "Get directions",
+    /** Live status of the opening hours (computed in the browser): "Open now · until 18:00". */
+    openNow: "Open now",
+    openUntil: "until {time}",
+    opensToday: "opens today at {time}",
+    opensTomorrow: "opens tomorrow at {time}",
+    opensOn: "opens {day} at {time}",
+    today: "Today",
+    mapLoad: "Show the map",
+    mapTitle: "Map: {place}",
     popularPlan: "Most popular",
+    planPrice: "Price",
+    planIncluded: "Included",
+    planExcluded: "Not included",
     rating: "Rating: {value} out of 5",
     contactBar: "Contact details",
     scheduleTime: "Time",
@@ -43,12 +57,43 @@ export const en = {
     embedNotice: "This content is loaded from {provider}. After you click, {provider} may set cookies and receive your IP address.",
     embedOpen: "Open in {provider}",
     step: "Step {number}",
+    gallery: "Gallery",
+    /** Review count under an overall rating, by plural category (Intl.PluralRules). */
+    reviews: { one: "{count} review", few: "{count} reviews", many: "{count} reviews", other: "{count} reviews" },
+  },
+
+  /** faq variants: split-contact card, categories, search. */
+  faq: {
+    contactTitle: "Still have a question?",
+    contactText: "We will gladly answer it — get in touch.",
+    /** Questions without a category when the others have one. */
+    other: "Other",
+    searchLabel: "Search the questions",
+    searchPlaceholder: "What are you looking for?",
+    filters: "Question topics",
+    all: "All",
+    /** Result count while searching, by plural category (Intl.PluralRules). */
+    results: { one: "{count} question found", few: "{count} questions found", many: "{count} questions found", other: "{count} questions found" },
+    noResults: "No question matches “{query}”.",
+    askLead: "Didn't find your question?",
+    ask: "Ask us",
   },
 
   slider: {
     previous: "Previous",
     next: "Next",
     label: "Scrollable list",
+    page: "Show {number} of {count}",
+    /** Toggle of a moving band of logos (pressed = stopped). */
+    pause: "Pause scrolling",
+  },
+
+  lightbox: {
+    label: "Photo viewer",
+    close: "Close",
+    previous: "Previous photo",
+    next: "Next photo",
+    status: "Photo {number} of {count}",
   },
 
   common: {
@@ -71,6 +116,7 @@ export const en = {
     privacyPolicy: "Privacy policy",
     cookieSettings: "Cookie settings",
     copyright: "© {year} {siteName}. All rights reserved.",
+    contact: "Contact",
     madeBy: "Website by",
     console: "This site was built by Mytko.dev — fast, accessible websites for businesses and specialists. Want one? https://mytko.dev",
   },
@@ -94,6 +140,11 @@ export const en = {
     emailHint: "We will use this email only to reply to your message.",
     phoneLabel: "Phone",
     addressLabel: "Address",
+    callTitle: "Call us",
+    writeTitle: "Send an email",
+    visitTitle: "Visit us",
+    directions: "Get directions",
+    mapTitle: "Map: {place}",
     subjectLabel: "Subject",
     messageLabel: "Message",
     honeypotLabel: "Website",

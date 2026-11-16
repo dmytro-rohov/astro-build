@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { hexToOklch } from "../../src/design-system/theme/color";
 
 /** Deep copy of the demo site.json, ready to be broken by a test. */
 export function demoSite(): Record<string, any> {
@@ -24,4 +25,9 @@ export function writeSite(site: unknown, assets?: Record<string, { file: string;
   }
 
   return dir;
+}
+
+/** Shortest distance between the OKLCH hues of two colors, in degrees. */
+export function hueDistance(a: string, b: string): number {
+  return Math.abs(((hexToOklch(a).h - hexToOklch(b).h + 540) % 360) - 180);
 }

@@ -1,0 +1,68 @@
+---
+/**
+ * Heading and an open form on the left, a tall map on the right with the place (address,
+ * hours, phone, directions) on a card over it. The map is `mapUrl`, loaded after a click
+ * (embeds system, CSP frame-src), or an illustrated map with a pin when there is none.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import EmbedFrame from "@/sections/_shared/EmbedFrame.astro";
+import DetailList from "@/sections/contact/DetailList.astro";
+import Form from "@/sections/contact/Form.astro";
+import MapArt from "@/sections/contact/MapArt.astro";
+import Button from "@/components/ui/Button.astro";
+import Icon from "@/components/media/Icon.astro";
+import { site } from "virtual:site";
+import { format, t } from "@/i18n";
+import { addressLine, contactDetails, contactHeader, directionsHref } from "@/sections/contact/details";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/contact/_map.scss";
+
+export interface Props {
+  section: VariantOf<"contact", "map">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const { business } = site;
+const name = business.name ?? site.meta.name;
+const place = addressLine(business.address);
+const directions = directionsHref(business);
+// The card has its own directions button (the address is plain text there) and keeps the
+// hours to one line, so it covers little of the map.
+const details = content.showDetails
+  ? contactDetails(business, t).map((detail) => ({ ...detail, href: detail.kind === "address" ? undefined : detail.href, lines: undefined }))
+  : [];
+const PlaceHeading = headingLevel === "h1" ? "h2" : "h3";
+---
+
+<SectionShell id={section.id} type="contact" variant="map" tone={props.tone} spacing={props.spacing}>
+  <div class="s-contact-map">
+    <div class="s-contact-map__main">
+      <SectionHeader {...contactHeader(content, t)} headingLevel={headingLevel} align={props.align ?? "left"} />
+      <Form />
+    </div>
+    <div class="s-contact-map__visual">
+      <div class="s-contact-map__canvas">
+        <MapArt class="s-contact-map__art" />
+        {content.mapUrl ? (
+          <EmbedFrame url={content.mapUrl} title={format(t.contactForm.mapTitle, { place: place || name })} class="s-contact-map__frame" />
+        ) : (
+          place && <span class="s-contact-map__pin"><Icon name="map-pin" size="1.5rem" /></span>
+        )}
+      </div>
+      {(details.length > 0 || directions) && (
+        <div class="s-contact-map__place">
+          <PlaceHeading class="s-contact-map__name">{name}</PlaceHeading>
+          {details.length > 0 && <DetailList details={details} look="compact" />}
+          {directions && (
+            <Button href={directions} variant="secondary" size="sm" class="s-contact-map__directions">
+              <Icon name="navigation" size="1rem" />{t.contactForm.directions}
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
+  </div>
+</SectionShell>

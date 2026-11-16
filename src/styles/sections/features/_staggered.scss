@@ -1,0 +1,95 @@
+// Features: staggered (Staggered.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Every other column is pushed down; a band of the accent runs behind the lower part of
+  // the cards from edge to edge (the section clips it). A tint on light palettes; on dark
+  // ones an accent tint turns muddy, so the band is a lighter neutral under an accent line.
+  .s-features--staggered {
+    overflow: clip;
+    isolation: isolate;
+  }
+
+  .s-features-staggered {
+    --stagger: 0rem;
+
+    position: relative;
+    row-gap: calc(var(--stagger) + var(--spacing-lg));
+    padding-block-end: var(--stagger);
+  }
+
+  .s-features-staggered::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: calc(var(--stagger) + 8rem) -100vw -100vh;
+    background: light-dark(
+      color-mix(in srgb, var(--color-action-primary) 18%, transparent),
+      color-mix(in srgb, var(--color-text-primary) 7%, transparent)
+    );
+    border-block-start: 2px solid light-dark(transparent, var(--color-action-primary));
+  }
+
+  .s-features-staggered__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xl) var(--spacing-lg);
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+    text-align: center;
+  }
+
+  .s-features-staggered__icon {
+    display: grid;
+    place-items: center;
+    width: 4rem;
+    height: 4rem;
+    margin-block-end: var(--spacing-sm);
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    border-radius: 50%;
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-features-staggered__title {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-features-staggered .s-features-link {
+    align-self: center;
+    padding-block-start: var(--spacing-sm);
+  }
+
+  @include mq(md) {
+    .s-features-staggered {
+      --stagger: var(--spacing-2xl);
+    }
+
+    .s-features-staggered__item:nth-child(even) {
+      translate: 0 var(--stagger);
+    }
+  }
+
+  @include mq(lg) {
+    .s-features-staggered {
+      --stagger: var(--spacing-3xl);
+    }
+
+    // Three columns: the middle one goes down (two and four: every second one).
+    .s-features-cols--3.s-features-staggered .s-features-staggered__item:nth-child(even) {
+      translate: none;
+    }
+
+    .s-features-cols--3.s-features-staggered .s-features-staggered__item:nth-child(3n + 2) {
+      translate: 0 var(--stagger);
+    }
+  }
+}

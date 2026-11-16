@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **18 section types, 38 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **18 section types, 93 variants**, 3 navbars and 3 footers, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -68,7 +68,7 @@ src/
 ├─ i18n/dictionaries/ one file per language (cs, de, en, es, fr, it, nl, pl, pt, ru, tr, uk)
 ├─ lib/contact/       contact form validation and delivery
 ├─ pages/             [...slug].astro (all site pages), privacy, contact results, 404/500
-└─ styles/
+└─ styles/           main.scss (what every page needs), sections/<type>/ (one sheet per variant)
 
 scripts/
 ├─ site/              CLI: validate, build, preview, screenshot, report, migrate,
@@ -161,19 +161,19 @@ the migrated site is validated like any build.
 | `hero` | `split-image`, `centered`, `cover-image` (photo behind text, always the dark palette), `panel` (edge-to-edge split), `minimal` (oversized type + facts) |
 | `about` | `image-side`, `centered` |
 | `services` | `cards`, `price-list` |
-| `features` | `cards-grid`, `icon-list` |
-| `testimonials` | `cards`, `spotlight` |
-| `gallery` | `grid`, `mosaic` |
-| `pricing` | `cards`, `compact` |
-| `faq` | `accordion`, `two-column` (both publish FAQPage JSON-LD) |
-| `cta` | `boxed`, `banner` |
-| `contact` | `form-split`, `form-centered` (details from `business`) |
-| `hours-location` | `card`, `compact` (hours, address, phone from `business`) |
-| `stats` | `row`, `cards` (key numbers; accent tone allowed) |
-| `process` | `steps`, `timeline` (numbered steps, optional icons) |
-| `team` | `cards`, `compact` (portraits 4:5 / round) |
-| `schedule` | `week`, `table` (weekly classes, sorted by day and time) |
-| `logo-cloud` | `row`, `grid` (partner / client logos, SVG or PNG) |
+| `features` | `cards-grid`, `icon-list`, `icon-badge` (round icon on the card edge, link per card), `staggered` (zigzag cards over a colored band), `orbit` (items around a central circle; a list on phones), `spotlight` (one raised card), `bento` (tiles of different sizes, one accent tile) |
+| `testimonials` | `cards` (a slider over 3 reviews), `spotlight` (first three, stacked), `carousel` (one quote at a time on a brand panel, arrows + dots), `portraits` (photo tile + brand quote card, checkerboard), `quote-cards` (quote mark in a curved corner, one card on the brand color), `rating` (overall score + review rows); without a photo the initials are shown, stars only for a real `rating`; optional `ratingAverage`, `ratingCount`, `ratingSource`, `ratingLink` from a review profile (Google…) |
+| `gallery` | `grid` (even 4:3 tiles, captions below), `mosaic` (first photo large, square tiles closing a rectangle), `slider` (pages of up to five tall, wide and small tiles, arrows beside the title, dashes), `masonry` (columns of different heights ending level, captions on the photos), `polaroid` (tilted prints over a brand band), `checkerboard` (photos alternate with text tiles: optional `items[].title`, `text`, `link`), `explore` (vertical word on a framed panel beside staggered portraits) — every photo opens a full-screen viewer (prop `lightbox`, default on; without JavaScript it links to the image), optional `link` to more photos |
+| `pricing` | `cards`, `compact`, `featured-center` (recommended plan in the middle, on the brand color), `table` (comparison: features × plans), `split` (intro left, plan rows right), `minimal` (typographic columns, thin rules) |
+| `faq` | `accordion`, `two-column`, `split-contact` (title and a contact card with phone and e-mail from `business`, optional photo and button), `categories` (a category menu switching the questions; without categories the questions are the menu), `with-image` (numbered questions beside a photo or a brand question-mark panel), `search` (brand panel with a search field, category pills and a live result count) — all publish FAQPage JSON-LD and list everything without JavaScript; optional `items[].category`, `image`, `action` |
+| `cta` | `boxed` (glow over a dot grid), `banner` (edge-to-edge band, brand bar, stacked actions), `rings` (brand card, concentric circles), `gradient-cards` (gradient band with wave lines, facts on floating cards), `faces` (light card, round photos around it — tinted dots without them), `band-card` (light card on a brand band, spaced uppercase title); optional `highlights` (gradient-cards) and `images` (faces); `description` optional |
+| `contact` | `form-split` (details as icon rows beside the form card), `form-centered` (one card: details on a brand panel + form), `info-columns` (open form, then large icon columns over a brand strip), `big-card` (one large card on a soft brand gradient), `methods` (call / write / visit action cards, form panel over a deep brand block), `map` (form + tall map with a place card) — details and hours from `business`, the same form in every layout; optional `mapUrl` (map embed) |
+| `hours-location` | `card`, `compact` (one-row contact bar), `today` (door sign: the week day by day, today marked, live "open now" status), `map` (side panel + a map loaded after a click from the optional `mapEmbed`, a drawn map without it), `image-side` (photo of the place with an overlapping card, optional `image`), `week-strip` (seven day tiles with a 24-hour track) — hours, address, phone from `business`; days with the same hours are grouped ("Pn–Pt"); the status is computed in the browser in the business time zone (from `address.country`, default Europe/Warsaw) |
+| `stats` | `row`, `cards`, `rings` (progress rings), `bars` (progress bars, two columns), `chart-cards` (decorative mini charts), `highlight` (one big number + text), `bento` (tiles, first on the brand color); key numbers, accent tone allowed, optional `items[].progress` 0–100 |
+| `process` | `steps` (one connecting line), `timeline` (alternating around a central line), `cards` (outlined numbers), `wave` (wavy path), `snake` (line looping over and under round nodes), `chevrons` (rings with numbered arrows) — 2–8 steps, optional icons and time labels; all collapse to one vertical sequence on phones |
+| `team` | `cards` (portraits 4:5), `compact` (round photos, balanced rows), `social-cards` (big round photo, icon links on its edge), `spotlight` (featured person in the middle, on the brand color), `color-tiles` (arch portraits on tiles of rotating soft colors), `directory` (dense small cards) — initials wherever a photo is missing, optional `members[].socials` icon links |
+| `schedule` | `week` (calendar board: a framed column per day), `table` (grouped by day), `day-columns` (bold colored day headers), `matrix` (instructors or classes × days), `tabs` (one day at a time, today first), `agenda` (timeline list) — weekly classes, sorted by day and time; `matrix` rows by `instructor` or `class` (prop `rows`) |
+| `logo-cloud` | `row` (muted, balanced rows), `grid` (light tiles), `coverflow` (3D carousel, big card in the middle; 2–3 logos as a still fan), `split-image` (photo beside the title and tiles, pages of six with dots), `marquee` (endless band between rules: pauses on hover, focus and a button, still for reduced motion), `color-tiles` (logos knocked out white on strong tiles from the accent, `palette` brand / spectrum) — partner / client logos, SVG or PNG, sized by their proportions; a white plate behind a logo melts into the background; optional `image` for `split-image` |
 | `embed` | `full`, `split` (OpenStreetMap, Google Maps, YouTube, Vimeo, Calendly — see below) |
 | `suggestion` | `box` (preview only, never published: a recommended section the generator cannot build yet — why it helps, what is missing, links to add or dismiss it) |
 | layout `navbar` | `simple`, `centered`, `topbar` (phone/email bar) |
@@ -182,19 +182,28 @@ the migrated site is validated like any build.
 **Rules:** at most one `contact` and one `faq` section per page; the first section of a page
 renders its only `<h1>`, so `stats`, `logo-cloud` and `embed` need a title there.
 
-**Embeds** (`src/site/embeds.ts`): only links from the listed providers are accepted
+**Embeds** (`src/site/embeds.ts`): embed sections and the contact `map` variant's `mapUrl` (map
+providers only) accept only links from the listed providers
 (YouTube becomes `youtube-nocookie.com`, Vimeo gets `dnt=1`). Nothing is requested from the
 provider before the visitor clicks "Show content from …"; without JavaScript a link opens it
-in a new tab. The CSP `frame-src` lists exactly the providers the site uses, and the privacy
-page names them. Script widgets (e.g. Booksy) are not embeddable — link to them with a button.
+in a new tab. The CSP `frame-src` lists exactly the providers the site uses (embed sections and
+the `map` variant of `hours-location`), and the privacy page names them. Script widgets
+(e.g. Booksy) are not embeddable — link to them with a button.
 
 Common section props: `tone` (`default`, `muted`, `inverse`; `accent` for hero, about, cta, stats),
 `spacing`, `align`. Without `tone` the archetype default for the type is used.
 
 **Adding a variant:** add it to `variants` in `src/sections/<type>/schema.ts` (description,
 used optional fields, own props), create `src/sections/<type>/<Variant>.astro` with
-`SectionShell` + `SectionHeader`, register it in `src/site/components.ts` and add styles in
-`src/styles/sections/`. Content stays the type's content — never add variant-only content fields.
+`SectionShell` + `SectionHeader`, register it in `src/site/components.ts` and add its styles in
+`src/styles/sections/<type>/_<variant>.scss`, imported by the component. Content stays the type's
+content — never add variant-only content fields.
+
+**CSS per site:** a build imports only the components of the variants its pages use
+(`virtual:section-components`, `src/site/vite-plugin.ts`), and each component imports its own
+stylesheets (widgets like `Slider` and `Lightbox` too), so a site ships the CSS of its variants
+only; `main.scss` keeps what every page needs (tokens, base, layout primitives, header, footer,
+hero). Every split stylesheet starts with the cascade layer order (`abstracts/_layers.scss`).
 
 **Boundary tests:** `scripts/site/make-catalog.ts` generates a site from the schemas with every
 variant twice — minimum and maximum content (every field at its limit, long Polish words).
@@ -449,6 +458,20 @@ Available UI primitives:
 - `Card`
 - `Tag`
 - `Divider`
+- `Progress` (v3.3) — a ring or a horizontal bar filled to `value` 0–100
+
+`Progress` draws the fill with SVG attributes (no inline styles, CSP-safe), so without
+JavaScript and in screenshots it shows the final state; just before it scrolls into view it
+empties and fills with a CSS transition at the pace of the count-up numbers (no animation with
+reduced motion). Its accessible name is the percentage (`role="img"`, `aria-label="75%"`) or
+`label`; `decorative` hides it from screen readers. Content in the slot sits inside the ring;
+`--progress-fill`, `--progress-track` and `--progress-thickness` (bar) restyle it.
+
+```astro
+<Progress value={75} />
+<Progress value={98} variant="bar" label="Zadowoleni klienci: 98%" />
+<Progress value={100} decorative><span>4,9</span></Progress>
+```
 
 ---
 
@@ -487,8 +510,10 @@ Available media primitives:
 
 Every section variant lives in `src/sections/<type>/` and renders through `SectionShell`
 (anchor id, tone, spacing, `data-section-type` for the tests). Shared building blocks:
-`Accordion` (`components/ui`), `ContactForm` (`components/form`), `SectionHeader`,
-`Actions`, `RichText` (`sections/_shared`). There is no separate "widgets" layer any more.
+`Accordion` (`components/ui`), `ContactForm` (`components/form`: the form alone, laid out by
+its own width), `Slider` and `Lightbox` (full-screen photo viewer on a native `<dialog>`:
+arrows, swipe, Escape, captions, counter; `components/widgets`), `SectionHeader`, `Actions`,
+`RichText`, `EmbedFrame` (`sections/_shared`). There is no separate "widgets" layer any more.
 
 Site layouts (`src/layouts/`): `BaseLayout`, `Header`, `Navbar`, `Footer`.
 
@@ -697,7 +722,7 @@ and English keywords. `catalog.json` lists them for the orchestrator; site.json 
 them by name (`services` and `features` items, footer social links).
 
 `npm run build-icons` (part of `build:system`) puts only the icons the site needs into
-its sprite — the engine's own (`check`, `mail`, `map-pin`, `phone`) plus every `icon`
+its sprite — the engine's own (`arrow-right`, `check`, `mail`, `map-pin`, `phone`) plus every `icon`
 in site.json — so a page downloads a few KB. `ICONS=all npm run build-icons` builds the
 whole set. The Lucide license is copied to `public/icons/LICENSE-lucide.txt`.
 
@@ -862,8 +887,24 @@ debug mode, immutable font caching). CI runs it on every pull request.
 
 ## Version
 
-Current version: **v3.2** (`3.2.1`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
+Current version: **v3.3** (`3.3.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
 starter is kept on the `v2` branch / tag `v2.0.0`.
+
+v3.3 (layout review of the first generated sites):
+
+- 18 section types, 93 variants (was 37): at least six clearly different layouts for features,
+  stats, process, pricing, team, schedule, testimonials, gallery, logo cloud, FAQ, CTA, contact and
+  hours & location; new optional content fields only (switching variants never loses content)
+- new widgets: `Progress` (ring, bar), `Lightbox` (photo viewer on a native dialog), Slider with
+  one-per-view and dots, live "open now" status in the business time zone, click-to-load maps in
+  the contact and hours-location map variants
+- phones: the hero shows the headline, text, then the photo, then the buttons; the menu is centered;
+  navbar props `menuButton` (`label` | `icon`) and `hideOnScroll`; the columns footer has four
+  columns with the contact details last; calmer counters
+- lighter pages: a site ships only the CSS of the variants it uses (`virtual:section-components`,
+  style files per variant, ~15 KB gzip instead of 41), `server.mjs` gzips in Astro server mode too
+- colors mix in OKLab (accent tints keep their hue), card borders follow inverse/accent palettes
+- every new interface text in all 12 languages
 
 v3.2.1: lighter pages — photos encode at quality 72 (the cover hero at 55, under its overlay,
 widths up to 1600), and `server.mjs` sends text files gzip-compressed in static mode, like the

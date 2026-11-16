@@ -1,0 +1,149 @@
+// Logo cloud: marquee (Marquee.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // The eyebrow as a filled pill (like a "New!" badge); the band between thin rules.
+  .s-logo-cloud--marquee .s-header__eyebrow {
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    border-color: transparent;
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-marquee {
+    --logo-size: 2.5rem;
+    --space: clamp(var(--spacing-xl), 5vw, var(--spacing-3xl));
+
+    position: relative;
+  }
+
+  .s-marquee__band {
+    padding-block: var(--spacing-lg);
+    border-block: 1px solid var(--color-border-default);
+  }
+
+  // Still (reduced motion, no JavaScript): the logos once, in a wrapped centered row.
+  .s-marquee__track {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-lg) var(--space);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-marquee__item {
+    display: flex;
+    flex: none;
+    align-items: center;
+  }
+
+  .s-marquee__item--copy {
+    display: none;
+  }
+
+  // Own colors on light backgrounds, light on dark ones.
+  .s-marquee .s-logo {
+    filter: var(--logo-filter-hover);
+    mix-blend-mode: var(--logo-blend);
+  }
+
+  // The pause button sits on the bottom rule at the right end — below the logos: a logo sliding
+  // past the band's end is clipped but still there, and must never lie under the button.
+  .s-marquee__toggle {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    display: none;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    color: var(--color-text-primary);
+    background: var(--color-background-surface);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--card-shadow);
+    cursor: pointer;
+    translate: 0 50%;
+  }
+
+  .s-marquee__toggle:hover {
+    background: var(--color-background-muted);
+  }
+
+  .s-marquee__play,
+  .s-marquee__toggle[aria-pressed="true"] .s-marquee__pause {
+    display: none;
+  }
+
+  .s-marquee__toggle[aria-pressed="true"] .s-marquee__play {
+    display: block;
+  }
+
+  // Moving: one line that slides by half its length (the second half repeats the first), faded
+  // at both ends. The moving track blends only with itself: it is painted in the section color.
+  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+    .s-marquee__band {
+      overflow: hidden;
+      mask-image: linear-gradient(to right, transparent, #000 4rem, #000 calc(100% - 4rem), transparent);
+    }
+
+    .s-marquee__track {
+      background: var(--color-background-primary);
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      gap: 0;
+      width: max-content;
+      animation: s-marquee calc(var(--loop) * 2.5s) linear infinite;
+    }
+
+    .section--tone-muted .s-marquee__track {
+      background: var(--color-background-muted);
+    }
+
+    .s-marquee__item {
+      padding-inline-end: var(--space);
+    }
+
+    .s-marquee__item--copy {
+      display: flex;
+    }
+
+    // Hover and focus count on the band only: over the button a click must show at once.
+    .s-marquee__band:is(:hover, :focus-within) .s-marquee__track,
+    .s-marquee:has([aria-pressed="true"]) .s-marquee__track {
+      animation-play-state: paused;
+    }
+
+    .s-marquee__toggle {
+      display: grid;
+    }
+  }
+
+  // Loop length (logos × repeats, marqueeRepeats) → about 2.5 s per logo.
+  @for $loop from 16 through 30 {
+    .s-marquee__track--#{$loop} {
+      --loop: #{$loop};
+    }
+  }
+
+  @keyframes s-marquee {
+    to {
+      translate: -50% 0;
+    }
+  }
+
+  @include mq(md) {
+    .s-marquee {
+      --logo-size: 3rem;
+    }
+
+    .s-marquee__band {
+      padding-block: var(--spacing-xl);
+    }
+  }
+}

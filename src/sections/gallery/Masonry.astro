@@ -1,0 +1,72 @@
+---
+/**
+ * Columns of photos at different heights, captions on the photos. Placed on a grid of fine rows
+ * (layout.ts masonryLayout): every photo has a column and a row span for phones (2 columns) and
+ * for wider screens (3, or 2 up to four photos), so the columns end level and the tab order
+ * stays the content order.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import MoreLink from "@/sections/gallery/MoreLink.astro";
+import Photo from "@/sections/gallery/Photo.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Lightbox from "@/components/widgets/Lightbox.astro";
+import { getAsset } from "@/site/assets";
+import { MASONRY_UNIT, masonryLayout, masonryRatio, shapeOf, tileSizes } from "@/sections/gallery/layout";
+import { format, t } from "@/i18n";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/gallery/_shared.scss";
+import "@/styles/sections/gallery/_masonry.scss";
+
+export interface Props {
+  section: VariantOf<"gallery", "masonry">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const count = content.items.length;
+const lightbox = props.lightbox ?? true;
+const align = props.align ?? "center";
+const columns = count <= 4 ? 2 : 3;
+const ratios = content.items.map((item, index) => masonryRatio(shapeOf(getAsset(item.image).image), index));
+const wide = masonryLayout(ratios, columns);
+const narrow = masonryLayout(ratios, 2);
+---
+
+<SectionShell id={section.id} type="gallery" variant="masonry" tone={props.tone} spacing={props.spacing} width="xl">
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={align} />
+    <div class:list={["s-masonry", `s-masonry--${columns}`]}>
+      <Lightbox label={content.title} enabled={lightbox}>
+        <ul class="s-masonry__list">
+          {content.items.map((item, index) => (
+            <li
+              class:list={[
+                "s-masonry__item",
+                `s-masonry__item--c${narrow[index].column + 1}`,
+                `s-masonry__item--s${narrow[index].span}`,
+                `s-masonry__item--wc${wide[index].column + 1}`,
+                `s-masonry__item--ws${wide[index].span}`,
+              ]}
+            >
+              <figure class="s-masonry__figure">
+                <Photo
+                  image={item.image}
+                  caption={item.caption}
+                  lightbox={lightbox}
+                  aspect={[MASONRY_UNIT, wide[index].span - 1]}
+                  widths={[320, 480, 640, 800]}
+                  sizes={tileSizes(columns, 2)}
+                  label={format(t.lightbox.status, { number: index + 1, count })}
+                />
+                {item.caption && <figcaption class="s-gallery__overlay">{item.caption}</figcaption>}
+              </figure>
+            </li>
+          ))}
+        </ul>
+      </Lightbox>
+    </div>
+    <MoreLink link={content.link} align={align} />
+  </Stack>
+</SectionShell>

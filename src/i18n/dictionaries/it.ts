@@ -8,13 +8,13 @@ export default {
   },
 
   days: {
-    mo: { short: "lun", long: "Lunedì" },
-    tu: { short: "mar", long: "Martedì" },
-    we: { short: "mer", long: "Mercoledì" },
-    th: { short: "gio", long: "Giovedì" },
-    fr: { short: "ven", long: "Venerdì" },
-    sa: { short: "sab", long: "Sabato" },
-    su: { short: "dom", long: "Domenica" },
+    mo: { short: "lun", long: "Lunedì", on: "lunedì" },
+    tu: { short: "mar", long: "Martedì", on: "martedì" },
+    we: { short: "mer", long: "Mercoledì", on: "mercoledì" },
+    th: { short: "gio", long: "Giovedì", on: "giovedì" },
+    fr: { short: "ven", long: "Venerdì", on: "venerdì" },
+    sa: { short: "sab", long: "Sabato", on: "sabato" },
+    su: { short: "dom", long: "Domenica", on: "domenica" },
   },
 
   sections: {
@@ -37,12 +37,28 @@ export default {
     embedNotice: "Questo contenuto viene caricato da {provider}. Dopo il clic, {provider} potrebbe impostare cookie e ricevere il tuo indirizzo IP.",
     embedOpen: "Apri su {provider}",
     step: "Passo {number}",
+    directions: "Indicazioni stradali",
+    openNow: "Aperto ora",
+    openUntil: "fino alle {time}",
+    opensToday: "apre oggi alle {time}",
+    opensTomorrow: "apre domani alle {time}",
+    opensOn: "apre {day} alle {time}",
+    today: "Oggi",
+    mapLoad: "Mostra la mappa",
+    mapTitle: "Mappa: {place}",
+    planPrice: "Prezzo",
+    planIncluded: "Incluso",
+    planExcluded: "Non incluso",
+    gallery: "Galleria",
+    reviews: { one: "{count} recensione", few: "{count} recensioni", many: "{count} recensioni", other: "{count} recensioni" },
   },
 
   slider: {
     previous: "Precedente",
     next: "Successivo",
     label: "Elenco scorrevole",
+    page: "Mostra {number} di {count}",
+    pause: "Metti in pausa lo scorrimento",
   },
 
   common: {
@@ -67,6 +83,7 @@ export default {
     copyright: "© {year} {siteName}. Tutti i diritti riservati.",
     madeBy: "Sito realizzato da",
     console: "Questo sito è stato realizzato da Mytko.dev — siti web veloci e accessibili per aziende e professionisti. Ne vuoi uno? https://mytko.dev",
+    contact: "Contatti",
   },
 
   cookies: {
@@ -115,6 +132,11 @@ export default {
       messageTooLong: "Il messaggio può contenere al massimo {max} caratteri.",
       privacyRequired: "Devi accettare l’informativa sulla privacy.",
     },
+    callTitle: "Chiamaci",
+    writeTitle: "Scrivici un’email",
+    visitTitle: "Vieni a trovarci",
+    directions: "Indicazioni stradali",
+    mapTitle: "Mappa: {place}",
   },
 
   email: {
@@ -175,5 +197,26 @@ export default {
       title: "Contatti",
       description: "Contattaci tramite il modulo di contatto.",
     },
+  },
+  faq: {
+    contactTitle: "Hai un’altra domanda?",
+    contactText: "Ti risponderemo volentieri: contattaci.",
+    other: "Altro",
+    searchLabel: "Cerca tra le domande",
+    searchPlaceholder: "Che cosa cerchi?",
+    filters: "Argomenti delle domande",
+    all: "Tutte",
+    results: { one: "{count} domanda trovata", few: "{count} domande trovate", many: "{count} domande trovate", other: "{count} domande trovate" },
+    noResults: "Nessuna domanda corrisponde a «{query}».",
+    askLead: "Non hai trovato la tua domanda?",
+    ask: "Chiedi a noi",
+  },
+
+  lightbox: {
+    label: "Visualizzatore di foto",
+    close: "Chiudi",
+    previous: "Foto precedente",
+    next: "Foto successiva",
+    status: "Foto {number} di {count}",
   },
 } satisfies Dictionary;

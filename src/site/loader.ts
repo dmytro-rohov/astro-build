@@ -244,9 +244,26 @@ export function loadSite(dir = resolveSiteDir()): LoadedSite {
       .filter((adjustment) => theme.colorScheme === "auto" || adjustment.scheme === theme.colorScheme)
       .map((adjustment) => `theme.accent: ${adjustment.from} was adjusted to ${adjustment.to} (${adjustment.scheme} scheme) to meet WCAG AA.`),
     ...site.pages.flatMap((page, pageIndex) =>
+      page.sections.flatMap((section, sectionIndex) => {
+        if (section.type !== "testimonials") return [];
+
+        const where = `pages[${pageIndex}].sections[${sectionIndex}]`;
+        const { items } = section.content;
+        const withoutPhoto = items.filter((item) => !item.avatar).length;
+        return [
+          ...(section.variant === "spotlight" && items.length > SPOTLIGHT_ITEMS
+            ? [`${where}: the "spotlight" variant shows the first ${SPOTLIGHT_ITEMS} of ${items.length} testimonials — use "cards" to show all.`]
+            : []),
+          ...(section.variant === "portraits" && withoutPhoto
+            ? [`${where}: the "portraits" variant shows big initials for ${withoutPhoto} of ${items.length} testimonials without a photo (avatar) — add photos or use "quote-cards".`]
+            : []),
+        ];
+      }),
+    ),
+    ...site.pages.flatMap((page, pageIndex) =>
       page.sections.flatMap((section, sectionIndex) =>
-        section.type === "testimonials" && section.variant === "spotlight" && section.content.items.length > SPOTLIGHT_ITEMS
-          ? [`pages[${pageIndex}].sections[${sectionIndex}]: the "spotlight" variant shows the first ${SPOTLIGHT_ITEMS} of ${section.content.items.length} testimonials — use "cards" to show all.`]
+        section.type === "contact" && section.variant === "map" && !section.content.mapUrl && !site.business.address?.street && !site.business.address?.city
+          ? [`pages[${pageIndex}].sections[${sectionIndex}]: the "map" variant has no place to show (no mapUrl, no business.address) — add one or use "form-split".`]
           : [],
       ),
     ),

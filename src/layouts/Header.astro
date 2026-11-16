@@ -12,6 +12,9 @@ export interface Props {
   navItems?: NavItem[];
   cta?: NavAction;
   sticky?: boolean;
+  /** Slides away while scrolling down, comes back when scrolling up (sticky headers only). */
+  hideOnScroll?: boolean;
+  menuButton?: "label" | "icon";
   class?: string;
 }
 
@@ -20,6 +23,8 @@ const {
   navItems = siteConfig.header.nav,
   cta = siteConfig.header.cta,
   sticky = siteConfig.header.sticky,
+  hideOnScroll = siteConfig.header.hideOnScroll,
+  menuButton = siteConfig.header.menuButton,
   class: className,
   ...restProps
 } = Astro.props;
@@ -34,8 +39,10 @@ const { phone, email } = site.business;
     "site-header",
     `site-header--${variant}`,
     sticky && "site-header--sticky",
+    sticky && hideOnScroll && "site-header--hide-on-scroll",
     className,
   ]}
+  data-hide-on-scroll={sticky && hideOnScroll ? "" : undefined}
 >
   {variant === "topbar" && (phone || email) && (
     <div class="site-header__topbar">
@@ -53,7 +60,40 @@ const { phone, email } = site.business;
         <Logo size="header" />
       </a>
 
-      <Navbar items={navItems} cta={cta} contact={variant === "topbar" ? { phone, email } : undefined} />
+      <Navbar items={navItems} cta={cta} menuButton={menuButton} contact={variant === "topbar" ? { phone, email } : undefined} />
     </div>
   </Container>
 </header>
+
+<script>
+  // v3.3: hides the sticky header while scrolling down, shows it again when scrolling up, near
+  // the top, while its menu is open or when focus moves into it (keyboard users never lose it).
+  const header = document.querySelector<HTMLElement>("[data-hide-on-scroll]");
+
+  if (header) {
+    const THRESHOLD = 6;
+    let last = window.scrollY;
+    let queued = false;
+
+    const update = () => {
+      queued = false;
+      const y = window.scrollY;
+      const delta = y - last;
+
+      if (Math.abs(delta) < THRESHOLD) return;
+      last = y;
+
+      const keep = y <= header.offsetHeight || delta < 0 || header.querySelector("[data-navbar][data-open]") || header.contains(document.activeElement);
+      header.toggleAttribute("data-hidden", !keep);
+    };
+
+    window.addEventListener("scroll", () => {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(update);
+      }
+    }, { passive: true });
+
+    header.addEventListener("focusin", () => header.removeAttribute("data-hidden"));
+  }
+</script>

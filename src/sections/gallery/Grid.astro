@@ -1,48 +1,57 @@
 ---
+/**
+ * Even 4:3 tiles with the caption under each photo. Full rows where the count allows (8 → 4 + 4),
+ * a short last row is centered; two columns on phones from four photos up.
+ */
 import SectionShell from "@/sections/_shared/SectionShell.astro";
 import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import MoreLink from "@/sections/gallery/MoreLink.astro";
+import Photo from "@/sections/gallery/Photo.astro";
 import Stack from "@/components/layouts/Stack.astro";
-import Img from "@/components/media/Img.astro";
-import { getAsset } from "@/site/assets";
-import type { SectionOf } from "@/site/types";
+import Lightbox from "@/components/widgets/Lightbox.astro";
+import { autoColumns } from "@/sections/features/layout";
+import { tileSizes } from "@/sections/gallery/layout";
+import { format, t } from "@/i18n";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/gallery/_shared.scss";
+import "@/styles/sections/gallery/_grid.scss";
 
 export interface Props {
-  section: SectionOf<"gallery">;
+  section: VariantOf<"gallery", "grid">;
   headingLevel: "h1" | "h2";
-  variant?: "grid" | "mosaic";
 }
 
-const { section, headingLevel, variant = "grid" } = Astro.props;
+const { section, headingLevel } = Astro.props;
 const { content, props } = section;
-// A mosaic needs a large photo plus at least two beside it; fewer photos fall back to the grid.
-const layout = variant === "mosaic" && content.items.length >= 3 ? "mosaic" : "grid";
+const count = content.items.length;
+const columns = autoColumns(count);
+const lightbox = props.lightbox ?? true;
+const align = props.align ?? "center";
 ---
 
-<SectionShell id={section.id} type="gallery" variant={variant} tone={props.tone} spacing={props.spacing} width="xl">
+<SectionShell id={section.id} type="gallery" variant="grid" tone={props.tone} spacing={props.spacing} width="xl">
   <Stack space="xl">
-    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
-    <ul class:list={["s-gallery__list", `s-gallery__list--${layout}`]}>
-      {content.items.map((item, index) => {
-        const photo = getAsset(item.image);
-        const large = layout === "mosaic" && index === 0;
-        return (
-          <li class:list={["s-gallery__item", large && "s-gallery__item--large"]}>
-            <figure class="s-gallery__figure">
-              <Img
-                src={photo.image}
-                alt={photo.alt}
-                kind={photo.alt ? "content" : "decorative"}
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={align} />
+    <Lightbox label={content.title} enabled={lightbox}>
+      <ul class:list={["s-gallery-grid", `s-gallery-grid--${columns}`, count < 4 && "s-gallery-grid--few"]}>
+        {content.items.map((item, index) => (
+          <li>
+            <figure class="s-gallery-grid__figure">
+              <Photo
+                image={item.image}
+                caption={item.caption}
+                lightbox={lightbox}
                 aspect={[4, 3]}
-                focal={photo.focal}
-                sizes={large ? "(min-width: 1024px) 60vw, 100vw" : "(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw"}
-                widths={large ? [640, 960, 1280] : [400, 640, 800]}
-                class="s-gallery__image"
+                widths={[400, 640, 960]}
+                sizes={tileSizes(Number(columns), count < 4 ? 1 : 2)}
+                label={format(t.lightbox.status, { number: index + 1, count })}
               />
-              {item.caption && <figcaption class="s-gallery__caption">{item.caption}</figcaption>}
+              {item.caption && <figcaption class="s-gallery-grid__caption">{item.caption}</figcaption>}
             </figure>
           </li>
-        );
-      })}
-    </ul>
+        ))}
+      </ul>
+    </Lightbox>
+    <MoreLink link={content.link} align={align} />
   </Stack>
 </SectionShell>

@@ -1,0 +1,217 @@
+// FAQ: the question list of split-contact, categories, with-image and search (Questions.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  .s-questions {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-questions__item {
+    min-width: 0;
+  }
+
+  .s-questions__item[hidden] {
+    display: none;
+  }
+
+  .s-question__summary {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    min-height: 3.5rem;
+    padding: var(--spacing-md) var(--spacing-lg);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .s-question__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .s-question__text {
+    flex: 1;
+    min-width: 0;
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
+    hyphens: auto;
+    transition: color var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .s-question__summary:hover .s-question__text {
+    color: $brand-ink;
+  }
+
+  .s-question__answer {
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
+  }
+
+  .s-question__icon {
+    position: relative;
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    color: var(--color-action-primary);
+    border-radius: 50%;
+    transition:
+      color var(--motion-duration-fast) var(--motion-easing-standard),
+      background-color var(--motion-duration-fast) var(--motion-easing-standard),
+      transform var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  // A plus from two bars; open questions turn it (cards: into ×) or drop the upright bar.
+  .s-question__icon::before,
+  .s-question__icon::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    width: 0.875rem;
+    height: 2px;
+    background: currentcolor;
+    border-radius: var(--radius-pill);
+    transform: translate(-50%, -50%);
+    transition: transform var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .s-question__icon::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  // Cards (split-contact): separate cards, a ringed plus that turns into × on the brand color.
+  .s-questions--cards .s-question {
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+    transition:
+      border-color var(--motion-duration-fast) var(--motion-easing-standard),
+      box-shadow var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .s-questions--cards .s-question[open] {
+    border-color: color-mix(in oklab, var(--color-action-primary) 45%, var(--card-border-color));
+    box-shadow: var(--elevation-card);
+  }
+
+  .s-questions--cards .s-question__summary {
+    padding-block: var(--spacing-lg);
+  }
+
+  .s-questions--cards .s-question__text {
+    font-size: var(--font-size-lg);
+  }
+
+  .s-questions--cards .s-question__icon {
+    box-shadow: inset 0 0 0 1px var(--color-border-default);
+  }
+
+  .s-questions--cards .s-question[open] .s-question__icon {
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    box-shadow: none;
+    transform: rotate(45deg);
+  }
+
+  .s-questions--cards .s-question__answer {
+    padding-block-start: 0;
+  }
+
+  // Numbered (with-image): the number in the heading font, a square brand button with + / −.
+  .s-questions--numbered .s-question {
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+    transition: border-color var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .s-questions--numbered .s-question[open] {
+    border-color: var(--color-action-primary);
+  }
+
+  .s-question__number {
+    flex: none;
+    min-width: 1.75rem;
+    color: $brand-ink;
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-lg);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-bold);
+    line-height: 1;
+  }
+
+  .s-questions--numbered .s-question__icon {
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    border-radius: var(--radius-control);
+  }
+
+  .s-questions--numbered .s-question[open] .s-question__icon {
+    color: var(--color-background-surface);
+    background: var(--color-text-primary);
+  }
+
+  .s-questions--numbered .s-question[open] .s-question__icon::after {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  // The answer lines up with the question, after the number.
+  @include mq(sm) {
+    .s-questions--numbered .s-question__answer {
+      padding-inline-start: calc(var(--spacing-lg) + 1.75rem + var(--spacing-md));
+    }
+  }
+
+  // Lines (categories, search): rows divided by hairlines — the gaps of a grid on the border
+  // color, so a filtered-out row never leaves a double line — and a chevron.
+  .s-questions--lines {
+    gap: 1px;
+    background: var(--color-border-default);
+  }
+
+  .s-questions--lines .s-questions__item {
+    background: var(--lines-surface, var(--color-background-surface));
+  }
+
+  .s-questions--lines .s-question__summary {
+    padding-inline: 0;
+  }
+
+  .s-questions--lines .s-question__answer {
+    padding-inline: 0;
+  }
+
+  .s-questions--lines .s-question[open] .s-question__text {
+    color: $brand-ink;
+  }
+
+  .s-questions--lines .s-question__icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .s-questions--lines .s-question__icon::before {
+    width: 0.55rem;
+    height: 0.55rem;
+    background: none;
+    border-block-end: 2px solid currentcolor;
+    border-inline-end: 2px solid currentcolor;
+    border-radius: 1px;
+    transform: translate(-50%, -70%) rotate(45deg);
+  }
+
+  .s-questions--lines .s-question__icon::after {
+    content: none;
+  }
+
+  .s-questions--lines .s-question[open] .s-question__icon {
+    transform: rotate(180deg);
+  }
+}

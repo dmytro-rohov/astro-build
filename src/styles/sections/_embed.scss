@@ -1,0 +1,26 @@
+// Section type embed: full and split (sections/embed/Embed.astro); the frame is in _embed-frame.scss.
+@use "../abstracts/layers";
+@use "../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-embed__layout {
+    display: grid;
+    gap: var(--spacing-xl);
+  }
+
+  @include mq(lg) {
+    .s-embed__layout--split {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      align-items: center;
+      gap: var(--spacing-3xl);
+    }
+
+    .s-embed__layout--split.s-embed__layout--media-left .s-embed__frame {
+      order: -1;
+    }
+
+    .s-embed__layout--split.s-embed__layout--media-left {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    }
+  }
+}

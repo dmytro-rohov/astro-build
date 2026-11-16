@@ -1,0 +1,177 @@
+// CTA: gradient-cards (GradientCards.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // A band from the brand color to a hue-turned version of it (lightness kept, so the text keeps
+  // its contrast) under fine wave lines that fade out behind the text. Up to three facts on light
+  // cards float on its right side, starting above the band's top edge; on phones they follow
+  // the text.
+  .s-cta--gradient-cards {
+    --band: var(--cta-brand);
+    --band-ink: var(--cta-ink);
+    --paper: var(--color-background-surface);
+    --paper-ink: var(--color-text-primary);
+    --paper-text: var(--color-text-secondary);
+    --paper-accent: var(--color-action-primary);
+  }
+
+  // Accent sections: the band keeps the section's brand color (set off by a hairline), the
+  // cards are the ink.
+  .s-cta--gradient-cards.section--tone-accent {
+    --band: var(--cta-ink);
+    --band-ink: var(--cta-brand);
+    --paper: var(--cta-brand);
+    --paper-ink: var(--cta-ink);
+    --paper-text: var(--cta-ink);
+    --paper-accent: var(--cta-ink);
+  }
+
+  .s-cta--gradient-cards.section--tone-accent .s-cta-gradient {
+    border: 1px solid color-mix(in srgb, var(--band-ink) 30%, transparent);
+  }
+
+  .s-cta-gradient {
+    @include on-color(var(--band), var(--band-ink));
+
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    gap: var(--spacing-2xl);
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    background: linear-gradient(
+      160deg,
+      var(--band) 35%,
+      oklch(from var(--band) calc(l + 0.04) c calc(h - 30))
+    );
+    border-radius: calc(var(--radius-card) * 1.5);
+    box-shadow: 0 2rem 4rem -2.5rem color-mix(in srgb, var(--band) 80%, transparent);
+  }
+
+  .s-cta-gradient__pattern {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    fill: none;
+    stroke: color-mix(in srgb, var(--band-ink) 30%, transparent);
+    stroke-width: 1;
+    mask-image: linear-gradient(to bottom, transparent 45%, #000);
+  }
+
+  .s-cta-gradient__pattern path {
+    vector-effect: non-scaling-stroke;
+  }
+
+  // Without facts the lines frame the centered text from both sides.
+  .s-cta-gradient:not(.s-cta-gradient--facts) .s-cta-gradient__pattern {
+    mask-image: radial-gradient(ellipse 60% 75% at 50% 45%, transparent 40%, #000);
+  }
+
+  .s-cta-gradient__facts {
+    display: grid;
+    gap: var(--spacing-md);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-cta-gradient__fact {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--spacing-md);
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+    color: var(--paper-ink);
+    background: var(--paper);
+    border-radius: var(--radius-card);
+    box-shadow: 0 1.25rem 2.5rem -1.25rem rgb(0 0 0 / 35%);
+  }
+
+  .s-cta-gradient__badge {
+    display: grid;
+    grid-row: span 2;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: var(--paper);
+    background: var(--paper-accent);
+    border-radius: var(--radius-control);
+  }
+
+  .s-cta-gradient__value {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--heading-weight);
+    line-height: var(--line-height-tight);
+  }
+
+  .s-cta-gradient__label {
+    color: var(--paper-text);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-snug);
+  }
+
+  // Tablets: the cards in a row under the text. Wide screens: text left, the cards in a
+  // staggered column right; the pattern fades in from the left instead of from the top.
+  @include mq(md) {
+    .s-cta-gradient {
+      align-items: center;
+      min-height: 20rem;
+      padding: var(--spacing-3xl) var(--spacing-2xl);
+    }
+
+    .s-cta-gradient__facts {
+      grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    }
+  }
+
+  @include mq(lg) {
+    .s-cta-gradient {
+      padding-inline: var(--spacing-3xl);
+    }
+
+    .s-cta-gradient--facts {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.75fr);
+    }
+
+    .s-cta-gradient--facts .s-cta-gradient__pattern {
+      mask-image: linear-gradient(to right, transparent 25%, #000 75%);
+    }
+
+    .s-cta-gradient__facts {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: end;
+    }
+
+    .s-cta-gradient__fact {
+      width: min(100%, 19rem);
+    }
+
+    .s-cta-gradient__fact:nth-child(2) {
+      margin-inline-end: 22%;
+    }
+
+    .s-cta-gradient__fact:nth-child(3) {
+      margin-inline-end: 6%;
+    }
+
+    // Two or three cards start above the band's top edge (the section padding leaves the room).
+    .s-cta-gradient__facts--2,
+    .s-cta-gradient__facts--3 {
+      align-self: start;
+      margin-block-start: calc(-1 * (var(--spacing-3xl) + var(--spacing-xl)));
+    }
+
+    .s-cta-gradient__fact:nth-child(2) {
+      rotate: -2deg;
+    }
+
+    .s-cta-gradient__fact:nth-child(odd) {
+      rotate: 1.5deg;
+    }
+  }
+}

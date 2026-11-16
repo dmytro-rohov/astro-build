@@ -1,13 +1,42 @@
 ---
-import FormSplit from "@/sections/contact/FormSplit.astro";
-import type { SectionOf } from "@/site/types";
+/**
+ * Centered heading above one wide card: the contact details on a brand-colored panel, the
+ * form beside it (the panel goes on top on phones). Without details the card holds the form only.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import DetailList from "@/sections/contact/DetailList.astro";
+import Form from "@/sections/contact/Form.astro";
+import { site } from "virtual:site";
+import { t } from "@/i18n";
+import { contactDetails, contactHeader } from "@/sections/contact/details";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/contact/_form-centered.scss";
 
 export interface Props {
-  section: SectionOf<"contact">;
+  section: VariantOf<"contact", "form-centered">;
   headingLevel: "h1" | "h2";
 }
 
 const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const details = content.showDetails ? contactDetails(site.business, t) : [];
+const SubHeading = headingLevel === "h1" ? "h2" : "h3";
 ---
 
-<FormSplit section={section} headingLevel={headingLevel} layout="centered" />
+<SectionShell id={section.id} type="contact" variant="form-centered" tone={props.tone} spacing={props.spacing}>
+  <div class="s-contact-centered">
+    <SectionHeader {...contactHeader(content, t)} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <div class:list={["s-contact-centered__card", details.length > 0 && "s-contact-centered__card--with-panel"]}>
+      {details.length > 0 && (
+        <div class="s-contact-centered__panel">
+          <SubHeading class="s-contact-centered__panel-title">{t.contactForm.detailsTitle}</SubHeading>
+          <DetailList details={details} look="brand" />
+        </div>
+      )}
+      <div class="s-contact-centered__form">
+        <Form />
+      </div>
+    </div>
+  </div>
+</SectionShell>

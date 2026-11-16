@@ -8,13 +8,13 @@ export default {
   },
 
   days: {
-    mo: { short: "Pzt", long: "Pazartesi" },
-    tu: { short: "Sal", long: "Salı" },
-    we: { short: "Çar", long: "Çarşamba" },
-    th: { short: "Per", long: "Perşembe" },
-    fr: { short: "Cum", long: "Cuma" },
-    sa: { short: "Cmt", long: "Cumartesi" },
-    su: { short: "Paz", long: "Pazar" },
+    mo: { short: "Pzt", long: "Pazartesi", on: "pazartesi" },
+    tu: { short: "Sal", long: "Salı", on: "salı" },
+    we: { short: "Çar", long: "Çarşamba", on: "çarşamba" },
+    th: { short: "Per", long: "Perşembe", on: "perşembe" },
+    fr: { short: "Cum", long: "Cuma", on: "cuma" },
+    sa: { short: "Cmt", long: "Cumartesi", on: "cumartesi" },
+    su: { short: "Paz", long: "Pazar", on: "pazar" },
   },
 
   sections: {
@@ -37,12 +37,28 @@ export default {
     embedNotice: "Bu içerik {provider} hizmetinden yüklenir. Tıkladıktan sonra {provider} çerez yerleştirebilir ve IP adresinizi alabilir.",
     embedOpen: "{provider} üzerinde aç",
     step: "Adım {number}",
+    directions: "Yol tarifi al",
+    openNow: "Şu an açık",
+    openUntil: "{time} saatine kadar",
+    opensToday: "bugün {time} saatinde açılır",
+    opensTomorrow: "yarın {time} saatinde açılır",
+    opensOn: "{day} {time} saatinde açılır",
+    today: "Bugün",
+    mapLoad: "Haritayı göster",
+    mapTitle: "Harita: {place}",
+    planPrice: "Fiyat",
+    planIncluded: "Dahil",
+    planExcluded: "Dahil değil",
+    gallery: "Galeri",
+    reviews: { one: "{count} yorum", few: "{count} yorum", many: "{count} yorum", other: "{count} yorum" },
   },
 
   slider: {
     previous: "Önceki",
     next: "Sonraki",
     label: "Kaydırılabilir liste",
+    page: "{count} içinden {number}. göster",
+    pause: "Kaydırmayı duraklat",
   },
 
   common: {
@@ -67,6 +83,7 @@ export default {
     copyright: "© {year} {siteName}. Tüm hakları saklıdır.",
     madeBy: "Web sitesi tasarımı:",
     console: "Bu site Mytko.dev tarafından yapıldı — işletmeler ve uzmanlar için hızlı, erişilebilir web siteleri. Siz de bir tane ister misiniz? https://mytko.dev",
+    contact: "İletişim",
   },
 
   cookies: {
@@ -115,6 +132,11 @@ export default {
       messageTooLong: "Mesaj en fazla {max} karakter olabilir.",
       privacyRequired: "Gizlilik politikasını kabul etmeniz gerekir.",
     },
+    callTitle: "Bizi arayın",
+    writeTitle: "Bize e-posta gönderin",
+    visitTitle: "Bizi ziyaret edin",
+    directions: "Yol tarifi al",
+    mapTitle: "Harita: {place}",
   },
 
   email: {
@@ -175,5 +197,26 @@ export default {
       title: "İletişim",
       description: "İletişim formunu kullanarak bize ulaşın.",
     },
+  },
+  faq: {
+    contactTitle: "Başka bir sorunuz mu var?",
+    contactText: "Memnuniyetle yanıtlarız — bizimle iletişime geçin.",
+    other: "Diğer",
+    searchLabel: "Sorularda ara",
+    searchPlaceholder: "Ne arıyorsunuz?",
+    filters: "Soru konuları",
+    all: "Tümü",
+    results: { one: "{count} soru bulundu", few: "{count} soru bulundu", many: "{count} soru bulundu", other: "{count} soru bulundu" },
+    noResults: "“{query}” ile eşleşen soru yok.",
+    askLead: "Sorunuzu bulamadınız mı?",
+    ask: "Bize sorun",
+  },
+
+  lightbox: {
+    label: "Fotoğraf görüntüleyici",
+    close: "Kapat",
+    previous: "Önceki fotoğraf",
+    next: "Sonraki fotoğraf",
+    status: "Fotoğraf {number} / {count}",
   },
 } satisfies Dictionary;

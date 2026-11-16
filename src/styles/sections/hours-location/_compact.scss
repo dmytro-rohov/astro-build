@@ -1,0 +1,112 @@
+// Hours and location: compact (Compact.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // v3.3, "contact bar": one frame, a fact per cell (icon, small label, value), hairlines between.
+  .s-info-bar {
+    @include framed;
+
+    display: grid;
+  }
+
+  .s-info-bar__item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+  }
+
+  .s-info-bar__item + .s-info-bar__item {
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  @include mq(md) {
+    .s-info-bar {
+      grid-auto-columns: minmax(0, 1fr);
+      grid-auto-flow: column;
+    }
+
+    .s-info-bar__item + .s-info-bar__item {
+      border-block-start: 0;
+      border-inline-start: 1px solid var(--color-border-default);
+    }
+
+    // Tablets: three cells of ~230px, the icon above the fact (rows of hours keep one line).
+    @include mq-down(lg) {
+      .s-info-bar__item {
+        grid-template-columns: none;
+        align-content: start;
+      }
+    }
+  }
+
+  @include mq(lg) {
+    .s-info-bar__item {
+      padding: var(--spacing-lg) var(--spacing-xl);
+    }
+  }
+
+  .s-info-bar__icon {
+    @include badge;
+  }
+
+  .s-info-bar__body {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-xs);
+    min-width: 0;
+  }
+
+  .s-info-bar__label {
+    @include label;
+  }
+
+  .s-info-bar__hours {
+    display: grid;
+    gap: 0.125rem;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .s-info-bar__row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0 var(--spacing-md);
+  }
+
+  .s-info-bar__row dt {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-info-bar__row abbr {
+    text-decoration: none;
+  }
+
+  .s-info-bar__row dd {
+    margin: 0;
+  }
+
+  .s-info-bar__row--closed dd {
+    color: var(--color-text-secondary);
+  }
+
+  .s-info-bar__value {
+    font-style: normal;
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-info-bar__phone {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-info-bar__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs) var(--spacing-lg);
+    font-size: var(--font-size-sm);
+  }
+}

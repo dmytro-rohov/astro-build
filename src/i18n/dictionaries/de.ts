@@ -8,13 +8,13 @@ export default {
   },
 
   days: {
-    mo: { short: "Mo", long: "Montag" },
-    tu: { short: "Di", long: "Dienstag" },
-    we: { short: "Mi", long: "Mittwoch" },
-    th: { short: "Do", long: "Donnerstag" },
-    fr: { short: "Fr", long: "Freitag" },
-    sa: { short: "Sa", long: "Samstag" },
-    su: { short: "So", long: "Sonntag" },
+    mo: { short: "Mo", long: "Montag", on: "am Montag" },
+    tu: { short: "Di", long: "Dienstag", on: "am Dienstag" },
+    we: { short: "Mi", long: "Mittwoch", on: "am Mittwoch" },
+    th: { short: "Do", long: "Donnerstag", on: "am Donnerstag" },
+    fr: { short: "Fr", long: "Freitag", on: "am Freitag" },
+    sa: { short: "Sa", long: "Samstag", on: "am Samstag" },
+    su: { short: "So", long: "Sonntag", on: "am Sonntag" },
   },
 
   sections: {
@@ -37,12 +37,28 @@ export default {
     embedNotice: "Dieser Inhalt wird von {provider} geladen. Nach dem Klick kann {provider} Cookies setzen und erhält Ihre IP-Adresse.",
     embedOpen: "In {provider} öffnen",
     step: "Schritt {number}",
+    directions: "Route planen",
+    openNow: "Jetzt geöffnet",
+    openUntil: "bis {time}",
+    opensToday: "öffnet heute um {time}",
+    opensTomorrow: "öffnet morgen um {time}",
+    opensOn: "öffnet {day} um {time}",
+    today: "Heute",
+    mapLoad: "Karte anzeigen",
+    mapTitle: "Karte: {place}",
+    planPrice: "Preis",
+    planIncluded: "Inklusive",
+    planExcluded: "Nicht enthalten",
+    gallery: "Galerie",
+    reviews: { one: "{count} Bewertung", few: "{count} Bewertungen", many: "{count} Bewertungen", other: "{count} Bewertungen" },
   },
 
   slider: {
     previous: "Zurück",
     next: "Weiter",
     label: "Scrollbare Liste",
+    page: "{number} von {count} anzeigen",
+    pause: "Laufband anhalten",
   },
 
   common: {
@@ -67,6 +83,7 @@ export default {
     copyright: "© {year} {siteName}. Alle Rechte vorbehalten.",
     madeBy: "Website von",
     console: "Diese Website wurde von Mytko.dev erstellt — schnelle, barrierefreie Websites für Unternehmen und Selbstständige. Interesse? https://mytko.dev",
+    contact: "Kontakt",
   },
 
   cookies: {
@@ -115,6 +132,11 @@ export default {
       messageTooLong: "Die Nachricht darf höchstens {max} Zeichen lang sein.",
       privacyRequired: "Sie müssen die Datenschutzerklärung akzeptieren.",
     },
+    callTitle: "Rufen Sie uns an",
+    writeTitle: "Schreiben Sie uns",
+    visitTitle: "Besuchen Sie uns",
+    directions: "Route planen",
+    mapTitle: "Karte: {place}",
   },
 
   email: {
@@ -175,5 +197,26 @@ export default {
       title: "Kontakt",
       description: "Nehmen Sie über das Kontaktformular Kontakt mit uns auf.",
     },
+  },
+  faq: {
+    contactTitle: "Noch eine Frage?",
+    contactText: "Wir beantworten sie gern – melden Sie sich bei uns.",
+    other: "Sonstiges",
+    searchLabel: "Fragen durchsuchen",
+    searchPlaceholder: "Wonach suchen Sie?",
+    filters: "Themen der Fragen",
+    all: "Alle",
+    results: { one: "{count} Frage gefunden", few: "{count} Fragen gefunden", many: "{count} Fragen gefunden", other: "{count} Fragen gefunden" },
+    noResults: "Keine Frage passt zu „{query}“.",
+    askLead: "Ihre Frage war nicht dabei?",
+    ask: "Fragen Sie uns",
+  },
+
+  lightbox: {
+    label: "Fotoansicht",
+    close: "Schließen",
+    previous: "Vorheriges Foto",
+    next: "Nächstes Foto",
+    status: "Foto {number} von {count}",
   },
 } satisfies Dictionary;

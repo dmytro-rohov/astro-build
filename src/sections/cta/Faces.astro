@@ -1,0 +1,38 @@
+---
+/**
+ * Light card with centered text; round photos of real people float around it, in eight spots
+ * on both sides. Spots without a photo are tinted dots, so the card never looks unfinished.
+ * The photos only set the mood: decorative (empty alt), hidden from assistive technology.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import Copy from "@/sections/cta/Copy.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/cta/_faces.scss";
+
+export interface Props {
+  section: VariantOf<"cta", "faces">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const photos = (content.images ?? []).map((ref) => getAsset(ref));
+const spots = Array.from({ length: 8 }, (_, index) => photos[index]);
+---
+
+<SectionShell id={section.id} type="cta" variant="faces" tone={props.tone} spacing={props.spacing} defaultSpacing="md">
+  <div class:list={["s-cta-faces", photos.length > 0 && "s-cta-faces--photos"]}>
+    <div class="s-cta-faces__spots" aria-hidden="true">
+      {spots.map((photo) => (
+        <span class:list={["s-cta-faces__spot", !photo && "s-cta-faces__spot--dot"]}>
+          {photo && (
+            <Img src={photo.image} kind="decorative" aspect={[1, 1]} focal={photo.focal} widths={[96, 192]} sizes="6rem" class="s-cta-faces__photo" />
+          )}
+        </span>
+      ))}
+    </div>
+    <Copy content={content} headingLevel={headingLevel} align="center" class="s-cta-faces__copy" />
+  </div>
+</SectionShell>

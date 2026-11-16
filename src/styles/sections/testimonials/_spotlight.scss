@@ -1,0 +1,73 @@
+// Testimonials: spotlight (Spotlight.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Stacked quotes divided by hairlines; the big quote mark hangs in the left margin.
+  .s-spotlight-list {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  .s-spotlight {
+    --avatar: 3.5rem;
+    --margin: 2.75rem;
+
+    position: relative;
+    display: grid;
+    gap: var(--spacing-md);
+    margin: 0;
+    padding-inline-start: var(--margin);
+  }
+
+  .s-spotlight + .s-spotlight {
+    padding-block-start: var(--spacing-2xl);
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-spotlight__mark {
+    position: absolute;
+    inset-block-start: 0.25rem;
+    inset-inline-start: 0;
+    width: calc(var(--margin) - var(--spacing-md));
+    color: var(--color-action-primary);
+  }
+
+  .s-spotlight + .s-spotlight .s-spotlight__mark {
+    inset-block-start: calc(var(--spacing-2xl) + 0.25rem);
+  }
+
+  .s-spotlight__quote {
+    margin: 0;
+    font-family: var(--font-family-heading);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-spotlight__quote--lg {
+    font-size: clamp(var(--font-size-xl), 3vw, var(--font-size-3xl));
+  }
+
+  .s-spotlight__quote--md {
+    font-size: clamp(var(--font-size-lg), 2.4vw, var(--font-size-2xl));
+  }
+
+  // Long quotes in the body font: a display face gets tiring over 300 characters.
+  .s-spotlight__quote--sm {
+    font-family: var(--font-family-base);
+    font-size: clamp(var(--font-size-base), 1.8vw, var(--font-size-xl));
+    line-height: var(--line-height-normal);
+  }
+
+  .s-spotlight__author {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-block-start: var(--spacing-xs);
+  }
+
+  @include mq(md) {
+    .s-spotlight {
+      --margin: 4.5rem;
+    }
+  }
+}

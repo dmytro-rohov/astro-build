@@ -1,0 +1,66 @@
+---
+/**
+ * Matrix like a printed timetable: rows are instructors or class names, columns the days with
+ * classes, every cell lists the row's classes of that day. Below lg every row becomes a card
+ * with one line per day (the day name is shown in the cell, empty days are left out).
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Details from "@/sections/schedule/Details.astro";
+import { t } from "@/i18n";
+import { scheduleMatrix } from "@/site/schedule";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/schedule/_shared.scss";
+import "@/styles/sections/schedule/_matrix.scss";
+
+export interface Props {
+  section: VariantOf<"schedule", "matrix">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const matrix = scheduleMatrix(content.items, props.rows);
+// The line under the time: the class in instructor rows, the instructor in class rows.
+const lead = (item: (typeof content.items)[number]) => (matrix.by === "instructor" ? item.title : item.instructor);
+---
+
+<SectionShell id={section.id} type="schedule" variant="matrix" tone={props.tone} spacing={props.spacing} width="xl">
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
+    <table class:list={["s-matrix", `s-matrix--by-${matrix.by}`, `s-matrix--days-${matrix.days.length}`]}>
+      <caption class="visually-hidden">{content.title}</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="s-matrix__corner">{matrix.by === "instructor" ? t.sections.scheduleInstructor : t.sections.scheduleClass}</th>
+          {matrix.days.map((day) => <th scope="col" class="s-matrix__day">{t.days[day].long}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {matrix.rows.map((row) => (
+          <tr class="s-matrix__row">
+            <th scope="row" class="s-matrix__name">{row.label}</th>
+            {row.cells.map((items, index) => (
+              <td class:list={["s-matrix__cell", !items.length && "s-matrix__cell--empty"]}>
+                {items.length > 0 && <span class="s-matrix__cell-day">{t.days[matrix.days[index]].long}</span>}
+                {items.length > 0 && (
+                  <ul class="s-matrix__slots">
+                    {items.map((item) => (
+                      <li class="s-matrix__slot">
+                        <span class="s-matrix__time"><time datetime={item.start}>{item.start}</time>–<time datetime={item.end}>{item.end}</time></span>
+                        {lead(item) && <span class="s-matrix__lead">{lead(item)}</span>}
+                        <Details parts={[item.level, item.room]} class="s-matrix__meta" />
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    {content.note && <p class="s-schedule__note">{content.note}</p>}
+  </Stack>
+</SectionShell>

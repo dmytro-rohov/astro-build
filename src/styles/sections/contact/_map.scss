@@ -1,0 +1,154 @@
+// Contact: map (Map.astro, MapArt.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-contact-map {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  .s-contact-map__main {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-xl);
+  }
+
+  .s-contact-map__visual {
+    display: grid;
+    gap: var(--spacing-md);
+  }
+
+  // A height, not a ratio: the embed's notice must fit also on a 320px phone.
+  .s-contact-map__canvas {
+    position: relative;
+    height: clamp(18rem, 75vw, 30rem);
+    overflow: hidden;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-image);
+  }
+
+  .s-contact-map__art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  // Map colors from the palette: light streets, blocks a shade of the text, park and river in the brand.
+  .s-contact-map__street {
+    fill: var(--color-background-surface);
+  }
+
+  .s-contact-map__block {
+    fill: color-mix(in oklab, var(--color-text-primary) 8%, var(--color-background-surface));
+  }
+
+  .s-contact-map__block--park {
+    fill: color-mix(in oklab, var(--color-action-primary) 20%, var(--color-background-surface));
+  }
+
+  .s-contact-map__river,
+  .s-contact-map__avenue {
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  .s-contact-map__river {
+    stroke: color-mix(in oklab, var(--color-action-primary) 34%, var(--color-background-surface));
+    stroke-width: 34;
+  }
+
+  .s-contact-map__avenue {
+    stroke: var(--color-background-surface);
+    stroke-width: 20;
+  }
+
+  .s-contact-map__pin {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    border: 3px solid var(--color-background-surface);
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 0.875rem color-mix(in oklab, var(--color-action-primary) 22%, transparent),
+      0 0 0 2rem color-mix(in oklab, var(--color-action-primary) 10%, transparent);
+    translate: -50% -50%;
+  }
+
+  // The embed covers the illustration; before the click its notice sits on a card in the middle.
+  .s-contact-map__frame {
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .s-contact-map__frame .s-embed__placeholder {
+    max-width: min(24rem, calc(100% - 2 * var(--spacing-md)));
+    background: var(--color-background-surface);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    box-shadow: var(--elevation-card-hover);
+  }
+
+  .s-contact-map__place {
+    display: grid;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: var(--color-background-surface);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-contact-map__name {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-contact-map__directions {
+    justify-self: start;
+    gap: var(--spacing-xs);
+  }
+
+  @include mq(lg) {
+    .s-contact-map {
+      grid-template-columns: minmax(28rem, 1.05fr) minmax(0, 0.95fr);
+      gap: var(--spacing-3xl);
+    }
+
+    // The map takes the height of the form column; the place card floats over its corner.
+    .s-contact-map__visual {
+      grid-template: minmax(32rem, 1fr) / minmax(0, 1fr);
+    }
+
+    .s-contact-map__canvas,
+    .s-contact-map__place {
+      grid-area: 1 / 1;
+    }
+
+    .s-contact-map__canvas {
+      height: auto;
+    }
+
+    // Above the place card.
+    .s-contact-map__pin {
+      inset-block-start: 40%;
+    }
+
+    .s-contact-map__place {
+      z-index: 1;
+      place-self: end start;
+      max-width: min(24rem, calc(100% - 2 * var(--spacing-lg)));
+      margin: var(--spacing-lg);
+      box-shadow: var(--elevation-card-hover);
+    }
+  }
+}

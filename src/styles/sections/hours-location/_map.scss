@@ -1,0 +1,283 @@
+// Hours and location: map (Map.astro, MapArt.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // v3.3, "location widget": one frame, the panel (address big, route button, phone, hours) next
+  // to the map. The drawn map (MapArt) sits behind a consent card until the visitor loads the
+  // real one; on phones the panel comes first, the map and the consent card under it.
+  .s-hours-map {
+    @include framed;
+
+    display: grid;
+    overflow: clip;
+  }
+
+  .s-hours-map--panel-only {
+    max-width: 34rem;
+  }
+
+  .s-hours-map__panel {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+  }
+
+  .s-hours-map__block {
+    display: grid;
+    gap: var(--spacing-sm);
+    min-width: 0;
+  }
+
+  .s-hours-map__block + .s-hours-map__block {
+    padding-block-start: var(--spacing-lg);
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-hours-map__label {
+    @include label;
+  }
+
+  .s-hours-map__address {
+    display: grid;
+    font-style: normal;
+  }
+
+  .s-hours-map__street {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--heading-weight);
+    font-variant-numeric: lining-nums;
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--heading-tracking);
+    hyphens: auto;
+  }
+
+  .s-hours-map__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-sm) var(--spacing-lg);
+    padding-block-start: var(--spacing-sm);
+  }
+
+  .s-hours-map__phone {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .s-hours-map__hours {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .s-hours-map__hours th,
+  .s-hours-map__hours td {
+    padding-block: 0.25rem;
+    text-align: start;
+    vertical-align: top;
+  }
+
+  .s-hours-map__hours th {
+    padding-inline-end: var(--spacing-md);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-hours-map__hours abbr {
+    text-decoration: none;
+  }
+
+  .s-hours-map__hours td {
+    text-align: end;
+    white-space: nowrap;
+  }
+
+  .s-hours-map__closed td {
+    color: var(--color-text-secondary);
+  }
+
+  .s-hours-map__map {
+    position: relative;
+    display: grid;
+    grid-template-rows: minmax(16rem, 1fr) auto;
+    min-height: 20rem;
+    background: color-mix(in srgb, var(--color-text-primary) 6%, var(--color-background-surface));
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-hours-map__canvas {
+    position: relative;
+    overflow: clip;
+  }
+
+  .s-hours-map__art,
+  .s-hours-map__frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .s-hours-map__frame {
+    border: 0;
+  }
+
+  // The street under the pin's tip (the pin is drawn with its tip in the middle of the map).
+  .s-hours-map__marker {
+    position: absolute;
+    inset-block-start: calc(50% + 0.75rem);
+    inset-inline: 0;
+    width: fit-content;
+    max-width: calc(100% - 2rem);
+    margin-inline: auto;
+    padding: var(--spacing-xs) var(--spacing-md);
+    overflow: clip;
+    background: var(--color-background-surface);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .s-hours-map__consent {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--color-background-surface);
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-hours-map__notice {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  .s-hours-map__consent-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-sm);
+  }
+
+  .s-hours-map__map[data-map-loaded] {
+    grid-template-rows: none;
+  }
+
+  @include mq(md) {
+    .s-hours-map:not(.s-hours-map--panel-only) {
+      grid-template-columns: minmax(17rem, 2fr) minmax(0, 3fr);
+    }
+
+    .s-hours-map__panel {
+      gap: var(--spacing-xl);
+      padding: var(--spacing-xl);
+    }
+
+    .s-hours-map__block + .s-hours-map__block {
+      padding-block-start: var(--spacing-xl);
+    }
+
+    .s-hours-map__map {
+      display: block;
+      min-height: 30rem;
+      border-block-start: 0;
+      border-inline-start: 1px solid var(--color-border-default);
+    }
+
+    .s-hours-map__canvas {
+      position: absolute;
+      inset: 0;
+    }
+
+    // Wide map: the consent card floats over its lower edge.
+    .s-hours-map__consent {
+      position: absolute;
+      inset-block-end: var(--spacing-lg);
+      inset-inline: var(--spacing-lg);
+      max-width: 30rem;
+      margin-inline: auto;
+      border: 1px solid var(--card-border-color);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-lg);
+    }
+  }
+
+  @include mq(lg) {
+    .s-hours-map:not(.s-hours-map--panel-only) {
+      grid-template-columns: minmax(20rem, 26rem) minmax(0, 1fr);
+    }
+
+    .s-hours-map__panel {
+      padding: var(--spacing-2xl);
+    }
+  }
+
+  // Drawn map: theme colors, so it fits every archetype and the dark scheme.
+  .s-map-art__land {
+    fill: color-mix(in srgb, var(--color-text-primary) 6%, var(--color-background-surface));
+  }
+
+  .s-map-art__park {
+    fill: color-mix(in srgb, var(--color-feedback-success) 20%, var(--color-background-surface));
+  }
+
+  .s-map-art__river {
+    fill: none;
+    stroke: color-mix(in srgb, var(--color-primitive-blue-400) 30%, var(--color-background-surface));
+    stroke-width: 38;
+    stroke-linecap: round;
+  }
+
+  .s-map-art__casing,
+  .s-map-art__street {
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  .s-map-art__casing {
+    stroke: var(--color-border-default);
+    stroke-width: 16;
+  }
+
+  .s-map-art__street {
+    stroke: var(--color-background-surface);
+    stroke-width: 12;
+  }
+
+  .s-map-art__casing--main {
+    stroke-width: 26;
+  }
+
+  .s-map-art__street--main {
+    stroke-width: 22;
+  }
+
+  .s-map-art__route {
+    fill: none;
+    stroke: var(--color-action-primary);
+    stroke-width: 7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 2 14;
+  }
+
+  .s-map-art__shadow {
+    fill: rgb(0 0 0 / 18%);
+  }
+
+  .s-map-art__pin {
+    fill: var(--color-action-primary);
+    stroke: var(--color-background-surface);
+    stroke-width: 3;
+  }
+
+  .s-map-art__pin-dot {
+    fill: var(--color-background-surface);
+  }
+}

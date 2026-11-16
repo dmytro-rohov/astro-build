@@ -1,0 +1,39 @@
+---
+/**
+ * One partner logo, shared by every variant: SVG as it is, PNG/JPG through the image pipeline,
+ * with a size class from its proportions (logoShape). With `href` it is a link named by the
+ * logo's alt; `decorative` (the marquee's repeats) renders it without alt and without the link.
+ */
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import { logoShape } from "@/sections/logo-cloud/layout";
+import "@/styles/sections/logo-cloud/_logo.scss";
+
+export interface Props {
+  logo: string;
+  name: string;
+  href?: string;
+  decorative?: boolean;
+  /** Rendered width of a raster logo in px (srcset at 1× and 2×). */
+  width?: number;
+}
+
+const { logo, name, href, decorative = false, width = 160 } = Astro.props;
+const { image } = getAsset(logo);
+const className = `s-logo s-logo--${logoShape(image.width, image.height)}`;
+const alt = decorative ? "" : name;
+
+const svg = image.format === "svg";
+const svgProps = { src: image.src, width: image.width, height: image.height, alt, class: className };
+const imgProps = { src: image, alt, kind: decorative ? ("decorative" as const) : ("content" as const), widths: [width, width * 2], sizes: `${width / 16}rem`, class: className };
+---
+
+{href && !decorative ? (
+  <a class="s-logo-link" href={href} rel="noopener noreferrer" target="_blank">
+    {svg ? <img {...svgProps} loading="lazy" decoding="async" /> : <Img {...imgProps} />}
+  </a>
+) : svg ? (
+  <img {...svgProps} loading="lazy" decoding="async" />
+) : (
+  <Img {...imgProps} />
+)}

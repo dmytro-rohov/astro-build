@@ -1,0 +1,38 @@
+---
+/** Stats "rings": progress rings with the number inside, label and context below. */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Progress from "@/components/ui/Progress.astro";
+import type { SectionOf } from "@/site/types";
+import "@/styles/sections/stats/_shared.scss";
+import "@/styles/sections/stats/_rings.scss";
+
+export interface Props {
+  section: SectionOf<"stats">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+---
+
+<SectionShell id={section.id} type="stats" variant="rings" tone={props.tone} spacing={props.spacing} defaultSpacing="md">
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <dl class:list={["s-stats-rings", `s-stats-rings--count-${content.items.length}`]}>
+      {content.items.map((item) => (
+        <div class="s-stats-rings__item">
+          <dt class="s-stats-rings__label">{item.label}</dt>
+          <dd class="s-stats-rings__figure">
+            {/* Without a share the ring is drawn full: a frame around the number. */}
+            <Progress value={item.progress ?? 100} decorative={item.progress === undefined} class:list={["s-stats-rings__ring", { "s-stats-rings__ring--frame": item.progress === undefined }]}>
+              <span class:list={["s-stats-rings__value", { "s-stats-rings__value--long": item.value.length > 6, "s-stats-rings__value--longer": item.value.length > 10 }]} data-counter>{item.value}</span>
+            </Progress>
+          </dd>
+          {item.description && <dd class="s-stats-rings__description">{item.description}</dd>}
+        </div>
+      ))}
+    </dl>
+  </Stack>
+</SectionShell>

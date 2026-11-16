@@ -1,0 +1,49 @@
+---
+/**
+ * "chevrons": a left-to-right flow of large rings (icon or number) with the step number and an
+ * arrow after each ring, text centered underneath. The rings deepen from a light tint to the
+ * full accent along the way (five tones spread over the steps). Phones: one centered column.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Icon from "@/components/media/Icon.astro";
+import { listClasses, stepNumber } from "@/sections/process/layout";
+import type { SectionOf } from "@/site/types";
+import "@/styles/sections/process/_shared.scss";
+import "@/styles/sections/process/_chevrons.scss";
+
+export interface Props {
+  section: SectionOf<"process">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const StepHeading = headingLevel === "h1" ? "h2" : "h3";
+const last = content.steps.length - 1;
+---
+
+<SectionShell id={section.id} type="process" variant="chevrons" tone={props.tone} spacing={props.spacing}>
+  <Stack space="2xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <ol class:list={listClasses("chevrons", content.steps.length, 5)}>
+      {content.steps.map((step, index) => (
+        <li class:list={["s-process__step", `s-process__step--tone-${Math.round((4 * index) / last)}`]}>
+          <span class="s-process__ring" aria-hidden="true">
+            {step.icon ? <Icon name={step.icon} size="2rem" /> : stepNumber(index)}
+          </span>
+          <span class="s-process__arrow" aria-hidden="true">
+            {step.icon && <span class="s-process__arrow-number">{stepNumber(index)}</span>}
+            <svg class="s-process__chevron" viewBox="0 0 12 24" focusable="false"><path d="M2 2l8 10-8 10" /></svg>
+          </span>
+          <div class="s-process__body">
+            {step.duration && <p class="s-process__duration">{step.duration}</p>}
+            <StepHeading class="s-process__title">{step.title}</StepHeading>
+            <p class="s-process__description">{step.description}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </Stack>
+</SectionShell>

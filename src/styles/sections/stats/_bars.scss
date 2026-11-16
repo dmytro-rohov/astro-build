@@ -1,0 +1,73 @@
+// Stats: bars (Bars.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-stats-bars {
+    display: grid;
+    gap: var(--spacing-xl) var(--spacing-3xl);
+    margin: 0;
+  }
+
+  @include mq(md) {
+    .s-stats-bars {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      row-gap: var(--spacing-2xl);
+    }
+  }
+
+  // Label left, number right on one baseline; a long number moves under a long label's last line.
+  .s-stats-bars__item {
+    display: grid;
+    grid-template-columns: minmax(min(100%, 8rem), 1fr) auto;
+    grid-template-areas: "label value" "bar bar" "description description";
+    align-content: start;
+    align-items: baseline;
+    gap: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .s-stats-bars__label {
+    grid-area: label;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-stats-bars__value {
+    grid-area: value;
+    margin: 0;
+    font-family: var(--font-family-heading);
+    font-size: clamp(var(--font-size-2xl), 3vw, var(--font-size-4xl));
+    font-weight: var(--heading-weight);
+    line-height: var(--line-height-none);
+    letter-spacing: var(--heading-tracking);
+    text-align: end;
+  }
+
+  .s-stats-bars__bar {
+    grid-area: bar;
+    margin: var(--spacing-xs) 0 0;
+  }
+
+  .s-stats-bars__bar .progress {
+    --progress-thickness: 0.625rem;
+  }
+
+  // An item without a share: a thin rule where the bar would be.
+  .s-stats-bars__item--plain::after {
+    grid-area: bar;
+    height: 1px;
+    margin-block-start: var(--spacing-xs);
+    background: var(--stats-rule);
+    content: "";
+  }
+
+  .s-stats-bars__description {
+    grid-area: description;
+    max-width: 34rem;
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+}

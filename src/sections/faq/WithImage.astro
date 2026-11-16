@@ -1,0 +1,45 @@
+---
+/**
+ * Numbered questions beside a large photo (stays in view on wide screens; a wide banner above
+ * the questions on phones). Without a photo a brand-colored panel with a big question mark
+ * takes its place on tablets and up.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import JsonLd from "@/sections/faq/JsonLd.astro";
+import Questions from "@/sections/faq/Questions.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/faq/_with-image.scss";
+
+export interface Props {
+  section: VariantOf<"faq", "with-image">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const image = content.image ? getAsset(content.image) : undefined;
+---
+
+<SectionShell id={section.id} type="faq" variant="with-image" tone={props.tone} spacing={props.spacing}>
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <div class:list={["s-faq-figure", props.imagePosition === "left" && "s-faq-figure--image-left"]}>
+      <div class:list={["s-faq-figure__media", !image && "s-faq-figure__media--mark"]}>
+        {image ? (
+          <Img src={image.image} alt={image.alt} kind={image.alt ? "content" : "decorative"} aspect={[4, 5]} focal={image.focal} sizes="(min-width: 1024px) 34rem, 100vw" widths={[480, 720, 960]} class="s-faq-figure__image" />
+        ) : (
+          <div class="s-faq-figure__mark" aria-hidden="true">
+            <span class="s-faq-figure__glyph">?</span>
+          </div>
+        )}
+      </div>
+      <Questions items={content.items} look="numbered" openFirst={props.openFirst} class="s-faq-figure__questions" />
+    </div>
+  </Stack>
+</SectionShell>
+
+<JsonLd items={content.items} />

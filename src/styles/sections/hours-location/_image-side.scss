@@ -1,0 +1,123 @@
+// Hours and location: image-side (ImageSide.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+@use "mixins" as *;
+
+@layer widgets {
+  // v3.3: the photo spans two thirds, the card overlaps its edge (centered vertically) and
+  // carries the section title. Without a photo: a brand-colored panel with a dot pattern.
+  // Phones: the photo on top, the card pulled up over its lower edge.
+  .s-hours-photo {
+    display: grid;
+  }
+
+  .s-hours-photo__media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: clip;
+    border: var(--image-border);
+    border-radius: var(--radius-image);
+    box-shadow: var(--image-shadow);
+  }
+
+  .s-hours-photo__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .s-hours-photo--no-image .s-hours-photo__media {
+    aspect-ratio: 16 / 9;
+    background:
+      radial-gradient(circle, color-mix(in srgb, var(--color-action-primary-text) 30%, transparent) 0.09rem, transparent 0.11rem) 0 0 / 1.25rem 1.25rem,
+      var(--color-action-primary);
+  }
+
+  .s-hours-photo__mark {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: color-mix(in srgb, var(--color-action-primary-text) 55%, transparent);
+  }
+
+  .s-hours-photo__mark svg {
+    width: min(9rem, 40%);
+  }
+
+  .s-hours-photo__card {
+    @include framed;
+
+    position: relative;
+    display: grid;
+    gap: var(--spacing-xl);
+    min-width: 0;
+    padding: var(--spacing-lg);
+    margin: -3rem var(--spacing-sm) 0;
+    box-shadow: var(--shadow-xl);
+  }
+
+  .s-hours-photo__card .s-header__title {
+    font-size: clamp(var(--font-size-2xl), 3vw, var(--font-size-3xl));
+  }
+
+  .s-hours-photo__details {
+    display: grid;
+    gap: var(--spacing-xl);
+  }
+
+  @include mq(sm) {
+    .s-hours-photo__card {
+      padding: var(--spacing-xl);
+      margin-inline: var(--spacing-lg);
+    }
+  }
+
+  @include mq(md) {
+    .s-hours-photo {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      align-items: center;
+    }
+
+    .s-hours-photo__media,
+    .s-hours-photo--no-image .s-hours-photo__media {
+      grid-area: 1 / 1 / 2 / 9;
+      align-self: stretch;
+      aspect-ratio: auto;
+      min-height: 30rem;
+    }
+
+    .s-hours-photo__card {
+      grid-area: 1 / 6 / 2 / 13;
+      margin: var(--spacing-2xl) 0;
+    }
+
+    .s-hours-photo--image-right .s-hours-photo__media {
+      grid-area: 1 / 5 / 2 / 13;
+    }
+
+    // The clock in the middle of the part the card leaves free.
+    .s-hours-photo__mark {
+      inset-inline-end: 30%;
+    }
+
+    .s-hours-photo--image-right .s-hours-photo__mark {
+      inset-inline: 30% 0;
+    }
+
+    .s-hours-photo--image-right .s-hours-photo__card {
+      grid-area: 1 / 1 / 2 / 8;
+    }
+  }
+
+  @include mq(lg) {
+    .s-hours-photo__card {
+      grid-column: 7 / 13;
+      padding: var(--spacing-2xl);
+    }
+
+    .s-hours-photo--image-right .s-hours-photo__card {
+      grid-column: 1 / 7;
+    }
+  }
+}

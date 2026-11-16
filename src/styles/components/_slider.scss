@@ -1,3 +1,4 @@
+@use "../abstracts/layers";
 @use "../abstracts/mixins" as *;
 
 // Horizontal slider (components/widgets/Slider.astro), v3.2.
@@ -49,8 +50,14 @@
     }
   }
 
+  // v3.3: one item per view on every screen (testimonials carousel).
+  .slider--single .slider__track {
+    grid-auto-columns: 100%;
+  }
+
   .slider__controls {
     display: flex;
+    align-items: center;
     justify-content: center;
     gap: var(--spacing-sm);
   }
@@ -81,9 +88,123 @@
     cursor: default;
   }
 
+  // A dot per item (v3.3): the target is 1.5rem (WCAG 2.5.8), the dot inside it; the current
+  // one grows into a bar in the accent color.
+  .slider__dots {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-inline: var(--spacing-xs);
+  }
+
+  .slider__dot {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    color: var(--color-border-strong);
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .slider__dot::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    background: currentcolor;
+    border-radius: var(--radius-pill);
+    transition:
+      width var(--motion-duration-normal) var(--motion-easing-standard),
+      background-color var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .slider__dot:hover {
+    color: var(--color-text-secondary);
+  }
+
+  .slider__dot[aria-current="true"] {
+    color: var(--color-action-primary);
+  }
+
+  .slider__dot[aria-current="true"]::before {
+    width: 1.25rem;
+  }
+
+  // v3.3: content in the head slot. Phones: above the track, the arrows framing the dots under
+  // it; wider screens: the arrows beside the head (bottom-aligned), the dots under the track.
+  .slider--head {
+    grid-template:
+      "head head head"
+      "track track track"
+      "previous dots next" / auto minmax(0, 1fr) auto;
+    column-gap: var(--spacing-sm);
+  }
+
+  .slider--head .slider__controls {
+    display: contents;
+  }
+
+  .slider__head {
+    grid-area: head;
+    min-width: 0;
+  }
+
+  .slider--head .slider__track {
+    grid-area: track;
+  }
+
+  .slider--head .slider__button--previous {
+    grid-area: previous;
+  }
+
+  .slider--head .slider__button--next {
+    grid-area: next;
+  }
+
+  .slider--head .slider__dots {
+    grid-area: dots;
+    align-self: center;
+  }
+
+  @include mq(md) {
+    .slider--head {
+      grid-template:
+        "head previous next"
+        "track track track"
+        "dots dots dots" / minmax(0, 1fr) auto auto;
+    }
+
+    .slider--head .slider__head {
+      margin-inline-end: var(--spacing-lg);
+    }
+
+    .slider--head .slider__button {
+      align-self: end;
+    }
+  }
+
+  // Without JavaScript the buttons cannot work: the list scrolls by itself, with a thin scrollbar.
+  @media (scripting: none) {
+    .slider__track {
+      scrollbar-width: thin;
+    }
+
+    .slider__controls,
+    .slider--head .slider__button,
+    .slider--head .slider__dots {
+      display: none;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .slider__track {
       scroll-behavior: auto;
+    }
+
+    .slider__dot::before {
+      transition: none;
     }
   }
 }

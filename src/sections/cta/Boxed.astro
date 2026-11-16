@@ -7,6 +7,7 @@ import Tag from "@/components/ui/Tag.astro";
 import Button from "@/components/ui/Button.astro";
 import { toneFor } from "@/site/theme";
 import type { SectionOf } from "@/site/types";
+import "@/styles/sections/cta/_boxed.scss";
 
 export interface Props {
   section: SectionOf<"cta">;
@@ -34,7 +35,7 @@ const Heading = headingLevel;
 
       <Stack space="md">
         <Heading class="cta__title">{content.title}</Heading>
-        <p class="cta__description">{content.description}</p>
+        {content.description && <p class="cta__description">{content.description}</p>}
       </Stack>
 
       <Cluster class="cta__actions" gap="md" justify={align === "center" ? "center" : "start"}>

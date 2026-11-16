@@ -21,6 +21,22 @@
     inset-block-start: 0;
   }
 
+  // v3.3: slides up while scrolling down (Header script sets data-hidden). Only a hidden header
+  // has a transform: a transform on a visible one would trap the fixed phone menu inside it.
+  .site-header--hide-on-scroll {
+    transition: transform var(--motion-duration-normal) var(--motion-easing-standard);
+  }
+
+  .site-header--hide-on-scroll[data-hidden] {
+    transform: translateY(-100%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-header--hide-on-scroll {
+      transition: none;
+    }
+  }
+
   .site-header__inner {
     display: flex;
     align-items: center;
@@ -86,6 +102,37 @@
   @include mq-down(md) {
     .site-header__topbar {
       display: none;
+    }
+  }
+
+  // ---------- header variants ----------
+  .site-header__topbar {
+    border-block-end: 1px solid var(--color-border-default);
+    font-size: var(--font-size-sm);
+  }
+
+  .site-header__contact {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--spacing-xs) var(--spacing-lg);
+    padding-block: var(--spacing-xs);
+    margin: 0;
+    list-style: none;
+  }
+
+  // Phones: only the phone number (a long email would wrap); the email is in the footer.
+  @include mq-down(sm) {
+    .site-header__contact-secondary {
+      display: none;
+    }
+  }
+
+  @include mq(md) {
+    .site-header--centered .site-header__inner {
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      padding-block: var(--spacing-md);
     }
   }
 }

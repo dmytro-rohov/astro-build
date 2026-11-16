@@ -1,0 +1,145 @@
+@use "../abstracts/layers";
+@use "../abstracts/mixins" as *;
+
+// Full-screen photo viewer (components/widgets/Lightbox.astro), v3.3. Always the dark palette
+// (cssVars.ts): the photo sits on near-black whatever the site's scheme.
+@layer components {
+  .lightbox[open] {
+    display: grid;
+    grid-template:
+      "bar bar" auto
+      "stage stage" minmax(0, 1fr)
+      "previous next" auto / minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--spacing-sm);
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-md);
+    color: var(--color-text-primary);
+    background: color-mix(in srgb, var(--color-background-primary) 92%, transparent);
+    border: 0;
+    backdrop-filter: blur(1rem);
+  }
+
+  .lightbox::backdrop {
+    background: transparent;
+  }
+
+  // The page under the viewer does not scroll.
+  :root:has(.lightbox[open]) {
+    overflow: hidden;
+  }
+
+  .lightbox__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    grid-area: bar;
+    padding-inline-start: var(--spacing-sm);
+  }
+
+  .lightbox__counter {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--letter-spacing-wide);
+  }
+
+  .lightbox__figure {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    place-items: center;
+    gap: var(--spacing-md);
+    grid-area: stage;
+    min-height: 0;
+    margin: 0;
+
+    // Horizontal swipes reach the script, vertical ones still scroll nothing.
+    touch-action: pan-y;
+  }
+
+  .lightbox__image {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: var(--radius-image);
+    transition: opacity var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .lightbox__image.is-loading {
+    opacity: 0;
+  }
+
+  .lightbox__caption {
+    max-width: 60ch;
+    color: var(--color-text-secondary);
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  .lightbox__button {
+    display: inline-grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    padding: 0;
+    color: var(--color-text-primary);
+    background: color-mix(in srgb, var(--color-text-primary) 10%, transparent);
+    border: 0;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: background-color var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .lightbox__button:hover {
+    background: color-mix(in srgb, var(--color-text-primary) 20%, transparent);
+  }
+
+  .lightbox__button[hidden],
+  .lightbox__caption[hidden] {
+    display: none;
+  }
+
+  .lightbox__button--previous {
+    grid-area: previous;
+    justify-self: end;
+  }
+
+  .lightbox__button--next {
+    grid-area: next;
+    justify-self: start;
+  }
+
+  // Wider screens: the arrows beside the photo.
+  @include mq(md) {
+    .lightbox[open] {
+      grid-template:
+        "bar bar bar" auto
+        "previous stage next" minmax(0, 1fr) / auto minmax(0, 1fr) auto;
+      gap: var(--spacing-md);
+      padding: var(--spacing-md) var(--spacing-md) var(--spacing-xl);
+    }
+
+    .lightbox__button--previous,
+    .lightbox__button--next {
+      place-self: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .lightbox[open] {
+      animation: lightbox-in var(--motion-duration-normal) var(--motion-easing-standard);
+    }
+  }
+
+  @keyframes lightbox-in {
+    from {
+      opacity: 0;
+    }
+  }
+}
