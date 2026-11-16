@@ -7,19 +7,19 @@
 
 @layer widgets {
   // ---------- shared: one logo ----------
-  // --logo-size is the height of a square mark; wider logos get lower (about the same area), and
-  // never wider than 3.4 squares or their box.
+  // --logo-size is the height of a square mark; wider logos get lower (a little more area than a
+  // square: their strokes are thinner), and never wider than 3.6 squares or their box.
   .s-logo {
     --logo-scale: 1;
 
     display: block;
     width: auto;
-    max-width: min(100%, calc(var(--logo-size, 3rem) * 3.4));
+    max-width: min(100%, calc(var(--logo-size, 3rem) * 3.6));
     height: calc(var(--logo-size, 3rem) * var(--logo-scale));
     object-fit: contain;
   }
 
-  @each $shape, $scale in (tall: 1.12, landscape: 0.8, wide: 0.68, wider: 0.58, widest: 0.5) {
+  @each $shape, $scale in (tall: 1.1, landscape: 0.82, wide: 0.72, wider: 0.62, widest: 0.54) {
     .s-logo--#{$shape} {
       --logo-scale: #{$scale};
     }
@@ -96,7 +96,7 @@
 
   @include mq(md) {
     .s-logos--row {
-      --logo-size: 3.25rem;
+      --logo-size: 3.5rem;
     }
   }
 
