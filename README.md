@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **17 section types, 37 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **18 section types, 38 variants**, 3 navbars and 3 footers, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -175,6 +175,7 @@ the migrated site is validated like any build.
 | `schedule` | `week`, `table` (weekly classes, sorted by day and time) |
 | `logo-cloud` | `row`, `grid` (partner / client logos, SVG or PNG) |
 | `embed` | `full`, `split` (OpenStreetMap, Google Maps, YouTube, Vimeo, Calendly — see below) |
+| `suggestion` | `box` (preview only, never published: a recommended section the generator cannot build yet — why it helps, what is missing, links to add or dismiss it) |
 | layout `navbar` | `simple`, `centered`, `topbar` (phone/email bar) |
 | layout `footer` | `columns`, `simple`, `centered` |
 
