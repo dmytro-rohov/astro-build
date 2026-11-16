@@ -1,5 +1,5 @@
-// Section types added in v3.1: schedule, team, logo-cloud, embed, and the hero variants
-// panel and minimal (v3.3: stats in _stats.scss, process in _process.scss).
+// Section types added in v3.1: schedule, logo-cloud, embed, and the hero variants panel and
+// minimal (v3.3: stats in _stats.scss, process in _process.scss, team in _team.scss).
 @use "../abstracts/mixins" as *;
 
 @layer widgets {
@@ -140,102 +140,6 @@
       grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
       align-items: end;
     }
-  }
-
-  // ---------- team ----------
-  .s-team__list {
-    display: grid;
-
-    // One or two people stay centered instead of leaving empty columns.
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 20rem));
-    justify-content: center;
-    gap: var(--spacing-lg);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  @include mq(lg) {
-    .s-team__list--count-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .s-team__list--count-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  }
-
-  .s-team__card {
-    overflow: hidden;
-  }
-
-  .s-team__photo {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-
-  .s-team__body {
-    padding: var(--spacing-lg);
-  }
-
-  .s-team__name {
-    font-size: var(--font-size-xl);
-  }
-
-  .s-team__role {
-    color: var(--color-action-primary);
-    font-weight: var(--font-weight-bold);
-    font-size: var(--font-size-sm);
-  }
-
-  .s-team__bio {
-    color: var(--color-text-secondary);
-  }
-
-  .s-people {
-    display: grid;
-
-    // auto-fit + center: a few people sit in the middle, not in the left columns of a wide grid.
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 13rem));
-    justify-content: center;
-    gap: var(--spacing-xl) var(--spacing-lg);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    text-align: center;
-  }
-
-  .s-people__item {
-    display: grid;
-    justify-items: center;
-    gap: var(--spacing-xs);
-    min-width: 0;
-  }
-
-  .s-people__photo,
-  .s-people__initials {
-    width: 8rem;
-    height: 8rem;
-    margin-block-end: var(--spacing-sm);
-    border-radius: var(--radius-full);
-  }
-
-  .s-people__photo {
-    object-fit: cover;
-  }
-
-  .s-people__initials {
-    display: grid;
-    place-items: center;
-    color: var(--color-action-primary-text);
-    background: var(--color-action-primary);
-    font-family: var(--font-family-heading);
-    font-size: var(--font-size-3xl);
-  }
-
-  .s-people__name {
-    font-size: var(--font-size-lg);
-  }
-
-  .s-people__role {
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-sm);
   }
 
   // ---------- schedule ----------
@@ -489,45 +393,5 @@
 
   .s-embed__frame--tall .s-embed__iframe {
     height: 42rem;
-  }
-}
-
-// v3.2: one or two people (team compact) — a horizontal card per person (photo next to the
-// name and role), centered, instead of two small portraits and an empty row.
-@layer widgets {
-  @include mq(md) {
-    .s-people--few {
-      grid-template-columns: repeat(auto-fit, minmax(0, 24rem));
-      gap: var(--spacing-xl);
-      text-align: start;
-    }
-
-    .s-people--few .s-people__item {
-      display: grid;
-      grid-template-columns: 8rem minmax(0, 1fr);
-      grid-template-rows: auto auto 1fr;
-      align-items: start;
-      column-gap: var(--spacing-lg);
-      padding: var(--spacing-lg);
-      background: var(--color-background-surface);
-      border: 1px solid var(--color-border-default);
-      border-radius: var(--radius-card);
-    }
-
-    .s-people--few .s-people__photo,
-    .s-people--few .s-people__initials {
-      grid-row: 1 / -1;
-      margin: 0;
-    }
-
-    .s-people--few .s-people__name {
-      align-self: end;
-      margin-block-start: var(--spacing-md);
-    }
-
-    .s-people--few :is(.s-people__name, .s-people__role) {
-      text-align: start;
-      margin-inline: 0;
-    }
   }
 }

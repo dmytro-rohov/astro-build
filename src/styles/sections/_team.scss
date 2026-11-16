@@ -1,0 +1,806 @@
+// Section type team: cards and compact (v3.1, polished in v3.3) and the v3.3 variants
+// social-cards, spotlight, color-tiles and directory. A person without a photo gets their
+// initials in the same frame, so mixed teams line up.
+@use "../abstracts/mixins" as *;
+
+@layer widgets {
+  // ---------- shared ----------
+  // Columns: 1 on phones, 2 on tablets, --3 / --4 on wide screens, --1 for one person. A wrapping
+  // flex row (not a grid), so a short last row is centered.
+  .s-team-cols {
+    --columns: 1;
+    --column-gap: var(--spacing-lg);
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-xl) var(--column-gap);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-team-cols > li {
+    flex: 0 0 calc((100% - (var(--columns) - 1) * var(--column-gap)) / var(--columns));
+    min-width: 0;
+  }
+
+  .s-team-cols--1 > li {
+    max-width: 48rem;
+  }
+
+  @include mq(md) {
+    .s-team-cols {
+      --columns: 2;
+    }
+
+    .s-team-cols--1 {
+      --columns: 1;
+    }
+  }
+
+  @include mq(lg) {
+    .s-team-cols--3 {
+      --columns: 3;
+    }
+
+    .s-team-cols--4 {
+      --columns: 4;
+    }
+  }
+
+  .s-team-photo {
+    display: block;
+    object-fit: cover;
+  }
+
+  // Initials instead of a missing photo: the accent tint with a darker accent (like .tag--primary).
+  .s-team-initials {
+    display: grid;
+    place-items: center;
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    background: color-mix(in srgb, var(--color-action-primary) 14%, var(--color-background-surface));
+    font-family: var(--font-family-heading);
+    font-weight: var(--heading-weight);
+    line-height: 1;
+    letter-spacing: 0.04em;
+    user-select: none;
+  }
+
+  // Icon links: a row of small buttons in the archetype's button shape.
+  .s-team-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-team-links__link {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-button);
+    transition:
+      color var(--motion-duration-fast) var(--motion-easing-standard),
+      background-color var(--motion-duration-fast) var(--motion-easing-standard),
+      border-color var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .s-team-links__link:hover {
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    border-color: var(--color-action-primary);
+  }
+
+  // ---------- cards ----------
+  .s-team__card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .s-team__photo {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+  }
+
+  // Initials fill the same 4:5 frame (cards side by side line up), on a soft diagonal of the
+  // accent. Shorter where nothing has to line up: on phones (one column) and when nobody has a photo.
+  .s-team__photo.s-team-initials {
+    aspect-ratio: 16 / 9;
+    background: linear-gradient(
+      150deg,
+      color-mix(in srgb, var(--color-action-primary) 22%, var(--color-background-surface)),
+      color-mix(in srgb, var(--color-action-primary) 7%, var(--color-background-surface))
+    );
+    font-size: clamp(var(--font-size-5xl), 6vw, var(--font-size-6xl));
+  }
+
+  @include mq(md) {
+    .s-team__photo.s-team-initials {
+      aspect-ratio: 4 / 5;
+    }
+
+    .s-team__list--initials .s-team__photo.s-team-initials {
+      aspect-ratio: 3 / 2;
+    }
+  }
+
+  .s-team__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-lg);
+  }
+
+  .s-team__name {
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-team__role {
+    color: var(--color-action-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-team__bio {
+    margin-block-start: var(--spacing-xs);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .s-team__links {
+    margin-block-start: auto;
+    padding-block-start: var(--spacing-md);
+  }
+
+  // One or two people: the photo beside the text, one card per row until both fit side by side.
+  @include mq(md) {
+    .s-team__list--wide {
+      --columns: 1;
+    }
+
+    .s-team__list--wide > .s-team__card {
+      flex-direction: row;
+      max-width: 48rem;
+    }
+
+    .s-team__list--wide .s-team__photo {
+      flex: 0 0 40%;
+      align-self: stretch;
+    }
+
+    .s-team__list--wide .s-team__body {
+      justify-content: center;
+      padding: var(--spacing-xl);
+    }
+
+    .s-team__list--wide .s-team__name {
+      font-size: var(--font-size-2xl);
+    }
+
+    .s-team__list--wide .s-team__links {
+      margin-block-start: 0;
+    }
+  }
+
+  @include mq(lg) {
+    .s-team__list--wide.s-team-cols--2 {
+      --columns: 2;
+    }
+  }
+
+  // ---------- compact ----------
+  // Balanced rows (8 → 4 + 4): --row-N on wide screens, --tablet-N from md, two on phones.
+  .s-people {
+    --columns: 2;
+    --column-gap: var(--spacing-lg);
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-xl) var(--column-gap);
+    max-width: calc(var(--columns) * 14rem + (var(--columns) - 1) * var(--column-gap));
+    padding: 0;
+    margin: 0 auto;
+    list-style: none;
+    text-align: center;
+  }
+
+  .s-people__item {
+    display: grid;
+    flex: 0 0 calc((100% - (var(--columns) - 1) * var(--column-gap)) / var(--columns));
+    align-content: start;
+    justify-items: center;
+    gap: var(--spacing-xs);
+    min-width: 0;
+  }
+
+  .s-people__photo {
+    width: 7rem;
+    height: 7rem;
+    margin-block-end: var(--spacing-sm);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-3xl);
+  }
+
+  .s-people__name {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-people__role {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  @include mq(md) {
+    @for $count from 1 through 4 {
+      .s-people--tablet-#{$count} {
+        --columns: #{$count};
+      }
+    }
+
+    .s-people__photo {
+      width: 8rem;
+      height: 8rem;
+    }
+  }
+
+  @include mq(lg) {
+    @for $count from 1 through 6 {
+      .s-people--row-#{$count} {
+        --columns: #{$count};
+      }
+    }
+  }
+
+  // v3.2: one or two people — a horizontal card per person (photo next to the name and role),
+  // centered, instead of two small portraits and an empty row.
+  @include mq(md) {
+    .s-people--few {
+      flex-wrap: nowrap;
+      gap: var(--spacing-xl);
+      max-width: none;
+      text-align: start;
+    }
+
+    .s-people--few .s-people__item {
+      flex: 0 1 24rem;
+      grid-template-columns: 8rem minmax(0, 1fr);
+      grid-template-rows: auto auto 1fr;
+      place-items: start;
+      column-gap: var(--spacing-lg);
+      max-width: 24rem;
+      padding: var(--spacing-lg);
+      background: var(--color-background-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-card);
+    }
+
+    .s-people--few .s-people__photo {
+      grid-row: 1 / -1;
+      margin: 0;
+    }
+
+    .s-people--few .s-people__name {
+      align-self: end;
+      margin-block-start: var(--spacing-md);
+    }
+  }
+
+  // ---------- social cards ----------
+  // A big round photo with the member's links on its edge, spread along the lower right
+  // quarter. The links come after the text in reading order; the grid stacks them on the photo.
+  .s-team-social__item {
+    --avatar: 9rem;
+    --badge: 2.5rem;
+
+    display: grid;
+    grid-template-areas: "photo" "text";
+    align-content: start;
+    justify-items: center;
+    gap: calc(var(--badge) / 2 + var(--spacing-md));
+    padding: var(--spacing-xl) var(--spacing-lg);
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+    text-align: center;
+  }
+
+  .s-team-social__avatar {
+    grid-area: photo;
+    width: var(--avatar);
+    height: var(--avatar);
+    border-radius: 50%;
+    font-size: var(--font-size-4xl);
+  }
+
+  .s-team-social__text {
+    display: grid;
+    grid-area: text;
+    justify-items: center;
+    gap: var(--spacing-xs);
+  }
+
+  .s-team-social__name {
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-team-social__role {
+    color: var(--color-action-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-team-social__bio {
+    margin-block-start: var(--spacing-xs);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .s-team-social__links {
+    position: relative;
+    grid-area: photo;
+    width: var(--avatar);
+    height: var(--avatar);
+    pointer-events: none;
+  }
+
+  // Each badge sits on the circle at --angle (clockwise from 3 o'clock), 38° apart.
+  .s-team-social__links > li {
+    --angle: 45deg;
+
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    margin: calc(var(--badge) / -2);
+    transform: rotate(var(--angle)) translateX(calc(var(--avatar) / 2)) rotate(calc(-1 * var(--angle)));
+    pointer-events: auto;
+  }
+
+  .s-team-social__links--2 > :nth-child(1),
+  .s-team-social__links--4 > :nth-child(2) {
+    --angle: 26deg;
+  }
+
+  .s-team-social__links--2 > :nth-child(2),
+  .s-team-social__links--4 > :nth-child(3) {
+    --angle: 64deg;
+  }
+
+  .s-team-social__links--3 > :nth-child(1) {
+    --angle: 7deg;
+  }
+
+  .s-team-social__links--3 > :nth-child(3) {
+    --angle: 83deg;
+  }
+
+  .s-team-social__links--4 > :nth-child(1) {
+    --angle: -12deg;
+  }
+
+  .s-team-social__links--4 > :nth-child(4) {
+    --angle: 102deg;
+  }
+
+  // A ring in the card color cuts the badge out of the photo.
+  .s-team-social__links .s-team-links__link {
+    width: var(--badge);
+    height: var(--badge);
+    color: var(--color-action-primary);
+    background: var(--color-background-surface);
+    border: 0;
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 0.25rem var(--color-background-surface),
+      0 0.5rem 1rem -0.25rem color-mix(in srgb, var(--color-text-primary) 25%, transparent);
+  }
+
+  .s-team-social__links .s-team-links__link:hover {
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+  }
+
+  @include mq(lg) {
+    .s-team-social__item {
+      --avatar: 10rem;
+    }
+  }
+
+  // One or two people: the photo beside the text, one card per row until both fit side by side.
+  @include mq(md) {
+    .s-team-social--wide {
+      --columns: 1;
+    }
+
+    .s-team-social--wide > .s-team-social__item {
+      --avatar: 11rem;
+
+      grid-template: "photo text" / var(--avatar) minmax(0, 1fr);
+      place-items: center start;
+      column-gap: calc(var(--spacing-2xl) + var(--badge) / 2);
+      max-width: 44rem;
+      padding: var(--spacing-2xl);
+      text-align: start;
+    }
+
+    .s-team-social--wide .s-team-social__text {
+      justify-items: start;
+    }
+
+    .s-team-social--wide .s-team-social__name {
+      font-size: var(--font-size-2xl);
+    }
+  }
+
+  @include mq(lg) {
+    .s-team-social--wide.s-team-cols--2 {
+      --columns: 2;
+    }
+  }
+
+  // ---------- spotlight ----------
+  // The featured member (moved to the middle of the first row) is raised and on the brand color:
+  // it swaps the accent and its text color (≥ 4.5:1, like pricing featured-center); the cards
+  // beside it start lower and end higher.
+  .s-team-spotlight {
+    --spot-accent: var(--color-action-primary);
+    --spot-ink: var(--color-action-primary-text);
+  }
+
+  .s-team-spotlight__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-xl) var(--spacing-lg);
+    background: var(--color-background-surface);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    text-align: center;
+  }
+
+  .s-team-spotlight__item--featured {
+    --color-text-primary: var(--spot-ink);
+    --color-text-secondary: var(--spot-ink);
+    --color-border-default: color-mix(in srgb, var(--spot-ink) 35%, transparent);
+    --color-background-surface: var(--spot-accent);
+    --color-action-primary: var(--spot-ink);
+    --color-action-primary-text: var(--spot-accent);
+    --color-focus-ring: var(--spot-ink);
+
+    color: var(--color-text-primary);
+    background: var(--spot-accent);
+    border-color: var(--spot-accent);
+    box-shadow: 0 1.75rem 3.5rem -1.75rem color-mix(in srgb, var(--spot-accent) 75%, transparent);
+  }
+
+  // A ring of the accent around the photo (of the text color on the featured card).
+  .s-team-spotlight__avatar {
+    flex-shrink: 0;
+    width: 6.5rem;
+    height: 6.5rem;
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 0.25rem var(--color-background-surface),
+      0 0 0 0.5rem color-mix(in srgb, var(--color-action-primary) 35%, transparent);
+    font-size: var(--font-size-2xl);
+  }
+
+  .s-team-spotlight__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    width: 100%;
+  }
+
+  .s-team-spotlight__name {
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-team-spotlight__role {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.08em;
+    line-height: var(--line-height-snug);
+    text-transform: uppercase;
+  }
+
+  .s-team-spotlight__bio {
+    margin-block-start: var(--spacing-xs);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+  }
+
+  // Plain icons in the text color, like a signature row.
+  .s-team-spotlight__links {
+    justify-content: center;
+    margin-block-start: auto;
+    padding-block-start: var(--spacing-md);
+  }
+
+  .s-team-spotlight__links .s-team-links__link {
+    color: var(--color-text-primary);
+    border-color: transparent;
+  }
+
+  @include mq(md) {
+    .s-team-spotlight__item--featured {
+      padding-block: var(--spacing-2xl);
+    }
+
+    .s-team-spotlight__item:not(.s-team-spotlight__item--featured) {
+      margin-block: var(--spacing-lg);
+    }
+
+    .s-team-spotlight__item--featured .s-team-spotlight__avatar {
+      width: 8rem;
+      height: 8rem;
+    }
+
+    // Three people stay in one row from tablets, the featured one in the middle.
+    .s-team-spotlight.s-team-cols--3 {
+      --columns: 3;
+    }
+
+    .s-team-spotlight.s-team-cols--2 {
+      max-width: 50rem;
+      margin-inline: auto;
+    }
+
+    // One person: a wide brand-colored card, the photo beside the text.
+    .s-team-spotlight.s-team-cols--1 > .s-team-spotlight__item {
+      flex-direction: row;
+      gap: var(--spacing-2xl);
+      padding: var(--spacing-2xl);
+      text-align: start;
+    }
+
+    .s-team-spotlight.s-team-cols--1 .s-team-spotlight__avatar {
+      width: 10rem;
+      height: 10rem;
+      margin: 0.5rem;
+    }
+
+    .s-team-spotlight.s-team-cols--1 .s-team-spotlight__text {
+      align-items: flex-start;
+    }
+
+    .s-team-spotlight.s-team-cols--1 .s-team-spotlight__links {
+      justify-content: flex-start;
+      margin-inline-start: calc(var(--spacing-sm) * -1);
+    }
+  }
+
+  // ---------- color tiles ----------
+  // Every tile gets a soft color of its own: the accent's hue turned around the color wheel in
+  // five steps at low chroma (an achromatic accent gives soft greys); light or dark per scheme.
+  // --hue is a plain number: relative colors give their channels as numbers. The portrait
+  // stands in an arch at the bottom of the tile.
+  .s-team-tiles__item {
+    --hue: 0;
+    --tile: light-dark(
+      oklch(from var(--color-action-primary) 93% calc(c * 0.3) calc(h + var(--hue))),
+      oklch(from var(--color-action-primary) 30% calc(c * 0.3) calc(h + var(--hue)))
+    );
+    --arch: light-dark(
+      oklch(from var(--color-action-primary) 86% calc(c * 0.4) calc(h + var(--hue))),
+      oklch(from var(--color-action-primary) 42% calc(c * 0.4) calc(h + var(--hue)))
+    );
+    --arch-ink: light-dark(
+      oklch(from var(--color-action-primary) 36% calc(c * 0.6) calc(h + var(--hue))),
+      oklch(from var(--color-action-primary) 93% calc(c * 0.25) calc(h + var(--hue)))
+    );
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  @each $step, $hue in (2: 72, 3: 144, 4: 216, 5: 288) {
+    .s-team-tiles__item:nth-child(5n + #{$step}) {
+      --hue: #{$hue};
+    }
+  }
+
+  // Landscape on phones (a shorter column), square from md.
+  .s-team-tiles__tile {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--tile);
+    border-radius: var(--radius-card);
+  }
+
+  .s-team-tiles__portrait {
+    width: auto;
+    height: 87.5%;
+    aspect-ratio: 4 / 5;
+    border-radius: 999px 999px 0 0;
+  }
+
+  @include mq(md) {
+    .s-team-tiles__tile {
+      aspect-ratio: 1;
+    }
+  }
+
+  .s-team-tiles__portrait.s-team-initials {
+    padding-block-start: 10%;
+    color: var(--arch-ink);
+    background: var(--arch);
+    font-size: clamp(var(--font-size-4xl), 4vw, var(--font-size-5xl));
+  }
+
+  .s-team-tiles.s-team-cols--3 {
+    max-width: 64rem;
+    margin-inline: auto;
+  }
+
+  .s-team-tiles__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  .s-team-tiles__name {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-team-tiles__role {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-team-tiles__bio {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .s-team-tiles__links {
+    margin-block-start: auto;
+    padding-block-start: var(--spacing-sm);
+  }
+
+  .s-team-tiles__links .s-team-links__link {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  // One or two people: the tile beside the text.
+  @include mq(md) {
+    .s-team-tiles--wide {
+      --columns: 1;
+    }
+
+    .s-team-tiles--wide > .s-team-tiles__item {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--spacing-2xl);
+      max-width: 48rem;
+    }
+
+    .s-team-tiles--wide .s-team-tiles__tile {
+      flex: 0 0 42%;
+    }
+
+    .s-team-tiles--wide .s-team-tiles__text {
+      flex: 1;
+    }
+
+    .s-team-tiles--wide .s-team-tiles__name {
+      font-size: var(--font-size-2xl);
+    }
+
+    .s-team-tiles--wide .s-team-tiles__links {
+      margin-block-start: 0;
+    }
+  }
+
+  @include mq(lg) {
+    .s-team-tiles--wide.s-team-cols--2 {
+      --columns: 2;
+    }
+  }
+
+  // ---------- directory ----------
+  // Small cards for many people: the photo beside name and role, then the bio and a row of links.
+  .s-team-directory {
+    --column-gap: var(--spacing-md);
+
+    row-gap: var(--spacing-md);
+  }
+
+  .s-team-directory__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-team-directory__head {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .s-team-directory__avatar {
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    font-size: var(--font-size-lg);
+  }
+
+  .s-team-directory__who {
+    display: grid;
+    gap: 0.125rem;
+    min-width: 0;
+  }
+
+  .s-team-directory__name {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-team-directory__role {
+    color: var(--color-action-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-snug);
+  }
+
+  .s-team-directory__bio {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .s-team-directory__links {
+    margin-block-start: auto;
+    padding-block-start: var(--spacing-md);
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-team-directory__links .s-team-links__link {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .s-team-directory.s-team-cols--1 > li {
+    max-width: 26rem;
+  }
+
+  .s-team-directory.s-team-cols--2 {
+    max-width: 54rem;
+    margin-inline: auto;
+  }
+}
