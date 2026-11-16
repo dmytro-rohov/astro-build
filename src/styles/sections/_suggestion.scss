@@ -52,7 +52,7 @@
     list-style: inherit;
   }
 
-  @media (max-width: 40rem) {
+  @media (width <= 40rem) {
     .suggestion__box {
       grid-template-columns: minmax(0, 1fr);
       padding: var(--spacing-lg);
