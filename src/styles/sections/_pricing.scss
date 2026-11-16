@@ -86,6 +86,7 @@
 
   .s-plan__badge {
     align-self: flex-start;
+    justify-self: start;
     padding: 0.125rem var(--spacing-sm);
     color: var(--color-action-primary-text);
     background: var(--color-action-primary);
@@ -706,8 +707,8 @@
   }
 
   .s-plan-row__features {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--spacing-xs) var(--spacing-lg);
     padding: 0;
     margin: var(--spacing-xs) 0 0;
@@ -751,11 +752,24 @@
     font-size: var(--font-size-sm);
   }
 
-  // From tablets the price and the button sit on the right of every row.
+  // From tablets the price and the button sit on the right of every row, in one column
+  // as wide as the widest of them (subgrid), so the rows line up.
   @include mq(md) {
     .s-plan-row {
       grid-template-columns: minmax(0, 1fr) auto;
       padding: var(--spacing-xl);
+    }
+
+    @supports (grid-template-columns: subgrid) {
+      .s-plan-rows {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+      }
+
+      .s-plan-row {
+        grid-column: 1 / -1;
+        grid-template-columns: subgrid;
+      }
     }
 
     .s-plan-row__side {
