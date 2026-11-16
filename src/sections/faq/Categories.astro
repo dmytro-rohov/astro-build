@@ -1,9 +1,9 @@
 ---
 /**
  * Help-center panel with a menu (ARIA tabs, roving tabindex, arrow keys) beside its content.
- * With categories the menu lists them (pills on phones) and switches the category's questions;
- * without categories the questions are the menu and the chosen answer fills the panel — from
- * tablets up, on phones every answer stays listed. The menu is hidden until the script runs:
+ * With categories the menu lists them (pills on phones) and switches the category's questions.
+ * Without categories the questions are the menu and the chosen answer fills the panel; phones
+ * get the same questions as an accordion instead. The menu is hidden until the script runs:
  * without JavaScript every category or answer is listed under its own heading.
  */
 import SectionShell from "@/sections/_shared/SectionShell.astro";
@@ -35,7 +35,7 @@ const id = (part: string, index: number) => `${section.id}-${part}-${index}`;
 <SectionShell id={section.id} type="faq" variant="categories" tone={props.tone} spacing={props.spacing}>
   <Stack space="xl">
     <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
-    <div class:list={["s-faq-help", `s-faq-help--${mode}`]} data-faq-tabs={mode}>
+    <div class:list={["s-faq-help", `s-faq-help--${mode}`]} data-faq-tabs>
       <div class="s-faq-help__menu" role="tablist" aria-label={content.title} aria-orientation="vertical" hidden>
         {tabs.map((tab, index) => (
           <button
@@ -60,10 +60,12 @@ const id = (part: string, index: number) => `${section.id}-${part}-${index}`;
       ))}
       {!groups.length && content.items.map((item, index) => (
         <section class="s-faq-help__panel" id={id("panel", index)} aria-labelledby={id("heading", index)} data-faq-panel>
+          {content.items.length > 1 && <p class="s-faq-help__index" aria-hidden="true">{String(index + 1).padStart(2, "0")} / {String(content.items.length).padStart(2, "0")}</p>}
           <PanelHeading class="s-faq-help__heading" id={id("heading", index)}>{item.question}</PanelHeading>
           <RichText text={item.answer} class="s-faq-help__answer" />
         </section>
       ))}
+      {!groups.length && <Questions items={content.items} look="lines" class="s-faq-help__accordion" />}
     </div>
   </Stack>
 </SectionShell>
@@ -78,11 +80,7 @@ const id = (part: string, index: number) => `${section.id}-${part}-${index}`;
     // One category or question needs no menu: it stays listed under its heading.
     if (!list || tabs.length < 2 || tabs.length !== panels.length) continue;
 
-    const headings = panels.map((panel) => panel.getAttribute("aria-labelledby") ?? "");
-    let selected = 0;
-
     const select = (index: number, focus = false) => {
-      selected = index;
       tabs.forEach((tab, current) => {
         tab.setAttribute("aria-selected", String(current === index));
         tab.tabIndex = current === index ? 0 : -1;
@@ -91,25 +89,14 @@ const id = (part: string, index: number) => `${section.id}-${part}-${index}`;
       if (focus) tabs[index].focus();
     };
 
-    // Tabs on, or every panel listed again under its own heading.
-    const enable = (on: boolean) => {
-      list.hidden = !on;
-      root.classList.toggle("s-faq-help--tabs", on);
-      panels.forEach((panel, index) => {
-        panel.setAttribute("aria-labelledby", on ? tabs[index].id : headings[index]);
-        if (on) {
-          panel.setAttribute("role", "tabpanel");
-          panel.tabIndex = 0;
-        } else {
-          panel.removeAttribute("role");
-          panel.removeAttribute("tabindex");
-          panel.hidden = false;
-        }
-      });
-      if (on) select(selected);
-    };
+    for (const [index, panel] of panels.entries()) {
+      panel.setAttribute("role", "tabpanel");
+      panel.setAttribute("aria-labelledby", tabs[index].id);
+      panel.tabIndex = 0;
+    }
 
-    // Arrow keys move between the tabs (and show them), Home / End jump to the ends.
+    // Arrow keys move between the tabs (and show them), Home / End jump to the ends. The menu is
+    // a column from tablets up and a row of pills on phones: both arrow pairs work.
     list.addEventListener("keydown", (event) => {
       const current = tabs.indexOf(event.target as HTMLButtonElement);
       if (current < 0) return;
@@ -125,9 +112,8 @@ const id = (part: string, index: number) => `${section.id}-${part}-${index}`;
     });
     tabs.forEach((tab, index) => tab.addEventListener("click", () => select(index)));
 
-    // Questions as the menu need the width of a tablet: phones keep the list of answers.
-    const wide = root.dataset.faqTabs === "questions" ? window.matchMedia("(min-width: 768px)") : undefined;
-    wide?.addEventListener("change", (event) => enable(event.matches));
-    enable(wide?.matches ?? true);
+    select(0);
+    list.hidden = false;
+    root.classList.add("s-faq-help--tabs");
   }
 </script>

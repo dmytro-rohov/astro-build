@@ -59,7 +59,7 @@ const inputId = `${section.id}-search`;
       {ask && (
         <div class="s-faq-desk__ask">
           <p class="s-faq-desk__ask-lead">{t.faq.askLead}</p>
-          <Button href={ask} variant="secondary" size="sm" class="s-faq-desk__ask-link">{content.action?.label ?? t.faq.ask}</Button>
+          <Button href={ask} variant="secondary" size="sm">{content.action?.label ?? t.faq.ask}</Button>
         </div>
       )}
     </div>
@@ -75,14 +75,16 @@ const inputId = `${section.id}-search`;
     const tools = root.querySelector<HTMLElement>("[data-faq-tools]");
     const input = root.querySelector<HTMLInputElement>("[data-faq-query]");
     const status = root.querySelector<HTMLElement>("[data-faq-status]");
-    if (!tools || !input || !status) continue;
-
-    const filters = [...root.querySelectorAll<HTMLButtonElement>("[data-faq-filter]")];
     const items = [...root.querySelectorAll<HTMLElement>("[data-faq-item]")].map((element) => ({
       element,
       category: element.dataset.category ?? "",
-      text: normalizeSearch(element.textContent ?? ""),
+      // The category's name counts too: "płatności" finds every question about payments.
+      text: normalizeSearch(`${element.dataset.category ?? ""} ${element.textContent ?? ""}`),
     }));
+    // A single question needs no search.
+    if (!tools || !input || !status || items.length < 2) continue;
+
+    const filters = [...root.querySelectorAll<HTMLButtonElement>("[data-faq-filter]")];
     const plural = new Intl.PluralRules(root.dataset.lang);
     const results = JSON.parse(root.dataset.results ?? "{}") as Record<string, string>;
     let category = "";
