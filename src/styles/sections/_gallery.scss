@@ -582,7 +582,7 @@
   // A pair per photo: the photo and its text tile (tinted surface, a notch pointing at the
   // photo). Phones: text under the photo; from 640px side by side, one pair per row with every
   // other pair mirrored (--flip-md); from 1024px two pairs per row, every other row mirrored
-  // (--flip-lg). A photo without text (--photo) spans the pair.
+  // (--flip-lg). A photo without any text, not even alt text (--photo), spans the pair.
   .s-checker {
     --gap: var(--spacing-sm);
 
