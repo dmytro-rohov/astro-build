@@ -10,7 +10,11 @@ import ContactFormSplit from "@/sections/contact/FormSplit.astro";
 import CtaBanner from "@/sections/cta/Banner.astro";
 import CtaBoxed from "@/sections/cta/Boxed.astro";
 import FaqAccordion from "@/sections/faq/Accordion.astro";
+import FaqCategories from "@/sections/faq/Categories.astro";
+import FaqSearch from "@/sections/faq/Search.astro";
+import FaqSplitContact from "@/sections/faq/SplitContact.astro";
 import FaqTwoColumn from "@/sections/faq/TwoColumn.astro";
+import FaqWithImage from "@/sections/faq/WithImage.astro";
 import FeaturesBento from "@/sections/features/Bento.astro";
 import FeaturesCardsGrid from "@/sections/features/CardsGrid.astro";
 import FeaturesIconBadge from "@/sections/features/IconBadge.astro";
@@ -76,7 +80,7 @@ export const sectionComponents: Record<string, Record<string, SectionComponent>>
   testimonials: { cards: TestimonialsCards, spotlight: TestimonialsSpotlight, carousel: TestimonialsCarousel, portraits: TestimonialsPortraits, "quote-cards": TestimonialsQuoteCards, rating: TestimonialsRating },
   gallery: { grid: GalleryGrid, mosaic: GalleryGrid },
   pricing: { cards: PricingCards, compact: PricingCompact, "featured-center": PricingFeaturedCenter, table: PricingTable, split: PricingSplit, minimal: PricingMinimal },
-  faq: { accordion: FaqAccordion, "two-column": FaqTwoColumn },
+  faq: { accordion: FaqAccordion, "two-column": FaqTwoColumn, "split-contact": FaqSplitContact, categories: FaqCategories, "with-image": FaqWithImage, search: FaqSearch },
   cta: { boxed: CtaBoxed, banner: CtaBanner },
   contact: { "form-split": ContactFormSplit, "form-centered": ContactFormCentered },
   "hours-location": { card: HoursCard, compact: HoursCompact },

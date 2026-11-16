@@ -111,6 +111,8 @@ function example(schema: z.ZodType, mode: Mode, key: string, index = 0): unknown
     if (key === "url") return "https://www.openstreetmap.org/export/embed.html?bbox=17.03%2C51.10%2C17.04%2C51.11&layer=mapnik";
     if (key === "href") return schema.safeParse("/").success ? "/" : "https://example.com/";
     if (key === "id") return `${mode}-${++idCounter}`;
+    // FAQ: three long categories, so the grouped layouts get several groups.
+    if (key === "category") return `${textOf(max - 2, false)} ${(index % 3) + 1}`;
     if (meta.editor?.fieldType === "richtext-lite") return richTextOf(max, mode);
 
     return textOf(mode === "min" ? Math.max(min, 2) : max, meta.editor?.fieldType === "textarea");
@@ -185,8 +187,8 @@ const leads = pageTypes.filter(titleRequired);
 const followers = pageTypes.filter((type) => !titleRequired(type));
 const groups: (typeof sectionTypes)[number][][] = [];
 
-// A page holds at most 20 sections, and the pages after the home page also get a contact and
-// a faq section: two types share a page only when their sections fit in the other 18.
+// A page holds at most 20 sections, and every page may also get a contact and a faq section:
+// two types share a page only when their sections fit in the other 18.
 const PAGE_ROOM = 18;
 const sizeOf = (type: (typeof sectionTypes)[number]) => Object.keys(type.variants).length * 2;
 const take = (types: (typeof sectionTypes)[number][], room: number, fromEnd = false) => {
@@ -202,8 +204,6 @@ while (leads.length) {
 }
 if (followers.length) throw new Error("make-catalog: optional-title types left without a page (too many sections or types)");
 
-// Types allowed once per page (contact, faq): instance N goes onto the N-th
-// page after the home page.
 const pages = groups.map((group, index) => ({
   id: index === 0 ? "home" : group[0].type,
   slug: index === 0 ? "/" : `/${group[0].type}`,
@@ -212,8 +212,13 @@ const pages = groups.map((group, index) => ({
   sections: group.flatMap(sectionsOf),
 }));
 
+// Types allowed once per page (contact, faq): instance N goes onto page N (the home page
+// first); instances beyond the type pages get extra pages, out of the menu.
 for (const type of sectionTypes.filter((type) => ONE_PER_PAGE_TYPES.includes(type.type))) {
-  sectionsOf(type).forEach((section, index) => pages[index + 1].sections.push(section));
+  sectionsOf(type).forEach((section, index) => {
+    pages[index] ??= { id: `more-${index}`, slug: `/more-${index}`, title: `Więcej sekcji ${index}`, nav: { show: false, label: type.type }, sections: [] };
+    pages[index].sections.push(section);
+  });
 }
 
 const site = {

@@ -43,6 +43,20 @@ export default {
     reviews: { one: "{count} відгук", few: "{count} відгуки", many: "{count} відгуків", other: "{count} відгуку" },
   },
 
+  faq: {
+    contactTitle: "Маєте інше запитання?",
+    contactText: "Ми охоче відповімо — зв’яжіться з нами.",
+    other: "Інше",
+    searchLabel: "Пошук у питаннях",
+    searchPlaceholder: "Що ви шукаєте?",
+    filters: "Теми питань",
+    all: "Усі",
+    results: { one: "Знайдено {count} питання", few: "Знайдено {count} питання", many: "Знайдено {count} питань", other: "Знайдено {count} питання" },
+    noResults: "Немає питань, що відповідають «{query}».",
+    askLead: "Не знайшли свого запитання?",
+    ask: "Запитайте нас",
+  },
+
   slider: {
     previous: "Попередні",
     next: "Наступні",

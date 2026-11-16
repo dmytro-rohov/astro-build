@@ -1,0 +1,32 @@
+---
+/**
+ * Title and a contact card on the left (the card stays in view on wide screens), the questions
+ * as separate cards on the right; on phones the card follows the questions. It holds the
+ * business phone and e-mail, the image as a round photo of the person who answers and the
+ * action as a button.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import ContactCard from "@/sections/faq/ContactCard.astro";
+import JsonLd from "@/sections/faq/JsonLd.astro";
+import Questions from "@/sections/faq/Questions.astro";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"faq", "split-contact">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+---
+
+<SectionShell id={section.id} type="faq" variant="split-contact" tone={props.tone} spacing={props.spacing}>
+  <div class="s-faq-split">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} />
+    <Questions items={content.items} look="cards" openFirst={props.openFirst} class="s-faq-split__questions" />
+    <ContactCard image={content.image} action={content.action} headingLevel={headingLevel === "h1" ? "h2" : "h3"} />
+  </div>
+</SectionShell>
+
+<JsonLd items={content.items} />

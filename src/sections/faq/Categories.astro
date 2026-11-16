@@ -1,0 +1,133 @@
+---
+/**
+ * Help-center panel with a menu (ARIA tabs, roving tabindex, arrow keys) beside its content.
+ * With categories the menu lists them (pills on phones) and switches the category's questions;
+ * without categories the questions are the menu and the chosen answer fills the panel — from
+ * tablets up, on phones every answer stays listed. The menu is hidden until the script runs:
+ * without JavaScript every category or answer is listed under its own heading.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import RichText from "@/sections/_shared/RichText.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import JsonLd from "@/sections/faq/JsonLd.astro";
+import Questions from "@/sections/faq/Questions.astro";
+import { t } from "@/i18n";
+import { faqGroups } from "@/sections/faq/layout";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"faq", "categories">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const PanelHeading = headingLevel === "h1" ? "h2" : "h3";
+const groups = faqGroups(content.items, t.faq.other);
+const mode = groups.length ? "groups" : "questions";
+const tabs = groups.length
+  ? groups.map((group) => ({ label: group.name, count: group.items.length }))
+  : content.items.map((item) => ({ label: item.question, count: undefined }));
+const id = (part: string, index: number) => `${section.id}-${part}-${index}`;
+---
+
+<SectionShell id={section.id} type="faq" variant="categories" tone={props.tone} spacing={props.spacing}>
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <div class:list={["s-faq-help", `s-faq-help--${mode}`]} data-faq-tabs={mode}>
+      <div class="s-faq-help__menu" role="tablist" aria-label={content.title} aria-orientation="vertical" hidden>
+        {tabs.map((tab, index) => (
+          <button
+            type="button"
+            role="tab"
+            class="s-faq-help__tab"
+            id={id("tab", index)}
+            aria-controls={id("panel", index)}
+            aria-selected={index === 0 ? "true" : "false"}
+            tabindex={index === 0 ? 0 : -1}
+          >
+            <span class="s-faq-help__label">{tab.label}</span>
+            {tab.count && <span class="s-faq-help__count" aria-hidden="true">{tab.count}</span>}
+          </button>
+        ))}
+      </div>
+      {groups.map((group, index) => (
+        <section class="s-faq-help__panel" id={id("panel", index)} aria-labelledby={id("heading", index)} data-faq-panel>
+          <PanelHeading class="s-faq-help__heading" id={id("heading", index)}>{group.name}</PanelHeading>
+          <Questions items={group.items} look="lines" />
+        </section>
+      ))}
+      {!groups.length && content.items.map((item, index) => (
+        <section class="s-faq-help__panel" id={id("panel", index)} aria-labelledby={id("heading", index)} data-faq-panel>
+          <PanelHeading class="s-faq-help__heading" id={id("heading", index)}>{item.question}</PanelHeading>
+          <RichText text={item.answer} class="s-faq-help__answer" />
+        </section>
+      ))}
+    </div>
+  </Stack>
+</SectionShell>
+
+<JsonLd items={content.items} />
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-faq-tabs]")) {
+    const list = root.querySelector<HTMLElement>('[role="tablist"]');
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = [...root.querySelectorAll<HTMLElement>("[data-faq-panel]")];
+    // One category or question needs no menu: it stays listed under its heading.
+    if (!list || tabs.length < 2 || tabs.length !== panels.length) continue;
+
+    const headings = panels.map((panel) => panel.getAttribute("aria-labelledby") ?? "");
+    let selected = 0;
+
+    const select = (index: number, focus = false) => {
+      selected = index;
+      tabs.forEach((tab, current) => {
+        tab.setAttribute("aria-selected", String(current === index));
+        tab.tabIndex = current === index ? 0 : -1;
+        panels[current].hidden = current !== index;
+      });
+      if (focus) tabs[index].focus();
+    };
+
+    // Tabs on, or every panel listed again under its own heading.
+    const enable = (on: boolean) => {
+      list.hidden = !on;
+      root.classList.toggle("s-faq-help--tabs", on);
+      panels.forEach((panel, index) => {
+        panel.setAttribute("aria-labelledby", on ? tabs[index].id : headings[index]);
+        if (on) {
+          panel.setAttribute("role", "tabpanel");
+          panel.tabIndex = 0;
+        } else {
+          panel.removeAttribute("role");
+          panel.removeAttribute("tabindex");
+          panel.hidden = false;
+        }
+      });
+      if (on) select(selected);
+    };
+
+    // Arrow keys move between the tabs (and show them), Home / End jump to the ends.
+    list.addEventListener("keydown", (event) => {
+      const current = tabs.indexOf(event.target as HTMLButtonElement);
+      if (current < 0) return;
+
+      const rtl = getComputedStyle(list).direction === "rtl";
+      const back = ["ArrowUp", rtl ? "ArrowRight" : "ArrowLeft"];
+      const forward = ["ArrowDown", rtl ? "ArrowLeft" : "ArrowRight"];
+      const next = back.includes(event.key) ? current - 1 : forward.includes(event.key) ? current + 1 : { Home: 0, End: tabs.length - 1 }[event.key];
+      if (next === undefined) return;
+
+      event.preventDefault();
+      select((next + tabs.length) % tabs.length, true);
+    });
+    tabs.forEach((tab, index) => tab.addEventListener("click", () => select(index)));
+
+    // Questions as the menu need the width of a tablet: phones keep the list of answers.
+    const wide = root.dataset.faqTabs === "questions" ? window.matchMedia("(min-width: 768px)") : undefined;
+    wide?.addEventListener("change", (event) => enable(event.matches));
+    enable(wide?.matches ?? true);
+  }
+</script>
