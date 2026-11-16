@@ -20,12 +20,13 @@ import { stats } from "../sections/stats/schema";
 import { processSteps } from "../sections/process/schema";
 import { logoCloud } from "../sections/logo-cloud/schema";
 import { embed } from "../sections/embed/schema";
+import { suggestion } from "../sections/suggestion/schema";
 import { footer } from "../layout/footer/schema";
 import { navbar } from "../layout/navbar/schema";
 
 export const sectionTypes = [
   hero, about, services, features, stats, processSteps, team, schedule, testimonials,
-  gallery, logoCloud, pricing, faq, cta, contact, hoursLocation, embed,
+  gallery, logoCloud, pricing, faq, cta, contact, hoursLocation, embed, suggestion,
 ] as const;
 
 export const layoutTypes = { navbar, footer } as const;

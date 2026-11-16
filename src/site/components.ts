@@ -9,6 +9,7 @@ import ContactFormCentered from "@/sections/contact/FormCentered.astro";
 import ContactFormSplit from "@/sections/contact/FormSplit.astro";
 import CtaBanner from "@/sections/cta/Banner.astro";
 import CtaBoxed from "@/sections/cta/Boxed.astro";
+import SuggestionBox from "@/sections/suggestion/Box.astro";
 import FaqAccordion from "@/sections/faq/Accordion.astro";
 import FaqTwoColumn from "@/sections/faq/TwoColumn.astro";
 import FeaturesCardsGrid from "@/sections/features/CardsGrid.astro";
@@ -57,4 +58,5 @@ export const sectionComponents: Record<string, Record<string, SectionComponent>>
   process: { steps: Process, timeline: Process },
   "logo-cloud": { row: LogoCloud, grid: LogoCloud },
   embed: { full: Embed, split: Embed },
+  suggestion: { box: SuggestionBox },
 };
