@@ -37,8 +37,8 @@ export const pricing = defineSectionType({
       uses: ["eyebrow", "description", "plans.period", "plans.description", "plans.features", "plans.action", "plans.highlighted", "note"],
     },
     compact: {
-      description: "Plans as rows: name and description, price on the right, features below.",
-      uses: ["eyebrow", "description", "plans.period", "plans.description", "plans.features", "plans.action", "note"],
+      description: "Plans as rows in one narrow column: name and description, price on the right, features below in two columns.",
+      uses: ["eyebrow", "description", "plans.period", "plans.description", "plans.features", "plans.action", "plans.highlighted", "note"],
     },
     "featured-center": {
       description:
