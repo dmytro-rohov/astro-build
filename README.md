@@ -887,8 +887,24 @@ debug mode, immutable font caching). CI runs it on every pull request.
 
 ## Version
 
-Current version: **v3.2** (`3.2.1`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
+Current version: **v3.3** (`3.3.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
 starter is kept on the `v2` branch / tag `v2.0.0`.
+
+v3.3 (layout review of the first generated sites):
+
+- 18 section types, 93 variants (was 37): at least six clearly different layouts for features,
+  stats, process, pricing, team, schedule, testimonials, gallery, logo cloud, FAQ, CTA, contact and
+  hours & location; new optional content fields only (switching variants never loses content)
+- new widgets: `Progress` (ring, bar), `Lightbox` (photo viewer on a native dialog), Slider with
+  one-per-view and dots, live "open now" status in the business time zone, click-to-load maps in
+  the contact and hours-location map variants
+- phones: the hero shows the headline, text, then the photo, then the buttons; the menu is centered;
+  navbar props `menuButton` (`label` | `icon`) and `hideOnScroll`; the columns footer has four
+  columns with the contact details last; calmer counters
+- lighter pages: a site ships only the CSS of the variants it uses (`virtual:section-components`,
+  style files per variant, ~15 KB gzip instead of 41), `server.mjs` gzips in Astro server mode too
+- colors mix in OKLab (accent tints keep their hue), card borders follow inverse/accent palettes
+- every new interface text in all 12 languages
 
 v3.2.1: lighter pages — photos encode at quality 72 (the cover hero at 55, under its overlay,
 widths up to 1600), and `server.mjs` sends text files gzip-compressed in static mode, like the
