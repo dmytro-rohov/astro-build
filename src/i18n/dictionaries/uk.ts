@@ -72,6 +72,7 @@ export default {
     next: "Наступні",
     label: "Гортальний список",
     page: "Показати {number} з {count}",
+    pause: "Зупинити прокручування",
   },
 
   lightbox: {

@@ -1,0 +1,35 @@
+---
+/**
+ * Logos knocked out in white on big tiles of strong colors made from the accent (v3.3): shades of
+ * the brand or, with `palette: "spectrum"`, hues around the color wheel. A logo on a white plate
+ * loses the plate, a logo with its own colored background stays as it is (Logo.astro classes).
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Logo from "@/sections/logo-cloud/Logo.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import { tileColumns } from "@/sections/logo-cloud/layout";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"logo-cloud", "color-tiles">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const columns = tileColumns(content.items.length);
+---
+
+<SectionShell id={section.id} type="logo-cloud" variant="color-tiles" tone={props.tone} spacing={props.spacing}>
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <ul class:list={["s-logo-tiles", `s-logo-tiles--md-${columns.md}`, `s-logo-tiles--lg-${columns.lg}`, `s-logo-tiles--${props.palette ?? "brand"}`]}>
+      {content.items.map((item) => (
+        <li class="s-logo-tiles__tile">
+          <Logo logo={item.logo} name={item.name} href={item.href} width={200} />
+        </li>
+      ))}
+    </ul>
+  </Stack>
+</SectionShell>

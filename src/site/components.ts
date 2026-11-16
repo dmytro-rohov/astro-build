@@ -65,6 +65,10 @@ import ProcessChevrons from "@/sections/process/Chevrons.astro";
 import ProcessSnake from "@/sections/process/Snake.astro";
 import ProcessWave from "@/sections/process/Wave.astro";
 import LogoCloud from "@/sections/logo-cloud/LogoCloud.astro";
+import LogoCloudColorTiles from "@/sections/logo-cloud/ColorTiles.astro";
+import LogoCloudCoverflow from "@/sections/logo-cloud/Coverflow.astro";
+import LogoCloudMarquee from "@/sections/logo-cloud/Marquee.astro";
+import LogoCloudSplitImage from "@/sections/logo-cloud/SplitImage.astro";
 import Embed from "@/sections/embed/Embed.astro";
 import HoursCard from "@/sections/hours-location/Card.astro";
 import HoursCompact from "@/sections/hours-location/Compact.astro";
@@ -106,6 +110,6 @@ export const sectionComponents: Record<string, Record<string, SectionComponent>>
   team: { cards: TeamCards, compact: TeamCompact, "social-cards": TeamSocialCards, spotlight: TeamSpotlight, "color-tiles": TeamColorTiles, directory: TeamDirectory },
   stats: { row: Stats, cards: Stats, rings: StatsRings, bars: StatsBars, "chart-cards": StatsChartCards, highlight: StatsHighlight, bento: StatsBento },
   process: { steps: Process, timeline: Process, cards: Process, wave: ProcessWave, snake: ProcessSnake, chevrons: ProcessChevrons },
-  "logo-cloud": { row: LogoCloud, grid: LogoCloud },
+  "logo-cloud": { row: LogoCloud, grid: LogoCloud, coverflow: LogoCloudCoverflow, "split-image": LogoCloudSplitImage, marquee: LogoCloudMarquee, "color-tiles": LogoCloudColorTiles },
   embed: { full: Embed, split: Embed },
 };

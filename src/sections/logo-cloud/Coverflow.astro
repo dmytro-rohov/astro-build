@@ -1,0 +1,49 @@
+---
+/**
+ * Logo cards in a 3D carousel (v3.3): the card in the middle is large, its neighbours shrink and
+ * turn away as they leave the center (scroll-driven CSS; flat cards where that is unsupported or
+ * motion is reduced). The slider starts on the middle logo. Two or three logos stand still as
+ * a fan, without controls.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Logo from "@/sections/logo-cloud/Logo.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Slider from "@/components/widgets/Slider.astro";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"logo-cloud", "coverflow">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const count = content.items.length;
+const List = count > 3 ? Slider : "ul";
+const listProps = count > 3 ? { label: content.title, class: "s-coverflow" } : { class: `s-coverflow s-coverflow--fan s-coverflow--${count}` };
+---
+
+<SectionShell id={section.id} type="logo-cloud" variant="coverflow" tone={props.tone} spacing={props.spacing} defaultSpacing="md">
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <List {...listProps}>
+      {content.items.map((item) => (
+        <li class="s-coverflow__item">
+          <div class="s-coverflow__card">
+            <Logo logo={item.logo} name={item.name} href={item.href} width={240} />
+          </div>
+        </li>
+      ))}
+    </List>
+  </Stack>
+</SectionShell>
+
+<script>
+  // Start on the middle logo, so the large card has neighbours on both sides.
+  for (const track of document.querySelectorAll<HTMLElement>(".s-coverflow [data-slider-track]")) {
+    const middle = track.children[Math.floor((track.children.length - 1) / 2)];
+    if (!(middle instanceof HTMLElement)) continue;
+    track.scrollTo({ left: middle.offsetLeft + middle.offsetWidth / 2 - track.clientWidth / 2, behavior: "instant" });
+  }
+</script>

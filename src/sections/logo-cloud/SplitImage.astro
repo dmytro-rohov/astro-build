@@ -1,0 +1,59 @@
+---
+/**
+ * A photo beside the title and the logo tiles (v3.3). Up to six logos fill one block of tiles;
+ * more page through a slider of six with a dot per page. Without an image the title takes the
+ * photo's side (without a title too, the tiles are centered). Phones: photo, title, tiles.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Logo from "@/sections/logo-cloud/Logo.astro";
+import Img from "@/components/media/Img.astro";
+import Slider from "@/components/widgets/Slider.astro";
+import { pages } from "@/sections/logo-cloud/layout";
+import { getAsset } from "@/site/assets";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"logo-cloud", "split-image">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const image = content.image ? getAsset(content.image) : undefined;
+const groups = pages(content.items, 6);
+// One block: two columns for two or four logos, three otherwise (phones: two, three for three).
+const count = content.items.length;
+const tiles = `s-logo-split__tiles s-logo-split__tiles--${groups.length > 1 ? "paged" : count}`;
+const layout = image ? "image" : content.eyebrow || content.title || content.description ? "text" : "logos";
+---
+
+<SectionShell id={section.id} type="logo-cloud" variant="split-image" tone={props.tone} spacing={props.spacing}>
+  <div class:list={["s-logo-split", `s-logo-split--${layout}`, image && props.imagePosition === "right" && "s-logo-split--image-right"]}>
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "left"} class="s-logo-split__header" />
+    {groups.length > 1 ? (
+      <Slider label={content.title} single dots={groups.length} class="s-logo-split__logos">
+        {groups.map((group) => (
+          <li class="s-logo-split__page">
+            <ul class={tiles}>
+              {group.map((item) => (
+                <li class="s-logo-split__tile"><Logo logo={item.logo} name={item.name} href={item.href} /></li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </Slider>
+    ) : (
+      <ul class:list={[tiles, "s-logo-split__logos"]}>
+        {content.items.map((item) => (
+          <li class="s-logo-split__tile"><Logo logo={item.logo} name={item.name} href={item.href} /></li>
+        ))}
+      </ul>
+    )}
+    {image && (
+      <div class="s-logo-split__media">
+        <Img src={image.image} alt={image.alt} kind={image.alt ? "content" : "decorative"} aspect={[5, 4]} focal={image.focal} sizes="(min-width: 1024px) 34rem, 100vw" widths={[480, 720, 1080]} class="s-logo-split__image" />
+      </div>
+    )}
+  </div>
+</SectionShell>
