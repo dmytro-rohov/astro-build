@@ -40,12 +40,14 @@ export default {
     embedNotice: "Цей вміст завантажується з {provider}. Після натискання {provider} може зберігати файли cookie та отримає вашу IP-адресу.",
     embedOpen: "Відкрити в {provider}",
     step: "Крок {number}",
+    reviews: { one: "{count} відгук", few: "{count} відгуки", many: "{count} відгуків", other: "{count} відгуку" },
   },
 
   slider: {
     previous: "Попередні",
     next: "Наступні",
     label: "Гортальний список",
+    page: "Показати {number} з {count}",
   },
 
   common: {

@@ -1,13 +1,13 @@
 ---
+/** Review cards: 1–3 in one centered row, more in a slider (v3.2); quote on top, author at the bottom. */
 import SectionShell from "@/sections/_shared/SectionShell.astro";
 import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Avatar from "@/sections/testimonials/Avatar.astro";
+import QuoteMark from "@/sections/testimonials/QuoteMark.astro";
 import Stars from "@/sections/testimonials/Stars.astro";
 import Stack from "@/components/layouts/Stack.astro";
-import Grid from "@/components/layouts/Grid.astro";
 import Slider from "@/components/widgets/Slider.astro";
 import Card from "@/components/ui/Card.astro";
-import Img from "@/components/media/Img.astro";
-import { getAsset } from "@/site/assets";
 import type { SectionOf } from "@/site/types";
 
 export interface Props {
@@ -17,33 +17,34 @@ export interface Props {
 
 const { section, headingLevel } = Astro.props;
 const { content, props } = section;
+const count = content.items.length;
 // More than 3 reviews: a slider instead of a long grid (v3.2).
-const List = content.items.length > 3 ? Slider : Grid;
-const listProps = content.items.length > 3 ? { label: content.title, class: "s-testimonials__slider" } : { as: "ul", columns: "3", gap: "lg", class: "s-testimonials__list" };
+const List = count > 3 ? Slider : "ul";
+const listProps = count > 3 ? { label: content.title, class: "s-testimonials__slider" } : { class: `s-testimonials__list s-testimonials__list--${count}` };
 ---
 
 <SectionShell id={section.id} type="testimonials" variant="cards" tone={props.tone} spacing={props.spacing}>
   <Stack space="xl">
     <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
     <List {...listProps}>
-      {content.items.map((item) => {
-        const avatar = item.avatar ? getAsset(item.avatar) : undefined;
-        return (
-          <Card as="li" variant="elevated" class="s-testimonials__card">
-            <figure class="s-testimonial">
+      {content.items.map((item) => (
+        <Card as="li" variant="elevated" padding="lg" class="s-testimonials__card">
+          <figure class="s-testimonial">
+            <div class="s-testimonial__head">
+              <QuoteMark class="s-testimonial__mark" />
               {item.rating && <Stars rating={item.rating} />}
-              <blockquote class="s-testimonial__quote"><p>{item.quote}</p></blockquote>
-              <figcaption class="s-testimonial__author">
-                {avatar && <Img src={avatar.image} alt="" kind="decorative" aspect={[1, 1]} focal={avatar.focal} widths={[96, 160]} sizes="48px" class="s-testimonial__avatar" />}
-                <span>
-                  <span class="s-testimonial__name">{item.author}</span>
-                  {item.role && <span class="s-testimonial__role">{item.role}</span>}
-                </span>
-              </figcaption>
-            </figure>
-          </Card>
-        );
-      })}
+            </div>
+            <blockquote class="s-testimonial__quote"><p>{item.quote}</p></blockquote>
+            <figcaption class="s-testimonial__author">
+              <Avatar author={item.author} avatar={item.avatar} />
+              <span>
+                <span class="s-testimonial__name">{item.author}</span>
+                {item.role && <span class="s-testimonial__role">{item.role}</span>}
+              </span>
+            </figcaption>
+          </figure>
+        </Card>
+      ))}
     </List>
   </Stack>
 </SectionShell>

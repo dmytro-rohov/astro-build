@@ -59,6 +59,10 @@ import PricingMinimal from "@/sections/pricing/Minimal.astro";
 import ServicesCards from "@/sections/services/Cards.astro";
 import ServicesPriceList from "@/sections/services/PriceList.astro";
 import TestimonialsCards from "@/sections/testimonials/Cards.astro";
+import TestimonialsCarousel from "@/sections/testimonials/Carousel.astro";
+import TestimonialsPortraits from "@/sections/testimonials/Portraits.astro";
+import TestimonialsQuoteCards from "@/sections/testimonials/QuoteCards.astro";
+import TestimonialsRating from "@/sections/testimonials/Rating.astro";
 import TestimonialsSpotlight from "@/sections/testimonials/Spotlight.astro";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,7 +73,7 @@ export const sectionComponents: Record<string, Record<string, SectionComponent>>
   about: { "image-side": AboutImageSide, centered: AboutCentered },
   services: { cards: ServicesCards, "price-list": ServicesPriceList },
   features: { "cards-grid": FeaturesCardsGrid, "icon-list": FeaturesIconList, "icon-badge": FeaturesIconBadge, staggered: FeaturesStaggered, orbit: FeaturesOrbit, spotlight: FeaturesSpotlight, bento: FeaturesBento },
-  testimonials: { cards: TestimonialsCards, spotlight: TestimonialsSpotlight },
+  testimonials: { cards: TestimonialsCards, spotlight: TestimonialsSpotlight, carousel: TestimonialsCarousel, portraits: TestimonialsPortraits, "quote-cards": TestimonialsQuoteCards, rating: TestimonialsRating },
   gallery: { grid: GalleryGrid, mosaic: GalleryGrid },
   pricing: { cards: PricingCards, compact: PricingCompact, "featured-center": PricingFeaturedCenter, table: PricingTable, split: PricingSplit, minimal: PricingMinimal },
   faq: { accordion: FaqAccordion, "two-column": FaqTwoColumn },

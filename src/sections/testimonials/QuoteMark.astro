@@ -1,0 +1,15 @@
+---
+/**
+ * Decorative opening quote mark: a filled shape, the same in every font (a “ glyph is a thin
+ * tick in grotesque fonts). Sized by CSS (width; the height follows), colored by currentcolor.
+ */
+export interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<svg class:list={["s-quote-mark", className]} viewBox="0 0 31 24" width="31" height="24" aria-hidden="true" focusable="false">
+  <path fill="currentColor" d="M13 17A6 6 0 1 1 1 17C1 9.5 5 4 12 1.5A1.6 1.6 0 0 1 13 4.5C9.5 6 7.5 8.5 7.2 11A6 6 0 0 1 13 17ZM30 17A6 6 0 1 1 18 17C18 9.5 22 4 29 1.5A1.6 1.6 0 0 1 30 4.5C26.5 6 24.5 8.5 24.2 11A6 6 0 0 1 30 17Z" />
+</svg>

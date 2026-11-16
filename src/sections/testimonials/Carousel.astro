@@ -1,0 +1,53 @@
+---
+/**
+ * One large quote at a time on a brand-colored panel (Slider: one item per view, a dot per
+ * review): the client's photo or a quote badge, stars, the quote and the author.
+ * A single review is the panel alone, without controls.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Avatar from "@/sections/testimonials/Avatar.astro";
+import QuoteMark from "@/sections/testimonials/QuoteMark.astro";
+import Stars from "@/sections/testimonials/Stars.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Slider from "@/components/widgets/Slider.astro";
+import { quoteSize } from "@/sections/testimonials/layout";
+import type { VariantOf } from "@/site/types";
+
+export interface Props {
+  section: VariantOf<"testimonials", "carousel">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const count = content.items.length;
+const List = count > 1 ? Slider : "ul";
+const listProps = count > 1 ? { label: content.title, single: true, dots: count, class: "s-carousel" } : { class: "s-carousel s-carousel--one" };
+---
+
+<SectionShell id={section.id} type="testimonials" variant="carousel" tone={props.tone} spacing={props.spacing} width="md">
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <List {...listProps}>
+      {content.items.map((item) => (
+        <li class="s-carousel__slide">
+          {item.avatar && <QuoteMark class="s-carousel__deco" />}
+          <figure class="s-carousel__figure">
+            {item.avatar ? (
+              <Avatar author={item.author} avatar={item.avatar} size="6rem" widths={[192, 288]} class="s-carousel__photo" />
+            ) : (
+              <span class="s-carousel__badge" aria-hidden="true"><QuoteMark /></span>
+            )}
+            {item.rating && <Stars rating={item.rating} />}
+            <blockquote class:list={["s-carousel__quote", `s-carousel__quote--${quoteSize(item.quote)}`]}><p>{item.quote}</p></blockquote>
+            <figcaption class="s-carousel__author">
+              <span class="s-carousel__name">{item.author}</span>
+              {item.role && <span class="s-carousel__role">{item.role}</span>}
+            </figcaption>
+          </figure>
+        </li>
+      ))}
+    </List>
+  </Stack>
+</SectionShell>
