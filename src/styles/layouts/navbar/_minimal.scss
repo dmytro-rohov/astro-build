@@ -17,8 +17,10 @@
     height: 3rem;
   }
 
+  // The button and Menu keep their width (the button does not wrap); a long name gives way.
   .navbar--overlay {
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     gap: var(--spacing-sm);
   }
