@@ -306,29 +306,4 @@
       width: auto;
     }
   }
-
-  // Topbar contacts inside the phone menu (v3.2); on wider screens the topbar shows them.
-  .navbar__contact {
-    display: grid;
-    gap: var(--spacing-xs);
-    margin: 0;
-    padding: var(--spacing-lg) 0 0;
-    list-style: none;
-    border-block-start: 1px solid var(--color-border-default);
-  }
-
-  .navbar__contact-link {
-    display: flex;
-    align-items: center;
-    min-height: 2.75rem;
-    padding-inline: var(--spacing-md);
-    color: var(--color-text-secondary);
-    text-decoration: none;
-  }
-
-  @include mq(md) {
-    .navbar__contact {
-      display: none;
-    }
-  }
 }

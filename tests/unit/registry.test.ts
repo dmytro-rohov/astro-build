@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { expect, test } from "vitest";
-import { layoutComponentPaths, sectionComponentPaths } from "../../src/site/components";
+import { layoutComponentPaths, navbarStylePaths, sectionComponentPaths } from "../../src/site/components";
 import { layoutTypes, sectionTypes } from "../../src/site/registry";
 
 test.each(sectionTypes.flatMap((type) => Object.keys(type.variants).map((variant) => [type.type, variant])))(
@@ -29,6 +29,13 @@ test("components.ts has no variant the schemas do not know", () => {
   const mapped = Object.entries(sectionComponentPaths).flatMap(([type, variants]) => Object.keys(variants).map((variant) => `${type}/${variant}`));
 
   expect(mapped.filter((entry) => !known.has(entry))).toEqual([]);
+});
+
+test("navbar style files exist and belong to known variants", () => {
+  for (const [variant, file] of Object.entries(navbarStylePaths)) {
+    expect(Object.keys(layoutTypes.navbar.variants), variant).toContain(variant);
+    expect(fs.existsSync(file.replace(/^@\//, "src/")), `${file} does not exist`).toBe(true);
+  }
 });
 
 test("every section type has a label, description and content schema", () => {

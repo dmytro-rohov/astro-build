@@ -5,11 +5,12 @@
  * - "virtual:section-components"  → { sectionComponents } for the variants the site uses
  *   (its components bring their styles, so unused variants add no CSS)
  * - "virtual:layout-components"   → { layoutComponents } the same for the footer variant
+ * - "virtual:navbar-style"         → imports the style file of the site's navbar variant (v3.5)
  * The site is re-validated whenever site.json or assets.json change (dev server).
  */
 import path from "node:path";
 import type { Plugin } from "vite";
-import { layoutComponentPaths, sectionComponentPaths } from "./components";
+import { layoutComponentPaths, navbarStylePaths, sectionComponentPaths } from "./components";
 import { loadSite } from "./loader";
 import type { Site } from "./schema/site";
 
@@ -17,6 +18,8 @@ const SITE_ID = "virtual:site";
 const ANALYTICS_ID = "virtual:site/analytics";
 const COMPONENTS_ID = "virtual:section-components";
 const LAYOUT_COMPONENTS_ID = "virtual:layout-components";
+const NAVBAR_STYLE_ID = "virtual:navbar-style";
+const IDS = [SITE_ID, ANALYTICS_ID, COMPONENTS_ID, LAYOUT_COMPONENTS_ID, NAVBAR_STYLE_ID];
 
 /** Imports the components of the section variants used on the site's pages, in registry order. */
 function sectionComponentsModule(site: Site): string {
@@ -63,14 +66,12 @@ export function siteVitePlugin(siteDir: string, options: { gaId: string }): Plug
   return {
     name: "mytko-site",
     resolveId(id) {
-      if (id === SITE_ID || id === ANALYTICS_ID || id === COMPONENTS_ID || id === LAYOUT_COMPONENTS_ID) {
+      if (IDS.includes(id)) {
         return resolved(id);
       }
     },
     load(id) {
-      const ids = [SITE_ID, ANALYTICS_ID, COMPONENTS_ID, LAYOUT_COMPONENTS_ID].map(resolved);
-
-      if (!ids.includes(id)) {
+      if (!IDS.some((known) => id === resolved(known))) {
         return;
       }
 
@@ -90,6 +91,11 @@ export function siteVitePlugin(siteDir: string, options: { gaId: string }): Plug
 
       if (id === resolved(LAYOUT_COMPONENTS_ID)) {
         return layoutComponentsModule(site);
+      }
+
+      if (id === resolved(NAVBAR_STYLE_ID)) {
+        const file = navbarStylePaths[site.layout.navbar.variant];
+        return file ? `import ${JSON.stringify(file)};` : "export {};";
       }
 
       return [

@@ -39,3 +39,6 @@ declare module "virtual:layout-components" {
   /** Layout element → the component of the site's variant (src/site/components.ts). */
   export const layoutComponents: Record<string, LayoutComponent>;
 }
+
+/** Imports the style file of the site's navbar variant, if it has one (src/site/components.ts). */
+declare module "virtual:navbar-style";

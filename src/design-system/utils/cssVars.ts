@@ -101,6 +101,7 @@ const lines = (values: Record<string, TokenValue>, indent = "  ") =>
 
 // Inverse sections use the OTHER scheme's palette, so headings, links, cards
 // and buttons inside them keep the contrast that was checked for that scheme.
+// v3.5: the brand-bar navbar takes the accent palette, the dark-bar navbar the dark one.
 const css = `/* AUTO-GENERATED FILE – DO NOT EDIT */
 /* Source: src/design-system/utils/cssVars.ts · site: ${site.siteId} · archetype: ${theme.archetypeId} */
 
@@ -117,7 +118,8 @@ ${lines(colorVars(theme.dark))}
 /* Footer (v3.5): tone "brand" and its brand surfaces (cta band, cards' contact card) get the accent palette like accent sections. */
 :root .section--tone-accent,
 :root .site-footer--tone-brand,
-:root .site-footer__brand-surface {
+:root .site-footer__brand-surface,
+:root .site-header--brand-bar {
 ${lines(colorVars(accentPalette(theme.light)))}
 }
 
@@ -128,7 +130,8 @@ ${lines(colorVars(theme.dark))}
 
 :root[data-theme="dark"] .section--tone-accent,
 :root[data-theme="dark"] .site-footer--tone-brand,
-:root[data-theme="dark"] .site-footer__brand-surface {
+:root[data-theme="dark"] .site-footer__brand-surface,
+:root[data-theme="dark"] .site-header--brand-bar {
 ${lines(colorVars(accentPalette(theme.dark)))}
 }
 
@@ -150,17 +153,19 @@ ${lines(colorVars(theme.light), "    ")}
 
   :root:not([data-theme]) .section--tone-accent,
   :root:not([data-theme]) .site-footer--tone-brand,
-  :root:not([data-theme]) .site-footer__brand-surface {
+  :root:not([data-theme]) .site-footer__brand-surface,
+  :root:not([data-theme]) .site-header--brand-bar {
 ${lines(colorVars(accentPalette(theme.dark)), "    ")}
   }
 }
 
-/* Cover hero, the photo viewer, dark footers and the footer's photo band: always the dark palette
-   (light text over dark), also in dark sites. */
+/* Cover hero, the photo viewer, the dark-bar navbar, dark footers and the footer's photo band:
+   always the dark palette (light text over dark), also in dark sites. */
 :root .section.s-hero--cover-image,
 :root .lightbox,
 :root .site-footer--tone-dark,
-:root .site-footer__band--image {
+:root .site-footer__band--image,
+:root .site-header--dark-bar {
   color-scheme: dark;
 ${lines(colorVars(theme.dark))}
 }

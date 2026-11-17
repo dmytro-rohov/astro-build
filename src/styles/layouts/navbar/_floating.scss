@@ -1,0 +1,73 @@
+// Navbar: floating — a rounded bar with a gap from the top and the edges.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // The header itself is a transparent strip; the bar is its inner row.
+  .site-header--floating {
+    padding-block-start: var(--spacing-sm);
+    background: transparent;
+    border-block-end: 0;
+    backdrop-filter: none;
+  }
+
+  // While the phone menu is open nothing of the page shows around the bar.
+  .site-header--floating:has(.navbar[data-open]) {
+    background: var(--color-background-primary);
+  }
+
+  .site-header--floating:has(.navbar[data-open]) .site-header__inner {
+    box-shadow: none;
+  }
+
+  .site-header--floating .site-header__inner {
+    min-height: 3.5rem;
+    padding-inline: var(--spacing-md) var(--spacing-xs);
+    background: var(--color-background-primary);
+    border: 1px solid var(--color-border-default);
+    border-radius: 1.75rem;
+    box-shadow: var(--elevation-dropdown);
+  }
+
+  // Everything in the capsule is round too, the button included (also on square-button archetypes).
+  .site-header--floating .navbar__link,
+  .site-header--floating .navbar__toggle,
+  .site-header--floating .navbar__cta {
+    border-radius: var(--radius-pill);
+  }
+
+  @include mq(md) {
+    .site-header--floating {
+      padding-block-start: var(--spacing-md);
+    }
+
+    // Translucent with blur on the bar itself (phones: see _header.scss).
+    .site-header--floating .site-header__inner {
+      max-width: 68rem;
+      margin-inline: auto;
+      padding-inline: var(--spacing-lg) var(--spacing-sm);
+      background: color-mix(in srgb, var(--color-background-primary) 92%, transparent);
+      backdrop-filter: blur(12px);
+    }
+
+    // A sticky bar moves closer to the top and lifts its shadow while the page scrolls
+    // (scroll-driven, no script). Only the bar moves, visually: the header keeps its place and
+    // height, nothing under it shifts.
+    @supports (animation-timeline: scroll()) {
+      @media (prefers-reduced-motion: no-preference) {
+        .site-header--floating.site-header--sticky .site-header__inner {
+          animation: floating-header-lift linear both;
+          animation-timeline: scroll();
+          animation-range: 0 8rem;
+        }
+      }
+    }
+  }
+
+  @keyframes floating-header-lift {
+    to {
+      box-shadow: var(--elevation-modal);
+      translate: 0 calc(var(--spacing-xs) - var(--spacing-md));
+    }
+  }
+}

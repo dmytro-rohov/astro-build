@@ -8,15 +8,15 @@ failed=()
 
 ARCHETYPES=("$@")
 [ ${#ARCHETYPES[@]} -gt 0 ] || ARCHETYPES=(default minimal elegant bold warm premium-dark corporate energetic)
-NAVBARS=(simple centered topbar)
-# v3.5: one footer variant per archetype (all eight covered), its tone rotating too.
+NAVBARS=(simple centered topbar brand-bar dark-bar split floating minimal)
+# v3.5: one navbar and one footer variant per archetype (all eight of each covered), the footer tone rotating too.
 FOOTERS=(columns simple centered cta-band cards contact-first big-name rounded-card)
 FOOTER_TONES=(auto light dark brand)
 LANGS=(pl en uk)
 
 for index in "${!ARCHETYPES[@]}"; do
   archetype="${ARCHETYPES[$index]}"
-  navbar="${NAVBARS[$((index % 3))]}"
+  navbar="${NAVBARS[$((index % ${#NAVBARS[@]}))]}"
   footer="${FOOTERS[$((index % ${#FOOTERS[@]}))]}"
   footer_tone="${FOOTER_TONES[$((index % ${#FOOTER_TONES[@]}))]}"
   lang="${LANGS[$((index % 3))]}"

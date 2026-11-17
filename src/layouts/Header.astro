@@ -60,7 +60,14 @@ const { phone, email } = site.business;
         <Logo size="header" />
       </a>
 
-      <Navbar items={navItems} cta={cta} menuButton={menuButton} contact={variant === "topbar" ? { phone, email } : undefined} />
+      <Navbar
+        items={navItems}
+        cta={cta}
+        menuButton={menuButton}
+        contact={variant === "topbar" ? { phone, email } : undefined}
+        split={variant === "split"}
+        overlay={variant === "minimal"}
+      />
     </div>
   </Container>
 </header>

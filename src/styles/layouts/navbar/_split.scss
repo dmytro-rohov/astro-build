@@ -1,0 +1,81 @@
+// Navbar: split — the logo in the middle, the links on both sides of it.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Phones: the two lists read as one; the button keeps its distance below them.
+  @include mq-down(md) {
+    .site-header--split .navbar__menu {
+      row-gap: var(--spacing-xs);
+    }
+
+    .site-header--split .navbar__item--cta {
+      display: grid;
+      justify-items: center;
+      justify-self: stretch;
+      margin-block-start: var(--spacing-lg);
+    }
+  }
+
+  // Tablets: the links after the logo, like the simple navbar, spaced as one list.
+  @include mq(md) {
+    .site-header--split .navbar__menu {
+      column-gap: var(--spacing-xs);
+    }
+
+    .site-header--split .navbar__item--cta {
+      margin-inline-start: var(--spacing-sm);
+    }
+  }
+
+  @include mq(lg) {
+    // Three columns of equal sides, so the logo sits in the middle of the screen. The nav and its
+    // menu span the row as subgrids: the first list takes the left column, the second (with the
+    // button) the right one.
+    .site-header--split .site-header__inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      min-height: 5rem;
+    }
+
+    .site-header--split .navbar,
+    .site-header--split .navbar__menu {
+      display: grid;
+      grid-template-columns: subgrid;
+      grid-area: 1 / 1 / 2 / -1;
+      align-items: center;
+      gap: normal;
+    }
+
+    // Above the nav, which spans its column too.
+    .site-header--split .site-header__brand {
+      position: relative;
+      z-index: 1;
+      grid-area: 1 / 2;
+      justify-content: center;
+      max-width: 18rem;
+      font-size: var(--font-size-xl);
+      text-align: center;
+      text-wrap: balance;
+    }
+
+    .site-header--split .logo--header {
+      height: 3rem;
+    }
+
+    .site-header--split .navbar__link {
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .site-header--split .navbar__list {
+      grid-column: 3;
+      justify-content: flex-end;
+    }
+
+    .site-header--split .navbar__list--start {
+      grid-column: 1;
+      justify-content: flex-start;
+    }
+  }
+}
