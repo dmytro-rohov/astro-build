@@ -6,7 +6,7 @@
   // v3.4: the card has the section's background, so it reads as a notch cut out of the photo; its
   // inner corner takes the image radius. The photo fills what the headline leaves of the screen.
   .s-hero--offset-card {
-    align-content: stretch;
+    --hero-align: stretch;
   }
 
   .s-hero--offset-card > .container {
@@ -27,8 +27,13 @@
   .s-hero-offset__header .s-header__title {
     max-width: 15ch;
     font-size: clamp(var(--font-size-4xl), 6.5vw, var(--font-size-7xl));
-    line-height: 1.02;
+    line-height: 1.08;
     text-wrap: balance;
+  }
+
+  .s-hero-offset--long .s-hero-offset__header .s-header__title {
+    max-width: 20ch;
+    font-size: clamp(var(--font-size-3xl), 4.5vw, var(--font-size-6xl));
   }
 
   .s-hero-offset__media {
@@ -84,8 +89,7 @@
       --overlap: clamp(5rem, 12svh, 9rem);
 
       grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-      column-gap: var(--spacing-3xl);
-      row-gap: 0;
+      gap: 0 var(--spacing-3xl);
     }
 
     .s-hero-offset--with-image {

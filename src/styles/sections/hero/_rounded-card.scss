@@ -8,8 +8,8 @@
   // text (container units of the arch).
   .s-hero--rounded-card {
     --round-inset: var(--spacing-sm);
+    --hero-align: stretch;
 
-    align-content: stretch;
     padding-block: var(--round-inset);
   }
 
@@ -22,8 +22,7 @@
     position: relative;
     isolation: isolate;
     display: grid;
-    align-items: end;
-    justify-items: center;
+    place-items: end center;
     min-height: calc(var(--hero-min-height) - var(--round-inset) * 2);
     padding-block-start: calc(var(--spacing-4xl) * var(--section-fluid));
     overflow: clip;
@@ -75,8 +74,13 @@
     max-width: 14ch;
     margin-inline: auto;
     font-size: clamp(var(--font-size-4xl), 5.5vw, var(--font-size-7xl));
-    line-height: 1.02;
+    line-height: 1.08;
     text-wrap: balance;
+  }
+
+  .s-hero-round--long .s-hero-round__header .s-header__title {
+    max-width: 20ch;
+    font-size: clamp(var(--font-size-3xl), 3.5vw, var(--font-size-5xl));
   }
 
   .s-hero-round__header .s-header__description {

@@ -10,7 +10,8 @@
   }
 
   .s-hero--band.s-hero-band--with-image {
-    align-content: stretch;
+    --hero-align: stretch;
+
     padding-block-end: 0;
   }
 
@@ -37,7 +38,7 @@
     max-width: 18ch;
     margin-inline: auto;
     font-size: clamp(var(--font-size-4xl), 6vw, var(--font-size-7xl));
-    line-height: 1.02;
+    line-height: 1.08;
     text-wrap: balance;
   }
 

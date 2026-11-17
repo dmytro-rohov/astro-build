@@ -7,13 +7,14 @@
 
   // v3.2: the hero fills the first screen (minus the sticky header, measured by BaseLayout)
   // and centers its content; the panel and cover variants set the same height themselves.
+  // v3.4: variants whose photo takes the rest of the screen stretch instead (--hero-align).
   .s-hero {
     --hero-min-height: calc(100svh - var(--header-offset, 4.5rem));
   }
 
   .s-hero:not(.s-hero--panel) {
     display: grid;
-    align-content: center;
+    align-content: var(--hero-align, center);
     min-height: var(--hero-min-height);
   }
 

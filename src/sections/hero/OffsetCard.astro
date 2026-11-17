@@ -9,6 +9,7 @@ import SectionHeader from "@/sections/_shared/SectionHeader.astro";
 import Actions from "@/sections/_shared/Actions.astro";
 import Img from "@/components/media/Img.astro";
 import { getAsset } from "@/site/assets";
+import { titleScale } from "@/sections/hero/layout";
 import type { VariantOf } from "@/site/types";
 import "@/styles/sections/hero/_offset-card.scss";
 
@@ -24,7 +25,7 @@ const hasCard = Boolean(content.description || content.primaryAction || content.
 ---
 
 <SectionShell id={section.id} type="hero" variant="offset-card" tone={props.tone} spacing={props.spacing} defaultSpacing="md" width="xl">
-  <div class:list={["s-hero-offset", image ? "s-hero-offset--with-image" : "s-hero-offset--no-image"]}>
+  <div class:list={["s-hero-offset", `s-hero-offset--${titleScale(content.title)}`, image ? "s-hero-offset--with-image" : "s-hero-offset--no-image"]}>
     <SectionHeader eyebrow={content.eyebrow} title={content.title} headingLevel={headingLevel} class="s-hero-offset__header" />
     {image && (
       <div class="s-hero-offset__media">

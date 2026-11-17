@@ -5,8 +5,8 @@
 @layer widgets {
   // v3.4: the word, the photo and the word's front copy share one grid cell. The type size comes
   // from the stage width and the word's length (--chars, a class per length) so the word always
-  // fills one line; the photo is sized from it. The front copy shows only the letters' lower
-  // part, so they pass in front of the photo there and behind it above.
+  // fills one line; the photo is sized from it. The front copy is cut to the photo's width and
+  // only outlined, so the letters run on across the photo without hiding it.
   .s-hero-word {
     display: grid;
     justify-items: center;
@@ -16,7 +16,8 @@
   }
 
   .s-hero-word__stage {
-    --word-size: min(100cqi / (var(--chars, 6) * 0.78), 16rem);
+    --word-size: min(100cqi / (var(--chars, 6) * 0.78), 36svh, 20rem);
+    --photo-width: clamp(8rem, var(--word-size) * 1.2, 21rem);
 
     container-type: inline-size;
     display: grid;
@@ -44,7 +45,7 @@
 
   .s-hero-word__photo {
     z-index: 1;
-    width: clamp(7rem, var(--word-size) * 1.1, 20rem);
+    width: var(--photo-width);
   }
 
   .s-hero-word__image {
@@ -57,13 +58,17 @@
 
   .s-hero-word__word--front {
     z-index: 2;
-    clip-path: inset(62% 0 0);
+    color: transparent;
+    -webkit-text-stroke: max(2px, 0.012em) var(--color-primitive-white);
+    clip-path: inset(0 calc(50% - var(--photo-width) / 2));
+    filter: drop-shadow(0 1px 3px rgb(0 0 0 / 40%));
     pointer-events: none;
   }
 
-  // Without a photo the word carries the brand color, top to bottom.
+  // Without a photo the word carries the brand color, mixed towards the text color so even a light
+  // accent (amber, lime) keeps 3:1 as large text.
   .s-hero-word:not(.s-hero-word--with-image) .s-hero-word__word {
-    color: var(--color-action-primary);
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
   }
 
   .s-hero-word__header {

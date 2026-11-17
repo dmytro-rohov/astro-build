@@ -7,7 +7,7 @@
   // on its lower edge, the headline and the text share the row under it. The block fills the
   // first screen: the photo row takes whatever the text leaves.
   .s-hero--title-below {
-    align-content: stretch;
+    --hero-align: stretch;
   }
 
   .s-hero--title-below > .container {
@@ -27,8 +27,13 @@
   .s-hero-below__header .s-header__title {
     max-width: 16ch;
     font-size: clamp(var(--font-size-4xl), 6vw, var(--font-size-7xl));
-    line-height: 1.02;
+    line-height: 1.08;
     text-wrap: balance;
+  }
+
+  .s-hero-below--long .s-hero-below__header .s-header__title {
+    max-width: 22ch;
+    font-size: clamp(var(--font-size-3xl), 4.5vw, var(--font-size-6xl));
   }
 
   .s-hero-below__description {
@@ -76,7 +81,7 @@
   }
 
   .s-hero-below__card .s-highlights {
-    grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr));
     gap: var(--spacing-md);
     padding: 0;
     border: 0;
@@ -86,9 +91,13 @@
     font-size: var(--font-size-2xl);
   }
 
+  .s-hero-below--no-image .s-hero-below__media {
+    align-content: center;
+    padding-block: var(--spacing-xl);
+  }
+
   .s-hero-below--no-image .s-hero-below__card {
     margin-block-start: 0;
-    align-self: center;
   }
 
   @include mq(md) {
@@ -101,11 +110,10 @@
   // the text below — the text under a hairline, aligned with the headline's last line.
   @include mq(lg) {
     .s-hero-below {
-      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-      grid-template-rows: minmax(18rem, 1fr) auto;
-      grid-template-areas:
-        "media media"
-        "header text";
+      grid-template:
+        "media media" minmax(18rem, 1fr)
+        "header text" auto
+        / minmax(0, 3fr) minmax(0, 2fr);
       gap: var(--spacing-2xl) var(--spacing-3xl);
     }
 
@@ -134,8 +142,7 @@
     }
 
     .s-hero-below__card {
-      align-self: end;
-      justify-self: start;
+      place-self: end start;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -161,7 +168,8 @@
     }
 
     .s-hero-below--no-image .s-hero-below__card {
-      align-self: center;
+      place-self: center;
+      margin-block: 0;
     }
   }
 }

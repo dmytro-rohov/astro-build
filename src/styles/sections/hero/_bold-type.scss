@@ -30,7 +30,9 @@
   .s-hero-bold__headline {
     font-family: var(--font-family-heading);
     font-size: var(--bold-size);
-    line-height: 0.92;
+
+    // Room for Polish accents over capitals (Ń, Ż) under the line above.
+    line-height: 1.1;
     text-wrap: balance;
   }
 
@@ -84,6 +86,10 @@
 
   .s-hero-bold__link {
     justify-self: start;
+    min-height: 0;
+    padding-inline: 0;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
   }
 
   .s-hero-bold__image {
@@ -95,10 +101,10 @@
 
   // The facts close the hero as a bar in the text color (light on dark, dark on light).
   .s-hero-bold .s-highlights {
-    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-    gap: var(--spacing-md) var(--spacing-xl);
+    grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
+    gap: var(--spacing-md);
     margin-block-start: var(--spacing-md);
-    padding: var(--spacing-lg) var(--spacing-xl);
+    padding: var(--spacing-lg);
     color: var(--color-background-primary);
     background: var(--color-text-primary);
     border: 0;
@@ -111,7 +117,7 @@
   }
 
   .s-hero-bold .s-highlights__value {
-    font-size: var(--font-size-4xl);
+    font-size: var(--font-size-2xl);
     letter-spacing: -0.02em;
   }
 
@@ -119,7 +125,7 @@
   // narrow column on the right, the facts bar across the bottom.
   @include mq(lg) {
     .s-hero-bold {
-      grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
+      grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem);
       grid-template-rows: auto auto auto 1fr auto;
       column-gap: var(--spacing-3xl);
     }
@@ -143,7 +149,6 @@
     .s-hero-bold__link {
       grid-column: 2;
       grid-row: 3;
-      margin-inline-start: calc(var(--spacing-xl) * -1);
     }
 
     .s-hero-bold__media {
@@ -157,7 +162,12 @@
       grid-row: 5;
       display: flex;
       justify-content: space-between;
-      padding-inline: var(--spacing-2xl);
+      gap: var(--spacing-xl);
+      padding: var(--spacing-lg) var(--spacing-2xl);
+    }
+
+    .s-hero-bold .s-highlights__value {
+      font-size: var(--font-size-4xl);
     }
 
     .s-hero-bold .s-highlights__item {
