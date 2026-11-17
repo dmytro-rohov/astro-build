@@ -1,0 +1,59 @@
+// Navbar: topbar — phone and e-mail in a thin bar above the header.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .site-header__topbar {
+    border-block-end: 1px solid var(--color-border-default);
+    font-size: var(--font-size-sm);
+  }
+
+  // v3.2: on phones the topbar's phone and e-mail move into the menu.
+  @include mq-down(md) {
+    .site-header__topbar {
+      display: none;
+    }
+  }
+
+  .site-header__contact {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--spacing-xs) var(--spacing-lg);
+    padding-block: var(--spacing-xs);
+    margin: 0;
+    list-style: none;
+  }
+
+  // Phones: only the phone number (a long email would wrap); the email is in the footer.
+  @include mq-down(sm) {
+    .site-header__contact-secondary {
+      display: none;
+    }
+  }
+
+  // Topbar contacts inside the phone menu (v3.2); on wider screens the topbar shows them.
+  .navbar__contact {
+    display: grid;
+    gap: var(--spacing-xs);
+    margin: 0;
+    padding: var(--spacing-lg) 0 0;
+    list-style: none;
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .navbar__contact-link {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-inline: var(--spacing-md);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+  }
+
+  @include mq(md) {
+    .navbar__contact {
+      display: none;
+    }
+  }
+}

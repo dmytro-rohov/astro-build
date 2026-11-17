@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **18 section types, 104 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **18 section types, 104 variants**, 8 navbars and 3 footers, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -176,7 +176,7 @@ the migrated site is validated like any build.
 | `logo-cloud` | `row` (muted, balanced rows), `grid` (light tiles), `coverflow` (3D carousel, big card in the middle; 2–3 logos as a still fan), `split-image` (photo beside the title and tiles, pages of six with dots), `marquee` (endless band between rules: pauses on hover, focus and a button, still for reduced motion), `color-tiles` (logos knocked out white on strong tiles from the accent, `palette` brand / spectrum) — partner / client logos, SVG or PNG, sized by their proportions; a white plate behind a logo melts into the background; optional `image` for `split-image` |
 | `embed` | `full`, `split` (OpenStreetMap, Google Maps, YouTube, Vimeo, Calendly — see below) |
 | `suggestion` | `box` (preview only, never published: a recommended section the generator cannot build yet — why it helps, what is missing, links to add or dismiss it) |
-| layout `navbar` | `simple`, `centered`, `topbar` (phone/email bar) |
+| layout `navbar` | `simple`, `centered`, `topbar` (phone/email bar), `brand-bar` (whole bar in the brand colour, outlined button), `dark-bar` (dark on every site, name in a brand block, links as cells), `split` (logo in the middle, links on both sides), `floating` (rounded bar with a gap and a shadow, compact while scrolling), `minimal` (large name, full-screen menu on every screen) — shared props `sticky`, `hideOnScroll`, `menuButton`; each variant's styles load only on its site |
 | layout `footer` | `columns`, `simple`, `centered` |
 
 **Rules:** at most one `contact` and one `faq` section per page; the first section of a page
@@ -889,6 +889,9 @@ debug mode, immutable font caching). CI runs it on every pull request.
 
 Current version: **v3.4** (`3.4.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
 starter is kept on the `v2` branch / tag `v2.0.0`.
+
+v3.5: five new navbars — `brand-bar`, `dark-bar`, `split`, `floating`, `minimal`; navbar styles
+load per variant (`virtual:navbar-style`).
 
 v3.4: 104 variants — six new hero layouts (`title-below`, `band`, `offset-card`, `rounded-card`,
 `bold-type`, `giant-word`; new optional `word`) and five new about layouts (`textured`,

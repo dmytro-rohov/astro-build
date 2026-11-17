@@ -8,13 +8,13 @@ failed=()
 
 ARCHETYPES=("$@")
 [ ${#ARCHETYPES[@]} -gt 0 ] || ARCHETYPES=(default minimal elegant bold warm premium-dark corporate energetic)
-NAVBARS=(simple centered topbar)
+NAVBARS=(simple centered topbar brand-bar dark-bar split floating minimal)
 FOOTERS=(columns simple centered)
 LANGS=(pl en uk)
 
 for index in "${!ARCHETYPES[@]}"; do
   archetype="${ARCHETYPES[$index]}"
-  navbar="${NAVBARS[$((index % 3))]}"
+  navbar="${NAVBARS[$((index % ${#NAVBARS[@]}))]}"
   footer="${FOOTERS[$((index % 3))]}"
   lang="${LANGS[$((index % 3))]}"
   # Cyrillic needs a font pair with Cyrillic glyphs; archetypes without one use Polish.

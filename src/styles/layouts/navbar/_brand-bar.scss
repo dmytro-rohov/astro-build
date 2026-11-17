@@ -1,0 +1,47 @@
+// Navbar: brand-bar — the whole bar in the brand colour.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // The header takes the accent palette (src/design-system/utils/cssVars.ts): background is the
+  // brand colour, text the ink checked on it — the full-screen phone menu included. Solid, never
+  // translucent: what scrolls under the bar would change the checked contrast.
+  .site-header--brand-bar {
+    --brand-bar-tint: color-mix(in srgb, var(--color-text-primary) 14%, transparent);
+
+    background: var(--color-background-primary);
+    border-block-end-color: transparent;
+    backdrop-filter: none;
+  }
+
+  // A logo file is drawn for light backgrounds: on a dark brand colour it gets a light tile.
+  .site-header--brand-bar .logo {
+    padding: 0.25rem 0.5rem;
+    background: var(--logo-tile);
+    border-radius: var(--radius-control);
+  }
+
+  // Muted backgrounds equal the brand colour here: hover and the current page get an ink tint.
+  .site-header--brand-bar .navbar__link:hover,
+  .site-header--brand-bar .navbar__link[aria-current="page"],
+  .site-header--brand-bar .navbar__toggle:hover {
+    background: var(--brand-bar-tint);
+  }
+
+  .site-header--brand-bar .navbar__link[aria-current="page"] {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  // Outlined button in the ink colour, filled on hover (ink with brand-coloured text).
+  .site-header--brand-bar .navbar__cta {
+    color: var(--color-text-primary);
+    background: transparent;
+    border-color: currentcolor;
+  }
+
+  .site-header--brand-bar .navbar__cta:hover {
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    border-color: var(--color-action-primary);
+  }
+}

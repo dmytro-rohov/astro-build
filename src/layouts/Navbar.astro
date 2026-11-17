@@ -22,6 +22,10 @@ export interface Props {
   contact?: { phone?: string; email?: string };
   /** Phone menu button: the word "Menu" with the icon, or the icon alone (v3.3). */
   menuButton?: "label" | "icon";
+  /** v3.5 "split": the links in two lists, on both sides of the centered logo (wide screens). */
+  split?: boolean;
+  /** v3.5 "minimal": the full-screen menu on every screen; the button stays in the bar. */
+  overlay?: boolean;
   label?: string;
   class?: string;
 }
@@ -31,6 +35,8 @@ const {
   cta,
   contact,
   menuButton = "label",
+  split = false,
+  overlay = false,
   label = t.nav.label,
   class: className,
   ...restProps
@@ -52,17 +58,36 @@ function isActiveLink(href: string) {
 
   return normalizePath(href) === normalizePath(currentPath);
 }
+
+// Split navbar: the first half of the links left of the logo, the rest and the button (the last
+// item of the second list) right of it.
+const lists = split && items.length > 1
+  ? [items.slice(0, Math.ceil(items.length / 2)), items.slice(Math.ceil(items.length / 2))]
+  : [items];
 ---
 
 <nav
   {...restProps}
   class:list={[
     "navbar",
+    split && "navbar--split",
+    overlay && "navbar--overlay",
     className,
   ]}
   aria-label={label}
   data-navbar
 >
+  {overlay && cta && (
+    <Button
+      href={cta.href}
+      external={cta.external}
+      size="sm"
+      class="navbar__cta navbar__cta--bar"
+    >
+      {cta.label}
+    </Button>
+  )}
+
   <button
     class:list={["navbar__toggle", `navbar__toggle--${menuButton}`]}
     type="button"
@@ -79,23 +104,32 @@ function isActiveLink(href: string) {
   </button>
 
   <div class="navbar__menu" id="navbar-menu" data-navbar-menu>
-    <ul class="navbar__list">
-      {items.map((item) => (
-        <li class="navbar__item">
-          <Link
-            href={item.href}
-            external={item.external}
-            variant="nav"
-            class="navbar__link"
-            aria-current={isActiveLink(item.href) ? "page" : undefined}
-          >
-            {item.label}
-          </Link>
-        </li>
-      ))}
-    </ul>
+    {lists.map((list, index) => (
+      <ul class:list={["navbar__list", lists.length > 1 && (index === 0 ? "navbar__list--start" : "navbar__list--end")]}>
+        {list.map((item) => (
+          <li class="navbar__item">
+            <Link
+              href={item.href}
+              external={item.external}
+              variant="nav"
+              class="navbar__link"
+              aria-current={isActiveLink(item.href) ? "page" : undefined}
+            >
+              {item.label}
+            </Link>
+          </li>
+        ))}
+        {split && cta && index === lists.length - 1 && (
+          <li class="navbar__item navbar__item--cta">
+            <Button href={cta.href} external={cta.external} size="sm" class="navbar__cta">
+              {cta.label}
+            </Button>
+          </li>
+        )}
+      </ul>
+    ))}
 
-    {cta && (
+    {!split && cta && (
       <Button
         href={cta.href}
         external={cta.external}

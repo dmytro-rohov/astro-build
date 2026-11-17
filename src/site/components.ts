@@ -148,3 +148,18 @@ export const sectionComponentPaths: Record<string, Record<string, string>> = {
     box: "@/sections/suggestion/Box.astro",
   },
 };
+
+/**
+ * v3.5: navbar styles per variant (src/styles/layouts/navbar/). A build imports only the one its
+ * site uses ("virtual:navbar-style"); the header and the phone menu every variant shares stay in
+ * main.scss. A variant without an entry ("simple") needs nothing more.
+ */
+export const navbarStylePaths: Record<string, string> = {
+  centered: "@/styles/layouts/navbar/_centered.scss",
+  topbar: "@/styles/layouts/navbar/_topbar.scss",
+  "brand-bar": "@/styles/layouts/navbar/_brand-bar.scss",
+  "dark-bar": "@/styles/layouts/navbar/_dark-bar.scss",
+  split: "@/styles/layouts/navbar/_split.scss",
+  floating: "@/styles/layouts/navbar/_floating.scss",
+  minimal: "@/styles/layouts/navbar/_minimal.scss",
+};

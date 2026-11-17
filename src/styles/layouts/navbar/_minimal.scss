@@ -1,0 +1,118 @@
+// Navbar: minimal — a large name, the button and Menu; the full-screen menu on every screen.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .site-header--minimal .site-header__inner {
+    min-height: 4.5rem;
+  }
+
+  .site-header--minimal .site-header__brand {
+    font-size: clamp(var(--font-size-xl), 1rem + 1.5vw, var(--font-size-3xl));
+    letter-spacing: -0.02em;
+  }
+
+  .site-header--minimal .logo--header {
+    height: 3rem;
+  }
+
+  .navbar--overlay {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
+  .navbar--overlay .navbar__cta--bar {
+    width: auto;
+  }
+
+  // The button sits in the bar from 640px; narrower screens show it in the menu instead.
+  @include mq-down(sm) {
+    .navbar--overlay .navbar__cta--bar {
+      display: none;
+    }
+  }
+
+  @include mq(sm) {
+    .navbar--overlay .navbar__menu .navbar__cta {
+      display: none;
+    }
+  }
+
+  @include mq(md) {
+    // No translucent blur: it would make the fixed menu relative to the header (see _header.scss).
+    .site-header--minimal {
+      background: var(--color-background-primary);
+      backdrop-filter: none;
+    }
+
+    // Wide screens keep the phone menu (_navbar.scss) with larger links. Without JavaScript the
+    // links stay inline, as on phones.
+    @media (scripting: enabled) {
+      html:has(.navbar--overlay[data-open]) {
+        overflow: hidden;
+      }
+
+      .navbar--overlay .navbar__toggle {
+        display: inline-flex;
+      }
+
+      .navbar--overlay .navbar__menu {
+        position: fixed;
+        inset: var(--header-offset, 4.5rem) 0 0;
+        flex-flow: column nowrap;
+        align-items: center;
+        justify-content: flex-start;
+        gap: var(--spacing-xl);
+        padding: var(--spacing-2xl) var(--spacing-md);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        background: var(--color-background-primary);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-0.75rem);
+        transition:
+          opacity var(--motion-duration-slow) var(--motion-easing-emphasized),
+          transform var(--motion-duration-slow) var(--motion-easing-emphasized),
+          visibility 0s linear var(--motion-duration-slow);
+      }
+
+      .navbar--overlay .navbar__menu > :first-child {
+        margin-block-start: auto;
+      }
+
+      .navbar--overlay .navbar__menu > :last-child {
+        margin-block-end: auto;
+      }
+
+      .navbar--overlay .navbar__list {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .navbar--overlay .navbar__menu .navbar__item {
+        opacity: 0;
+        transform: translateY(0.5rem);
+        transition:
+          opacity var(--motion-duration-normal) var(--motion-easing-emphasized),
+          transform var(--motion-duration-normal) var(--motion-easing-emphasized);
+      }
+
+      .navbar--overlay .navbar__link {
+        min-height: 4rem;
+        padding-inline: var(--spacing-lg);
+        font-family: var(--font-family-heading);
+        font-size: clamp(var(--font-size-2xl), 1rem + 2vw, var(--font-size-4xl));
+        letter-spacing: -0.02em;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .navbar--overlay .navbar__menu,
+    .navbar--overlay .navbar__menu .navbar__item {
+      transform: none;
+      transition-duration: 0s;
+    }
+  }
+}

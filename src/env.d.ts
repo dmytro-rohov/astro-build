@@ -31,3 +31,6 @@ declare module "virtual:section-components" {
   /** Section type → variant → component, for the variants used on the site (src/site/components.ts). */
   export const sectionComponents: Record<string, Record<string, SectionComponent>>;
 }
+
+/** Imports the style file of the site's navbar variant, if it has one (src/site/components.ts). */
+declare module "virtual:navbar-style";

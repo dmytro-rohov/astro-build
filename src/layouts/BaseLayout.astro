@@ -19,6 +19,8 @@ import {
   type BreadcrumbItem,
 } from "@/lib/seo/schema";
 import "@/styles/main.scss";
+// v3.5: the navbar variant's own styles, after main.scss (they refine the shared header).
+import "virtual:navbar-style";
 
 export interface Props {
   title?: string;

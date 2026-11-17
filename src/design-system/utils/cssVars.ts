@@ -101,6 +101,7 @@ const lines = (values: Record<string, TokenValue>, indent = "  ") =>
 
 // Inverse sections use the OTHER scheme's palette, so headings, links, cards
 // and buttons inside them keep the contrast that was checked for that scheme.
+// v3.5: the brand-bar navbar takes the accent palette, the dark-bar navbar the dark one.
 const css = `/* AUTO-GENERATED FILE – DO NOT EDIT */
 /* Source: src/design-system/utils/cssVars.ts · site: ${site.siteId} · archetype: ${theme.archetypeId} */
 
@@ -114,7 +115,8 @@ ${lines(flatTokens)}
 ${lines(colorVars(theme.dark))}
 }
 
-:root .section--tone-accent {
+:root .section--tone-accent,
+:root .site-header--brand-bar {
 ${lines(colorVars(accentPalette(theme.light)))}
 }
 
@@ -123,7 +125,8 @@ ${lines(colorVars(accentPalette(theme.light)))}
 ${lines(colorVars(theme.dark))}
 }
 
-:root[data-theme="dark"] .section--tone-accent {
+:root[data-theme="dark"] .section--tone-accent,
+:root[data-theme="dark"] .site-header--brand-bar {
 ${lines(colorVars(accentPalette(theme.dark)))}
 }
 
@@ -143,14 +146,16 @@ ${lines(colorVars(theme.dark), "    ")}
 ${lines(colorVars(theme.light), "    ")}
   }
 
-  :root:not([data-theme]) .section--tone-accent {
+  :root:not([data-theme]) .section--tone-accent,
+  :root:not([data-theme]) .site-header--brand-bar {
 ${lines(colorVars(accentPalette(theme.dark)), "    ")}
   }
 }
 
-/* Cover hero and the photo viewer: always the dark palette (light text over dark), also in dark sites. */
+/* Cover hero, the photo viewer and the dark-bar navbar: always the dark palette (light text over dark), also in dark sites. */
 :root .section.s-hero--cover-image,
-:root .lightbox {
+:root .lightbox,
+:root .site-header--dark-bar {
   color-scheme: dark;
 ${lines(colorVars(theme.dark))}
 }
