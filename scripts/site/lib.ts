@@ -83,25 +83,60 @@ export const buildSite = (context: SiteContext, quiet = false) => runBuild(conte
 
 export const distDir = (context: SiteContext) => path.join(context.out, "dist");
 
-/** Starts server.mjs for a built site and resolves when it answers. */
-export async function serve(context: SiteContext, port: number): Promise<{ url: string; stop: () => void }> {
+/** Port for serve(): --port or SITE_PORT, else 0 — a free port chosen by the system. */
+const servePort = () => Number(getFlag("port") ?? process.env.SITE_PORT ?? 0);
+
+/**
+ * Starts server.mjs for a built site and resolves with its URL once it listens. Reports may run in
+ * parallel (the generator), so the port is a free one unless --port / SITE_PORT asks for one. The
+ * URL comes from the child's own "listening" line: requests reach this site, never another server
+ * on a taken port. A child that exits before or while serving stops the run loudly.
+ */
+export function serve(context: SiteContext, port = servePort()): Promise<{ url: string; stop: () => void }> {
+  const site = context.loaded.site.siteId;
   const child: ChildProcess = spawn("node", ["server.mjs", String(port)], {
     env: { ...process.env, OUT_DIR: distDir(context), HOST: "localhost", SITE_DIR: context.dir },
-    stdio: "ignore",
+    stdio: ["ignore", "pipe", "pipe"],
   });
-  const url = `http://localhost:${port}`;
+  let output = "";
+  let serving = false;
+  let stopped = false;
+  const stop = () => {
+    stopped = true;
+    child.kill();
+  };
 
-  for (let attempt = 0; attempt < 60; attempt++) {
-    try {
-      if ((await fetch(url)).ok) return { url, stop: () => child.kill() };
-    } catch {
-      // not up yet
-    }
-    await new Promise((resolve) => setTimeout(resolve, 250));
-  }
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      stop();
+      reject(new Error(`Server for ${site} did not start:\n${output.trim()}`));
+    }, 15_000);
 
-  child.kill();
-  throw new Error(`Server for ${context.loaded.site.siteId} did not start on ${url}`);
+    // Kept reading while serving, so the child never blocks on a full pipe.
+    const read = (chunk: Buffer) => {
+      if (serving) return;
+      output += chunk;
+      const url = /Server listening on (http:\/\/\S+)/.exec(output)?.[1];
+      if (!url) return;
+      serving = true;
+      clearTimeout(timer);
+      resolve({ url, stop });
+    };
+    child.stdout?.on("data", read);
+    child.stderr?.on("data", read);
+    child.on("error", reject);
+
+    child.on("exit", (code, signal) => {
+      if (stopped) return;
+      clearTimeout(timer);
+      const error = `✖ Server for ${site} exited ${serving ? "while serving" : "before it listened"} (${signal ?? `code ${code}`}):\n${output.trim()}`;
+      if (!serving) reject(new Error(error));
+      else {
+        console.error(error);
+        process.exit(1);
+      }
+    });
+  });
 }
 
 export const pagesOf = (context: SiteContext) => context.loaded.site.pages.map((page) => ({ id: page.id, slug: page.slug, title: page.title }));

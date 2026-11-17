@@ -1,6 +1,6 @@
 /**
  * PNG screenshots (desktop 1440×900 and mobile Pixel 7, full page) of every page.
- * Usage: npm run site:screenshot -- --site sites/_demo [--out dir] [--no-build]
+ * Usage: npm run site:screenshot -- --site sites/_demo [--out dir] [--no-build] [--port n]
  * Output: <out>/screenshots/<page-id>-desktop.png, <page-id>-mobile.png
  */
 import path from "node:path";
@@ -65,7 +65,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   if (!process.argv.includes("--no-build") && !buildSite(context)) process.exit(1);
 
-  const server = await serve(context, 4592);
+  const server = await serve(context);
   try {
     const files = await takeScreenshots(context, server.url);
     console.log(`✔ ${files.length * 2} screenshots in ${path.join(context.out, "screenshots")}`);

@@ -9,6 +9,7 @@ import { dir, ogLocale, pageTitle, t } from "@/i18n";
 import { siteTheme } from "@/site/theme";
 import { fontPreloads } from "@/design-system/fonts.generated";
 import { hasSvgFavicon } from "@/design-system/appIcons.generated";
+import { EditorBridge, editorOrigin } from "virtual:editor-bridge";
 import {
   breadcrumbSchema,
   organizationSchema,
@@ -186,6 +187,7 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
     <CookieConsent />
     <Counters />
     <span hidden data-mytko-console={t.footer.console}></span>
+    {EditorBridge && <EditorBridge origin={editorOrigin} />}
     <script>
       // The sticky header's real height: the hero fills the rest of the first screen (--header-offset)
       // and the phone menu opens right under the header.

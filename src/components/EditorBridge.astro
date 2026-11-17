@@ -1,0 +1,82 @@
+---
+/**
+ * v3.6: editor preview bridge, only in preview builds for the factory editor (PREVIEW_EDITOR_ORIGIN,
+ * "virtual:editor-bridge"; production builds do not import it). In the editor's iframe the page
+ * lists its sections, follows the panel (section order and visibility without a reload, the section
+ * in focus) and reports clicks on sections. Messages go to the editor's origin only, and only the
+ * editor (the parent window, its origin) is listened to. Opened outside a frame, the page works as
+ * usual. Protocol: README "Editor Preview Bridge".
+ */
+import "@/styles/state/_editor-bridge.scss";
+
+interface Props {
+  /** The editor's origin, e.g. https://factory.mytko.dev. */
+  origin: string;
+}
+
+const { origin } = Astro.props;
+---
+
+<span hidden data-editor-origin={origin}></span>
+
+<script>
+  import { parseEditorMessage, sectionOrder, type BridgeSection } from "@/site/editor-bridge";
+
+  const FOCUS = "is-editor-focus";
+  // The page's sections (SectionShell) in their current order.
+  const sections = () => [...document.querySelectorAll<HTMLElement>("main > [data-section-type]")];
+
+  function start(origin: string) {
+    const post = (message: object) => window.parent.postMessage(message, origin);
+    let focused: HTMLElement | undefined;
+
+    post({
+      type: "factory:ready",
+      page: location.pathname,
+      sections: sections().map((section): BridgeSection => ({
+        id: section.id,
+        type: section.dataset.sectionType ?? "",
+        variant: section.dataset.sectionVariant ?? "",
+        title: section.querySelector("h1, h2")?.textContent?.replace(/\s+/g, " ").trim() || null,
+      })),
+    });
+
+    window.addEventListener("message", (event) => {
+      if (event.origin !== origin || event.source !== window.parent) return;
+      const message = parseEditorMessage(event.data);
+
+      if (message?.type === "factory:layout") {
+        const byId = new Map(sections().map((section) => [section.id, section]));
+        const [first, ...rest] = sectionOrder([...byId.keys()], message.order).map((id) => byId.get(id) as HTMLElement);
+        // The first section keeps its place (it has the page's <h1>), the others follow it in the new order.
+        first?.after(...rest);
+        for (const [id, section] of byId) section.hidden = message.hidden.includes(id);
+        post({ type: "factory:layout-applied" });
+      }
+
+      if (message?.type === "factory:focus") {
+        focused?.classList.remove(FOCUS);
+        focused = sections().find((section) => section.id === message.id);
+        focused?.classList.add(FOCUS);
+        const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        focused?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+      }
+    });
+
+    // Links do not leave the page (other pages, tel:, mailto:, new tabs): the panel is the place to
+    // edit. Links within the page, buttons, forms and widgets work as usual; any click inside a
+    // section selects it.
+    document.addEventListener("click", (event) => {
+      const target = event.target instanceof Element ? event.target : undefined;
+      const link = target?.closest("a[href]");
+      const withinPage = link instanceof HTMLAnchorElement && link.hash && link.origin === location.origin && link.pathname === location.pathname && !link.target;
+      if (link && !withinPage) event.preventDefault();
+
+      const section = target?.closest<HTMLElement>("main > [data-section-type]");
+      if (section) post({ type: "factory:select", id: section.id });
+    }, { capture: true });
+  }
+
+  const origin = document.querySelector("[data-editor-origin]")?.getAttribute("data-editor-origin");
+  if (origin && window.parent !== window) start(origin);
+</script>

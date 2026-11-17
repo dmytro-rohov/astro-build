@@ -2,7 +2,7 @@
  * Visual QA gallery: every section variant (min and max content) × every
  * archetype × light and dark scheme, as element screenshots in one HTML page.
  *
- * Usage: npm run gallery [-- --archetypes default,bold] [--out dist-gallery]
+ * Usage: npm run gallery [-- --archetypes default,bold] [--out dist-gallery] [--port n]
  * Open dist-gallery/index.html in a browser (local tool, not deployed).
  */
 import { spawnSync } from "node:child_process";
@@ -35,7 +35,7 @@ for (const archetype of archetypes) {
   const context: SiteContext = { dir, out: path.join(dir, "build"), loaded: loadSite(dir) };
   if (!buildSite(context, true)) process.exit(1);
 
-  const server = await serve(context, 4594);
+  const server = await serve(context);
 
   try {
     for (const scheme of ["light", "dark"] as const) {

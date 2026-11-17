@@ -5,8 +5,8 @@
  * - contact.mode "remote": the build has no server; static files are served
  *   from the output directory (same headers — also the model for a Caddyfile)
  *
- * Usage: node server.mjs          (PORT, HOST, SITE_URL, OUT_DIR from the environment)
- *        node server.mjs 4331     (port as an argument)
+ * Usage: node server.mjs          (PORT, HOST, SITE_URL, OUT_DIR, PREVIEW_EDITOR_ORIGIN from the environment)
+ *        node server.mjs 4331     (port as an argument; 0: a free port, printed when listening)
  */
 import fs from "node:fs";
 import http from "node:http";
@@ -21,11 +21,15 @@ const host = process.env.HOST ?? "localhost";
 const outDir = path.resolve(process.env.OUT_DIR || "dist");
 const entry = path.join(outDir, "server", "entry.mjs");
 
+// v3.6: a preview build for the factory editor (PREVIEW_EDITOR_ORIGIN, the same value as for the build).
+const editorOrigin = process.env.PREVIEW_EDITOR_ORIGIN ? new URL(process.env.PREVIEW_EDITOR_ORIGIN).origin : undefined;
+
 const securityHeaders = {
   "X-Content-Type-Options": "nosniff",
   "Referrer-Policy": "strict-origin-when-cross-origin",
-  // CSP frame-ancestors is ignored in <meta> policies, so framing is blocked here.
-  "X-Frame-Options": "DENY",
+  // CSP frame-ancestors is ignored in <meta> policies, so framing is blocked here — a preview
+  // build for the editor may be framed by the editor only.
+  ...(editorOrigin ? { "Content-Security-Policy": `frame-ancestors ${editorOrigin}` } : { "X-Frame-Options": "DENY" }),
   "Cross-Origin-Opener-Policy": "same-origin",
   "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
 };
@@ -167,7 +171,8 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(port, host, () => {
-  console.log(`Server listening on http://${host}:${port} (${astroHandler ? "Astro server" : "static files"})`);
+  // The real port (port 0: a free one); scripts/site/lib.ts serve() takes the URL from this line.
+  console.log(`Server listening on http://${host}:${server.address().port} (${astroHandler ? "Astro server" : "static files"})`);
 });
 
 for (const signal of ["SIGINT", "SIGTERM"]) {

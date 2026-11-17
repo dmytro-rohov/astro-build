@@ -49,6 +49,10 @@ jobs:
       - name: Lighthouse
         run: npm run test:lighthouse
 
+      # Its own build (PREVIEW_EDITOR_ORIGIN, .generated/bridge): after Lighthouse.
+      - name: Editor preview bridge
+        run: npm run test:bridge
+
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v4

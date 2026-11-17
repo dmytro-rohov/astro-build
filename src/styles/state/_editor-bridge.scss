@@ -1,0 +1,16 @@
+// v3.6: editor preview bridge (EditorBridge.astro, preview builds for the factory editor only).
+@use "../abstracts/layers";
+
+@layer state {
+  // Sections the editor hides: `hidden` must win over the display of the section variants.
+  .s[hidden] {
+    display: none !important;
+  }
+
+  // The section open in the editor panel, until the editor focuses another one or clears it.
+  // Inside the section box: full-width sections would clip an outer outline.
+  .s.is-editor-focus {
+    outline: 3px solid var(--color-focus-ring);
+    outline-offset: -3px;
+  }
+}

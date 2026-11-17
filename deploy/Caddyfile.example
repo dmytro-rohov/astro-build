@@ -11,6 +11,8 @@ example.com, www.example.com {
 		X-Content-Type-Options "nosniff"
 		Referrer-Policy "strict-origin-when-cross-origin"
 		X-Frame-Options "DENY"
+		# A preview build for the factory editor (PREVIEW_EDITOR_ORIGIN) instead:
+		# Content-Security-Policy "frame-ancestors https://factory.mytko.dev"
 		Cross-Origin-Opener-Policy "same-origin"
 		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
 		Strict-Transport-Security "max-age=31536000"
