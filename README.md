@@ -894,10 +894,7 @@ starter is kept on the `v2` branch / tag `v2.0.0`.
 v3.5: eight navbars (new `brand-bar`, `dark-bar`, `split`, `floating`, `minimal`) and eight footers
 (new `cta-band`, `cards`, `contact-first`, `big-name`, `rounded-card`; prop `tone` auto | light |
 dark | brand; optional `ctaTitle`, `ctaText`, `ctaAction`, `ctaImage`, `wordmark`). A site ships only
-its own navbar and footer variant CSS.
-
-v3.5: five new navbars — `brand-bar`, `dark-bar`, `split`, `floating`, `minimal`; navbar styles
-load per variant (`virtual:navbar-style`).
+its own navbar and footer variant CSS (`virtual:navbar-style`, `virtual:layout-components`).
 
 v3.4: 104 variants — six new hero layouts (`title-below`, `band`, `offset-card`, `rounded-card`,
 `bold-type`, `giant-word`; new optional `word`) and five new about layouts (`textured`,
