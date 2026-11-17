@@ -203,7 +203,7 @@ content — never add variant-only content fields.
 (`virtual:section-components`, `src/site/vite-plugin.ts`), and each component imports its own
 stylesheets (widgets like `Slider` and `Lightbox` too), so a site ships the CSS of its variants
 only; `main.scss` keeps what every page needs (tokens, base, layout primitives, header, footer,
-hero). Every split stylesheet starts with the cascade layer order (`abstracts/_layers.scss`).
+the hero's first-screen rules). Every split stylesheet starts with the cascade layer order (`abstracts/_layers.scss`).
 
 **Boundary tests:** `scripts/site/make-catalog.ts` generates a site from the schemas with every
 variant twice — minimum and maximum content (every field at its limit, long Polish words).

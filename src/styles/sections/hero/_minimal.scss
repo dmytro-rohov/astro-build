@@ -1,0 +1,45 @@
+// Hero: minimal (Minimal.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-hero-minimal__header {
+    max-width: none;
+  }
+
+  .s-hero-minimal__header .s-header__title {
+    max-width: 18ch;
+    font-size: clamp(var(--font-size-4xl), 9vw, var(--font-size-7xl));
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  .s-hero-minimal__rule {
+    height: 1px;
+    background: var(--color-border-strong);
+  }
+
+  .s-hero-minimal__bottom {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  .s-hero-minimal__description {
+    max-width: 38rem;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .s-hero-minimal .s-highlights {
+    padding-block-start: 0;
+    border-block-start: 0;
+  }
+
+  @include mq(lg) {
+    .s-hero-minimal__bottom {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      align-items: end;
+    }
+  }
+}
