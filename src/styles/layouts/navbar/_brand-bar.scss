@@ -7,8 +7,6 @@
   // brand colour, text the ink checked on it — the full-screen phone menu included. Solid, never
   // translucent: what scrolls under the bar would change the checked contrast.
   .site-header--brand-bar {
-    --brand-bar-tint: color-mix(in srgb, var(--color-text-primary) 14%, transparent);
-
     background: var(--color-background-primary);
     border-block-end-color: transparent;
     backdrop-filter: none;
@@ -21,11 +19,16 @@
     border-radius: var(--radius-control);
   }
 
-  // Muted backgrounds equal the brand colour here: hover and the current page get an ink tint.
+  // Hover and the current page: an ink line under the link. A tinted background would lower
+  // the checked contrast of the text on it.
+  .site-header--brand-bar .navbar__link {
+    border-radius: 0;
+  }
+
   .site-header--brand-bar .navbar__link:hover,
-  .site-header--brand-bar .navbar__link[aria-current="page"],
-  .site-header--brand-bar .navbar__toggle:hover {
-    background: var(--brand-bar-tint);
+  .site-header--brand-bar .navbar__link[aria-current="page"] {
+    background: transparent;
+    box-shadow: inset 0 -2px 0 currentcolor;
   }
 
   .site-header--brand-bar .navbar__link[aria-current="page"] {
