@@ -148,3 +148,35 @@ export const sectionComponentPaths: Record<string, Record<string, string>> = {
     box: "@/sections/suggestion/Box.astro",
   },
 };
+
+/**
+ * v3.5: layout elements (one per site) the same way — the site's footer variant brings only its
+ * own styles (src/styles/layouts/footer/). Served by "virtual:layout-components".
+ */
+export const layoutComponentPaths: Record<string, Record<string, string>> = {
+  footer: {
+    columns: "@/layouts/footer/Columns.astro",
+    simple: "@/layouts/footer/Compact.astro",
+    centered: "@/layouts/footer/Compact.astro",
+    "cta-band": "@/layouts/footer/CtaBand.astro",
+    cards: "@/layouts/footer/Cards.astro",
+    "contact-first": "@/layouts/footer/ContactFirst.astro",
+    "big-name": "@/layouts/footer/BigName.astro",
+    "rounded-card": "@/layouts/footer/RoundedCard.astro",
+  },
+};
+
+/**
+ * v3.5: navbar styles per variant (src/styles/layouts/navbar/). A build imports only the one its
+ * site uses ("virtual:navbar-style"); the header and the phone menu every variant shares stay in
+ * main.scss. A variant without an entry ("simple") needs nothing more.
+ */
+export const navbarStylePaths: Record<string, string> = {
+  centered: "@/styles/layouts/navbar/_centered.scss",
+  topbar: "@/styles/layouts/navbar/_topbar.scss",
+  "brand-bar": "@/styles/layouts/navbar/_brand-bar.scss",
+  "dark-bar": "@/styles/layouts/navbar/_dark-bar.scss",
+  split: "@/styles/layouts/navbar/_split.scss",
+  floating: "@/styles/layouts/navbar/_floating.scss",
+  minimal: "@/styles/layouts/navbar/_minimal.scss",
+};

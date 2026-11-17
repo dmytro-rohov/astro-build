@@ -1,0 +1,25 @@
+---
+/**
+ * The whole footer on one rounded card inset from the screen edges (dark unless the site picks
+ * a tone): logo, description and social icons on top, link groups and contact in columns.
+ */
+import Brand from "./Brand.astro";
+import Contact from "./Contact.astro";
+import Groups from "./Groups.astro";
+import type { FooterProps } from "./types";
+import "@/styles/layouts/footer/_rounded-card.scss";
+
+export type Props = FooterProps;
+
+const { brandHref, description, groups, socialLinks, contact } = Astro.props;
+const hasContact = Boolean(contact.phone || contact.email || contact.address);
+---
+
+<Brand brandHref={brandHref} description={description} socialLinks={socialLinks} class="site-footer__brand-block--row" />
+
+{(groups.length > 0 || hasContact) && (
+  <div class="site-footer__panel-columns">
+    <Groups groups={groups} />
+    <Contact contact={contact} />
+  </div>
+)}

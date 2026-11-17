@@ -1,33 +1,21 @@
 ---
+/**
+ * Site footer: the shell every variant shares (tone, container, copyright row). The body comes
+ * from the component of the site's variant (src/layouts/footer/, "virtual:layout-components"),
+ * which brings only its own styles.
+ */
 import Container from "@/components/layouts/Container.astro";
 import Stack from "@/components/layouts/Stack.astro";
-import Cluster from "@/components/layouts/Cluster.astro";
 import Link from "@/components/ui/Link.astro";
 import Divider from "@/components/ui/Divider.astro";
-import Icon from "@/components/media/Icon.astro";
 import { siteConfig } from "@/config/site";
-import Logo from "@/components/media/Logo.astro";
 import { ANALYTICS_CONFIG } from "@/config/analytics";
 import { format, t } from "@/i18n";
+import type { FooterLinkGroup, SocialLink } from "@/layouts/footer/types";
 import { site } from "virtual:site";
+import { layoutComponents } from "virtual:layout-components";
 
-export type FooterLink = {
-  label: string;
-  href: string;
-  external?: boolean;
-  analyticsLabel?: string;
-};
-
-export type FooterLinkGroup = {
-  title: string;
-  links: FooterLink[];
-};
-
-export type SocialLink = {
-  label: string;
-  href: string;
-  icon: string;
-};
+export type { FooterLink, FooterLinkGroup, SocialLink } from "@/layouts/footer/types";
 
 export interface Props {
   brandLabel?: string;
@@ -58,12 +46,22 @@ const {
   ...restProps
 } = Astro.props;
 
-const variant = site.layout.footer.variant;
+const { variant, props } = site.layout.footer;
+const Variant = layoutComponents.footer;
 const businessAddress = site.business.address;
 const address = [businessAddress?.street, [businessAddress?.postalCode, businessAddress?.city].filter(Boolean).join(" ")]
   .filter(Boolean)
   .join(", ");
-const allLinks = groups.flatMap((group) => group.links);
+
+// v3.5: "auto" is the site's colors; the rounded card is dark unless the site picks a tone.
+const tone = props.tone && props.tone !== "auto" ? props.tone : variant === "rounded-card" ? "dark" : "auto";
+
+// The newer layouts keep the privacy link in the bottom row, so the link groups leave it out.
+const privacyHref = "/privacy";
+const legalInBottom = !["columns", "simple", "centered"].includes(variant);
+const linkGroups = legalInBottom
+  ? groups.map((group) => ({ ...group, links: group.links.filter((link) => link.href !== privacyHref) })).filter((group) => group.links.length > 0)
+  : groups;
 ---
 
 <footer
@@ -71,120 +69,20 @@ const allLinks = groups.flatMap((group) => group.links);
   class:list={[
     "site-footer",
     `site-footer--${variant}`,
+    tone !== "auto" && `site-footer--tone-${tone}`,
     className,
   ]}
 >
   <Container size="xl">
     <Stack space="xl">
-      {variant !== "columns" && (
-        <div class="site-footer__compact">
-          <a class="site-footer__brand" href={brandHref}>
-            <Logo size="footer" />
-          </a>
-          {variant === "centered" && description && <p class="site-footer__description">{description}</p>}
-          {socialLinks.length > 0 && (
-            <ul class="site-footer__social-list site-footer__social-list--inline">
-              {socialLinks.map((item) => (
-                <li class="site-footer__social-item">
-                  <a class="site-footer__social-link" href={item.href} target="_blank" rel="noopener noreferrer" aria-label={item.label}>
-                    <Icon name={item.icon} />
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
-          <nav aria-label={brandLabel} class="site-footer__inline-nav">
-            <ul class="site-footer__inline-links">
-              {allLinks.map((link) => (
-                <li><Link href={link.href} external={link.external} variant="muted" class="site-footer__link">{link.label}</Link></li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-      )}
-      {variant === "columns" && (
-      <div class="site-footer__main">
-        <Stack class="site-footer__brand-block" space="md">
-          <a class="site-footer__brand" href={brandHref}>
-            <Logo size="footer" />
-          </a>
-
-          {description && (
-            <p class="site-footer__description">
-              {description}
-            </p>
-          )}
-
-          {socialLinks.length > 0 && (
-            <Cluster as="ul" gap="sm" class="site-footer__social-list">
-              {socialLinks.map((item) => (
-                <li class="site-footer__social-item">
-                  <a
-                    class="site-footer__social-link"
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={item.label}
-                  >
-                    <Icon name={item.icon} />
-                  </a>
-                </li>
-              ))}
-            </Cluster>
-          )}
-        </Stack>
-
-        {groups.map((group) => (
-          <nav class="site-footer__group" aria-label={group.title}>
-            <h2 class="site-footer__group-title">
-              {group.title}
-            </h2>
-
-            <ul class="site-footer__link-list">
-              {group.links.map((link) => (
-                <li>
-                  <Link
-                    href={link.href}
-                    external={link.external}
-                    variant="muted"
-                    class="site-footer__link"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        ))}
-
-        {/* v3.3: contact details in their own last column (4 columns by default). */}
-        {(phone || email || address) && (
-          <div class="site-footer__group site-footer__group--contact">
-            <h2 class="site-footer__group-title">{t.footer.contact}</h2>
-            <ul class="site-footer__contact">
-              {address && (
-                <li class="site-footer__contact-item">
-                  <Icon name="map-pin" />
-                  <span>{address}</span>
-                </li>
-              )}
-              {phone && (
-                <li class="site-footer__contact-item">
-                  <Icon name="phone" />
-                  <Link href={phoneHref ?? `tel:${phone}`} variant="muted">{phone}</Link>
-                </li>
-              )}
-              {email && (
-                <li class="site-footer__contact-item">
-                  <Icon name="mail" />
-                  <Link href={`mailto:${email}`} variant="muted">{email}</Link>
-                </li>
-              )}
-            </ul>
-          </div>
-        )}
-      </div>
-      )}
+      <Variant
+        brandLabel={brandLabel}
+        brandHref={brandHref}
+        description={description}
+        groups={linkGroups}
+        socialLinks={socialLinks}
+        contact={{ address, phone, phoneHref, email }}
+      />
 
       <Divider />
 
@@ -193,11 +91,20 @@ const allLinks = groups.flatMap((group) => group.links);
           {copyright}
         </p>
 
+        {legalInBottom && (
+          <nav class="site-footer__legal" aria-label={t.footer.legal}>
+            <Link href={privacyHref} variant="muted" class="site-footer__link">{t.footer.privacyPolicy}</Link>
+            {ANALYTICS_CONFIG.enabled && (
+              <button type="button" class="site-footer__cookie-settings" data-cookie-settings>{t.footer.cookieSettings}</button>
+            )}
+          </nav>
+        )}
+
         <p class="site-footer__credit">
           {t.footer.madeBy} <a class="site-footer__credit-link" href="https://mytko.dev" target="_blank" rel="noopener">Mytko.dev</a>
         </p>
 
-        {ANALYTICS_CONFIG.enabled && (
+        {!legalInBottom && ANALYTICS_CONFIG.enabled && (
           <button
             type="button"
             class="site-footer__cookie-settings"

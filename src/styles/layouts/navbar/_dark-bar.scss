@@ -1,0 +1,89 @@
+// Navbar: dark-bar — a dark bar on every site, the name in a brand-coloured block, links as cells.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // The header takes the dark palette on every site (src/design-system/utils/cssVars.ts), a shade
+  // deeper so it stands out on dark sites too; light text only gains contrast on it.
+  .site-header--dark-bar {
+    --dark-bar-background: color-mix(in oklab, var(--color-background-primary), #000 45%);
+
+    background: var(--dark-bar-background);
+    border-block-end-color: transparent;
+    backdrop-filter: none;
+  }
+
+  .site-header--dark-bar .navbar__menu {
+    background: var(--dark-bar-background);
+  }
+
+  // A compact bar: the name block and the link cells fill its whole height.
+  .site-header--dark-bar .site-header__inner {
+    align-items: stretch;
+    min-height: 3.5rem;
+    padding-block: 0;
+  }
+
+  .site-header--dark-bar .navbar {
+    display: flex;
+    align-items: center;
+  }
+
+  .site-header--dark-bar .site-header__brand {
+    padding-inline: var(--spacing-md);
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    transition: background-color var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .site-header--dark-bar .site-header__brand:hover {
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary-hover);
+  }
+
+  // A logo file is drawn for light backgrounds: its block is a light tile instead.
+  .site-header--dark-bar .site-header__brand:has(.logo),
+  .site-header--dark-bar .site-header__brand:has(.logo):hover {
+    background: var(--logo-tile);
+  }
+
+  @include mq(md) {
+    .site-header--dark-bar .navbar,
+    .site-header--dark-bar .navbar__menu,
+    .site-header--dark-bar .navbar__list {
+      align-items: stretch;
+    }
+
+    .site-header--dark-bar .navbar__menu {
+      column-gap: var(--spacing-md);
+    }
+
+    .site-header--dark-bar .navbar__list {
+      gap: 0;
+    }
+
+    // Cells: thin rules between the links, a brand line under the current page.
+    .site-header--dark-bar .navbar__item {
+      display: flex;
+      border-inline-start: 1px solid var(--color-border-default);
+    }
+
+    .site-header--dark-bar .navbar__item:last-child {
+      border-inline-end: 1px solid var(--color-border-default);
+    }
+
+    .site-header--dark-bar .navbar__link {
+      min-height: 3.5rem;
+      padding-inline: var(--spacing-md);
+      border-radius: 0;
+    }
+
+    .site-header--dark-bar .navbar__link[aria-current="page"] {
+      box-shadow: inset 0 -3px 0 var(--color-action-primary);
+    }
+
+    .site-header--dark-bar .navbar__cta {
+      align-self: center;
+    }
+  }
+}

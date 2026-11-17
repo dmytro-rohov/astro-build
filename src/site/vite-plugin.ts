@@ -4,17 +4,22 @@
  * - "virtual:site/analytics"      → { gaId } only, safe to import in browser scripts
  * - "virtual:section-components"  → { sectionComponents } for the variants the site uses
  *   (its components bring their styles, so unused variants add no CSS)
+ * - "virtual:layout-components"   → { layoutComponents } the same for the footer variant
+ * - "virtual:navbar-style"         → imports the style file of the site's navbar variant (v3.5)
  * The site is re-validated whenever site.json or assets.json change (dev server).
  */
 import path from "node:path";
 import type { Plugin } from "vite";
-import { sectionComponentPaths } from "./components";
+import { layoutComponentPaths, navbarStylePaths, sectionComponentPaths } from "./components";
 import { loadSite } from "./loader";
 import type { Site } from "./schema/site";
 
 const SITE_ID = "virtual:site";
 const ANALYTICS_ID = "virtual:site/analytics";
 const COMPONENTS_ID = "virtual:section-components";
+const LAYOUT_COMPONENTS_ID = "virtual:layout-components";
+const NAVBAR_STYLE_ID = "virtual:navbar-style";
+const IDS = [SITE_ID, ANALYTICS_ID, COMPONENTS_ID, LAYOUT_COMPONENTS_ID, NAVBAR_STYLE_ID];
 
 /** Imports the components of the section variants used on the site's pages, in registry order. */
 function sectionComponentsModule(site: Site): string {
@@ -42,18 +47,31 @@ function sectionComponentsModule(site: Site): string {
   ].join("\n");
 }
 
+/** Imports the component of each layout element's variant (footer: one per site). */
+function layoutComponentsModule(site: Site): string {
+  const entries = Object.entries(layoutComponentPaths).map(([type, variants]) => {
+    const variant = site.layout[type as keyof Site["layout"]].variant;
+    return [type, variants[variant]] as const;
+  });
+
+  return [
+    ...entries.map(([, file], index) => `import Component${index} from ${JSON.stringify(file)};`),
+    `export const layoutComponents = { ${entries.map(([type], index) => `${JSON.stringify(type)}: Component${index}`).join(", ")} };`,
+  ].join("\n");
+}
+
 export function siteVitePlugin(siteDir: string, options: { gaId: string }): Plugin {
   const resolved = (id: string) => `\0${id}`;
 
   return {
     name: "mytko-site",
     resolveId(id) {
-      if (id === SITE_ID || id === ANALYTICS_ID || id === COMPONENTS_ID) {
+      if (IDS.includes(id)) {
         return resolved(id);
       }
     },
     load(id) {
-      if (id !== resolved(SITE_ID) && id !== resolved(ANALYTICS_ID) && id !== resolved(COMPONENTS_ID)) {
+      if (!IDS.some((known) => id === resolved(known))) {
         return;
       }
 
@@ -69,6 +87,15 @@ export function siteVitePlugin(siteDir: string, options: { gaId: string }): Plug
 
       if (id === resolved(COMPONENTS_ID)) {
         return sectionComponentsModule(site);
+      }
+
+      if (id === resolved(LAYOUT_COMPONENTS_ID)) {
+        return layoutComponentsModule(site);
+      }
+
+      if (id === resolved(NAVBAR_STYLE_ID)) {
+        const file = navbarStylePaths[site.layout.navbar.variant];
+        return file ? `import ${JSON.stringify(file)};` : "export {};";
       }
 
       return [

@@ -1,0 +1,25 @@
+---
+/** Link groups, each its own labelled navigation with a heading. */
+import Link from "@/components/ui/Link.astro";
+import type { FooterLinkGroup } from "./types";
+
+export interface Props {
+  groups: FooterLinkGroup[];
+  class?: string;
+}
+
+const { groups, class: className } = Astro.props;
+---
+
+{groups.map((group) => (
+  <nav class:list={["site-footer__group", className]} aria-label={group.title}>
+    <h2 class="site-footer__group-title">{group.title}</h2>
+    <ul class="site-footer__link-list">
+      {group.links.map((link) => (
+        <li>
+          <Link href={link.href} external={link.external} variant="muted" class="site-footer__link">{link.label}</Link>
+        </li>
+      ))}
+    </ul>
+  </nav>
+))}

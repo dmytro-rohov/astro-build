@@ -1,0 +1,53 @@
+---
+/**
+ * Description, social icons, link groups and contact in a calm row, then the business name
+ * (or `wordmark`) in giant letters across the full width. The name is decoration here — the
+ * copyright line says it — so screen readers skip it. A script fits it to the width once the
+ * fonts are in; without it the length classes keep it inside.
+ */
+import Contact from "./Contact.astro";
+import Groups from "./Groups.astro";
+import Socials from "./Socials.astro";
+import type { FooterProps } from "./types";
+import { site } from "virtual:site";
+import "@/styles/layouts/footer/_big-name.scss";
+
+export type Props = FooterProps;
+
+const { brandLabel, description, groups, socialLinks, contact } = Astro.props;
+const word = site.layout.footer.content.wordmark ?? brandLabel;
+// Longer names get smaller letters so the word still fits one line where it can.
+const size = word.length <= 6 ? "xl" : word.length <= 10 ? "lg" : word.length <= 16 ? "md" : "sm";
+---
+
+<div class="site-footer__big-top">
+  {(description || socialLinks.length > 0) && (
+    <div class="site-footer__big-intro">
+      {description && <p class="site-footer__description">{description}</p>}
+      <Socials links={socialLinks} />
+    </div>
+  )}
+  <Groups groups={groups} />
+  <Contact contact={contact} />
+</div>
+
+<p class:list={["site-footer__wordmark", `site-footer__wordmark--${size}`]} aria-hidden="true" data-wordmark>
+  <span class="site-footer__wordmark-text">{word}</span>
+</p>
+
+<script>
+  // Measured on one line at 10cqi; the size scales with the container, so once is enough.
+  // Sizes come in half-cqi steps from the stylesheet (no inline styles under the CSP); a name
+  // that would get smaller than 8cqi keeps wrapping instead.
+  const fit = () => {
+    for (const mark of document.querySelectorAll<HTMLElement>("[data-wordmark]")) {
+      const text = mark.firstElementChild as HTMLElement;
+      mark.dataset.fit = "measure";
+      const size = Math.min(34, Math.floor(((10 * mark.clientWidth) / text.offsetWidth) * 2) / 2);
+      if (size >= 8) mark.dataset.fit = String(size);
+      else delete mark.dataset.fit;
+    }
+  };
+
+  document.fonts.ready.then(fit);
+</script>

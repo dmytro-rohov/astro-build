@@ -1,0 +1,41 @@
+// Footer: columns (Columns.astro; also the body of cta-band).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // v3.3: brand · link groups · contact. Phones: brand and contact full width, links in two
+  // columns; tablets: brand on top, the rest in three; wide: one row (4 columns by default).
+  .site-footer__main {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-2xl) var(--spacing-xl);
+  }
+
+  .site-footer__main > .site-footer__brand-block,
+  .site-footer__main > .site-footer__group--contact {
+    grid-column: 1 / -1;
+  }
+
+  @include mq(md) {
+    .site-footer__main {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+    }
+
+    .site-footer__main > .site-footer__group--contact {
+      grid-column: auto;
+    }
+  }
+
+  @include mq(lg) {
+    .site-footer__main {
+      grid-template-columns: minmax(0, 1.5fr);
+      grid-auto-columns: minmax(0, 1fr);
+      grid-auto-flow: column;
+    }
+
+    .site-footer__main > .site-footer__brand-block {
+      grid-column: auto;
+    }
+  }
+}

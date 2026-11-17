@@ -1,0 +1,47 @@
+---
+/**
+ * A rounded band on top with one call to action — brand gradient, or the photo from ctaImage
+ * darkened under the text — then the columns. The button goes to ctaAction, else the contact
+ * section (or e-mail, phone); without any of them the band keeps only its words.
+ */
+import Button from "@/components/ui/Button.astro";
+import Img from "@/components/media/Img.astro";
+import { t } from "@/i18n";
+import { contactHref } from "@/sections/faq/layout";
+import { getAsset } from "@/site/assets";
+import Columns from "./Columns.astro";
+import type { FooterProps } from "./types";
+import { site } from "virtual:site";
+import "@/styles/layouts/footer/_cta-band.scss";
+
+export type Props = FooterProps;
+
+const { content } = site.layout.footer;
+const image = content.ctaImage ? getAsset(content.ctaImage) : undefined;
+const href = contactHref(content.ctaAction, site.pages, site.business);
+const label = content.ctaAction?.label ?? t.footer.getInTouch;
+---
+
+<div class:list={["site-footer__band", image ? "site-footer__band--image" : "site-footer__band--brand site-footer__brand-surface"]}>
+  {image && (
+    <div class="site-footer__band-media">
+      <Img
+        src={image.image}
+        alt={image.alt}
+        kind={image.alt ? "content" : "decorative"}
+        aspect={[3, 1]}
+        focal={image.focal}
+        widths={[640, 960, 1280, 1600]}
+        sizes="(min-width: 1280px) 1224px, 100vw"
+        class="site-footer__band-image"
+      />
+    </div>
+  )}
+  <div class="site-footer__band-text">
+    <h2 class="site-footer__band-title">{content.ctaTitle ?? t.footer.ctaTitle}</h2>
+    {content.ctaText && <p class="site-footer__band-lead">{content.ctaText}</p>}
+  </div>
+  {href && <Button href={href} size="lg" class="site-footer__band-button">{label}</Button>}
+</div>
+
+<Columns {...Astro.props} />
