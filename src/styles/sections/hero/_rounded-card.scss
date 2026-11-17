@@ -1,0 +1,100 @@
+// Hero: rounded-card (RoundedCard.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // v3.4: a thin frame of the page around one big card; the arch (a half circle on top of a
+  // rectangle) grows from the card's lower edge, its width sets the curve and the room above the
+  // text (container units of the arch).
+  .s-hero--rounded-card {
+    --round-inset: var(--spacing-sm);
+    --hero-align: stretch;
+
+    padding-block: var(--round-inset);
+  }
+
+  .s-hero--rounded-card > .container {
+    display: grid;
+    width: calc(100% - var(--round-inset) * 2);
+  }
+
+  .s-hero-round {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    place-items: end center;
+    min-height: calc(var(--hero-min-height) - var(--round-inset) * 2);
+    padding-block-start: calc(var(--spacing-4xl) * var(--section-fluid));
+    overflow: clip;
+    background: var(--color-background-muted);
+    border-radius: calc(var(--radius-card) * 1.5 + 1rem);
+  }
+
+  .s-hero-round__image {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .s-hero-round--no-image {
+    background:
+      radial-gradient(ellipse at 50% 120%, color-mix(in oklab, var(--color-action-primary) 45%, transparent), transparent 65%),
+      linear-gradient(160deg, color-mix(in oklab, var(--color-action-primary) 8%, var(--color-background-primary)), color-mix(in oklab, var(--color-action-primary) 24%, var(--color-background-primary)));
+  }
+
+  .s-hero-round__arch {
+    container-type: inline-size;
+    width: min(100% - var(--spacing-md), 48rem);
+    padding: 0 var(--spacing-lg) calc(var(--spacing-3xl) * var(--section-fluid));
+    color: var(--color-text-primary);
+    background: color-mix(in srgb, var(--color-background-primary) 86%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-background-primary) 60%, transparent);
+    border-block-end: 0;
+    border-radius: 999rem 999rem 0 0;
+    backdrop-filter: blur(16px) saturate(1.2);
+  }
+
+  .s-hero-round--no-image .s-hero-round__arch {
+    background: var(--color-background-primary);
+  }
+
+  // The text starts below the curve: a fifth of the arch's width down.
+  .s-hero-round__content {
+    padding-block-start: max(var(--spacing-3xl), 20cqi);
+  }
+
+  .s-hero-round__header {
+    max-width: none;
+  }
+
+  .s-hero-round__header .s-header__title {
+    max-width: 14ch;
+    margin-inline: auto;
+    font-size: clamp(var(--font-size-4xl), 5.5vw, var(--font-size-7xl));
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+
+  .s-hero-round--long .s-hero-round__header .s-header__title {
+    max-width: 20ch;
+    font-size: clamp(var(--font-size-3xl), 3.5vw, var(--font-size-5xl));
+  }
+
+  .s-hero-round__header .s-header__description {
+    max-width: 32rem;
+    margin-inline: auto;
+  }
+
+  @include mq(md) {
+    .s-hero--rounded-card {
+      --round-inset: var(--spacing-md);
+    }
+
+    .s-hero-round__arch {
+      padding-inline: var(--spacing-3xl);
+    }
+  }
+}

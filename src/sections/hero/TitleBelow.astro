@@ -1,0 +1,54 @@
+---
+/**
+ * Photo first across the page with a floating card (key facts + buttons) on it; the big headline
+ * and the text sit under the photo, side by side. Without an image a brand band carries the card.
+ * Phones: headline and text first, then the photo with the card below it.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Actions from "@/sections/_shared/Actions.astro";
+import Highlights from "@/sections/about/Highlights.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import { titleScale } from "@/sections/hero/layout";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/hero/_title-below.scss";
+
+export interface Props {
+  section: VariantOf<"hero", "title-below">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const image = content.image ? getAsset(content.image) : undefined;
+const hasCard = Boolean(content.highlights || content.primaryAction || content.secondaryAction);
+---
+
+<SectionShell id={section.id} type="hero" variant="title-below" tone={props.tone} spacing={props.spacing} defaultSpacing="md" width="xl">
+  <div class:list={["s-hero-below", `s-hero-below--${titleScale(content.title)}`, !image && "s-hero-below--no-image"]}>
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} headingLevel={headingLevel} class="s-hero-below__header" />
+    {content.description && <p class="s-hero-below__description">{content.description}</p>}
+    <div class="s-hero-below__media">
+      {image && (
+        <Img
+          src={image.image}
+          alt={image.alt}
+          kind={image.alt ? "content" : "decorative"}
+          aspect={[4, 3]}
+          focal={image.focal}
+          priority={headingLevel === "h1" ? "high" : "auto"}
+          widths={[640, 960, 1280, 1600]}
+          sizes="(min-width: 1280px) 1224px, 100vw"
+          class="s-hero-below__image"
+        />
+      )}
+      {hasCard && (
+        <div class="s-hero-below__card">
+          {content.highlights && <Highlights items={content.highlights} />}
+          <Actions primary={content.primaryAction} secondary={content.secondaryAction} size="md" />
+        </div>
+      )}
+    </div>
+  </div>
+</SectionShell>

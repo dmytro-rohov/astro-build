@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **18 section types, 98 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **18 section types, 104 variants**, 3 navbars and 3 footers, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -158,7 +158,7 @@ the migrated site is validated like any build.
 
 | Type | Variants |
 |---|---|
-| `hero` | `split-image`, `centered`, `cover-image` (photo behind text, always the dark palette), `panel` (edge-to-edge split), `minimal` (oversized type + facts) |
+| `hero` | `split-image`, `centered`, `cover-image` (photo behind text, always the dark palette), `panel` (edge-to-edge split), `minimal` (oversized type + facts), `title-below` (photo first with a floating facts-and-buttons card, headline and text under it), `band` (centered text over an edge-to-edge photo band), `offset-card` (headline, wide photo, text card cut into its corner), `rounded-card` (inset rounded photo card, frosted arch behind the centered text), `bold-type` (huge uppercase headline with a pill button in its last line, photo card, facts bar), `giant-word` (one oversized word threaded through the photo, optional `word`) |
 | `about` | `image-side` (a second photo overlaps the first), `centered` (values in small columns), `textured` (photo over the edge of an engraved plaster pattern), `experience` (offset outline frame, years badge from the first highlight, vision/mission columns over faint stripes), `editorial` (magazine columns: highlighted title words, drop cap, pull quote, side stories), `bio` (one person: big name, lead, portrait with a contact card, a client's quote), `milestones` (history on a timeline of years, alternating above and below the line) — optional `titleHighlight`, `secondImage`, `points`, `quote` + `quoteAuthor`, `milestones` |
 | `services` | `cards`, `price-list` |
 | `features` | `cards-grid`, `icon-list`, `icon-badge` (round icon on the card edge, link per card), `staggered` (zigzag cards over a colored band), `orbit` (items around a central circle; a list on phones), `spotlight` (one raised card), `bento` (tiles of different sizes, one accent tile) |
@@ -203,7 +203,7 @@ content — never add variant-only content fields.
 (`virtual:section-components`, `src/site/vite-plugin.ts`), and each component imports its own
 stylesheets (widgets like `Slider` and `Lightbox` too), so a site ships the CSS of its variants
 only; `main.scss` keeps what every page needs (tokens, base, layout primitives, header, footer,
-hero). Every split stylesheet starts with the cascade layer order (`abstracts/_layers.scss`).
+the hero's first-screen rules). Every split stylesheet starts with the cascade layer order (`abstracts/_layers.scss`).
 
 **Boundary tests:** `scripts/site/make-catalog.ts` generates a site from the schemas with every
 variant twice — minimum and maximum content (every field at its limit, long Polish words).
@@ -887,8 +887,13 @@ debug mode, immutable font caching). CI runs it on every pull request.
 
 ## Version
 
-Current version: **v3.3** (`3.3.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
+Current version: **v3.4** (`3.4.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
 starter is kept on the `v2` branch / tag `v2.0.0`.
+
+v3.4: 104 variants — six new hero layouts (`title-below`, `band`, `offset-card`, `rounded-card`,
+`bold-type`, `giant-word`; new optional `word`) and five new about layouts (`textured`,
+`experience`, `editorial`, `bio`, `milestones`; new optional `titleHighlight`, `secondImage`,
+`points`, `quote`/`quoteAuthor`, `milestones`). Hero and about styles load per variant too.
 
 v3.3 (layout review of the first generated sites):
 

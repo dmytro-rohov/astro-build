@@ -1,0 +1,131 @@
+// Hero: offset-card (OffsetCard.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // v3.4: the card has the section's background, so it reads as a notch cut out of the photo; its
+  // inner corner takes the image radius. The photo fills what the headline leaves of the screen.
+  .s-hero--offset-card {
+    --hero-align: stretch;
+  }
+
+  .s-hero--offset-card > .container {
+    display: grid;
+  }
+
+  .s-hero-offset {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: var(--spacing-xl);
+  }
+
+  .s-hero-offset__header {
+    max-width: none;
+  }
+
+  .s-hero-offset__header .s-header__title {
+    max-width: 15ch;
+    font-size: clamp(var(--font-size-4xl), 6.5vw, var(--font-size-7xl));
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+
+  .s-hero-offset--long .s-hero-offset__header .s-header__title {
+    max-width: 20ch;
+    font-size: clamp(var(--font-size-3xl), 4.5vw, var(--font-size-6xl));
+  }
+
+  .s-hero-offset__media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+  }
+
+  .s-hero-offset__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-image);
+  }
+
+  .s-hero-offset__card {
+    position: relative;
+    display: grid;
+    gap: var(--spacing-lg);
+    align-content: start;
+    background: var(--color-background-primary);
+  }
+
+  .section--tone-muted .s-hero-offset__card {
+    background: var(--color-background-muted);
+  }
+
+  .s-hero-offset__description {
+    max-width: 30rem;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+  }
+
+  // Phones and tablets: the card cuts into the photo's lower right corner.
+  .s-hero-offset--with-image .s-hero-offset__card {
+    margin: calc(var(--spacing-3xl) * -1) 0 0 var(--spacing-xl);
+    padding: var(--spacing-lg) 0 0 var(--spacing-lg);
+    border-start-start-radius: var(--radius-image);
+  }
+
+  @include mq(md) {
+    .s-hero-offset--with-image .s-hero-offset__card {
+      margin-inline-start: 40%;
+    }
+  }
+
+  // Wide screens: the headline beside the card's top, the photo below both; the card reaches
+  // down into the photo by --overlap.
+  @include mq(lg) {
+    .s-hero-offset {
+      --overlap: clamp(5rem, 12svh, 9rem);
+
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: 0 var(--spacing-3xl);
+    }
+
+    .s-hero-offset--with-image {
+      grid-template-rows: auto var(--overlap) minmax(16rem, 1fr);
+      align-content: stretch;
+    }
+
+    .s-hero-offset__header {
+      grid-column: 1;
+      grid-row: 1;
+      align-self: end;
+      padding-block-end: var(--spacing-2xl);
+    }
+
+    .s-hero-offset__media {
+      grid-column: 1 / -1;
+      grid-row: 2 / 4;
+      aspect-ratio: auto;
+    }
+
+    .s-hero-offset__card {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: end;
+    }
+
+    .s-hero-offset--with-image .s-hero-offset__card {
+      grid-row: 1 / 3;
+      margin: 0 0 0 calc(var(--spacing-3xl) * -1);
+      padding: var(--spacing-2xl) 0 var(--spacing-2xl) var(--spacing-2xl);
+      border-radius: 0 0 0 var(--radius-image);
+    }
+
+    .s-hero-offset--no-image .s-hero-offset__card {
+      padding: var(--spacing-lg) 0 var(--spacing-2xl) var(--spacing-xl);
+      border-inline-start: 1px solid var(--color-border-strong);
+    }
+  }
+}

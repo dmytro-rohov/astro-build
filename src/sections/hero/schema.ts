@@ -46,7 +46,12 @@ export const hero = defineSectionType({
     highlights: field(listWithIds(Highlight, 1, 3).optional(), {
       label: "Wyróżniki",
       fieldType: "list",
-      description: "Up to 3 short facts shown under the actions (minimal and panel variants).",
+      description: "Up to 3 short facts: under the actions (minimal, panel), on the card over the photo (title-below), in the bottom bar (bold-type).",
+    }),
+    word: field(text(12).optional(), {
+      label: "Wielkie słowo",
+      fieldType: "text",
+      description: 'One short word set huge across the hero in giant-word, e.g. "BOKS", "KAWA", "TANIEC" — 3–8 letters, the essence of the business.',
     }),
   }),
   accentTone: true,
@@ -71,6 +76,48 @@ export const hero = defineSectionType({
     minimal: {
       description: "Oversized left-aligned headline, a thin rule and key facts — editorial and confident, no image.",
       uses: ["eyebrow", "description", "primaryAction", "secondaryAction", "highlights"],
+    },
+    "title-below": {
+      description:
+        "Photo first across the page with a floating card of up to 3 key facts and the buttons; the big headline and the text sit " +
+        "under the photo — calm and spacious; good for real estate, architecture, interiors, travel and hotels. Needs an image " +
+        "(without one a brand-colored band takes its place); best with highlights and a headline of up to ~7 words.",
+      uses: ["eyebrow", "description", "primaryAction", "secondaryAction", "image", "highlights"],
+    },
+    band: {
+      description:
+        "Centered headline, text and buttons above a wide photo band reaching the screen edges — open and welcoming; good for " +
+        "hotels, restaurants, travel, real estate and schools. Needs a wide, calm image (a place, a landscape, an interior); " +
+        "without one it is a centered headline.",
+      uses: ["eyebrow", "description", "primaryAction", "secondaryAction", "image"],
+    },
+    "offset-card": {
+      description:
+        "Large headline on top, a wide photo under it and the text with the buttons on a card cut into the photo's corner — " +
+        "architectural and editorial; good for architects, interior designers, construction, photographers and law firms. " +
+        "Needs an image (without one the headline and the card sit side by side); headline up to ~7 words.",
+      uses: ["eyebrow", "description", "primaryAction", "secondaryAction", "image"],
+    },
+    "rounded-card": {
+      description:
+        "The hero is a large rounded card inset from the screen edges: the photo fills it and a frosted arch rises behind the " +
+        "centered headline, text and buttons — soft and premium; good for travel, spa, wellness, wedding venues and hotels. " +
+        "Works without an image (a brand gradient card); headline up to ~6 words.",
+      uses: ["eyebrow", "description", "primaryAction", "secondaryAction", "image"],
+    },
+    "bold-type": {
+      description:
+        "Huge uppercase headline across the page with the main button as a pill in its last line, the text beside it, a photo " +
+        "card and up to 3 facts in a bar below — loud and confident; good for gyms, sport, events, travel and youth brands. " +
+        "A short headline (3–6 words) works best; image and highlights are optional.",
+      uses: ["eyebrow", "description", "primaryAction", "secondaryAction", "image", "highlights"],
+    },
+    "giant-word": {
+      description:
+        "One oversized word (word, else the eyebrow) across the page with the photo standing among its letters, the headline, " +
+        "text and buttons centered below — a dramatic poster; good for boxing and gyms, dance, barbers, tattoo, cafes and events. " +
+        "Needs word (3–8 letters) and an image with the subject in the middle (a person, a cup, a tool).",
+      uses: ["eyebrow", "description", "primaryAction", "secondaryAction", "image", "word"],
     },
   },
 });

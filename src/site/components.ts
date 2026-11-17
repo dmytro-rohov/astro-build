@@ -13,6 +13,12 @@ export const sectionComponentPaths: Record<string, Record<string, string>> = {
     "cover-image": "@/sections/hero/CoverImage.astro",
     panel: "@/sections/hero/Panel.astro",
     minimal: "@/sections/hero/Minimal.astro",
+    "title-below": "@/sections/hero/TitleBelow.astro",
+    band: "@/sections/hero/Band.astro",
+    "offset-card": "@/sections/hero/OffsetCard.astro",
+    "rounded-card": "@/sections/hero/RoundedCard.astro",
+    "bold-type": "@/sections/hero/BoldType.astro",
+    "giant-word": "@/sections/hero/GiantWord.astro",
   },
   about: {
     "image-side": "@/sections/about/ImageSide.astro",
