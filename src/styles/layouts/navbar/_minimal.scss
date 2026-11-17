@@ -25,17 +25,18 @@
 
   .navbar--overlay .navbar__cta--bar {
     width: auto;
+    white-space: nowrap;
   }
 
-  // The button sits in the bar from 640px; narrower screens show it in the menu instead.
-  @include mq-down(sm) {
+  // The button sits in the bar from 768px; phones show it in the menu instead.
+  @include mq-down(md) {
     .navbar--overlay .navbar__cta--bar {
       display: none;
     }
   }
 
-  // The list is then the only thing in the menu: it keeps the middle of the screen alone.
-  @include mq(sm) {
+  @include mq(md) {
+    // The list is then the only thing in the menu: it keeps the middle of the screen alone.
     .navbar--overlay .navbar__menu .navbar__cta {
       display: none;
     }
@@ -43,9 +44,7 @@
     .navbar--overlay .navbar__list {
       margin-block-end: auto;
     }
-  }
 
-  @include mq(md) {
     // No translucent blur: it would make the fixed menu relative to the header (see _header.scss).
     .site-header--minimal {
       background: var(--color-background-primary);
