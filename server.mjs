@@ -6,7 +6,7 @@
  *   from the output directory (same headers — also the model for a Caddyfile)
  *
  * Usage: node server.mjs          (PORT, HOST, SITE_URL, OUT_DIR, PREVIEW_EDITOR_ORIGIN from the environment)
- *        node server.mjs 4331     (port as an argument)
+ *        node server.mjs 4331     (port as an argument; 0: a free port, printed when listening)
  */
 import fs from "node:fs";
 import http from "node:http";
@@ -171,7 +171,8 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(port, host, () => {
-  console.log(`Server listening on http://${host}:${port} (${astroHandler ? "Astro server" : "static files"})`);
+  // The real port (port 0: a free one); scripts/site/lib.ts serve() takes the URL from this line.
+  console.log(`Server listening on http://${host}:${server.address().port} (${astroHandler ? "Astro server" : "static files"})`);
 });
 
 for (const signal of ["SIGINT", "SIGTERM"]) {

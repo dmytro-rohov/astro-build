@@ -1,7 +1,7 @@
 /**
  * Builds one site and writes a machine-readable report for the orchestrator.
  *
- * Usage: npm run site:report -- --site <dir> [--out <dir>] [--no-lighthouse] [--no-screenshots]
+ * Usage: npm run site:report -- --site <dir> [--out <dir>] [--no-lighthouse] [--no-screenshots] [--port n]
  * Output: <out>/report.json (+ <out>/dist, <out>/screenshots)
  * Exit code: 0 when every quality gate passes, 1 otherwise.
  *
@@ -78,7 +78,7 @@ type PageReport = ReturnType<typeof pagesOf>[number] & {
 const pages: PageReport[] = pagesOf(context);
 
 if (buildOk) {
-  const server = await serve(context, 4593);
+  const server = await serve(context);
 
   try {
     // Accessibility (axe) in the schemes the site can show.

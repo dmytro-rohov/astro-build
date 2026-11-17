@@ -107,6 +107,11 @@ npm run site:compare -- --site <dirA> --site <dirB> [--same-brand-accent] [--jso
 build runs in `.generated/staging` and is moved there; a contact-`local` build gets a
 `node_modules` link so `OUT_DIR=<out> node server.mjs` runs from that folder.
 
+`site:screenshot`, `site:report` and `gallery` serve the build on a free port, so several runs
+can work in parallel (`--port <n>` or `SITE_PORT` for a fixed one). The URL comes from the
+server's own "listening" line, and a server that exits (e.g. a taken port) fails the run — it
+never measures another site.
+
 `site:report` writes `<out>/report.json` for the orchestrator (default out:
 `.generated/sites/<siteId>`): engine and schema version, validation issues and warnings
 (legal review of the privacy template, missing data, accent adjustments), resolved theme,
