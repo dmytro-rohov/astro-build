@@ -1,0 +1,26 @@
+// About: centered (Centered.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-about-centered__body {
+    text-align: center;
+  }
+
+  // v3.4: values as small centered columns under a short brand rule each.
+  .s-about-centered__points {
+    text-align: center;
+  }
+
+  .s-about-centered__points .s-about-points__item {
+    justify-items: center;
+  }
+
+  .s-about-centered__points .s-about-points__item::before {
+    content: "";
+    width: 2.5rem;
+    height: 0.25rem;
+    margin-block-end: var(--spacing-sm);
+    background: var(--color-action-primary);
+  }
+}

@@ -1,0 +1,14 @@
+// About: the section title with its highlighted words (Title.astro); variants color the mark.
+@use "../../abstracts/layers";
+
+@layer widgets {
+  .s-about-title {
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  .s-about-title__mark {
+    color: inherit;
+    background: none;
+  }
+}

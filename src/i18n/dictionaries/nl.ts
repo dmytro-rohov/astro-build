@@ -51,6 +51,7 @@ export default {
     planExcluded: "Niet inbegrepen",
     gallery: "Galerij",
     reviews: { one: "{count} review", few: "{count} reviews", many: "{count} reviews", other: "{count} reviews" },
+    letsTalk: "Laten we praten",
   },
 
   slider: {

@@ -1,0 +1,58 @@
+---
+/**
+ * A magazine page: the eyebrow as an underlined section label, a big title with the
+ * titleHighlight words marked like with a highlighter, the facts and a pull quote under it; the
+ * story with a drop cap below the photo; a side column of short stories (points) and a second
+ * photo. Thin rules divide the columns on wide screens; phones stack them. A long story without
+ * a photo or side column runs in two newspaper columns.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import RichText from "@/sections/_shared/RichText.astro";
+import Actions from "@/sections/_shared/Actions.astro";
+import Highlights from "@/sections/about/Highlights.astro";
+import Points from "@/sections/about/Points.astro";
+import Quote from "@/sections/about/Quote.astro";
+import Title from "@/sections/about/Title.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/about/_editorial.scss";
+
+export interface Props {
+  section: VariantOf<"about", "editorial">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const image = content.image ? getAsset(content.image) : undefined;
+const detail = content.secondImage ? getAsset(content.secondImage) : undefined;
+const aside = Boolean(content.points || detail);
+const columns = !image && !aside && content.body.length > 600;
+---
+
+<SectionShell id={section.id} type="about" variant="editorial" tone={props.tone} spacing={props.spacing}>
+  {content.eyebrow && <p class="s-about-ed__label"><span class="s-about-ed__label-text">{content.eyebrow}</span></p>}
+  <div class:list={["s-about-ed", aside && "s-about-ed--aside", columns && "s-about-ed--columns"]}>
+    <div class="s-about-ed__lead">
+      <Title title={content.title} highlight={content.titleHighlight} headingLevel={headingLevel} class="s-about-ed__title" />
+      {content.highlights && <Highlights items={content.highlights} />}
+      {content.quote && <Quote text={content.quote} author={content.quoteAuthor} class="s-about-ed__quote" />}
+    </div>
+    <div class="s-about-ed__story">
+      {image && (
+        <Img src={image.image} alt={image.alt} kind={image.alt ? "content" : "decorative"} aspect={[4, 5]} focal={image.focal} sizes="(min-width: 1024px) 34vw, 100vw" widths={[480, 720, 960]} class="s-about-ed__image" />
+      )}
+      <RichText text={content.body} class="s-about-ed__body" />
+      <Actions primary={content.action} size="md" />
+    </div>
+    {aside && (
+      <div class="s-about-ed__aside">
+        {content.points && <Points items={content.points} headingLevel={headingLevel === "h1" ? "h2" : "h3"} class="s-about-ed__points" />}
+        {detail && (
+          <Img src={detail.image} alt={detail.alt} kind={detail.alt ? "content" : "decorative"} aspect={[4, 3]} focal={detail.focal} sizes="(min-width: 1024px) 22vw, 100vw" widths={[320, 480, 640]} class="s-about-ed__detail" />
+        )}
+      </div>
+    )}
+  </div>
+</SectionShell>

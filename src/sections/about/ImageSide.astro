@@ -1,4 +1,5 @@
 ---
+/** Text next to a portrait photo, facts below the text; a second photo overlaps the first one's corner. */
 import SectionShell from "@/sections/_shared/SectionShell.astro";
 import SectionHeader from "@/sections/_shared/SectionHeader.astro";
 import RichText from "@/sections/_shared/RichText.astro";
@@ -8,7 +9,7 @@ import Stack from "@/components/layouts/Stack.astro";
 import Img from "@/components/media/Img.astro";
 import { getAsset } from "@/site/assets";
 import type { VariantOf } from "@/site/types";
-import "@/styles/sections/_about.scss";
+import "@/styles/sections/about/_image-side.scss";
 
 export interface Props {
   section: VariantOf<"about", "image-side">;
@@ -18,10 +19,11 @@ export interface Props {
 const { section, headingLevel } = Astro.props;
 const { content, props } = section;
 const image = content.image ? getAsset(content.image) : undefined;
+const detail = image && content.secondImage ? getAsset(content.secondImage) : undefined;
 ---
 
 <SectionShell id={section.id} type="about" variant="image-side" tone={props.tone} spacing={props.spacing}>
-  <div class:list={["s-about__layout", image && "s-about__layout--with-image", props.imagePosition === "left" && "s-about__layout--image-left"]}>
+  <div class:list={["s-about__layout", image && "s-about__layout--with-image", detail && "s-about__layout--with-detail", props.imagePosition === "left" && "s-about__layout--image-left"]}>
     <Stack space="lg" class="s-about__text">
       <SectionHeader eyebrow={content.eyebrow} title={content.title} headingLevel={headingLevel} />
       <RichText text={content.body} />
@@ -31,6 +33,9 @@ const image = content.image ? getAsset(content.image) : undefined;
     {image && (
       <div class="s-about__media">
         <Img src={image.image} alt={image.alt} kind={image.alt ? "content" : "decorative"} aspect={[4, 5]} focal={image.focal} sizes="(min-width: 768px) 40vw, 100vw" widths={[480, 720, 960]} class="image--rounded image--shadow s-about__image" />
+        {detail && (
+          <Img src={detail.image} alt={detail.alt} kind={detail.alt ? "content" : "decorative"} aspect={[4, 3]} focal={detail.focal} sizes="(min-width: 768px) 16rem, 46vw" widths={[320, 480, 640]} class="s-about__detail" />
+        )}
       </div>
     )}
   </div>

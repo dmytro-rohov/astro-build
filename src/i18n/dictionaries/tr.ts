@@ -51,6 +51,7 @@ export default {
     planExcluded: "Dahil değil",
     gallery: "Galeri",
     reviews: { one: "{count} yorum", few: "{count} yorum", many: "{count} yorum", other: "{count} yorum" },
+    letsTalk: "Konuşalım",
   },
 
   slider: {

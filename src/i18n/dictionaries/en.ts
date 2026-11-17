@@ -60,6 +60,8 @@ export const en = {
     gallery: "Gallery",
     /** Review count under an overall rating, by plural category (Intl.PluralRules). */
     reviews: { one: "{count} review", few: "{count} reviews", many: "{count} reviews", other: "{count} reviews" },
+    /** Title of the contact card in the about "bio" layout. */
+    letsTalk: "Let's talk",
   },
 
   /** faq variants: split-contact card, categories, search. */

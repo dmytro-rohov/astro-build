@@ -1,0 +1,208 @@
+// About: experience (Experience.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Faint brand stripes on the whole section, fading out at the top and bottom (behind the
+  // content: the section is its own stacking context).
+  .s-about--experience {
+    isolation: isolate;
+  }
+
+  .s-about-exp__stripes {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0 3rem,
+      color-mix(in oklab, var(--color-action-primary) 6%, transparent) 3rem 5.5rem
+    );
+    mask-image: linear-gradient(transparent, #000 25%, #000 75%, transparent);
+  }
+
+  .s-about-exp {
+    --frame: 1.25rem;
+
+    display: grid;
+    gap: var(--spacing-2xl);
+    align-items: center;
+  }
+
+  // The photo sits at the top right of its box: the outline frame shows below and left of it,
+  // the dots right of it. Both are drawn behind the photo.
+  .s-about-exp__media {
+    position: relative;
+    isolation: isolate;
+    order: -1;
+    justify-self: center;
+    width: min(100%, 26rem);
+    padding: 0 var(--frame) var(--frame);
+  }
+
+  .s-about-exp__media::before {
+    content: "";
+    position: absolute;
+    inset: calc(var(--frame) * 2) calc(var(--frame) * 2) 0 0;
+    z-index: -1;
+    border: 2px solid var(--color-action-primary);
+    border-radius: var(--radius-image);
+  }
+
+  .s-about-exp__media::after {
+    content: "";
+    position: absolute;
+    inset: 30% 0 auto auto;
+    z-index: -1;
+    width: 45%;
+    height: 45%;
+    background: radial-gradient(circle, color-mix(in oklab, var(--color-action-primary) 55%, transparent) 0.1rem, transparent 0.13rem) 0 0 / 0.75rem 0.75rem;
+  }
+
+  .s-about-exp__image {
+    width: 100%;
+    border: var(--image-border);
+    border-radius: var(--radius-image);
+    box-shadow: var(--image-shadow);
+  }
+
+  // Badge: the first highlight on the brand color over the photo's lower right corner.
+  .s-about-exp__badge {
+    position: absolute;
+    inset-block-end: calc(var(--frame) * 2.5);
+    inset-inline-end: 0;
+    display: grid;
+    place-items: center;
+    width: max-content;
+    min-width: 8.5rem;
+    max-width: min(70%, 13rem);
+    min-height: 8.5rem;
+    padding: var(--spacing-md);
+    margin: 0;
+    color: var(--color-action-primary-text);
+    text-align: center;
+    background: var(--color-action-primary);
+    border: 0.25rem solid var(--color-background-surface);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .s-about-exp__badge-item {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--spacing-xs);
+  }
+
+  .s-about-exp__badge-value {
+    margin: 0;
+    font-family: var(--font-family-heading);
+    font-size: clamp(var(--font-size-3xl), 5vw, var(--font-size-4xl));
+    font-weight: var(--heading-weight);
+    line-height: var(--line-height-none);
+  }
+
+  // A long word breaks only when it cannot fit a line of its own.
+  .s-about-exp__badge-value,
+  .s-about-exp__badge-label {
+    overflow-wrap: break-word;
+  }
+
+  .s-about-exp__badge-label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-snug);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+
+  // Without a photo the badge is a large brand tile in the frame.
+  .s-about-exp__media--badge .s-about-exp__badge {
+    position: static;
+    width: 100%;
+    max-width: none;
+    aspect-ratio: 1;
+    padding: var(--spacing-xl);
+    border: 0;
+    border-radius: var(--radius-image);
+    box-shadow: var(--image-shadow);
+  }
+
+  .s-about-exp__media--badge .s-about-exp__badge-value {
+    font-size: clamp(var(--font-size-5xl), 9vw, var(--font-size-7xl));
+  }
+
+  .s-about-exp__media--badge .s-about-exp__badge-label {
+    font-size: var(--font-size-sm);
+  }
+
+  .s-about-exp__points {
+    padding-block-start: var(--spacing-lg);
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .s-about-exp__points .s-about-points__title {
+    color: var(--color-action-primary);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+  }
+
+  // No photo and no facts: the text is a card in the outline frame.
+  .s-about-exp--text-only .s-about-exp__text {
+    position: relative;
+    max-width: 48rem;
+    padding: var(--spacing-xl) var(--spacing-lg);
+    margin: 0 auto var(--frame) var(--frame);
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  .s-about-exp--text-only .s-about-exp__text::before {
+    content: "";
+    position: absolute;
+    inset: var(--frame) var(--frame) calc(var(--frame) * -1) calc(var(--frame) * -1);
+    z-index: -1;
+    border: 2px solid var(--color-action-primary);
+    border-radius: var(--radius-card);
+  }
+
+  @include mq(md) {
+    .s-about-exp {
+      --frame: 1.75rem;
+
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: var(--spacing-3xl);
+    }
+
+    .s-about-exp--text-only {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .s-about-exp__media {
+      width: 100%;
+      max-width: 30rem;
+    }
+
+    // Two or three narrow columns beside the photo.
+    .s-about-exp__points {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+    }
+
+    .s-about-exp__badge {
+      min-width: 10rem;
+      min-height: 10rem;
+    }
+
+    .s-about-exp--text-only .s-about-exp__text {
+      padding: var(--spacing-2xl);
+      margin-inline: auto;
+    }
+  }
+
+  @include mq(lg) {
+    .s-about-exp {
+      gap: var(--spacing-4xl);
+    }
+  }
+}

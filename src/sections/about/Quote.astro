@@ -1,0 +1,19 @@
+---
+/** The section's quote and its author (editorial, bio), under a quote mark; each variant styles the figure. */
+import QuoteMark from "@/sections/testimonials/QuoteMark.astro";
+import "@/styles/sections/about/_quote.scss";
+
+export interface Props {
+  text: string;
+  author?: string;
+  class?: string;
+}
+
+const { text, author, class: className } = Astro.props;
+---
+
+<figure class:list={["s-about-quote", className]}>
+  <QuoteMark class="s-about-quote__mark" />
+  <blockquote class="s-about-quote__text"><p>{text}</p></blockquote>
+  {author && <figcaption class="s-about-quote__author">{author}</figcaption>}
+</figure>

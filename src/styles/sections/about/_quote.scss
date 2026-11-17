@@ -1,0 +1,29 @@
+// About: the quote and its author (Quote.astro) — editorial and bio style the figure.
+@use "../../abstracts/layers";
+
+@layer widgets {
+  .s-about-quote {
+    display: grid;
+    gap: var(--spacing-sm);
+  }
+
+  .s-about-quote__mark {
+    width: 2rem;
+    height: auto;
+    color: var(--color-action-primary);
+  }
+
+  .s-about-quote__text p {
+    white-space: pre-line;
+  }
+
+  .s-about-quote__author {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-about-quote__author::before {
+    content: "— ";
+  }
+}

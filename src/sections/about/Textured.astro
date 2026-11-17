@@ -1,0 +1,46 @@
+---
+/**
+ * The text and button on a plain half, a portrait photo overlapping the edge of a half covered
+ * with engraved arcs (a plaster texture drawn in CSS). Without a photo the text is a card over
+ * the edge. Phones: the pattern is a band on top with the photo (or the card) pulled over it.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import RichText from "@/sections/_shared/RichText.astro";
+import Actions from "@/sections/_shared/Actions.astro";
+import Highlights from "@/sections/about/Highlights.astro";
+import Title from "@/sections/about/Title.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/about/_textured.scss";
+
+export interface Props {
+  section: VariantOf<"about", "textured">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const image = content.image ? getAsset(content.image) : undefined;
+---
+
+<SectionShell id={section.id} type="about" variant="textured" tone={props.tone} spacing={props.spacing}>
+  <span class="s-about-textured__pattern" aria-hidden="true"></span>
+  <div class:list={["s-about-textured", !image && "s-about-textured--no-image"]}>
+    <Stack space="lg" class="s-about-textured__text">
+      <div class="s-about-textured__head">
+        <Title title={content.title} highlight={content.titleHighlight} headingLevel={headingLevel} class="s-about-textured__title" />
+        {content.eyebrow && <p class="s-about-textured__eyebrow">{content.eyebrow}</p>}
+      </div>
+      <RichText text={content.body} />
+      {content.highlights && <Highlights items={content.highlights} />}
+      <Actions primary={content.action} size="md" />
+    </Stack>
+    {image && (
+      <div class="s-about-textured__media">
+        <Img src={image.image} alt={image.alt} kind={image.alt ? "content" : "decorative"} aspect={[4, 5]} focal={image.focal} sizes="(min-width: 768px) 34vw, 90vw" widths={[480, 720, 960]} class="s-about-textured__image" />
+      </div>
+    )}
+  </div>
+</SectionShell>

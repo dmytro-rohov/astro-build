@@ -1,0 +1,183 @@
+// About: bio (Bio.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-about-bio {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  .s-about-bio:not(.s-about-bio--side) {
+    max-width: 48rem;
+  }
+
+  .s-about-bio__intro,
+  .s-about-bio__story {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-lg);
+  }
+
+  // "Cześć, jestem" — a short brand rule before it.
+  .s-about-bio__eyebrow {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+  }
+
+  .s-about-bio__eyebrow::before {
+    content: "";
+    flex: none;
+    width: 2.5rem;
+    height: 2px;
+    background: var(--color-action-primary);
+  }
+
+  .s-about-bio__name {
+    font-size: clamp(var(--font-size-4xl), 6vw, var(--font-size-6xl));
+    line-height: 1.04;
+  }
+
+  .s-about-bio__name .s-about-title__mark {
+    color: var(--color-action-primary);
+  }
+
+  .s-about-bio__lead {
+    color: var(--color-text-primary);
+    font-size: clamp(var(--font-size-lg), 2vw, var(--font-size-xl));
+    line-height: var(--line-height-normal);
+  }
+
+  .s-about-bio__side {
+    display: grid;
+    justify-items: center;
+  }
+
+  .s-about-bio__portrait {
+    width: min(100%, 24rem);
+    border: var(--image-border);
+    border-radius: var(--radius-image);
+    box-shadow: var(--image-shadow);
+  }
+
+  // Contact card: pulled over the portrait's lower edge.
+  .s-about-bio__card {
+    position: relative;
+    display: grid;
+    gap: var(--spacing-md);
+    width: min(100%, 22rem);
+    padding: var(--spacing-lg);
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-block-start: 0.25rem solid var(--color-action-primary);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .s-about-bio--portrait .s-about-bio__card {
+    width: calc(min(100%, 24rem) - var(--spacing-lg) * 2);
+    margin-block-start: -3.5rem;
+  }
+
+  .s-about-bio__card-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .s-about-bio__contacts {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding: 0;
+    list-style: none;
+  }
+
+  .s-about-bio__contact {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+    min-width: 0;
+  }
+
+  .s-about-bio__contact-icon {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    color: color-mix(in srgb, var(--color-action-primary) 75%, var(--color-text-primary));
+    background: color-mix(in srgb, var(--color-action-primary) 12%, transparent);
+    border-radius: var(--radius-full);
+  }
+
+  .s-about-bio__contact-link {
+    min-width: 0;
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  .s-about-bio__contact-link:hover {
+    text-decoration: underline;
+  }
+
+  .s-about-bio__action {
+    width: 100%;
+  }
+
+  // A client's words: a soft brand-tinted card under a quote mark.
+  .s-about-bio__quote {
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: color-mix(in oklab, var(--color-action-primary) 6%, var(--color-background-surface));
+    border: 1px solid color-mix(in oklab, var(--color-action-primary) 18%, var(--card-border-color));
+    border-radius: var(--radius-card);
+  }
+
+  .s-about-bio__quote .s-about-quote__text {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-lg);
+    font-style: italic;
+    line-height: var(--line-height-relaxed);
+  }
+
+  @include mq(md) {
+    .s-about-bio--side {
+      grid-template:
+        "intro side" auto
+        "story side" 1fr / minmax(0, 7fr) minmax(0, 5fr);
+      align-items: start;
+      column-gap: var(--spacing-3xl);
+    }
+
+    .s-about-bio__intro {
+      grid-area: intro;
+    }
+
+    .s-about-bio__story {
+      grid-area: story;
+    }
+
+    .s-about-bio__side {
+      grid-area: side;
+      justify-items: stretch;
+    }
+
+    .s-about-bio__portrait,
+    .s-about-bio__card {
+      width: 100%;
+    }
+
+    .s-about-bio--portrait .s-about-bio__card {
+      width: auto;
+      margin-inline: var(--spacing-lg);
+    }
+  }
+
+  @include mq(lg) {
+    .s-about-bio--side {
+      column-gap: var(--spacing-4xl);
+    }
+  }
+}
