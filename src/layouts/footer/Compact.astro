@@ -1,0 +1,30 @@
+---
+/** simple: logo, social icons and every link in one row; centered: the same stacked in the middle, with the description. */
+import Link from "@/components/ui/Link.astro";
+import Logo from "@/components/media/Logo.astro";
+import Socials from "./Socials.astro";
+import type { FooterProps } from "./types";
+import { site } from "virtual:site";
+import "@/styles/layouts/footer/_compact.scss";
+
+export type Props = FooterProps;
+
+const { brandLabel, brandHref, description, groups, socialLinks } = Astro.props;
+const centered = site.layout.footer.variant === "centered";
+const allLinks = groups.flatMap((group) => group.links);
+---
+
+<div class="site-footer__compact">
+  <a class="site-footer__brand" href={brandHref}>
+    <Logo size="footer" />
+  </a>
+  {centered && description && <p class="site-footer__description">{description}</p>}
+  <Socials links={socialLinks} />
+  <nav aria-label={brandLabel} class="site-footer__inline-nav">
+    <ul class="site-footer__inline-links">
+      {allLinks.map((link) => (
+        <li><Link href={link.href} external={link.external} variant="muted" class="site-footer__link">{link.label}</Link></li>
+      ))}
+    </ul>
+  </nav>
+</div>

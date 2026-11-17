@@ -1,0 +1,167 @@
+// Footer: contact-first (ContactFirst.astro); the open-now pill comes from hours-location/_shared.scss.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // Contact block (wide) beside the brand; stacked on phones, contact first.
+  .site-footer__reach {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  .site-footer__reach-main {
+    display: grid;
+    gap: var(--spacing-lg);
+    align-content: start;
+    min-width: 0;
+  }
+
+  .site-footer__reach-title {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-3xl);
+    line-height: var(--line-height-tight);
+    text-wrap: balance;
+  }
+
+  .site-footer__reach-lines {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  // Phone and e-mail in large type.
+  .site-footer__reach-line {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    max-width: 100%;
+    color: var(--color-text-primary);
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    text-decoration-color: color-mix(in srgb, currentcolor 30%, transparent);
+  }
+
+  .site-footer__reach-line:hover {
+    color: var(--color-action-primary);
+  }
+
+  .site-footer__reach-line svg {
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--color-action-primary);
+  }
+
+  .site-footer__reach-facts {
+    display: grid;
+    gap: var(--spacing-lg);
+  }
+
+  .site-footer__reach-fact {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    min-width: 0;
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+  }
+
+  .site-footer__reach-fact > svg {
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-block-start: 0.125rem;
+    color: var(--color-text-primary);
+  }
+
+  .site-footer__reach-hours {
+    display: grid;
+    gap: var(--spacing-sm);
+    justify-items: start;
+  }
+
+  .site-footer__hours {
+    display: grid;
+    gap: var(--spacing-xs);
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .site-footer__hours-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--spacing-md);
+  }
+
+  .site-footer__hours-row dt {
+    min-width: 4.5rem;
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .site-footer__hours-row abbr {
+    text-decoration: none;
+  }
+
+  .site-footer__hours-row dd {
+    margin: 0;
+  }
+
+  .site-footer__reach-aside {
+    display: grid;
+    gap: var(--spacing-md);
+    align-content: start;
+    justify-items: start;
+    max-width: 26rem;
+  }
+
+  .site-footer__follow {
+    display: grid;
+    gap: var(--spacing-sm);
+    padding-block-start: var(--spacing-sm);
+  }
+
+  .site-footer__follow-label {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  // Links: one quiet row above the copyright.
+  .site-footer__quiet-nav .site-footer__link {
+    color: var(--color-text-secondary);
+  }
+
+  @include mq(md) {
+    .site-footer__reach-title {
+      font-size: var(--font-size-5xl);
+    }
+
+    .site-footer__reach-line {
+      font-size: var(--font-size-2xl);
+    }
+
+    .site-footer__reach-facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @include mq(lg) {
+    .site-footer__reach {
+      grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr);
+      gap: var(--spacing-4xl);
+    }
+
+    .site-footer__reach-aside {
+      padding-block-start: var(--spacing-sm);
+    }
+  }
+}

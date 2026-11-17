@@ -1,12 +1,24 @@
 import fs from "node:fs";
 import { expect, test } from "vitest";
-import { sectionComponentPaths } from "../../src/site/components";
-import { sectionTypes } from "../../src/site/registry";
+import { layoutComponentPaths, sectionComponentPaths } from "../../src/site/components";
+import { layoutTypes, sectionTypes } from "../../src/site/registry";
 
 test.each(sectionTypes.flatMap((type) => Object.keys(type.variants).map((variant) => [type.type, variant])))(
   "section %s/%s has a component",
   (type, variant) => {
     const file = sectionComponentPaths[type]?.[variant];
+    expect(file, `no entry for "${type}/${variant}" in components.ts`).toBeTruthy();
+    expect(fs.existsSync(file.replace(/^@\//, "src/")), `${file} does not exist`).toBe(true);
+  },
+);
+
+// Layout elements with a component per variant (the navbar renders its variants itself).
+const layoutsWithComponents = Object.values(layoutTypes).filter((type) => type.type in layoutComponentPaths);
+
+test.each(layoutsWithComponents.flatMap((type) => Object.keys(type.variants).map((variant) => [type.type, variant])))(
+  "layout %s/%s has a component",
+  (type, variant) => {
+    const file = layoutComponentPaths[type]?.[variant];
     expect(file, `no entry for "${type}/${variant}" in components.ts`).toBeTruthy();
     expect(fs.existsSync(file.replace(/^@\//, "src/")), `${file} does not exist`).toBe(true);
   },

@@ -1,0 +1,25 @@
+---
+/** Social profile icons (square buttons, or circles with `round`). */
+import Icon from "@/components/media/Icon.astro";
+import type { SocialLink } from "./types";
+
+export interface Props {
+  links: SocialLink[];
+  round?: boolean;
+  class?: string;
+}
+
+const { links, round = false, class: className } = Astro.props;
+---
+
+{links.length > 0 && (
+  <ul class:list={["site-footer__social-list", round && "site-footer__social-list--round", className]}>
+    {links.map((item) => (
+      <li class="site-footer__social-item">
+        <a class="site-footer__social-link" href={item.href} target="_blank" rel="noopener noreferrer" aria-label={item.label}>
+          <Icon name={item.icon} />
+        </a>
+      </li>
+    ))}
+  </ul>
+)}

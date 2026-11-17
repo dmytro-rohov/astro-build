@@ -1,0 +1,41 @@
+---
+/** Contact details under a heading: address, phone and e-mail as icon rows (nothing without them). */
+import Icon from "@/components/media/Icon.astro";
+import Link from "@/components/ui/Link.astro";
+import { t } from "@/i18n";
+import type { FooterContact } from "./types";
+
+export interface Props {
+  contact: FooterContact;
+  class?: string;
+}
+
+const { contact, class: className } = Astro.props;
+const { address, phone, phoneHref, email } = contact;
+---
+
+{(phone || email || address) && (
+  <div class:list={["site-footer__group site-footer__group--contact", className]}>
+    <h2 class="site-footer__group-title">{t.footer.contact}</h2>
+    <ul class="site-footer__contact">
+      {address && (
+        <li class="site-footer__contact-item">
+          <Icon name="map-pin" />
+          <span>{address}</span>
+        </li>
+      )}
+      {phone && (
+        <li class="site-footer__contact-item">
+          <Icon name="phone" />
+          <Link href={phoneHref ?? `tel:${phone}`} variant="muted">{phone}</Link>
+        </li>
+      )}
+      {email && (
+        <li class="site-footer__contact-item">
+          <Icon name="mail" />
+          <Link href={`mailto:${email}`} variant="muted">{email.replace(/@.*/, "")}@<wbr />{email.replace(/^[^@]*@/, "")}</Link>
+        </li>
+      )}
+    </ul>
+  </div>
+)}

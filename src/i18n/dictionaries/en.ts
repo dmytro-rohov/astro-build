@@ -120,6 +120,9 @@ export const en = {
     copyright: "© {year} {siteName}. All rights reserved.",
     contact: "Contact",
     madeBy: "Website by",
+    ctaTitle: "Questions? We're happy to help.",
+    getInTouch: "Get in touch",
+    follow: "Follow us",
     console: "This site was built by Mytko.dev — fast, accessible websites for businesses and specialists. Want one? https://mytko.dev",
   },
 

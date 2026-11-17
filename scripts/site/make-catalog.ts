@@ -8,7 +8,7 @@
  * in every archetype. Generated from the schemas, so it never drifts from them.
  *
  * Usage: tsx scripts/site/make-catalog.ts [--out .generated/catalog]
- *        [--archetype energetic] [--navbar simple] [--footer columns] [--lang pl]
+ *        [--archetype energetic] [--navbar simple] [--footer columns] [--footer-tone dark] [--lang pl]
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -26,6 +26,7 @@ const out = path.resolve(getFlag("out") ?? ".generated/catalog");
 const archetype = getFlag("archetype") ?? "default";
 const navbar = getFlag("navbar") ?? "simple";
 const footer = getFlag("footer") ?? "columns";
+const footerTone = getFlag("footer-tone");
 const lang = getFlag("lang") ?? "pl";
 
 // Long, real Polish words test hyphenation and wrapping.
@@ -246,7 +247,7 @@ const site = {
   theme: { archetype },
   layout: {
     navbar: { variant: navbar, props: {}, content: example(layoutTypes.navbar.content, "max", "content") },
-    footer: { variant: footer, props: {}, content: example(layoutTypes.footer.content, "max", "content") },
+    footer: { variant: footer, props: footerTone ? { tone: footerTone } : {}, content: example(layoutTypes.footer.content, "max", "content") },
   },
   navigation: { auto: true },
   pages,
