@@ -33,7 +33,7 @@ const { address, phone, phoneHref, email } = contact;
       {email && (
         <li class="site-footer__contact-item">
           <Icon name="mail" />
-          <Link href={`mailto:${email}`} variant="muted">{email}</Link>
+          <Link href={`mailto:${email}`} variant="muted">{email.replace(/@.*/, "")}@<wbr />{email.replace(/^[^@]*@/, "")}</Link>
         </li>
       )}
     </ul>

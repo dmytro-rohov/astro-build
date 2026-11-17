@@ -37,7 +37,8 @@
     line-height: var(--line-height-relaxed);
   }
 
-  // Brand block as a row (cards, rounded-card): logo, description, social icons pushed right.
+  // Brand block as a row (cards, rounded-card): logo, description, social icons pushed right
+  // from tablets on.
   .site-footer__brand-block--row {
     flex-flow: row wrap;
     align-items: center;
@@ -50,9 +51,6 @@
     max-width: 34rem;
   }
 
-  .site-footer__brand-block--row .site-footer__social-list {
-    margin-inline-start: auto;
-  }
 
   .site-footer__social-list {
     display: flex;
@@ -232,6 +230,10 @@
   @include mq(md) {
     .site-footer {
       padding-block: var(--spacing-4xl) var(--spacing-xl);
+    }
+
+    .site-footer__brand-block--row .site-footer__social-list {
+      margin-inline-start: auto;
     }
 
     .site-footer__bottom {

@@ -35,7 +35,7 @@ const allLinks = groups.flatMap((group) => group.links);
             <li><Link href={phoneHref ?? `tel:${phone}`} class="site-footer__reach-line"><Icon name="phone" />{phone}</Link></li>
           )}
           {email && (
-            <li><Link href={`mailto:${email}`} class="site-footer__reach-line"><Icon name="mail" />{email}</Link></li>
+            <li><Link href={`mailto:${email}`} class="site-footer__reach-line"><Icon name="mail" /><span>{email.replace(/@.*/, "")}@<wbr />{email.replace(/^[^@]*@/, "")}</span></Link></li>
           )}
         </ul>
       )}

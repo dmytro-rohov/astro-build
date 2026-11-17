@@ -66,6 +66,26 @@
     font-size: 11cqi;
   }
 
+  .site-footer__wordmark-text {
+    display: inline-block;
+  }
+
+  // Fitted by the script (BigName.astro): one line, edge to edge, in half-cqi steps.
+  .site-footer__wordmark[data-fit] {
+    white-space: nowrap;
+    overflow-wrap: normal;
+  }
+
+  .site-footer__wordmark[data-fit="measure"] {
+    font-size: 10cqi;
+  }
+
+  @for $step from 16 through 68 {
+    .site-footer__wordmark[data-fit="#{$step * 0.5}"] {
+      font-size: #{$step * 0.5}cqi;
+    }
+  }
+
   @include mq(md) {
     .site-footer__big-top {
       grid-template-columns: repeat(3, minmax(0, 1fr));
