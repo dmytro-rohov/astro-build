@@ -3,12 +3,6 @@
 @use "../../abstracts/mixins" as *;
 
 @layer widgets {
-  .site-header--split .navbar__link {
-    font-size: var(--font-size-sm);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
   // Phones: the two lists read as one; the button keeps its distance below them.
   @include mq-down(md) {
     .site-header--split .navbar__menu {
@@ -51,10 +45,16 @@
       max-width: 18rem;
       font-size: var(--font-size-xl);
       text-align: center;
+      text-wrap: balance;
     }
 
     .site-header--split .logo--header {
       height: 3rem;
+    }
+
+    .site-header--split .navbar__link {
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
     }
 
     .site-header--split .navbar__list {

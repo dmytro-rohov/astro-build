@@ -10,6 +10,7 @@
   .site-header--minimal .site-header__brand {
     font-size: clamp(var(--font-size-xl), 1rem + 1.5vw, var(--font-size-3xl));
     letter-spacing: -0.02em;
+    text-wrap: balance;
   }
 
   .site-header--minimal .logo--header {
@@ -33,9 +34,14 @@
     }
   }
 
+  // The list is then the only thing in the menu: it keeps the middle of the screen alone.
   @include mq(sm) {
     .navbar--overlay .navbar__menu .navbar__cta {
       display: none;
+    }
+
+    .navbar--overlay .navbar__list {
+      margin-block-end: auto;
     }
   }
 
@@ -79,10 +85,6 @@
 
       .navbar--overlay .navbar__menu > :first-child {
         margin-block-start: auto;
-      }
-
-      .navbar--overlay .navbar__menu > :last-child {
-        margin-block-end: auto;
       }
 
       .navbar--overlay .navbar__list {
