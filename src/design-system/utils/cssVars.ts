@@ -114,10 +114,10 @@ ${lines(flatTokens)}
 ${lines(colorVars(theme.dark))}
 }
 
-/* Footer (v3.5): tone "brand" and the call-to-action band get the accent palette like accent sections. */
+/* Footer (v3.5): tone "brand" and its brand surfaces (cta band, cards' contact card) get the accent palette like accent sections. */
 :root .section--tone-accent,
 :root .site-footer--tone-brand,
-:root .site-footer__band--brand {
+:root .site-footer__brand-surface {
 ${lines(colorVars(accentPalette(theme.light)))}
 }
 
@@ -128,7 +128,7 @@ ${lines(colorVars(theme.dark))}
 
 :root[data-theme="dark"] .section--tone-accent,
 :root[data-theme="dark"] .site-footer--tone-brand,
-:root[data-theme="dark"] .site-footer__band--brand {
+:root[data-theme="dark"] .site-footer__brand-surface {
 ${lines(colorVars(accentPalette(theme.dark)))}
 }
 
@@ -150,7 +150,7 @@ ${lines(colorVars(theme.light), "    ")}
 
   :root:not([data-theme]) .section--tone-accent,
   :root:not([data-theme]) .site-footer--tone-brand,
-  :root:not([data-theme]) .site-footer__band--brand {
+  :root:not([data-theme]) .site-footer__brand-surface {
 ${lines(colorVars(accentPalette(theme.dark)), "    ")}
   }
 }

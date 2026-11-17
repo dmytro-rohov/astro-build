@@ -22,7 +22,7 @@ const href = contactHref(content.ctaAction, site.pages, site.business);
 const label = content.ctaAction?.label ?? t.footer.getInTouch;
 ---
 
-<div class:list={["site-footer__band", image ? "site-footer__band--image" : "site-footer__band--brand"]}>
+<div class:list={["site-footer__band", image ? "site-footer__band--image" : "site-footer__band--brand site-footer__brand-surface"]}>
   {image && (
     <div class="site-footer__band-media">
       <Img

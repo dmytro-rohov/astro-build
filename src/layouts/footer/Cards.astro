@@ -1,5 +1,8 @@
 ---
-/** Brand row (logo and description, social icons on the right), then every link group and the contact details on its own rounded card. */
+/**
+ * Brand row (logo and description, social icons on the right), then every link group and the
+ * contact details on its own rounded card — the contact card on the brand color.
+ */
 import Brand from "./Brand.astro";
 import Contact from "./Contact.astro";
 import Groups from "./Groups.astro";
@@ -17,6 +20,6 @@ const hasContact = Boolean(contact.phone || contact.email || contact.address);
 {(groups.length > 0 || hasContact) && (
   <div class="site-footer__cards">
     <Groups groups={groups} class="site-footer__card" />
-    <Contact contact={contact} class="site-footer__card" />
+    <Contact contact={contact} class="site-footer__card site-footer__brand-surface" />
   </div>
 )}

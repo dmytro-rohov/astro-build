@@ -29,4 +29,14 @@
   .site-footer__card .site-footer__contact {
     gap: var(--spacing-sm);
   }
+
+  // The contact card has the accent palette (cssVars.ts): its own color, ink for text and icons.
+  .site-footer__card.site-footer__brand-surface {
+    color: var(--color-text-primary);
+    background: var(--color-background-primary);
+  }
+
+  .site-footer__brand-surface .site-footer__contact-item {
+    color: var(--color-text-primary);
+  }
 }
