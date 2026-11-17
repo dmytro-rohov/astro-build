@@ -236,8 +236,7 @@
     }
 
     .site-footer__bottom {
-      flex-direction: row;
-      flex-wrap: wrap;
+      flex-flow: row wrap;
       align-items: center;
       justify-content: space-between;
     }
