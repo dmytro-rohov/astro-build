@@ -4,7 +4,7 @@
 @layer widgets {
   // The footer takes the page color, the cards the footer's (dark cards on a darker base in a
   // dark footer); as many columns as fit, every card at least 13rem wide.
-  .site-footer--cards {
+  .site-footer.site-footer--cards {
     background: var(--color-background-primary);
   }
 

@@ -5,7 +5,7 @@
 @layer widgets {
   // The footer itself stays the page (transparent: the body color of the site's own palette
   // shows through); its container is the card, in the footer's tone (dark by default).
-  .site-footer--rounded-card {
+  .site-footer.site-footer--rounded-card {
     padding-block: var(--spacing-md);
     background: transparent;
     border-block-start: 0;
@@ -27,7 +27,7 @@
   }
 
   @include mq(md) {
-    .site-footer--rounded-card {
+    .site-footer.site-footer--rounded-card {
       padding-block: var(--spacing-lg);
     }
 

@@ -3,7 +3,7 @@
 @use "../../abstracts/mixins" as *;
 
 @layer widgets {
-  .site-footer--big-name {
+  .site-footer.site-footer--big-name {
     padding-block-end: var(--spacing-lg);
   }
 

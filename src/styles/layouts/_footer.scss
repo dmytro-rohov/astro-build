@@ -1,8 +1,9 @@
 @use "../abstracts/mixins" as *;
 
 // Footer parts every variant shares. v3.5: each variant's own layout comes with its component
-// (src/styles/layouts/footer/). Tones "light", "dark" and "brand" re-scope the color tokens on
-// .site-footer (see cssVars.ts), so everything below already uses the right palette.
+// (src/styles/layouts/footer/); those sheets land before this one in the bundle, so they write
+// the root as `.site-footer.site-footer--<variant>`. Tones "light", "dark" and "brand" re-scope
+// the color tokens on .site-footer (see cssVars.ts), so everything below already uses the right palette.
 @layer widgets {
   .site-footer {
     // v3.2: room above, little below the last line.

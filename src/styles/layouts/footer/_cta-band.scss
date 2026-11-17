@@ -4,7 +4,7 @@
 
 @layer widgets {
   // The band opens the footer: less room above it.
-  .site-footer--cta-band {
+  .site-footer.site-footer--cta-band {
     padding-block-start: var(--spacing-xl);
   }
 
