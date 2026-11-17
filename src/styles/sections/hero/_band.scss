@@ -1,0 +1,67 @@
+// Hero: band (Band.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // v3.4: the text block in the middle, the photo band under it from edge to edge, touching the
+  // next section; the band grows to fill the first screen (at least 15rem).
+  .s-hero--band > .container {
+    width: 100%;
+  }
+
+  .s-hero--band.s-hero-band--with-image {
+    align-content: stretch;
+    padding-block-end: 0;
+  }
+
+  .s-hero-band--with-image > .container,
+  .s-hero-band--with-image .s-hero-band {
+    display: grid;
+  }
+
+  .s-hero-band {
+    grid-template-rows: auto minmax(15rem, 1fr);
+    gap: calc(var(--spacing-3xl) * var(--section-fluid));
+  }
+
+  .s-hero-band__content {
+    width: min(100% - var(--spacing-md) * 2, 56rem);
+    margin-inline: auto;
+  }
+
+  .s-hero-band__header {
+    max-width: none;
+  }
+
+  .s-hero-band__header .s-header__title {
+    max-width: 18ch;
+    margin-inline: auto;
+    font-size: clamp(var(--font-size-4xl), 6vw, var(--font-size-7xl));
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  .s-hero-band__header .s-header__description {
+    max-width: 40rem;
+    margin-inline: auto;
+  }
+
+  .s-hero-band__media {
+    position: relative;
+  }
+
+  // The photo never sets the band's height: it fills what the text leaves.
+  .s-hero-band__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @include mq(lg) {
+    .s-hero-band {
+      grid-template-rows: auto minmax(20rem, 1fr);
+    }
+  }
+}

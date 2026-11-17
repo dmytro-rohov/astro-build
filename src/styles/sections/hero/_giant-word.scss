@@ -1,0 +1,90 @@
+// Hero: giant-word (GiantWord.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // v3.4: the word, the photo and the word's front copy share one grid cell. The type size comes
+  // from the stage width and the word's length (--chars, a class per length) so the word always
+  // fills one line; the photo is sized from it. The front copy shows only the letters' lower
+  // part, so they pass in front of the photo there and behind it above.
+  .s-hero-word {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: var(--spacing-xl);
+    text-align: center;
+  }
+
+  .s-hero-word__stage {
+    --word-size: min(100cqi / (var(--chars, 6) * 0.78), 16rem);
+
+    container-type: inline-size;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    overflow: clip;
+  }
+
+  .s-hero-word__stage > * {
+    grid-area: 1 / 1;
+  }
+
+  .s-hero-word__word {
+    margin: 0;
+    font-family: var(--font-family-heading);
+    font-size: var(--word-size);
+    font-weight: max(700, var(--heading-weight));
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--color-text-primary);
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow-wrap: normal;
+  }
+
+  .s-hero-word__photo {
+    z-index: 1;
+    width: clamp(7rem, var(--word-size) * 1.1, 20rem);
+  }
+
+  .s-hero-word__image {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: calc(var(--radius-image) * 2);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .s-hero-word__word--front {
+    z-index: 2;
+    clip-path: inset(62% 0 0);
+    pointer-events: none;
+  }
+
+  // Without a photo the word carries the brand color, top to bottom.
+  .s-hero-word:not(.s-hero-word--with-image) .s-hero-word__word {
+    color: var(--color-action-primary);
+  }
+
+  .s-hero-word__header {
+    max-width: none;
+  }
+
+  .s-hero-word__header .s-header__title {
+    max-width: 22ch;
+    margin-inline: auto;
+    font-size: clamp(var(--font-size-2xl), 3.5vw, var(--font-size-5xl));
+    text-wrap: balance;
+  }
+
+  .s-hero-word__header .s-header__description {
+    max-width: 36rem;
+    margin-inline: auto;
+  }
+
+  @for $chars from 1 through 40 {
+    .s-hero-word__stage--#{$chars} {
+      --chars: #{$chars};
+    }
+  }
+}

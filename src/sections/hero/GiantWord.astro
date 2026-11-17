@@ -1,0 +1,61 @@
+---
+/**
+ * One oversized word across the page (word, else the eyebrow) with the photo standing among its
+ * letters: the word runs behind the photo and its lower part again in front of it, so the photo
+ * seems threaded through the word. The headline, text and buttons are centered below. The word
+ * is read once; the copy in front is decorative.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Actions from "@/sections/_shared/Actions.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Tag from "@/components/ui/Tag.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import { giantWord } from "@/sections/hero/layout";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/hero/_giant-word.scss";
+
+export interface Props {
+  section: VariantOf<"hero", "giant-word">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const image = content.image ? getAsset(content.image) : undefined;
+const word = giantWord(content.word, content.eyebrow);
+// The eyebrow keeps its own line only when it is not the giant word itself.
+const eyebrow = content.word ? content.eyebrow : undefined;
+---
+
+<SectionShell id={section.id} type="hero" variant="giant-word" tone={props.tone} spacing={props.spacing} defaultSpacing="md" width="xl">
+  <div class:list={["s-hero-word", image && "s-hero-word--with-image"]}>
+    {eyebrow && <Tag variant="primary" class="s-hero-word__eyebrow">{eyebrow}</Tag>}
+    {(word || image) && (
+      <div class:list={["s-hero-word__stage", word && `s-hero-word__stage--${word.chars}`]}>
+        {word && <p class="s-hero-word__word">{word.text}</p>}
+        {image && (
+          <div class="s-hero-word__photo">
+            <Img
+              src={image.image}
+              alt={image.alt}
+              kind={image.alt ? "content" : "decorative"}
+              aspect={[4, 5]}
+              focal={image.focal}
+              priority={headingLevel === "h1" ? "high" : "auto"}
+              widths={[320, 480, 640]}
+              sizes="(min-width: 1024px) 20rem, 45vw"
+              class="s-hero-word__image"
+            />
+          </div>
+        )}
+        {word && image && <p class="s-hero-word__word s-hero-word__word--front" aria-hidden="true">{word.text}</p>}
+      </div>
+    )}
+    <Stack space="xl" class="s-hero-word__copy">
+      <SectionHeader title={content.title} description={content.description} headingLevel={headingLevel} align="center" class="s-hero-word__header" />
+      <Actions primary={content.primaryAction} secondary={content.secondaryAction} align="center" />
+    </Stack>
+  </div>
+</SectionShell>

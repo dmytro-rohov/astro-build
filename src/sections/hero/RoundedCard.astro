@@ -1,0 +1,49 @@
+---
+/**
+ * The hero as a large rounded card inset from the screen edges: the photo fills it and a frosted
+ * arch rises from its lower edge behind the centered headline, text and buttons. The arch is the
+ * section background at 86 % (blurred photo behind), so the text keeps its contrast on any photo.
+ * Without an image the card is a soft brand gradient and the arch is solid.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Actions from "@/sections/_shared/Actions.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/hero/_rounded-card.scss";
+
+export interface Props {
+  section: VariantOf<"hero", "rounded-card">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const image = content.image ? getAsset(content.image) : undefined;
+---
+
+<SectionShell id={section.id} type="hero" variant="rounded-card" tone={props.tone} spacing={props.spacing} defaultSpacing="sm" width="full">
+  <div class:list={["s-hero-round", !image && "s-hero-round--no-image"]}>
+    {image && (
+      <Img
+        src={image.image}
+        alt={image.alt}
+        kind={image.alt ? "content" : "decorative"}
+        aspect={[4, 3]}
+        focal={image.focal}
+        priority={headingLevel === "h1" ? "high" : "auto"}
+        widths={[640, 960, 1280, 1600]}
+        sizes="100vw"
+        class="s-hero-round__image"
+      />
+    )}
+    <div class="s-hero-round__arch">
+      <Stack space="xl" class="s-hero-round__content">
+        <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align="center" class="s-hero-round__header" />
+        <Actions primary={content.primaryAction} secondary={content.secondaryAction} align="center" />
+      </Stack>
+    </div>
+  </div>
+</SectionShell>

@@ -1,0 +1,51 @@
+---
+/**
+ * Large headline on top, a wide photo under it and the text with the buttons on a card cut into
+ * the photo's upper right corner (the page background runs into the photo). Phones: the card cuts
+ * into the photo's lower corner. Without an image the headline and the card sit side by side.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Actions from "@/sections/_shared/Actions.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/hero/_offset-card.scss";
+
+export interface Props {
+  section: VariantOf<"hero", "offset-card">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const image = content.image ? getAsset(content.image) : undefined;
+const hasCard = Boolean(content.description || content.primaryAction || content.secondaryAction);
+---
+
+<SectionShell id={section.id} type="hero" variant="offset-card" tone={props.tone} spacing={props.spacing} defaultSpacing="md" width="xl">
+  <div class:list={["s-hero-offset", image ? "s-hero-offset--with-image" : "s-hero-offset--no-image"]}>
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} headingLevel={headingLevel} class="s-hero-offset__header" />
+    {image && (
+      <div class="s-hero-offset__media">
+        <Img
+          src={image.image}
+          alt={image.alt}
+          kind={image.alt ? "content" : "decorative"}
+          aspect={[4, 3]}
+          focal={image.focal}
+          priority={headingLevel === "h1" ? "high" : "auto"}
+          widths={[640, 960, 1280, 1600]}
+          sizes="(min-width: 1280px) 1224px, 100vw"
+          class="s-hero-offset__image"
+        />
+      </div>
+    )}
+    {hasCard && (
+      <div class="s-hero-offset__card">
+        {content.description && <p class="s-hero-offset__description">{content.description}</p>}
+        <Actions primary={content.primaryAction} secondary={content.secondaryAction} />
+      </div>
+    )}
+  </div>
+</SectionShell>

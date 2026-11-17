@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **18 section types, 93 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **18 section types, 99 variants**, 3 navbars and 3 footers, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -158,7 +158,7 @@ the migrated site is validated like any build.
 
 | Type | Variants |
 |---|---|
-| `hero` | `split-image`, `centered`, `cover-image` (photo behind text, always the dark palette), `panel` (edge-to-edge split), `minimal` (oversized type + facts) |
+| `hero` | `split-image`, `centered`, `cover-image` (photo behind text, always the dark palette), `panel` (edge-to-edge split), `minimal` (oversized type + facts), `title-below` (photo first with a floating facts-and-buttons card, headline and text under it), `band` (centered text over an edge-to-edge photo band), `offset-card` (headline, wide photo, text card cut into its corner), `rounded-card` (inset rounded photo card, frosted arch behind the centered text), `bold-type` (huge uppercase headline with a pill button in its last line, photo card, facts bar), `giant-word` (one oversized word threaded through the photo, optional `word`) |
 | `about` | `image-side`, `centered` |
 | `services` | `cards`, `price-list` |
 | `features` | `cards-grid`, `icon-list`, `icon-badge` (round icon on the card edge, link per card), `staggered` (zigzag cards over a colored band), `orbit` (items around a central circle; a list on phones), `spotlight` (one raised card), `bento` (tiles of different sizes, one accent tile) |
