@@ -51,6 +51,7 @@ export default {
     step: "Krok {number}",
     gallery: "Galeria",
     reviews: { one: "{count} opinia", few: "{count} opinie", many: "{count} opinii", other: "{count} opinii" },
+    letsTalk: "Porozmawiajmy",
   },
 
   faq: {

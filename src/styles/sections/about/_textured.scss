@@ -1,0 +1,139 @@
+// About: textured (Textured.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // The pattern lies on the section (behind the content, the section's own stacking context):
+  // a band on top on phones, the right half from md. Combed plaster: fans of hairline arcs in
+  // square tiles, turned the other way on every other tile (two layers, checkerboard masks),
+  // over a brand-tinted plaster with soft light.
+  .s-about--textured {
+    isolation: isolate;
+  }
+
+  .s-about-textured__pattern {
+    --tile: 9rem;
+    --groove: color-mix(in oklab, var(--color-text-primary) 13%, transparent);
+
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: -1;
+    height: 17rem;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 70% 50% at 20% 15%, color-mix(in oklab, var(--color-background-primary) 60%, transparent), transparent 70%),
+      radial-gradient(ellipse 60% 45% at 85% 90%, color-mix(in oklab, var(--color-text-primary) 4%, transparent), transparent 70%),
+      color-mix(in oklab, var(--color-action-primary) 7%, var(--color-background-muted));
+  }
+
+  .s-about-textured__pattern::before,
+  .s-about-textured__pattern::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-radial-gradient(circle at 0 100%, transparent 0 0.62rem, var(--groove) 0.66rem, transparent 0.7rem) 0 0 / var(--tile) var(--tile);
+    mask: conic-gradient(#000 25%, transparent 0 50%, #000 0 75%, transparent 0) 0 0 / calc(var(--tile) * 2) calc(var(--tile) * 2);
+  }
+
+  .s-about-textured__pattern::after {
+    background-image: repeating-radial-gradient(circle at 100% 0, transparent 0 0.62rem, var(--groove) 0.66rem, transparent 0.7rem);
+    mask-image: conic-gradient(transparent 25%, #000 0 50%, transparent 0 75%, #000 0);
+  }
+
+  .s-about-textured {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  .s-about-textured__media {
+    order: -1;
+    justify-self: center;
+    width: min(100%, 22rem);
+  }
+
+  .s-about-textured__image {
+    width: 100%;
+    border: var(--image-border);
+    border-radius: var(--radius-image);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .s-about-textured__title {
+    font-size: clamp(var(--font-size-3xl), 5vw, var(--font-size-5xl));
+    line-height: var(--line-height-tight);
+  }
+
+  .s-about-textured__title .s-about-title__mark {
+    color: var(--color-action-primary);
+    font-style: italic;
+  }
+
+  .s-about-textured__eyebrow {
+    margin-block-start: var(--spacing-md);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  // Without a photo: the text on a card, over the edge of the pattern.
+  .s-about-textured--no-image .s-about-textured__text {
+    margin-block-start: 6rem;
+    padding: var(--spacing-xl) var(--spacing-lg);
+    background: var(--color-background-surface);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .s-about--textured:has(.s-about-textured--no-image) .s-about-textured__pattern {
+    height: 13rem;
+  }
+
+  @include mq(md) {
+    .s-about-textured__pattern,
+    .s-about--textured:has(.s-about-textured--no-image) .s-about-textured__pattern {
+      inset: 0 0 0 50%;
+      height: auto;
+    }
+
+    .s-about-textured {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      align-items: center;
+    }
+
+    .s-about-textured__text {
+      grid-column: 1 / 6;
+    }
+
+    .s-about-textured__media {
+      order: 0;
+      grid-column: 6 / 11;
+      width: 100%;
+      max-width: 26rem;
+    }
+
+    .s-about-textured--no-image .s-about-textured__text {
+      grid-column: 2 / 12;
+      margin-block: var(--spacing-xl);
+      padding: var(--spacing-2xl);
+    }
+  }
+
+  @include mq(lg) {
+    .s-about-textured__text {
+      grid-column: 1 / 6;
+      padding-inline-end: var(--spacing-lg);
+    }
+
+    .s-about-textured__media {
+      grid-column: 6 / 10;
+    }
+
+    .s-about-textured--no-image .s-about-textured__text {
+      grid-column: 3 / 11;
+      padding: var(--spacing-3xl);
+    }
+  }
+}

@@ -1,0 +1,44 @@
+// Hero: cover-image (CoverImage.astro).
+@use "../../abstracts/layers";
+
+@layer widgets {
+  .s-hero--cover-image {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+  }
+
+  .s-hero--cover-image.s-hero-cover--with-image {
+    min-height: var(--hero-min-height);
+    display: grid;
+    align-items: center;
+  }
+
+  .s-hero-cover__media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  .s-hero-cover__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  // Overlay keeps light text readable (≥ 4.5:1) on any photo.
+  .s-hero-cover__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-background-primary) 82%, transparent);
+  }
+
+  .s-hero-cover__content {
+    max-width: 42rem;
+  }
+
+  .s-hero-cover__content--center {
+    margin-inline: auto;
+  }
+}

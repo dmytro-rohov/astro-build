@@ -51,6 +51,7 @@ export default {
     planExcluded: "Není v ceně",
     gallery: "Galerie",
     reviews: { one: "{count} recenze", few: "{count} recenze", many: "{count} recenze", other: "{count} recenzí" },
+    letsTalk: "Pojďme si promluvit",
   },
 
   slider: {

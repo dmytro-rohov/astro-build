@@ -51,6 +51,7 @@ export default {
     planExcluded: "Non incluso",
     gallery: "Galleria",
     reviews: { one: "{count} recensione", few: "{count} recensioni", many: "{count} recensioni", other: "{count} recensioni" },
+    letsTalk: "Parliamone",
   },
 
   slider: {

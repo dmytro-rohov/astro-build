@@ -1,0 +1,184 @@
+// Hero: bold-type (BoldType.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // v3.4: the headline is an inline heading in a line box of its own size, so the pill button
+  // after it runs on in its last line (or starts a new one when it does not fit). Three type
+  // sizes by the title's length (--short, --medium, --long; layout.ts).
+  .s-hero-bold {
+    --bold-size: clamp(3rem, 10vw, 8.5rem);
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: var(--spacing-lg);
+  }
+
+  .s-hero-bold--medium {
+    --bold-size: clamp(2.5rem, 7.5vw, 6.5rem);
+  }
+
+  .s-hero-bold--long {
+    --bold-size: clamp(2.25rem, 5.5vw, 5rem);
+  }
+
+  .s-hero-bold__eyebrow {
+    justify-self: start;
+  }
+
+  .s-hero-bold__headline {
+    font-family: var(--font-family-heading);
+    font-size: var(--bold-size);
+
+    // Room for Polish accents over capitals (Ń, Ż) under the line above.
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+
+  .s-hero-bold__title {
+    display: inline;
+    font-size: inherit;
+    font-weight: max(700, var(--heading-weight));
+    line-height: inherit;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+
+  .s-hero-bold__pill {
+    gap: var(--spacing-md);
+    margin-inline-start: 0.15em;
+    padding-inline: var(--spacing-xl) var(--spacing-xs);
+    font-family: var(--font-family-base);
+    font-size: clamp(var(--font-size-base), 1.5vw, var(--font-size-xl));
+    letter-spacing: 0;
+    text-transform: uppercase;
+    vertical-align: 0.12em;
+    border-radius: var(--radius-pill);
+  }
+
+  .s-hero-bold__arrow {
+    display: grid;
+    place-items: center;
+    width: 2.5em;
+    height: 2.5em;
+    color: var(--color-action-primary);
+    background: var(--color-action-primary-text);
+    border-radius: 50%;
+  }
+
+  .s-hero-bold__pill:hover .s-hero-bold__arrow {
+    transform: translateX(0.15em);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .s-hero-bold__arrow {
+      transition: transform var(--motion-duration-fast) var(--motion-easing-standard);
+    }
+  }
+
+  .s-hero-bold__description {
+    max-width: 34rem;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .s-hero-bold__link {
+    justify-self: start;
+    min-height: 0;
+    padding-inline: 0;
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
+
+  .s-hero-bold__image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-card);
+  }
+
+  // The facts close the hero as a bar in the text color (light on dark, dark on light).
+  .s-hero-bold .s-highlights {
+    grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
+    gap: var(--spacing-md);
+    margin-block-start: var(--spacing-md);
+    padding: var(--spacing-lg);
+    color: var(--color-background-primary);
+    background: var(--color-text-primary);
+    border: 0;
+    border-radius: var(--radius-card);
+  }
+
+  .s-hero-bold .s-highlights__value,
+  .s-hero-bold .s-highlights__label {
+    color: inherit;
+  }
+
+  .s-hero-bold .s-highlights__value {
+    font-size: var(--font-size-2xl);
+    letter-spacing: -0.02em;
+  }
+
+  // Wide screens: the headline on the left over three rows, the text, link and photo card in a
+  // narrow column on the right, the facts bar across the bottom.
+  @include mq(lg) {
+    .s-hero-bold {
+      grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem);
+      grid-template-rows: auto auto auto 1fr auto;
+      column-gap: var(--spacing-3xl);
+    }
+
+    .s-hero-bold__eyebrow {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .s-hero-bold__headline {
+      grid-column: 1;
+      grid-row: 2 / 5;
+      align-self: center;
+    }
+
+    .s-hero-bold__description {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    .s-hero-bold__link {
+      grid-column: 2;
+      grid-row: 3;
+    }
+
+    .s-hero-bold__media {
+      grid-column: 2;
+      grid-row: 4;
+      align-self: end;
+    }
+
+    .s-hero-bold .s-highlights {
+      grid-column: 1 / -1;
+      grid-row: 5;
+      display: flex;
+      justify-content: space-between;
+      gap: var(--spacing-xl);
+      padding: var(--spacing-lg) var(--spacing-2xl);
+    }
+
+    .s-hero-bold .s-highlights__value {
+      font-size: var(--font-size-4xl);
+    }
+
+    .s-hero-bold .s-highlights__item {
+      flex-direction: row-reverse;
+      align-items: baseline;
+      justify-content: flex-end;
+      gap: var(--spacing-md);
+    }
+
+    .s-hero-bold .s-highlights__label {
+      max-width: 14rem;
+    }
+  }
+}

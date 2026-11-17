@@ -1,0 +1,8 @@
+// Hero: centered (Centered.astro).
+@use "../../abstracts/layers";
+
+@layer widgets {
+  .s-hero-centered .s-header {
+    max-width: none;
+  }
+}

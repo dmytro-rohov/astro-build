@@ -1,0 +1,64 @@
+---
+/**
+ * Huge uppercase headline across the page; the main button is a pill that runs on in its last
+ * line. The text, the secondary link and a photo card stand beside it, the facts close the hero
+ * as a dark bar. Phones: headline (with the pill), text, photo, link, facts.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import Highlights from "@/sections/about/Highlights.astro";
+import Tag from "@/components/ui/Tag.astro";
+import Button from "@/components/ui/Button.astro";
+import Icon from "@/components/media/Icon.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import { titleScale } from "@/sections/hero/layout";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/hero/_bold-type.scss";
+
+export interface Props {
+  section: VariantOf<"hero", "bold-type">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const image = content.image ? getAsset(content.image) : undefined;
+const Heading = headingLevel;
+---
+
+<SectionShell id={section.id} type="hero" variant="bold-type" tone={props.tone} spacing={props.spacing} defaultSpacing="md" width="xl">
+  <div class:list={["s-hero-bold", `s-hero-bold--${titleScale(content.title)}`, image && "s-hero-bold--with-image"]}>
+    {content.eyebrow && <Tag variant="primary" class="s-hero-bold__eyebrow">{content.eyebrow}</Tag>}
+    <div class="s-hero-bold__headline">
+      <Heading class="s-hero-bold__title">{content.title}</Heading>
+      {content.primaryAction && (
+        <Button href={content.primaryAction.href} size="lg" class="s-hero-bold__pill">
+          {content.primaryAction.label}
+          <span class="s-hero-bold__arrow"><Icon name="arrow-right" size="1.125em" /></span>
+        </Button>
+      )}
+    </div>
+    {content.description && <p class="s-hero-bold__description">{content.description}</p>}
+    {image && (
+      <div class="s-hero-bold__media">
+        <Img
+          src={image.image}
+          alt={image.alt}
+          kind={image.alt ? "content" : "decorative"}
+          aspect={[4, 3]}
+          focal={image.focal}
+          priority={headingLevel === "h1" ? "high" : "auto"}
+          widths={[480, 720, 960]}
+          sizes="(min-width: 1024px) 22rem, 100vw"
+          class="s-hero-bold__image"
+        />
+      </div>
+    )}
+    {content.secondaryAction && (
+      <Button href={content.secondaryAction.href} variant="ghost" size="lg" class="s-hero-bold__link">
+        {content.secondaryAction.label}
+      </Button>
+    )}
+    {content.highlights && <Highlights items={content.highlights} />}
+  </div>
+</SectionShell>

@@ -1,0 +1,78 @@
+---
+/**
+ * A personal page about one person: the name as a large title and the first paragraph as a
+ * lead; beside them the portrait with a contact card over its lower edge (business phone and
+ * e-mail, the action as a button); then the rest of the story, the facts and a client's quote.
+ * Phones: intro, portrait and card, story. Without a portrait the card stays beside the text;
+ * without a portrait and contact details the text is one column.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import RichText from "@/sections/_shared/RichText.astro";
+import Highlights from "@/sections/about/Highlights.astro";
+import Quote from "@/sections/about/Quote.astro";
+import Title from "@/sections/about/Title.astro";
+import Button from "@/components/ui/Button.astro";
+import Icon from "@/components/media/Icon.astro";
+import Img from "@/components/media/Img.astro";
+import { site } from "virtual:site";
+import { t } from "@/i18n";
+import { getAsset } from "@/site/assets";
+import { contactDetails } from "@/sections/contact/details";
+import { splitLead } from "@/sections/about/layout";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/about/_bio.scss";
+
+export interface Props {
+  section: VariantOf<"about", "bio">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const CardHeading = headingLevel === "h1" ? "h2" : "h3";
+const image = content.image ? getAsset(content.image) : undefined;
+const { lead, rest } = splitLead(content.body);
+const contacts = contactDetails(site.business, t).filter((detail) => detail.kind === "phone" || detail.kind === "email");
+const card = contacts.length > 0 || Boolean(content.action);
+const story = Boolean(rest || content.highlights || content.quote);
+---
+
+<SectionShell id={section.id} type="about" variant="bio" tone={props.tone} spacing={props.spacing}>
+  <div class:list={["s-about-bio", (image || card) && "s-about-bio--side", image && "s-about-bio--portrait"]}>
+    <div class="s-about-bio__intro">
+      {content.eyebrow && <p class="s-about-bio__eyebrow">{content.eyebrow}</p>}
+      <Title title={content.title} highlight={content.titleHighlight} headingLevel={headingLevel} class="s-about-bio__name" />
+      <RichText text={lead} class="s-about-bio__lead" />
+    </div>
+    {(image || card) && (
+      <div class="s-about-bio__side">
+        {image && (
+          <Img src={image.image} alt={image.alt} kind={image.alt ? "content" : "decorative"} aspect={[4, 5]} focal={image.focal} sizes="(min-width: 768px) 30vw, 90vw" widths={[480, 720, 960]} class="s-about-bio__portrait" />
+        )}
+        {card && (
+          <div class="s-about-bio__card">
+            <CardHeading class="s-about-bio__card-title">{t.sections.letsTalk}</CardHeading>
+            {contacts.length > 0 && (
+              <ul class="s-about-bio__contacts">
+                {contacts.map((contact) => (
+                  <li class="s-about-bio__contact">
+                    <span class="s-about-bio__contact-icon"><Icon name={contact.icon} /></span>
+                    <a class="s-about-bio__contact-link" href={contact.href}>{contact.value}</a>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {content.action && <Button href={content.action.href} class="s-about-bio__action">{content.action.label}</Button>}
+          </div>
+        )}
+      </div>
+    )}
+    {story && (
+      <div class="s-about-bio__story">
+        {rest && <RichText text={rest} />}
+        {content.highlights && <Highlights items={content.highlights} />}
+        {content.quote && <Quote text={content.quote} author={content.quoteAuthor} class="s-about-bio__quote" />}
+      </div>
+    )}
+  </div>
+</SectionShell>

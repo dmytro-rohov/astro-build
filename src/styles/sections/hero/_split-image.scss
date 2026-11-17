@@ -1,0 +1,109 @@
+// Hero: split-image (SplitImage.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .hero {
+    overflow: clip;
+  }
+
+  // Split hero: the picture takes the height of the text block (not a fixed 4:3 box).
+  .hero--with-media .hero__media {
+    align-self: stretch;
+    display: flex;
+  }
+
+  .hero--with-media .hero__media .hero__image {
+    height: 100%;
+    min-height: 18rem;
+    max-height: calc(var(--hero-min-height) - var(--spacing-2xl));
+    aspect-ratio: auto;
+  }
+
+  .hero__content {
+    max-width: 42rem;
+  }
+
+  // v3.3, phones: eyebrow, headline, text, then the picture, then the buttons — the first screen
+  // shows the headline and the photo together. The text block dissolves into the split grid.
+  @include mq-down(md) {
+    .hero--with-media .split {
+      --split-gap: var(--spacing-lg);
+    }
+
+    .hero--with-media .hero__content {
+      display: contents;
+    }
+
+    .hero--with-media .hero__media {
+      order: 1;
+    }
+
+    .hero--with-media .hero__actions {
+      order: 2;
+    }
+  }
+
+  .hero--align-center .hero__content {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .hero--align-center .hero__eyebrow {
+    margin-inline: auto;
+  }
+
+  .hero--align-center .hero__actions {
+    justify-content: center;
+  }
+
+  .hero__title {
+    max-width: 12ch;
+    font-size: clamp(
+      var(--font-size-4xl),
+      8vw,
+      var(--font-size-7xl)
+    );
+    line-height: var(--line-height-none);
+    letter-spacing: calc(var(--heading-tracking) - 0.02em);
+  }
+
+  .hero__description {
+    max-width: 62ch;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .hero--align-center .hero__description {
+    margin-inline: auto;
+  }
+
+  .hero__actions {
+    align-items: center;
+  }
+
+  .hero__media {
+    position: relative;
+  }
+
+  .hero__media::before {
+    content: "";
+    position: absolute;
+    inset: 10%;
+    z-index: -1;
+    background: color-mix(
+      in srgb,
+      var(--color-action-primary) 18%,
+      transparent
+    );
+    border-radius: var(--radius-2xl);
+    filter: blur(48px);
+  }
+
+  .hero__image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+}

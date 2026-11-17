@@ -1,0 +1,59 @@
+---
+/**
+ * An established business: the photo in an offset outline frame over a dot pattern, the first
+ * highlight as a brand badge on its corner ("20 lat" / "doświadczenia"); beside it the story,
+ * the points (vision, mission) in columns and the other facts, over faint vertical stripes.
+ * Without a photo the badge grows into a brand tile in the same frame; without both the text is
+ * a framed card. The text comes first in the HTML, the picture is moved before it on screen.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import RichText from "@/sections/_shared/RichText.astro";
+import Actions from "@/sections/_shared/Actions.astro";
+import Highlights from "@/sections/about/Highlights.astro";
+import Points from "@/sections/about/Points.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import Img from "@/components/media/Img.astro";
+import { getAsset } from "@/site/assets";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/about/_experience.scss";
+
+export interface Props {
+  section: VariantOf<"about", "experience">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const image = content.image ? getAsset(content.image) : undefined;
+const [badge, ...facts] = content.highlights ?? [];
+const media = Boolean(image || badge);
+---
+
+<SectionShell id={section.id} type="about" variant="experience" tone={props.tone} spacing={props.spacing}>
+  <span class="s-about-exp__stripes" aria-hidden="true"></span>
+  <div class:list={["s-about-exp", !media && "s-about-exp--text-only"]}>
+    <Stack space="lg" class="s-about-exp__text">
+      <SectionHeader eyebrow={content.eyebrow} title={content.title} headingLevel={headingLevel} />
+      <RichText text={content.body} />
+      {content.points && <Points items={content.points} headingLevel={headingLevel === "h1" ? "h2" : "h3"} class="s-about-exp__points" />}
+      {facts.length > 0 && <Highlights items={facts} />}
+      <Actions primary={content.action} size="md" />
+    </Stack>
+    {media && (
+      <div class:list={["s-about-exp__media", !image && "s-about-exp__media--badge"]}>
+        {image && (
+          <Img src={image.image} alt={image.alt} kind={image.alt ? "content" : "decorative"} aspect={[4, 5]} focal={image.focal} sizes="(min-width: 768px) 38vw, 90vw" widths={[480, 720, 960]} class="s-about-exp__image" />
+        )}
+        {badge && (
+          <dl class="s-about-exp__badge">
+            <div class="s-about-exp__badge-item">
+              <dt class="s-about-exp__badge-label">{badge.label}</dt>
+              <dd class="s-about-exp__badge-value" data-counter>{badge.value}</dd>
+            </div>
+          </dl>
+        )}
+      </div>
+    )}
+  </div>
+</SectionShell>
