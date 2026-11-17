@@ -31,3 +31,11 @@ declare module "virtual:section-components" {
   /** Section type → variant → component, for the variants used on the site (src/site/components.ts). */
   export const sectionComponents: Record<string, Record<string, SectionComponent>>;
 }
+
+declare module "virtual:layout-components" {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  type LayoutComponent = (props: any) => any;
+
+  /** Layout element → the component of the site's variant (src/site/components.ts). */
+  export const layoutComponents: Record<string, LayoutComponent>;
+}

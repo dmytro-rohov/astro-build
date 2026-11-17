@@ -1,0 +1,22 @@
+---
+/** Brand row (logo and description, social icons on the right), then every link group and the contact details on its own rounded card. */
+import Brand from "./Brand.astro";
+import Contact from "./Contact.astro";
+import Groups from "./Groups.astro";
+import type { FooterProps } from "./types";
+import "@/styles/layouts/footer/_cards.scss";
+
+export type Props = FooterProps;
+
+const { brandHref, description, groups, socialLinks, contact } = Astro.props;
+const hasContact = Boolean(contact.phone || contact.email || contact.address);
+---
+
+<Brand brandHref={brandHref} description={description} socialLinks={socialLinks} class="site-footer__brand-block--row" />
+
+{(groups.length > 0 || hasContact) && (
+  <div class="site-footer__cards">
+    <Groups groups={groups} class="site-footer__card" />
+    <Contact contact={contact} class="site-footer__card" />
+  </div>
+)}

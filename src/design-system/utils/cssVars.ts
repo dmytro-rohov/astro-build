@@ -114,7 +114,10 @@ ${lines(flatTokens)}
 ${lines(colorVars(theme.dark))}
 }
 
-:root .section--tone-accent {
+/* Footer (v3.5): tone "brand" and the call-to-action band get the accent palette like accent sections. */
+:root .section--tone-accent,
+:root .site-footer--tone-brand,
+:root .site-footer__band--brand {
 ${lines(colorVars(accentPalette(theme.light)))}
 }
 
@@ -123,7 +126,9 @@ ${lines(colorVars(accentPalette(theme.light)))}
 ${lines(colorVars(theme.dark))}
 }
 
-:root[data-theme="dark"] .section--tone-accent {
+:root[data-theme="dark"] .section--tone-accent,
+:root[data-theme="dark"] .site-footer--tone-brand,
+:root[data-theme="dark"] .site-footer__band--brand {
 ${lines(colorVars(accentPalette(theme.dark)))}
 }
 
@@ -143,16 +148,27 @@ ${lines(colorVars(theme.dark), "    ")}
 ${lines(colorVars(theme.light), "    ")}
   }
 
-  :root:not([data-theme]) .section--tone-accent {
+  :root:not([data-theme]) .section--tone-accent,
+  :root:not([data-theme]) .site-footer--tone-brand,
+  :root:not([data-theme]) .site-footer__band--brand {
 ${lines(colorVars(accentPalette(theme.dark)), "    ")}
   }
 }
 
-/* Cover hero and the photo viewer: always the dark palette (light text over dark), also in dark sites. */
+/* Cover hero, the photo viewer, dark footers and the footer's photo band: always the dark palette
+   (light text over dark), also in dark sites. */
 :root .section.s-hero--cover-image,
-:root .lightbox {
+:root .lightbox,
+:root .site-footer--tone-dark,
+:root .site-footer__band--image {
   color-scheme: dark;
 ${lines(colorVars(theme.dark))}
+}
+
+/* Light footers: the light palette, also in dark sites. */
+:root .site-footer--tone-light {
+  color-scheme: light;
+${lines(colorVars(theme.light))}
 }
 `;
 

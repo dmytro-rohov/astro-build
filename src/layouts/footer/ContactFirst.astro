@@ -1,0 +1,91 @@
+---
+/**
+ * "Get in touch" first: phone and e-mail in large type, the address and opening hours with the
+ * live open-now status (hours-location/Status.astro) beside the logo, description and round
+ * social icons; every link follows in one quiet row. Without contact details: the brand alone.
+ */
+import Icon from "@/components/media/Icon.astro";
+import Link from "@/components/ui/Link.astro";
+import Logo from "@/components/media/Logo.astro";
+import Status from "@/sections/hours-location/Status.astro";
+import { t } from "@/i18n";
+import { hoursRows } from "@/site/hours";
+import Socials from "./Socials.astro";
+import type { FooterProps } from "./types";
+import { site } from "virtual:site";
+import "@/styles/sections/hours-location/_shared.scss";
+import "@/styles/layouts/footer/_contact-first.scss";
+
+export type Props = FooterProps;
+
+const { brandLabel, brandHref, description, groups, socialLinks, contact } = Astro.props;
+const { address, phone, phoneHref, email } = contact;
+const hours = hoursRows(site.business.hours, t);
+const hasContact = Boolean(phone || email || address || hours.length > 0);
+const allLinks = groups.flatMap((group) => group.links);
+---
+
+<div class="site-footer__reach">
+  {hasContact && (
+    <div class="site-footer__reach-main">
+      <h2 class="site-footer__reach-title">{site.layout.footer.content.ctaTitle ?? t.footer.getInTouch}</h2>
+      {(phone || email) && (
+        <ul class="site-footer__reach-lines">
+          {phone && (
+            <li><Link href={phoneHref ?? `tel:${phone}`} class="site-footer__reach-line"><Icon name="phone" />{phone}</Link></li>
+          )}
+          {email && (
+            <li><Link href={`mailto:${email}`} class="site-footer__reach-line"><Icon name="mail" />{email}</Link></li>
+          )}
+        </ul>
+      )}
+      <div class="site-footer__reach-facts">
+        {address && (
+          <p class="site-footer__reach-fact">
+            <Icon name="map-pin" />
+            <span>{address}</span>
+          </p>
+        )}
+        {hours.length > 0 && (
+          <div class="site-footer__reach-fact">
+            <Icon name="clock" />
+            <div class="site-footer__reach-hours">
+              <Status look="pill" />
+              <dl class="site-footer__hours">
+                {hours.map((row) => (
+                  <div class="site-footer__hours-row">
+                    <dt><abbr title={row.daysLong}>{row.days}</abbr></dt>
+                    <dd>{row.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )}
+
+  <div class="site-footer__reach-aside">
+    <a class="site-footer__brand" href={brandHref}>
+      <Logo size="footer" />
+    </a>
+    {description && <p class="site-footer__description">{description}</p>}
+    {socialLinks.length > 0 && (
+      <div class="site-footer__follow">
+        <p class="site-footer__follow-label">{t.footer.follow}</p>
+        <Socials links={socialLinks} round />
+      </div>
+    )}
+  </div>
+</div>
+
+{allLinks.length > 0 && (
+  <nav aria-label={brandLabel} class="site-footer__quiet-nav">
+    <ul class="site-footer__inline-links">
+      {allLinks.map((link) => (
+        <li><Link href={link.href} external={link.external} variant="muted" class="site-footer__link">{link.label}</Link></li>
+      ))}
+    </ul>
+  </nav>
+)}

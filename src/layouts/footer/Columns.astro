@@ -1,0 +1,21 @@
+---
+/**
+ * Brand block, link groups and the contact details as columns (v3.3: four by default, contact
+ * last). Also the body of the cta-band footer.
+ */
+import Brand from "./Brand.astro";
+import Contact from "./Contact.astro";
+import Groups from "./Groups.astro";
+import type { FooterProps } from "./types";
+import "@/styles/layouts/footer/_columns.scss";
+
+export type Props = FooterProps;
+
+const { brandHref, description, groups, socialLinks, contact } = Astro.props;
+---
+
+<div class="site-footer__main">
+  <Brand brandHref={brandHref} description={description} socialLinks={socialLinks} />
+  <Groups groups={groups} />
+  <Contact contact={contact} />
+</div>

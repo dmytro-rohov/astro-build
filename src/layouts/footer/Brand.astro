@@ -1,0 +1,24 @@
+---
+/** Logo (home link), the short description and the social icons. */
+import Stack from "@/components/layouts/Stack.astro";
+import Logo from "@/components/media/Logo.astro";
+import Socials from "./Socials.astro";
+import type { SocialLink } from "./types";
+
+export interface Props {
+  brandHref: string;
+  description?: string;
+  socialLinks: SocialLink[];
+  class?: string;
+}
+
+const { brandHref, description, socialLinks, class: className } = Astro.props;
+---
+
+<Stack class:list={["site-footer__brand-block", className]} space="md">
+  <a class="site-footer__brand" href={brandHref}>
+    <Logo size="footer" />
+  </a>
+  {description && <p class="site-footer__description">{description}</p>}
+  <Socials links={socialLinks} />
+</Stack>

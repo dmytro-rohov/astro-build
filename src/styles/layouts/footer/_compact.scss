@@ -1,0 +1,27 @@
+// Footer: simple and centered (Compact.astro).
+@use "../../abstracts/layers";
+
+@layer widgets {
+  .site-footer__compact {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-lg);
+  }
+
+  .site-footer--centered .site-footer__compact {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .site-footer--centered .site-footer__inline-links {
+    justify-content: center;
+  }
+
+  .site-footer--centered .site-footer__bottom {
+    align-items: center;
+    text-align: center;
+  }
+}

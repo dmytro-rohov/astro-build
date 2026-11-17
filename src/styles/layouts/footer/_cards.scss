@@ -1,0 +1,32 @@
+// Footer: cards (Cards.astro).
+@use "../../abstracts/layers";
+
+@layer widgets {
+  // The footer takes the page color, the cards the footer's (dark cards on a darker base in a
+  // dark footer); as many columns as fit, every card at least 13rem wide.
+  .site-footer--cards {
+    background: var(--color-background-primary);
+  }
+
+  .site-footer__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: var(--spacing-md);
+  }
+
+  .site-footer__card {
+    padding: var(--spacing-lg);
+    background: var(--color-background-secondary);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+  }
+
+  .site-footer__card .site-footer__group-title {
+    padding-block-end: var(--spacing-sm);
+    border-block-end: 1px solid var(--color-border-default);
+  }
+
+  .site-footer__card .site-footer__contact {
+    gap: var(--spacing-sm);
+  }
+}

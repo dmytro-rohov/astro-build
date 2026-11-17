@@ -148,3 +148,20 @@ export const sectionComponentPaths: Record<string, Record<string, string>> = {
     box: "@/sections/suggestion/Box.astro",
   },
 };
+
+/**
+ * v3.5: layout elements (one per site) the same way — the site's footer variant brings only its
+ * own styles (src/styles/layouts/footer/). Served by "virtual:layout-components".
+ */
+export const layoutComponentPaths: Record<string, Record<string, string>> = {
+  footer: {
+    columns: "@/layouts/footer/Columns.astro",
+    simple: "@/layouts/footer/Compact.astro",
+    centered: "@/layouts/footer/Compact.astro",
+    "cta-band": "@/layouts/footer/CtaBand.astro",
+    cards: "@/layouts/footer/Cards.astro",
+    "contact-first": "@/layouts/footer/ContactFirst.astro",
+    "big-name": "@/layouts/footer/BigName.astro",
+    "rounded-card": "@/layouts/footer/RoundedCard.astro",
+  },
+};

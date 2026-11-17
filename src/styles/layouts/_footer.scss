@@ -1,5 +1,8 @@
 @use "../abstracts/mixins" as *;
 
+// Footer parts every variant shares. v3.5: each variant's own layout comes with its component
+// (src/styles/layouts/footer/). Tones "light", "dark" and "brand" re-scope the color tokens on
+// .site-footer (see cssVars.ts), so everything below already uses the right palette.
 @layer widgets {
   .site-footer {
     // v3.2: room above, little below the last line.
@@ -7,19 +10,6 @@
     color: var(--color-text-secondary);
     background: var(--color-background-secondary);
     border-block-start: 1px solid var(--color-border-default);
-  }
-
-  // v3.3: brand · link groups · contact. Phones: brand and contact full width, links in two
-  // columns; tablets: brand on top, the rest in three; wide: one row (4 columns by default).
-  .site-footer__main {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--spacing-2xl) var(--spacing-xl);
-  }
-
-  .site-footer__brand-block,
-  .site-footer__group--contact {
-    grid-column: 1 / -1;
   }
 
   .site-footer__brand-block {
@@ -46,7 +36,27 @@
     line-height: var(--line-height-relaxed);
   }
 
+  // Brand block as a row (cards, rounded-card): logo, description, social icons pushed right.
+  .site-footer__brand-block--row {
+    flex-flow: row wrap;
+    align-items: center;
+    gap: var(--spacing-md) var(--spacing-2xl);
+    max-width: none;
+  }
+
+  .site-footer__brand-block--row .site-footer__description {
+    flex: 1 1 16rem;
+    max-width: 34rem;
+  }
+
+  .site-footer__brand-block--row .site-footer__social-list {
+    margin-inline-start: auto;
+  }
+
   .site-footer__social-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
     padding: 0;
     margin: 0;
     list-style: none;
@@ -85,6 +95,21 @@
     height: 1rem;
   }
 
+  // Round icons on the brand color (contact-first).
+  .site-footer__social-list--round .site-footer__social-link {
+    width: 2.75rem;
+    height: 2.75rem;
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary);
+    border-color: transparent;
+    border-radius: var(--radius-full);
+  }
+
+  .site-footer__social-list--round .site-footer__social-link:hover {
+    color: var(--color-action-primary-text);
+    background: var(--color-action-primary-hover);
+  }
+
   .site-footer__group {
     min-width: 0;
   }
@@ -111,6 +136,16 @@
     font-size: var(--font-size-sm);
   }
 
+  // Every link in one wrapping row (simple, centered, contact-first).
+  .site-footer__inline-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs) var(--spacing-lg);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
   .site-footer__bottom {
     display: flex;
     flex-direction: column;
@@ -130,7 +165,21 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
+    min-width: 0;
     color: var(--color-text-muted);
+    overflow-wrap: anywhere;
+  }
+
+  .site-footer__contact-item svg {
+    flex: none;
+  }
+
+  // Privacy link and cookie settings in the bottom row (the v3.5 variants).
+  .site-footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-xs) var(--spacing-lg);
   }
 
   .site-footer__cookie-settings {
@@ -144,6 +193,10 @@
     text-decoration: underline;
     text-underline-offset: 0.2em;
     cursor: pointer;
+  }
+
+  .site-footer__legal .site-footer__cookie-settings {
+    align-self: auto;
   }
 
   .site-footer__cookie-settings:hover {
@@ -180,65 +233,11 @@
       padding-block: var(--spacing-4xl) var(--spacing-xl);
     }
 
-    .site-footer__main {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      align-items: start;
-    }
-
-    .site-footer__group--contact {
-      grid-column: auto;
-    }
-
     .site-footer__bottom {
       flex-direction: row;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
     }
-  }
-
-  @include mq(lg) {
-    .site-footer__main {
-      grid-template-columns: minmax(0, 1.5fr);
-      grid-auto-columns: minmax(0, 1fr);
-      grid-auto-flow: column;
-    }
-
-    .site-footer__brand-block {
-      grid-column: auto;
-    }
-  }
-
-  // ---------- footer variants ----------
-  .site-footer__compact {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--spacing-lg);
-  }
-
-  .site-footer--centered .site-footer__compact {
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-  }
-
-  .site-footer__inline-links,
-  .site-footer__social-list--inline {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-xs) var(--spacing-lg);
-    padding: 0;
-    margin: 0;
-    list-style: none;
-  }
-
-  .site-footer--centered .site-footer__inline-links {
-    justify-content: center;
-  }
-
-  .site-footer--centered .site-footer__bottom {
-    align-items: center;
-    text-align: center;
   }
 }

@@ -1,0 +1,90 @@
+// Footer: big-name (BigName.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .site-footer--big-name {
+    padding-block-end: var(--spacing-lg);
+  }
+
+  // The wordmark is sized by the container's width (cqi), so it spans it at every screen.
+  .site-footer--big-name > .container {
+    container-type: inline-size;
+  }
+
+  // Intro, link groups and contact: two columns on phones (intro and contact full width), one
+  // row on wide screens with the intro wider.
+  .site-footer__big-top {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-2xl) var(--spacing-xl);
+  }
+
+  .site-footer__big-intro,
+  .site-footer__big-top > .site-footer__group--contact {
+    grid-column: 1 / -1;
+  }
+
+  .site-footer__big-intro {
+    display: grid;
+    gap: var(--spacing-md);
+    align-content: start;
+    max-width: 24rem;
+  }
+
+  .site-footer__big-intro .site-footer__description {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-normal);
+  }
+
+  // Giant name, tight letters, fading into the footer at its foot. Longer names step down
+  // (xl ≤ 6, lg ≤ 10, md ≤ 16 characters) and may wrap, never overflow.
+  .site-footer__wordmark {
+    margin: var(--spacing-xl) 0 calc(var(--spacing-md) * -1);
+    color: var(--color-text-primary);
+    font-family: var(--font-family-heading);
+    font-size: 8cqi;
+    font-weight: var(--font-weight-bold);
+    line-height: 0.85;
+    letter-spacing: var(--letter-spacing-tighter);
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+    mask-image: linear-gradient(to bottom, #000 55%, transparent 105%);
+    user-select: none;
+  }
+
+  .site-footer__wordmark--xl {
+    font-size: 27cqi;
+  }
+
+  .site-footer__wordmark--lg {
+    font-size: 17cqi;
+  }
+
+  .site-footer__wordmark--md {
+    font-size: 11cqi;
+  }
+
+  @include mq(md) {
+    .site-footer__big-top {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .site-footer__big-top > .site-footer__group--contact {
+      grid-column: auto;
+    }
+  }
+
+  @include mq(lg) {
+    .site-footer__big-top {
+      grid-template-columns: minmax(0, 1.6fr);
+      grid-auto-columns: minmax(0, 1fr);
+      grid-auto-flow: column;
+    }
+
+    .site-footer__big-intro {
+      grid-column: auto;
+    }
+  }
+}

@@ -28,8 +28,9 @@ export type VariantDefinition = {
 
 type CommonShape = typeof CommonSectionProps.shape;
 
+// A variant prop with a common prop's name replaces it (the footer's own `tone`).
 type PropsShape<Definition> = Definition extends { props: z.ZodObject<infer Shape> }
-  ? CommonShape & Shape
+  ? Omit<CommonShape, keyof Shape> & Shape
   : CommonShape;
 
 /** Precise Zod type of one variant object (keeps literals for TS inference). */

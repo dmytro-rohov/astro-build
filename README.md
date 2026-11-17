@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **18 section types, 104 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **18 section types, 104 variants**, 3 navbars and 8 footers, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -177,7 +177,7 @@ the migrated site is validated like any build.
 | `embed` | `full`, `split` (OpenStreetMap, Google Maps, YouTube, Vimeo, Calendly — see below) |
 | `suggestion` | `box` (preview only, never published: a recommended section the generator cannot build yet — why it helps, what is missing, links to add or dismiss it) |
 | layout `navbar` | `simple`, `centered`, `topbar` (phone/email bar) |
-| layout `footer` | `columns`, `simple`, `centered` |
+| layout `footer` | `columns`, `simple`, `centered`, `cta-band` (brand-gradient or photo band with one call to action on top of the columns), `cards` (brand row, link groups and contact on separate rounded cards), `contact-first` (large phone, e-mail, address and hours with the open-now status, round social icons, links in one quiet row), `big-name` (giant business name across the bottom), `rounded-card` (the footer as one rounded card inset from the edges, dark by default) — prop `tone` (`auto`, `light`, `dark`, `brand`) on every variant; optional `ctaTitle`, `ctaText`, `ctaAction`, `ctaImage`, `wordmark`; the v3.5 variants keep the privacy link in the bottom row |
 
 **Rules:** at most one `contact` and one `faq` section per page; the first section of a page
 renders its only `<h1>`, so `stats`, `logo-cloud` and `embed` need a title there.
@@ -203,7 +203,8 @@ content — never add variant-only content fields.
 (`virtual:section-components`, `src/site/vite-plugin.ts`), and each component imports its own
 stylesheets (widgets like `Slider` and `Lightbox` too), so a site ships the CSS of its variants
 only; `main.scss` keeps what every page needs (tokens, base, layout primitives, header, footer,
-the hero's first-screen rules). Every split stylesheet starts with the cascade layer order (`abstracts/_layers.scss`).
+the hero's first-screen rules). The footer works the same way: its variants are components in
+`src/layouts/footer/` (`virtual:layout-components`) with styles in `src/styles/layouts/footer/`. Every split stylesheet starts with the cascade layer order (`abstracts/_layers.scss`).
 
 **Boundary tests:** `scripts/site/make-catalog.ts` generates a site from the schemas with every
 variant twice — minimum and maximum content (every field at its limit, long Polish words).
