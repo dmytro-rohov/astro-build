@@ -32,7 +32,7 @@
     list-style: none;
   }
 
-  // Phone and e-mail in large type; a long address wraps anywhere rather than overflow.
+  // Phone and e-mail in large type.
   .site-footer__reach-line {
     display: inline-flex;
     align-items: center;
@@ -43,7 +43,6 @@
     font-size: var(--font-size-xl);
     font-weight: var(--font-weight-semibold);
     line-height: var(--line-height-snug);
-    overflow-wrap: anywhere;
     text-decoration-color: color-mix(in srgb, currentcolor 30%, transparent);
   }
 
@@ -72,7 +71,6 @@
     color: var(--color-text-secondary);
     font-size: var(--font-size-sm);
     line-height: var(--line-height-normal);
-    overflow-wrap: anywhere;
   }
 
   .site-footer__reach-fact > svg {

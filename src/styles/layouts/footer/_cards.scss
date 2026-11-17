@@ -1,21 +1,27 @@
 // Footer: cards (Cards.astro).
 @use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
 
 @layer widgets {
   // The footer takes the page color, the cards the footer's (dark cards on a darker base in a
-  // dark footer); as many columns as fit, every card at least 13rem wide.
+  // dark footer). Phones: link cards in two columns, the contact card across; from tablets on
+  // as many columns as fit, every card at least 13rem wide.
   .site-footer.site-footer--cards {
     background: var(--color-background-primary);
   }
 
   .site-footer__cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
-    gap: var(--spacing-md);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+    gap: var(--spacing-sm);
+  }
+
+  .site-footer__cards > .site-footer__group--contact {
+    grid-column: 1 / -1;
   }
 
   .site-footer__card {
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
     background: var(--color-background-secondary);
     border: 1px solid var(--color-border-default);
     border-radius: var(--radius-card);
@@ -38,5 +44,20 @@
 
   .site-footer__brand-surface .site-footer__contact-item {
     color: var(--color-text-primary);
+  }
+
+  @include mq(md) {
+    .site-footer__cards {
+      grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+      gap: var(--spacing-md);
+    }
+
+    .site-footer__cards > .site-footer__group--contact {
+      grid-column: auto;
+    }
+
+    .site-footer__card {
+      padding: var(--spacing-lg);
+    }
   }
 }

@@ -64,12 +64,15 @@
     object-fit: cover;
   }
 
-  // Overlay keeps the light text readable (≥ 4.5:1) on any photo, as on the cover hero.
+  // Overlay keeps the light text readable (≥ 4.5:1) on any photo, as on the cover hero; from
+  // tablets on it opens up on the right, where only the button sits.
   .site-footer__band-media::after {
+    --overlay: var(--color-background-primary);
+
     content: "";
     position: absolute;
     inset: 0;
-    background: color-mix(in srgb, var(--color-background-primary) 80%, transparent);
+    background: color-mix(in srgb, var(--overlay) 82%, transparent);
   }
 
   .site-footer__band-text {
@@ -102,11 +105,20 @@
       grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
       gap: var(--spacing-2xl);
-      padding: var(--spacing-3xl) var(--spacing-3xl);
+      padding: var(--spacing-3xl);
     }
 
     .site-footer__band-title {
       font-size: var(--font-size-4xl);
+    }
+
+    .site-footer__band-media::after {
+      background: linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--overlay) 86%, transparent) 0%,
+        color-mix(in srgb, var(--overlay) 82%, transparent) 60%,
+        color-mix(in srgb, var(--overlay) 45%, transparent) 100%
+      );
     }
   }
 }
