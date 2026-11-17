@@ -1,0 +1,51 @@
+---
+/**
+ * The company's history: the title beside the intro, then the milestones on a horizontal
+ * timeline — year circles alternate above and below the line, each with its text on the other
+ * side (from lg; 7–8 stops from xl). Phones and tablets: a vertical line with the years on it.
+ * Without milestones the highlights are the stops (their values count up); with neither, the
+ * intro closes with a short line and a dot.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import RichText from "@/sections/_shared/RichText.astro";
+import Actions from "@/sections/_shared/Actions.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import { timelineStops } from "@/sections/about/layout";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/about/_milestones.scss";
+
+export interface Props {
+  section: VariantOf<"about", "milestones">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const StopHeading = headingLevel === "h1" ? "h2" : "h3";
+const stops = timelineStops(content);
+const counted = !content.milestones?.length;
+---
+
+<SectionShell id={section.id} type="about" variant="milestones" tone={props.tone} spacing={props.spacing}>
+  <div class:list={["s-about-years-intro", stops.length === 0 && "s-about-years-intro--alone"]}>
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} headingLevel={headingLevel} />
+    <Stack space="lg" class="s-about-years-intro__text">
+      <RichText text={content.body} />
+      <Actions primary={content.action} size="md" />
+    </Stack>
+  </div>
+  {stops.length > 0 && (
+    <ol class:list={["s-about-years", stops.length > 6 && "s-about-years--long"]}>
+      {stops.map((stop) => (
+        <li class="s-about-years__stop">
+          <span class="s-about-years__year" data-counter={counted ? "" : undefined}>{stop.year}</span>
+          <div class="s-about-years__text">
+            <StopHeading class="s-about-years__title">{stop.title}</StopHeading>
+            {stop.text && <p class="s-about-years__desc">{stop.text}</p>}
+          </div>
+        </li>
+      ))}
+    </ol>
+  )}
+</SectionShell>

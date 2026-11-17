@@ -17,6 +17,11 @@ export const sectionComponentPaths: Record<string, Record<string, string>> = {
   about: {
     "image-side": "@/sections/about/ImageSide.astro",
     centered: "@/sections/about/Centered.astro",
+    textured: "@/sections/about/Textured.astro",
+    experience: "@/sections/about/Experience.astro",
+    editorial: "@/sections/about/Editorial.astro",
+    bio: "@/sections/about/Bio.astro",
+    milestones: "@/sections/about/Milestones.astro",
   },
   services: {
     cards: "@/sections/services/Cards.astro",

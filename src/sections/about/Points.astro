@@ -1,0 +1,22 @@
+---
+/** Short blocks under the story — vision, mission, values: a heading and a sentence or two. */
+import "@/styles/sections/about/_points.scss";
+
+export interface Props {
+  items: { id: string; title: string; text: string }[];
+  headingLevel: "h2" | "h3";
+  class?: string;
+}
+
+const { items, headingLevel, class: className } = Astro.props;
+const Heading = headingLevel;
+---
+
+<ul class:list={["s-about-points", className]}>
+  {items.map((item) => (
+    <li class="s-about-points__item">
+      <Heading class="s-about-points__title">{item.title}</Heading>
+      <p class="s-about-points__text">{item.text}</p>
+    </li>
+  ))}
+</ul>

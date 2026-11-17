@@ -51,6 +51,7 @@ export default {
     planExcluded: "Не входит",
     gallery: "Галерея",
     reviews: { one: "{count} отзыв", few: "{count} отзыва", many: "{count} отзывов", other: "{count} отзыва" },
+    letsTalk: "Давайте поговорим",
   },
 
   slider: {

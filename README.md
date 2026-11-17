@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **18 section types, 93 variants**, 3 navbars and 3 footers, all validated by Zod schemas
+- **18 section types, 98 variants**, 3 navbars and 3 footers, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -159,7 +159,7 @@ the migrated site is validated like any build.
 | Type | Variants |
 |---|---|
 | `hero` | `split-image`, `centered`, `cover-image` (photo behind text, always the dark palette), `panel` (edge-to-edge split), `minimal` (oversized type + facts) |
-| `about` | `image-side`, `centered` |
+| `about` | `image-side` (a second photo overlaps the first), `centered` (values in small columns), `textured` (photo over the edge of an engraved plaster pattern), `experience` (offset outline frame, years badge from the first highlight, vision/mission columns over faint stripes), `editorial` (magazine columns: highlighted title words, drop cap, pull quote, side stories), `bio` (one person: big name, lead, portrait with a contact card, a client's quote), `milestones` (history on a timeline of years, alternating above and below the line) — optional `titleHighlight`, `secondImage`, `points`, `quote` + `quoteAuthor`, `milestones` |
 | `services` | `cards`, `price-list` |
 | `features` | `cards-grid`, `icon-list`, `icon-badge` (round icon on the card edge, link per card), `staggered` (zigzag cards over a colored band), `orbit` (items around a central circle; a list on phones), `spotlight` (one raised card), `bento` (tiles of different sizes, one accent tile) |
 | `testimonials` | `cards` (a slider over 3 reviews), `spotlight` (first three, stacked), `carousel` (one quote at a time on a brand panel, arrows + dots), `portraits` (photo tile + brand quote card, checkerboard), `quote-cards` (quote mark in a curved corner, one card on the brand color), `rating` (overall score + review rows); without a photo the initials are shown, stars only for a real `rating`; optional `ratingAverage`, `ratingCount`, `ratingSource`, `ratingLink` from a review profile (Google…) |

@@ -1,0 +1,169 @@
+// About: editorial (Editorial.astro).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-about-ed {
+    --rule: var(--color-border-default);
+    --marker: color-mix(in oklab, var(--color-action-primary) 26%, transparent);
+
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  // The eyebrow as the page's section label, underlined.
+  .s-about-ed__label {
+    margin-block-end: var(--spacing-2xl);
+    text-align: center;
+  }
+
+  .s-about-ed__label-text {
+    display: inline-block;
+    padding-block-end: var(--spacing-xs);
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-xl);
+    font-weight: var(--heading-weight);
+    letter-spacing: var(--heading-tracking);
+    text-transform: var(--heading-transform);
+    border-block-end: 2px solid currentcolor;
+  }
+
+  .s-about-ed__lead {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-xl);
+  }
+
+  .s-about-ed__title {
+    font-size: clamp(var(--font-size-3xl), 4.4vw, var(--font-size-5xl));
+    line-height: 1.12;
+  }
+
+  // Highlighter: the marked words of the title and the bold words of the story.
+  .s-about-ed__title .s-about-title__mark,
+  .s-about-ed__body strong {
+    padding-inline: 0.08em;
+    color: var(--color-text-primary);
+    background: var(--marker);
+    box-decoration-break: clone;
+  }
+
+  .s-about-ed__story {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-lg);
+  }
+
+  // A landscape cut of the portrait (CSS crop: the focal area, or a bit above the middle).
+  .s-about-ed__image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border: var(--image-border);
+    border-radius: var(--radius-image);
+  }
+
+  .s-about-ed__body {
+    color: var(--color-text-primary);
+  }
+
+  .s-about-ed__body > p:first-child::first-letter {
+    float: left;
+    margin: 0.06em 0.12em 0 0;
+    color: var(--color-action-primary);
+    font-family: var(--font-family-heading);
+    font-size: 3.6em;
+    font-weight: var(--heading-weight);
+    line-height: 0.82;
+  }
+
+  .s-about-ed__aside {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-xl);
+  }
+
+  // Points as short stories one under another, between rules.
+  .s-about-ed__points {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .s-about-ed__points .s-about-points__item {
+    padding-block: var(--spacing-md);
+    border-block-end: 1px solid var(--rule);
+  }
+
+  .s-about-ed__points .s-about-points__item:first-child {
+    padding-block-start: 0;
+  }
+
+  .s-about-ed__points .s-about-points__title {
+    font-size: var(--font-size-xl);
+  }
+
+  // Pull quote: between rules, in the heading font.
+  .s-about-ed__quote {
+    padding-block: var(--spacing-lg);
+    border-block: 1px solid var(--rule);
+  }
+
+  .s-about-ed__quote .s-about-quote__text {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-xl);
+    font-style: italic;
+    line-height: var(--line-height-snug);
+  }
+
+  .s-about-ed__detail {
+    width: 100%;
+    border: var(--image-border);
+    border-radius: var(--radius-image);
+  }
+
+  // Wide screens: columns divided by thin rules — title | story | side column.
+  @include mq(md) {
+    .s-about-ed {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      column-gap: var(--spacing-xl);
+    }
+
+    .s-about-ed__story {
+      padding-inline-start: var(--spacing-xl);
+      border-inline-start: 1px solid var(--rule);
+    }
+
+    .s-about-ed__aside {
+      grid-column: 1 / -1;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+      padding-block-start: var(--spacing-xl);
+      border-block-start: 1px solid var(--rule);
+    }
+  }
+
+  @include mq(lg) {
+    .s-about-ed--aside {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 3fr);
+    }
+
+    .s-about-ed__aside {
+      grid-column: auto;
+      grid-template-columns: minmax(0, 1fr);
+      padding-block-start: 0;
+      padding-inline-start: var(--spacing-xl);
+      border-block-start: 0;
+      border-inline-start: 1px solid var(--rule);
+    }
+
+    // A long story without a photo or side column: two newspaper columns.
+    .s-about-ed--columns .s-about-ed__body {
+      display: block;
+      columns: 2;
+      column-gap: var(--spacing-xl);
+    }
+
+    .s-about-ed--columns .s-about-ed__body > p + p {
+      margin-block-start: var(--spacing-md);
+    }
+  }
+}

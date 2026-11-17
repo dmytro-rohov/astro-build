@@ -4,12 +4,13 @@ import SectionHeader from "@/sections/_shared/SectionHeader.astro";
 import RichText from "@/sections/_shared/RichText.astro";
 import Actions from "@/sections/_shared/Actions.astro";
 import Highlights from "@/sections/about/Highlights.astro";
+import Points from "@/sections/about/Points.astro";
 import Stack from "@/components/layouts/Stack.astro";
-import type { SectionOf } from "@/site/types";
-import "@/styles/sections/_about.scss";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/about/_centered.scss";
 
 export interface Props {
-  section: SectionOf<"about">;
+  section: VariantOf<"about", "centered">;
   headingLevel: "h1" | "h2";
 }
 
@@ -21,6 +22,7 @@ const { content, props } = section;
   <Stack space="lg" class="s-about-centered">
     <SectionHeader eyebrow={content.eyebrow} title={content.title} headingLevel={headingLevel} align="center" />
     <RichText text={content.body} class="s-about-centered__body" />
+    {content.points && <Points items={content.points} headingLevel={headingLevel === "h1" ? "h2" : "h3"} class="s-about-centered__points" />}
     {content.highlights && <Highlights items={content.highlights} align="center" />}
     <Actions primary={content.action} align="center" size="md" />
   </Stack>

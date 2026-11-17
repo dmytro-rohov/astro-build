@@ -1,0 +1,18 @@
+---
+/** Section title with its highlighted words (titleHighlight) in a <mark>; each variant styles the mark. */
+import { titleParts } from "@/sections/about/layout";
+import "@/styles/sections/about/_title.scss";
+
+export interface Props {
+  title: string;
+  highlight?: string;
+  headingLevel: "h1" | "h2";
+  class?: string;
+}
+
+const { title, highlight, headingLevel, class: className } = Astro.props;
+const Heading = headingLevel;
+const parts = titleParts(title, highlight);
+---
+
+<Heading class:list={["s-about-title", className]}>{parts.before}{parts.mark && <mark class="s-about-title__mark">{parts.mark}</mark>}{parts.after}</Heading>

@@ -51,6 +51,7 @@ export default {
     step: "Крок {number}",
     gallery: "Галерея",
     reviews: { one: "{count} відгук", few: "{count} відгуки", many: "{count} відгуків", other: "{count} відгуку" },
+    letsTalk: "Поговорімо",
   },
 
   faq: {
