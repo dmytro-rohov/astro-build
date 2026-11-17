@@ -17,7 +17,17 @@
     }
   }
 
-  // From 1024px; tablets show the links after the logo, like the simple navbar.
+  // Tablets: the links after the logo, like the simple navbar, spaced as one list.
+  @include mq(md) {
+    .site-header--split .navbar__menu {
+      column-gap: var(--spacing-xs);
+    }
+
+    .site-header--split .navbar__item--cta {
+      margin-inline-start: var(--spacing-sm);
+    }
+  }
+
   @include mq(lg) {
     // Three columns of equal sides, so the logo sits in the middle of the screen. The nav and its
     // menu span the row as subgrids: the first list takes the left column, the second (with the
@@ -66,10 +76,6 @@
     .site-header--split .navbar__list--start {
       grid-column: 1;
       justify-content: flex-start;
-    }
-
-    .site-header--split .navbar__item--cta {
-      margin-inline-start: var(--spacing-sm);
     }
   }
 }

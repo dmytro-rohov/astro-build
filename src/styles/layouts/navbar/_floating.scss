@@ -50,37 +50,24 @@
       backdrop-filter: blur(12px);
     }
 
-    // A sticky bar moves up and becomes compact while the page scrolls (scroll-driven, no script).
+    // A sticky bar moves closer to the top and lifts its shadow while the page scrolls
+    // (scroll-driven, no script). Only the bar moves, visually: the header keeps its place and
+    // height, nothing under it shifts.
     @supports (animation-timeline: scroll()) {
       @media (prefers-reduced-motion: no-preference) {
-        .site-header--floating.site-header--sticky,
         .site-header--floating.site-header--sticky .site-header__inner {
-          animation: linear both;
+          animation: floating-header-lift linear both;
           animation-timeline: scroll();
           animation-range: 0 8rem;
-        }
-
-        .site-header--floating.site-header--sticky {
-          animation-name: floating-header-up;
-        }
-
-        .site-header--floating.site-header--sticky .site-header__inner {
-          animation-name: floating-header-compact;
         }
       }
     }
   }
 
-  @keyframes floating-header-up {
+  @keyframes floating-header-lift {
     to {
-      padding-block-start: var(--spacing-xs);
-    }
-  }
-
-  @keyframes floating-header-compact {
-    to {
-      min-height: 3rem;
       box-shadow: var(--elevation-modal);
+      translate: 0 calc(var(--spacing-xs) - var(--spacing-md));
     }
   }
 }
