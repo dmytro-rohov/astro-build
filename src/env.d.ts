@@ -42,3 +42,13 @@ declare module "virtual:layout-components" {
 
 /** Imports the style file of the site's navbar variant, if it has one (src/site/components.ts). */
 declare module "virtual:navbar-style";
+
+declare module "virtual:editor-bridge" {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  type BridgeComponent = (props: any) => any;
+
+  /** The editor preview bridge (src/components/EditorBridge.astro), null without an editor origin. */
+  export const EditorBridge: BridgeComponent | null;
+  /** PREVIEW_EDITOR_ORIGIN as an origin, "" for a normal build. */
+  export const editorOrigin: string;
+}

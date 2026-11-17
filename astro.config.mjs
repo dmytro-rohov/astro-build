@@ -11,6 +11,7 @@ import {
 import { loadSite, resolveSiteDir, SiteValidationError } from "./src/site/loader.ts";
 import { siteVitePlugin } from "./src/site/vite-plugin.ts";
 import { cspForSite } from "./src/site/csp.ts";
+import { previewEditorOrigin } from "./src/site/editor-bridge.ts";
 
 const env = loadEnv(process.env.NODE_ENV ?? "development", process.cwd(), "");
 
@@ -45,6 +46,17 @@ const siteUrl = new URL(env.SITE_URL || siteData.meta.url || "http://localhost:4
 const gaId = env.PUBLIC_GA_MEASUREMENT_ID || siteData.analytics.gaId || "";
 const csp = cspForSite(siteData, gaId);
 
+// v3.6: PREVIEW_EDITOR_ORIGIN (e.g. https://factory.mytko.dev) makes a preview build for the
+// factory editor, with the editor bridge (src/components/EditorBridge.astro). Never set in production.
+let editorOrigin;
+
+try {
+  editorOrigin = previewEditorOrigin(env.PREVIEW_EDITOR_ORIGIN);
+} catch (error) {
+  console.error(`\n✖ ${error instanceof Error ? error.message : error}\n`);
+  process.exit(1);
+}
+
 // contact.mode "local": Node server with /api/contact. "remote": a purely static
 // site (no adapter) whose form posts to the shared form service.
 const isLocalContact = siteData.contact.mode === "local";
@@ -72,7 +84,7 @@ export default defineConfig({
   adapter: isLocalContact ? node({ mode: "standalone" }) : undefined,
 
   vite: {
-    plugins: [siteVitePlugin(siteDir, { gaId })],
+    plugins: [siteVitePlugin(siteDir, { gaId, editorOrigin })],
     server: {
       // SITE_DIR may live outside the project (client sites repository).
       fs: { allow: [process.cwd(), siteDir] },

@@ -76,7 +76,7 @@ scripts/
 └─ build-*.ts|js      per-site system assets: tokens, fonts, icons, app icons, OG image
 
 tests/unit/           Vitest (schemas, theme, fonts, CSP, migrations, catalog…)
-tests/e2e/            Playwright (pages, a11y, cookies, contact, keyboard, security, site.spec)
+tests/e2e/            Playwright (pages, a11y, cookies, contact, keyboard, security, editor bridge, site.spec)
 ```
 
 ---
@@ -371,7 +371,8 @@ Extra nodes (Service, Product, Event…) can be passed with `<BaseLayout jsonLd=
   Astro's scripts and styles — no `unsafe-inline`. Google Analytics hosts are allowed.
   Not active in `astro dev`; test with `build` + `preview`.
 - `server.mjs` (the production server, also used by Docker and the tests) adds
-  `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`,
+  `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options` (for a preview build for the
+  editor: `frame-ancestors` of the editor, see [Editor Preview Bridge](#editor-preview-bridge)),
   `Cross-Origin-Opener-Policy`, `Permissions-Policy` and HSTS (for an `https://`
   `SITE_URL` with `NODE_ENV=production`) to **every** response: pages, the 404 page,
   static files and the API.
@@ -640,6 +641,12 @@ CONTACT_TO_EMAIL=
 CONTACT_FROM_EMAIL=
 ```
 
+Preview builds for the factory editor only ([Editor Preview Bridge](#editor-preview-bridge)):
+
+```env
+PREVIEW_EDITOR_ORIGIN=https://factory.mytko.dev
+```
+
 ---
 
 ## Installation
@@ -805,7 +812,8 @@ npm run test:remote      # contact "remote" mode produces a purely static site
 npm run test:outside     # builds into a folder outside the project, both contact modes
 npm run test:catalog     # generated min/max catalog in all 8 archetypes
 npm run test:fixtures    # the six fixture sites (+ report gates for three of them)
-npm run ci               # validate + broken-site + remote + e2e + Lighthouse
+npm run test:bridge      # editor preview bridge: the demo built for an editor, in its iframe
+npm run ci               # validate + broken-site + remote + e2e + Lighthouse + bridge
 npm run test:docker      # production Docker image smoke test (needs Docker)
 ```
 
@@ -823,6 +831,9 @@ End-to-end tests (`tests/e2e/`, desktop and mobile Chrome, demo site):
   outside click closes), navigation without JavaScript, visible focus
 - **security** — headers on pages, 404, API and static files, CSP without
   `unsafe-inline`, immutable assets/fonts/sprite, `/_image` disabled, no inline `style`
+- **editor-bridge** (`npm run test:bridge`, `PREVIEW_EDITOR_ORIGIN`) — the demo in an iframe of a
+  tiny editor page on another port: ready, layout, focus, select, links do not navigate, messages
+  of another origin ignored, `frame-ancestors`; without the variable: no bridge in the build
 - **site** (`SITE_SMOKE=1`, any `SITE_DIR`) — one `<h1>` and valid JSON-LD per page,
   nothing overflows and no section container collapses at 320/768/1440 px, axe clean;
   used by the catalog and fixture tests
@@ -886,10 +897,49 @@ debug mode, immutable font caching). CI runs it on every pull request.
 
 ---
 
+## Editor Preview Bridge
+
+v3.6: the factory editor shows a preview build of the site in an iframe next to its sections panel
+and drives it with `window.postMessage`. The build gets the editor's origin:
+
+```bash
+PREVIEW_EDITOR_ORIGIN=https://factory.mytko.dev SITE_URL=https://<preview host> \
+  npm run site:build -- --site <site dir> --out <dir>
+```
+
+Without `PREVIEW_EDITOR_ORIGIN` (every production build) the bridge is not even imported — no
+script, no CSS (`virtual:editor-bridge`; the e2e suite checks it). Anything but an http(s) origin
+stops the build. `server.mjs` with the same variable sends `Content-Security-Policy: frame-ancestors
+<origin>` instead of `X-Frame-Options: DENY`; a Caddy preview host needs the same header (a
+`<meta>` policy cannot allow framing).
+
+The bridge (`src/components/EditorBridge.astro`) runs only when the page is in a frame. It posts to
+the editor's origin only, never `"*"`, and ignores every message that does not come from the parent
+window with the editor's origin. The editor sends its messages after `factory:ready`.
+
+| Direction | Message | What happens |
+|---|---|---|
+| preview → editor | `{ type: "factory:ready", page, sections: [{ id, type, variant, title }] }` | on load: the page path (`/`, `/contact`) and its sections in DOM order; `title` is the section's heading text or `null` |
+| editor → preview | `{ type: "factory:layout", order: [ids], hidden: [ids] }` | sections in `<main>` reordered without a reload: the listed ids first, the others after them in their order, unknown ids ignored; the first section stays first (it has the page's only `<h1>`); `hidden` ones get the `hidden` attribute, the others lose it |
+| preview → editor | `{ type: "factory:layout-applied" }` | after every layout message |
+| editor → preview | `{ type: "factory:focus", id }` | smooth scroll to the section (instant with reduced motion) and an outline (`.is-editor-focus`) until the next focus; `id: null` clears it |
+| preview → editor | `{ type: "factory:select", id }` | the visitor clicked inside a section |
+
+In the editor, links do not leave the page: a click on a link to another page, `tel:`, `mailto:` or
+a new tab only selects its section (the panel is the place to edit; header and footer links do
+nothing). Links within the page, buttons, forms and widgets (menu, sliders, lightbox, FAQ) work as
+usual. Opened on its own, outside a frame, a preview build behaves like a normal site.
+
+---
+
 ## Version
 
-Current version: **v3.5** (`3.5.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
+Current version: **v3.6** (`3.6.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
 starter is kept on the `v2` branch / tag `v2.0.0`.
+
+v3.6: editor preview bridge — a build with `PREVIEW_EDITOR_ORIGIN` lists its sections to the factory
+editor and follows its panel (order, hidden sections, focus, selection) over `postMessage`;
+production builds contain none of it ([Editor Preview Bridge](#editor-preview-bridge)).
 
 v3.5: eight navbars (new `brand-bar`, `dark-bar`, `split`, `floating`, `minimal`) and eight footers
 (new `cta-band`, `cards`, `contact-first`, `big-name`, `rounded-card`; prop `tone` auto | light |

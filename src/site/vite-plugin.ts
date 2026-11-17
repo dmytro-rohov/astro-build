@@ -6,6 +6,8 @@
  *   (its components bring their styles, so unused variants add no CSS)
  * - "virtual:layout-components"   → { layoutComponents } the same for the footer variant
  * - "virtual:navbar-style"         → imports the style file of the site's navbar variant (v3.5)
+ * - "virtual:editor-bridge"       → { EditorBridge, editorOrigin }: the editor preview bridge, only
+ *   when the build has an editor origin (v3.6); otherwise null and the bridge is not even imported
  * The site is re-validated whenever site.json or assets.json change (dev server).
  */
 import path from "node:path";
@@ -19,7 +21,8 @@ const ANALYTICS_ID = "virtual:site/analytics";
 const COMPONENTS_ID = "virtual:section-components";
 const LAYOUT_COMPONENTS_ID = "virtual:layout-components";
 const NAVBAR_STYLE_ID = "virtual:navbar-style";
-const IDS = [SITE_ID, ANALYTICS_ID, COMPONENTS_ID, LAYOUT_COMPONENTS_ID, NAVBAR_STYLE_ID];
+const EDITOR_BRIDGE_ID = "virtual:editor-bridge";
+const IDS = [SITE_ID, ANALYTICS_ID, COMPONENTS_ID, LAYOUT_COMPONENTS_ID, NAVBAR_STYLE_ID, EDITOR_BRIDGE_ID];
 
 /** Imports the components of the section variants used on the site's pages, in registry order. */
 function sectionComponentsModule(site: Site): string {
@@ -60,7 +63,7 @@ function layoutComponentsModule(site: Site): string {
   ].join("\n");
 }
 
-export function siteVitePlugin(siteDir: string, options: { gaId: string }): Plugin {
+export function siteVitePlugin(siteDir: string, options: { gaId: string; editorOrigin: string }): Plugin {
   const resolved = (id: string) => `\0${id}`;
 
   return {
@@ -83,6 +86,13 @@ export function siteVitePlugin(siteDir: string, options: { gaId: string }): Plug
       if (id === resolved(ANALYTICS_ID)) {
         // Resolved in astro.config (env/.env override, then site.json), same as the CSP.
         return `export const gaId = ${JSON.stringify(options.gaId)};`;
+      }
+
+      if (id === resolved(EDITOR_BRIDGE_ID)) {
+        // Resolved in astro.config (PREVIEW_EDITOR_ORIGIN): preview builds for the factory editor only.
+        return options.editorOrigin
+          ? `export { default as EditorBridge } from "@/components/EditorBridge.astro";\nexport const editorOrigin = ${JSON.stringify(options.editorOrigin)};`
+          : `export const EditorBridge = null;\nexport const editorOrigin = "";`;
       }
 
       if (id === resolved(COMPONENTS_ID)) {
