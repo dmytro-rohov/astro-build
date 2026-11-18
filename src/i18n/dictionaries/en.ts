@@ -67,7 +67,7 @@ export const en = {
   /** faq variants: split-contact card, categories, search. */
   faq: {
     contactTitle: "Still have a question?",
-    contactText: "We will gladly answer it — get in touch.",
+    contactText: "We will gladly answer it. Get in touch.",
     /** Questions without a category when the others have one. */
     other: "Other",
     searchLabel: "Search the questions",
@@ -119,11 +119,39 @@ export const en = {
     cookieSettings: "Cookie settings",
     copyright: "© {year} {siteName}. All rights reserved.",
     contact: "Contact",
-    madeBy: "Website by",
     ctaTitle: "Questions? We're happy to help.",
     getInTouch: "Get in touch",
     follow: "Follow us",
-    console: "This site was built by Mytko.dev — fast, accessible websites for businesses and specialists. Want one? https://mytko.dev",
+  },
+
+  // v3.7: the Factory easter eggs (src/site/signature.ts). "Powered by mytko factory" is a brand name, not translated.
+  signature: {
+    comment: "{siteName} was built with Mytko Website Factory: {url}",
+    commentHint: "Curious how it works? Open the browser console (F12), something is waiting for you there.",
+    console: "This website was built with Mytko Website Factory. Want one like it for your business? {url}",
+    consoleHint: "Psst… the next secret is waiting at {url}",
+    markLabel: "How this website was made",
+    title: "You found the last secret",
+    text: "{siteName} was built with Mytko Website Factory.",
+    factStatic: "Static pages built with Astro, so they load fast",
+    factStyles: "Only the styles and scripts of the sections this site uses",
+    factEngine: "Factory engine {version}",
+    link: "Discover Mytko Website Factory",
+    close: "Close",
+    humans: {
+      team: "TEAM",
+      owner: "Website owner",
+      website: "Website",
+      madeWith: "Built with",
+      studio: "Studio",
+      site: "SITE",
+      language: "Language",
+      updated: "Last update",
+      technology: "Technology",
+      engine: "Engine",
+      secret: "ONE MORE THING",
+      hint: "One last secret is left: a small mark at the bottom of the website. Click it.",
+    },
   },
 
   cookies: {
@@ -211,7 +239,7 @@ export const en = {
       dataHeading: "What data we process",
       dataText: "When you use the contact form we process your name, email address, the subject and content of your message. Our hosting provider also records technical data (IP address, date and time of the request) for security reasons.",
       purposeHeading: "Purpose and legal basis",
-      purposeText: "We use the data to reply to your message and to keep the website secure — our legitimate interest (Art. 6(1)(f) GDPR) and taking steps at your request before entering into a contract (Art. 6(1)(b) GDPR).",
+      purposeText: "We use the data to reply to your message and to keep the website secure, on the basis of our legitimate interest (Art. 6(1)(f) GDPR) and of taking steps at your request before entering into a contract (Art. 6(1)(b) GDPR).",
       retentionHeading: "How long we keep the data",
       retentionText: "Messages are kept for as long as needed to handle your request, and then for up to 12 months in case of follow-up questions. Server logs are kept for up to 30 days.",
       rightsHeading: "Your rights",

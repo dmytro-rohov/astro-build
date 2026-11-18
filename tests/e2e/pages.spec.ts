@@ -87,3 +87,24 @@ test("#features anchor exists and only the current page is marked in the menu", 
   await expect(page.locator('#navbar-menu [aria-current="page"]')).toHaveCount(1);
   await expect(page.locator('#navbar-menu [aria-current="page"]')).toHaveAttribute("href", "/");
 });
+
+test("factory signature: source comment, generator, humans.txt and the secret footer mark", async ({ page, request }) => {
+  const response = await page.goto("/");
+  const html = (await response?.text()) ?? "";
+  expect(html).toMatch(/<!--\n\n {2}┏┳┓/);
+  await expect(page.locator('meta[name="generator"]').first()).toHaveAttribute("content", /^Mytko Website Factory \d+\.\d+\.\d+$/);
+  await expect(page.locator('link[rel="author"]')).toHaveAttribute("href", "/humans.txt");
+
+  const humans = await request.get("/humans.txt");
+  expect(humans.status()).toBe(200);
+  expect(humans.headers()["content-type"]).toContain("text/plain");
+  expect(await humans.text()).toContain("Mytko Website Factory");
+
+  const card = page.locator("#factory-signature");
+  await expect(card).toBeHidden();
+  await page.locator(".factory-credit__mark").click();
+  await expect(card).toBeVisible();
+  await expect(card.locator(".factory-signature__link")).toHaveAttribute("href", "https://factory.mytko.dev");
+  await card.locator(".factory-signature__close").click();
+  await expect(card).toBeHidden();
+});

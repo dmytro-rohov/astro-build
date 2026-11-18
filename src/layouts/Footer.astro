@@ -8,6 +8,7 @@ import Container from "@/components/layouts/Container.astro";
 import Stack from "@/components/layouts/Stack.astro";
 import Link from "@/components/ui/Link.astro";
 import Divider from "@/components/ui/Divider.astro";
+import FactoryCredit from "@/components/FactoryCredit.astro";
 import { siteConfig } from "@/config/site";
 import { ANALYTICS_CONFIG } from "@/config/analytics";
 import { format, t } from "@/i18n";
@@ -100,9 +101,7 @@ const linkGroups = legalInBottom
           </nav>
         )}
 
-        <p class="site-footer__credit">
-          {t.footer.madeBy} <a class="site-footer__credit-link" href="https://mytko.dev" target="_blank" rel="noopener">Mytko.dev</a>
-        </p>
+        <FactoryCredit />
 
         {!legalInBottom && ANALYTICS_CONFIG.enabled && (
           <button

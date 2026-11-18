@@ -1,0 +1,49 @@
+---
+/**
+ * v3.7: "Powered by mytko factory" in the footer's bottom row. The lockup is a brand name and stays
+ * the same in every language. The small mark is the last of the easter eggs (src/site/signature.ts):
+ * it opens a native popover — no script — with a few words, in the site's language, about how the
+ * site was made. Browsers without the Popover API just show the mark.
+ */
+import { siteConfig } from "@/config/site";
+import { format, t } from "@/i18n";
+import { ENGINE_VERSION } from "@/site/engine";
+import { FACTORY_URL } from "@/site/signature";
+
+const id = "factory-signature";
+const s = t.signature;
+const facts = [s.factStatic, s.factStyles, format(s.factEngine, { version: ENGINE_VERSION })];
+---
+
+<div class="factory-credit">
+  <span class="factory-credit__by">Powered by</span>
+  <button type="button" class="factory-credit__mark" popovertarget={id} aria-label={s.markLabel}>
+    <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false">
+      <rect width="32" height="32" rx="8" fill="#0b110d" />
+      <rect x=".5" y=".5" width="31" height="31" rx="7.5" fill="none" stroke="#b7e34d" stroke-opacity=".3" />
+      <path d="M8.75 24V12.4c0-1.8 2.2-2.7 3.5-1.4L16 14.75l3.75-3.75c1.3-1.3 3.5-.4 3.5 1.4V24" fill="none" stroke="#c6f04f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+      <rect x="12.6" y="17.6" width="6.8" height="5.2" rx="1.2" fill="#c6f04f" />
+      <path d="M12.6 19.3h6.8" stroke="#0b110d" stroke-width=".9" />
+    </svg>
+  </button>
+  <a class="factory-credit__name" href={FACTORY_URL} target="_blank" rel="noopener nofollow">
+    <strong>mytko</strong>
+    <span>factory</span>
+  </a>
+
+  <div id={id} class="factory-signature" popover role="dialog" aria-labelledby={`${id}-title`}>
+    <div class="factory-signature__head">
+      <p id={`${id}-title`} class="factory-signature__title">{s.title}</p>
+      <button type="button" class="factory-signature__close" popovertarget={id} popovertargetaction="hide" aria-label={s.close}>
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+          <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+    <p class="factory-signature__text">{format(s.text, { siteName: siteConfig.name })}</p>
+    <ul class="factory-signature__facts">
+      {facts.map((fact) => <li>{fact}</li>)}
+    </ul>
+    <a class="factory-signature__link" href={FACTORY_URL} target="_blank" rel="noopener nofollow">{s.link} →</a>
+  </div>
+</div>

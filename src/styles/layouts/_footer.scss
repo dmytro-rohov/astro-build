@@ -208,22 +208,141 @@
     line-height: var(--line-height-normal);
   }
 
-  // "Strona wykonana przez Mytko.dev" — the last, quietest line.
-  .site-footer__credit {
-    margin: 0;
+  // v3.7: "Powered by [mark] mytko factory" — the last, quietest item of the bottom row.
+  .factory-credit {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
     color: var(--color-text-muted);
     font-size: var(--font-size-xs);
   }
 
-  .site-footer__credit-link {
+  .factory-credit__mark {
+    display: inline-flex;
+    padding: 0;
+    border: 0;
+    border-radius: 0.5rem;
+    background: none;
+    cursor: pointer;
+  }
+
+  .factory-credit__name {
+    display: inline-flex;
+    flex-direction: column;
     color: inherit;
-    font-weight: var(--font-weight-semibold);
+    line-height: 1.05;
     text-decoration: none;
+  }
+
+  .factory-credit__name strong {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.01em;
     transition: color var(--motion-duration-fast) var(--motion-easing-standard);
   }
 
-  .site-footer__credit-link:hover {
+  .factory-credit__name span {
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+  }
+
+  .factory-credit__name:hover strong {
     color: var(--color-action-primary);
+  }
+
+  // The secret behind the mark: a small card in the corner, in the Factory's own colors on every site.
+  // Hidden until the popover opens; browsers without :popover-open drop that rule and keep it hidden.
+  .factory-signature {
+    display: none;
+    position: fixed;
+    inset: auto;
+    inset-block-end: var(--spacing-md);
+    inset-inline-end: var(--spacing-md);
+    width: min(22rem, calc(100vw - 2 * var(--spacing-md)));
+    margin: 0;
+    padding: var(--spacing-md) var(--spacing-lg) var(--spacing-lg);
+    border: 1px solid rgb(183 227 77 / 30%);
+    border-radius: 0.875rem;
+    background: #0b110d;
+    color: #dfe8d4;
+    box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 35%);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+    text-align: start;
+  }
+
+  .factory-signature:popover-open {
+    display: block;
+  }
+
+  .factory-signature :focus-visible {
+    outline-color: #c6f04f;
+  }
+
+  .factory-signature__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+  }
+
+  .factory-signature__title {
+    margin: 0;
+    color: #c6f04f;
+    font-weight: var(--font-weight-bold);
+  }
+
+  .factory-signature__close {
+    display: inline-flex;
+    flex: none;
+    padding: 0.375rem;
+    border: 0;
+    border-radius: 0.375rem;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .factory-signature__close:hover {
+    background: rgb(183 227 77 / 12%);
+  }
+
+  .factory-signature__text {
+    margin: var(--spacing-xs) 0 0;
+  }
+
+  .factory-signature__facts {
+    display: grid;
+    gap: 0.25rem;
+    margin: var(--spacing-sm) 0 0;
+    padding: 0;
+    color: #b5c1a8;
+    font-size: var(--font-size-xs);
+    list-style: none;
+  }
+
+  .factory-signature__facts li {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .factory-signature__facts li::before {
+    content: "";
+    flex: none;
+    width: 0.375rem;
+    height: 0.375rem;
+    margin-top: 0.5em;
+    border-radius: 50%;
+    background: #b7e34d;
+  }
+
+  .factory-signature__link {
+    display: inline-block;
+    margin-top: var(--spacing-sm);
+    color: #c6f04f;
+    font-weight: var(--font-weight-semibold);
+    text-underline-offset: 0.2em;
   }
 
   @include mq(md) {
