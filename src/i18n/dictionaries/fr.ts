@@ -203,7 +203,7 @@ export default {
       dataHeading: "Données que nous traitons",
       dataText: "Lorsque vous utilisez le formulaire de contact, nous traitons votre nom, votre adresse e-mail, ainsi que l’objet et le contenu de votre message. Notre hébergeur enregistre également des données techniques (adresse IP, date et heure de la requête) pour des raisons de sécurité.",
       purposeHeading: "Finalités et base juridique",
-      purposeText: "Nous utilisons ces données pour répondre à votre message et assurer la sécurité du site — sur la base de notre intérêt légitime (art. 6, paragraphe 1, point f) du RGPD) et de l’exécution de mesures précontractuelles prises à votre demande (art. 6, paragraphe 1, point b) du RGPD).",
+      purposeText: "Nous utilisons ces données pour répondre à votre message et assurer la sécurité du site, sur la base de notre intérêt légitime (art. 6, paragraphe 1, point f) du RGPD) et de l’exécution de mesures précontractuelles prises à votre demande (art. 6, paragraphe 1, point b) du RGPD).",
       retentionHeading: "Durée de conservation des données",
       retentionText: "Les messages sont conservés le temps nécessaire au traitement de votre demande, puis jusqu’à 12 mois en cas de questions complémentaires. Les journaux du serveur sont conservés jusqu’à 30 jours.",
       rightsHeading: "Vos droits",
@@ -232,7 +232,7 @@ export default {
   },
   faq: {
     contactTitle: "Une autre question ?",
-    contactText: "Nous y répondrons avec plaisir — contactez-nous.",
+    contactText: "Nous y répondrons avec plaisir. Contactez-nous.",
     other: "Autres",
     searchLabel: "Rechercher dans les questions",
     searchPlaceholder: "Que cherchez-vous ?",

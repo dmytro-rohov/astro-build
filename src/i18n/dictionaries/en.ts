@@ -67,7 +67,7 @@ export const en = {
   /** faq variants: split-contact card, categories, search. */
   faq: {
     contactTitle: "Still have a question?",
-    contactText: "We will gladly answer it — get in touch.",
+    contactText: "We will gladly answer it. Get in touch.",
     /** Questions without a category when the others have one. */
     other: "Other",
     searchLabel: "Search the questions",
@@ -239,7 +239,7 @@ export const en = {
       dataHeading: "What data we process",
       dataText: "When you use the contact form we process your name, email address, the subject and content of your message. Our hosting provider also records technical data (IP address, date and time of the request) for security reasons.",
       purposeHeading: "Purpose and legal basis",
-      purposeText: "We use the data to reply to your message and to keep the website secure — our legitimate interest (Art. 6(1)(f) GDPR) and taking steps at your request before entering into a contract (Art. 6(1)(b) GDPR).",
+      purposeText: "We use the data to reply to your message and to keep the website secure, on the basis of our legitimate interest (Art. 6(1)(f) GDPR) and of taking steps at your request before entering into a contract (Art. 6(1)(b) GDPR).",
       retentionHeading: "How long we keep the data",
       retentionText: "Messages are kept for as long as needed to handle your request, and then for up to 12 months in case of follow-up questions. Server logs are kept for up to 30 days.",
       rightsHeading: "Your rights",

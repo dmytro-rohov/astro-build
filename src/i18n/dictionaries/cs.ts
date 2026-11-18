@@ -203,7 +203,7 @@ export default {
       dataHeading: "Jaké údaje zpracováváme",
       dataText: "Když použijete kontaktní formulář, zpracováváme vaše jméno, e-mailovou adresu, předmět a obsah vaší zprávy. Náš poskytovatel hostingu z bezpečnostních důvodů také zaznamenává technické údaje (IP adresu, datum a čas požadavku).",
       purposeHeading: "Účel a právní základ",
-      purposeText: "Údaje používáme k odpovědi na vaši zprávu a k zajištění bezpečnosti webu — na základě našeho oprávněného zájmu (čl. 6 odst. 1 písm. f) GDPR) a k provedení opatření přijatých před uzavřením smlouvy na vaši žádost (čl. 6 odst. 1 písm. b) GDPR).",
+      purposeText: "Údaje používáme k odpovědi na vaši zprávu a k zajištění bezpečnosti webu, na základě našeho oprávněného zájmu (čl. 6 odst. 1 písm. f) GDPR) a k provedení opatření přijatých před uzavřením smlouvy na vaši žádost (čl. 6 odst. 1 písm. b) GDPR).",
       retentionHeading: "Jak dlouho údaje uchováváme",
       retentionText: "Zprávy uchováváme po dobu nezbytnou k vyřízení vašeho požadavku a poté nejdéle 12 měsíců pro případ navazujících dotazů. Serverové logy uchováváme nejdéle 30 dní.",
       rightsHeading: "Vaše práva",
@@ -232,7 +232,7 @@ export default {
   },
   faq: {
     contactTitle: "Máte další otázku?",
-    contactText: "Rádi vám odpovíme — ozvěte se nám.",
+    contactText: "Rádi vám odpovíme. Ozvěte se nám.",
     other: "Ostatní",
     searchLabel: "Hledat v otázkách",
     searchPlaceholder: "Co hledáte?",

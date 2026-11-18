@@ -173,8 +173,8 @@ export default {
 
   email: {
     heading: "Новое сообщение с сайта {siteName}",
-    subjectWithTopic: "{siteName} — обращение: {subject}",
-    subjectFromName: "{siteName} — сообщение от {name}",
+    subjectWithTopic: "Обращение с сайта {siteName}: {subject}",
+    subjectFromName: "Сообщение с сайта {siteName} от {name}",
     name: "Имя",
     email: "E-mail",
     subject: "Тема",
@@ -232,7 +232,7 @@ export default {
   },
   faq: {
     contactTitle: "Остался вопрос?",
-    contactText: "Мы с радостью ответим — свяжитесь с нами.",
+    contactText: "Мы с радостью ответим. Свяжитесь с нами.",
     other: "Другое",
     searchLabel: "Поиск по вопросам",
     searchPlaceholder: "Что вы ищете?",

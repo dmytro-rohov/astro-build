@@ -203,7 +203,7 @@ export default {
       dataHeading: "Que dados tratamos",
       dataText: "Quando utiliza o formulário de contacto, tratamos o seu nome, o seu endereço de e-mail, o assunto e o conteúdo da sua mensagem. O nosso fornecedor de alojamento regista também dados técnicos (endereço IP, data e hora do pedido) por razões de segurança.",
       purposeHeading: "Finalidade e fundamento jurídico",
-      purposeText: "Utilizamos os dados para responder à sua mensagem e garantir a segurança do site — com base no nosso interesse legítimo (artigo 6.º, n.º 1, alínea f) do RGPD) e em diligências pré-contratuais tomadas a seu pedido (artigo 6.º, n.º 1, alínea b) do RGPD).",
+      purposeText: "Utilizamos os dados para responder à sua mensagem e garantir a segurança do site, com base no nosso interesse legítimo (artigo 6.º, n.º 1, alínea f) do RGPD) e em diligências pré-contratuais tomadas a seu pedido (artigo 6.º, n.º 1, alínea b) do RGPD).",
       retentionHeading: "Durante quanto tempo conservamos os dados",
       retentionText: "As mensagens são conservadas durante o tempo necessário para tratar o seu pedido e, depois, até 12 meses para eventuais questões posteriores. Os registos do servidor são conservados até 30 dias.",
       rightsHeading: "Os seus direitos",
@@ -232,7 +232,7 @@ export default {
   },
   faq: {
     contactTitle: "Tem outra pergunta?",
-    contactText: "Teremos todo o gosto em responder — contacte-nos.",
+    contactText: "Teremos todo o gosto em responder. Contacte-nos.",
     other: "Outras",
     searchLabel: "Pesquisar nas perguntas",
     searchPlaceholder: "O que procura?",

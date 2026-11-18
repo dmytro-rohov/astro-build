@@ -174,7 +174,7 @@ export default {
   email: {
     heading: "{siteName} sitesinden yeni mesaj",
     subjectWithTopic: "{siteName} iletişim: {subject}",
-    subjectFromName: "{siteName} iletişim — gönderen: {name}",
+    subjectFromName: "{siteName} iletişim, gönderen: {name}",
     name: "Ad Soyad",
     email: "E-posta",
     subject: "Konu",
@@ -203,7 +203,7 @@ export default {
       dataHeading: "Hangi verileri işliyoruz",
       dataText: "İletişim formunu kullandığınızda adınızı, e-posta adresinizi, mesajınızın konusunu ve içeriğini işleriz. Barındırma sağlayıcımız da güvenlik amacıyla teknik verileri (IP adresi, talebin tarihi ve saati) kaydeder.",
       purposeHeading: "Amaç ve hukuki dayanak",
-      purposeText: "Verileri mesajınızı yanıtlamak ve web sitesinin güvenliğini sağlamak için kullanırız — meşru menfaatimize (AB Genel Veri Koruma Tüzüğü (GDPR) md. 6/1(f)) ve sözleşme kurulmadan önce talebiniz üzerine gerekli adımların atılmasına (AB Genel Veri Koruma Tüzüğü (GDPR) md. 6/1(b)) dayanarak.",
+      purposeText: "Verileri mesajınızı yanıtlamak ve web sitesinin güvenliğini sağlamak için kullanırız, meşru menfaatimize (AB Genel Veri Koruma Tüzüğü (GDPR) md. 6/1(f)) ve sözleşme kurulmadan önce talebiniz üzerine gerekli adımların atılmasına (AB Genel Veri Koruma Tüzüğü (GDPR) md. 6/1(b)) dayanarak.",
       retentionHeading: "Verileri ne kadar süre saklıyoruz",
       retentionText: "Mesajlar, talebinizi yerine getirmek için gerekli olduğu süre boyunca, ardından da olası ek sorular için en fazla 12 ay saklanır. Sunucu kayıtları en fazla 30 gün saklanır.",
       rightsHeading: "Haklarınız",
@@ -232,7 +232,7 @@ export default {
   },
   faq: {
     contactTitle: "Başka bir sorunuz mu var?",
-    contactText: "Memnuniyetle yanıtlarız — bizimle iletişime geçin.",
+    contactText: "Memnuniyetle yanıtlarız. Bizimle iletişime geçin.",
     other: "Diğer",
     searchLabel: "Sorularda ara",
     searchPlaceholder: "Ne arıyorsunuz?",

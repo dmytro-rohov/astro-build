@@ -56,7 +56,7 @@ export default {
 
   faq: {
     contactTitle: "Masz inne pytanie?",
-    contactText: "Chętnie odpowiemy — skontaktuj się z nami.",
+    contactText: "Chętnie odpowiemy. Skontaktuj się z nami.",
     other: "Pozostałe",
     searchLabel: "Szukaj w pytaniach",
     searchPlaceholder: "Czego szukasz?",
@@ -225,7 +225,7 @@ export default {
       dataHeading: "Jakie dane przetwarzamy",
       dataText: "Gdy korzystasz z formularza kontaktowego, przetwarzamy Twoje imię i nazwisko, adres e-mail, temat i treść wiadomości. Dostawca hostingu zapisuje też dane techniczne (adres IP, datę i godzinę zapytania) w celach bezpieczeństwa.",
       purposeHeading: "Cel i podstawa prawna",
-      purposeText: "Dane wykorzystujemy, aby odpowiedzieć na Twoją wiadomość i zapewnić bezpieczeństwo strony — na podstawie naszego prawnie uzasadnionego interesu (art. 6 ust. 1 lit. f RODO) oraz działań na Twoje żądanie przed zawarciem umowy (art. 6 ust. 1 lit. b RODO).",
+      purposeText: "Dane wykorzystujemy, aby odpowiedzieć na Twoją wiadomość i zapewnić bezpieczeństwo strony, na podstawie naszego prawnie uzasadnionego interesu (art. 6 ust. 1 lit. f RODO) oraz działań na Twoje żądanie przed zawarciem umowy (art. 6 ust. 1 lit. b RODO).",
       retentionHeading: "Jak długo przechowujemy dane",
       retentionText: "Wiadomości przechowujemy przez czas potrzebny do obsługi zapytania, a następnie do 12 miesięcy na wypadek dalszych pytań. Logi serwera przechowujemy do 30 dni.",
       rightsHeading: "Twoje prawa",

@@ -203,7 +203,7 @@ export default {
       dataHeading: "Welke gegevens we verwerken",
       dataText: "Als je het contactformulier gebruikt, verwerken we je naam, je e-mailadres en het onderwerp en de inhoud van je bericht. Onze hostingprovider legt om veiligheidsredenen ook technische gegevens vast (IP-adres, datum en tijd van het verzoek).",
       purposeHeading: "Doel en rechtsgrond",
-      purposeText: "We gebruiken de gegevens om je bericht te beantwoorden en de website te beveiligen — op basis van ons gerechtvaardigd belang (artikel 6, lid 1, sub f AVG) en om op jouw verzoek maatregelen te nemen voorafgaand aan het sluiten van een overeenkomst (artikel 6, lid 1, sub b AVG).",
+      purposeText: "We gebruiken de gegevens om je bericht te beantwoorden en de website te beveiligen, op basis van ons gerechtvaardigd belang (artikel 6, lid 1, sub f AVG) en om op jouw verzoek maatregelen te nemen voorafgaand aan het sluiten van een overeenkomst (artikel 6, lid 1, sub b AVG).",
       retentionHeading: "Hoe lang we de gegevens bewaren",
       retentionText: "Berichten bewaren we zolang dat nodig is om je verzoek af te handelen en daarna maximaal 12 maanden voor eventuele vervolgvragen. Serverlogs bewaren we maximaal 30 dagen.",
       rightsHeading: "Je rechten",
@@ -232,7 +232,7 @@ export default {
   },
   faq: {
     contactTitle: "Nog een vraag?",
-    contactText: "We beantwoorden hem graag — neem contact met ons op.",
+    contactText: "We beantwoorden hem graag. Neem contact met ons op.",
     other: "Overig",
     searchLabel: "Zoeken in de vragen",
     searchPlaceholder: "Waar ben je naar op zoek?",

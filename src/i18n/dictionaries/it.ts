@@ -203,7 +203,7 @@ export default {
       dataHeading: "Quali dati trattiamo",
       dataText: "Quando utilizzi il modulo di contatto, trattiamo il tuo nome, il tuo indirizzo email, l’oggetto e il contenuto del tuo messaggio. Il nostro fornitore di hosting registra inoltre dati tecnici (indirizzo IP, data e ora della richiesta) per motivi di sicurezza.",
       purposeHeading: "Finalità e base giuridica",
-      purposeText: "Utilizziamo i dati per rispondere al tuo messaggio e garantire la sicurezza del sito — sulla base del nostro legittimo interesse (art. 6, par. 1, lett. f) GDPR) e dell’esecuzione di misure precontrattuali adottate su tua richiesta (art. 6, par. 1, lett. b) GDPR).",
+      purposeText: "Utilizziamo i dati per rispondere al tuo messaggio e garantire la sicurezza del sito, sulla base del nostro legittimo interesse (art. 6, par. 1, lett. f) GDPR) e dell’esecuzione di misure precontrattuali adottate su tua richiesta (art. 6, par. 1, lett. b) GDPR).",
       retentionHeading: "Per quanto tempo conserviamo i dati",
       retentionText: "I messaggi vengono conservati per il tempo necessario a gestire la tua richiesta e, successivamente, fino a 12 mesi nel caso di ulteriori domande. I log del server vengono conservati fino a 30 giorni.",
       rightsHeading: "I tuoi diritti",

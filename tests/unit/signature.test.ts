@@ -43,3 +43,14 @@ describe("factory signature", () => {
     expect(generatorName("3.7.0")).toBe("Mytko Website Factory 3.7.0");
   });
 });
+
+describe("dictionary texts", () => {
+  it("never use an em dash (house style: comma, colon or a new sentence instead)", () => {
+    const texts = (value: unknown): string[] =>
+      typeof value === "string" ? [value] : Object.values(value as Record<string, unknown>).flatMap(texts);
+
+    for (const lang of availableLanguages) {
+      expect(texts(getDictionary(lang)).filter((text) => text.includes("—")), lang).toEqual([]);
+    }
+  });
+});
