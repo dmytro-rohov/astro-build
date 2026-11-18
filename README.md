@@ -344,6 +344,7 @@ import { t, format } from "@/i18n";
 ## SEO and Indexing
 
 - `robots.txt` is generated with the sitemap URL; `/api/` is disallowed.
+- `humans.txt` names the site owner and the Factory ([Factory Signature](#factory-signature)).
 - URLs have no trailing slash (`trailingSlash: "never"`) — canonical links and the
   sitemap use the same form; `/contact/` redirects to `/contact`.
 - `src/config/indexing.ts`:
@@ -937,10 +938,30 @@ usual. Opened on its own, outside a frame, a preview build behaves like a normal
 
 ---
 
+## Factory Signature
+
+v3.7: every site carries a few quiet easter eggs that lead to one another (`src/site/signature.ts`).
+Their texts are in the site's language (`signature` in every dictionary); the "Powered by mytko
+factory" lockup is a brand name and stays the same everywhere.
+
+| Where | What |
+|---|---|
+| page source | a comment under the viewport meta: "mytko factory" in box-drawing letters, who built the site, a hint to open the console (no `--` inside, whatever the site name) |
+| browser console | the wordmark on a dark card, a link to factory.mytko.dev and the way to `/humans.txt` |
+| `/humans.txt` | the site owner, Mytko Website Factory and the studio, language, last build date, technology; ends with the hint to the footer mark (`<link rel="author">` points to it) |
+| `<meta name="generator">` | `Mytko Website Factory <engine version>`; Astro's own generator tag stays as a second one |
+| footer | "Powered by [mark] mytko factory" at the end of the bottom row; the link goes to factory.mytko.dev (`rel="noopener nofollow"`: a footer link on every client site must not look like a link scheme). The mark is a button that opens a native popover (no script) with a few words about how the site was made. |
+
+---
+
 ## Version
 
-Current version: **v3.6** (`3.6.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
+Current version: **v3.7** (`3.7.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
 starter is kept on the `v2` branch / tag `v2.0.0`.
+
+v3.7: Factory signature — "Powered by mytko factory" with a secret mark in the footer (replaces
+"Website by Mytko.dev"), a source comment, a console note, `/humans.txt` and the Factory's generator
+meta tag, all in the site's language ([Factory Signature](#factory-signature)).
 
 v3.6: editor preview bridge — a build with `PREVIEW_EDITOR_ORIGIN` lists its sections to the factory
 editor and follows its panel (order, hidden sections, focus, selection) over `postMessage`;

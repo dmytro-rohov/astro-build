@@ -5,11 +5,13 @@ import CookieConsent from "@/components/CookieConsent.astro";
 import Counters from "@/components/widgets/Counters.astro";
 import { siteConfig } from "@/config/site";
 import { isNoindexPath } from "@/config/indexing";
-import { dir, ogLocale, pageTitle, t } from "@/i18n";
+import { dir, format, ogLocale, pageTitle, t } from "@/i18n";
 import { siteTheme } from "@/site/theme";
 import { fontPreloads } from "@/design-system/fonts.generated";
 import { hasSvgFavicon } from "@/design-system/appIcons.generated";
 import { EditorBridge, editorOrigin } from "virtual:editor-bridge";
+import { ENGINE_VERSION } from "@/site/engine";
+import { FACTORY_URL, WORDMARK, generatorName, sourceComment } from "@/site/signature";
 import {
   breadcrumbSchema,
   organizationSchema,
@@ -118,8 +120,10 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <Fragment set:html={sourceComment(t.signature, siteConfig.name)} />
     <meta name="description" content={description} />
     <meta name="robots" content={robots} />
+    <meta name="generator" content={generatorName(ENGINE_VERSION)} />
     <meta name="generator" content={Astro.generator} />
     {author && <meta name="author" content={author} />}
     {keywords && <meta name="keywords" content={keywords} />}
@@ -140,6 +144,7 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
       : <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />}
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    <link rel="author" href="/humans.txt" type="text/plain" />
     {fontPreloads.map((href) => (
       <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />
     ))}
@@ -186,7 +191,13 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
     {showFooter && <Footer />}
     <CookieConsent />
     <Counters />
-    <span hidden data-mytko-console={t.footer.console}></span>
+    <span
+      hidden
+      data-signature
+      data-art={WORDMARK}
+      data-text={format(t.signature.console, { url: FACTORY_URL })}
+      data-hint={t.signature.consoleHint}
+    ></span>
     {EditorBridge && <EditorBridge origin={editorOrigin} />}
     <script>
       // The sticky header's real height: the hero fills the rest of the first screen (--header-offset)
@@ -199,9 +210,18 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
       setOffset();
       window.addEventListener("resize", setOffset, { passive: true });
 
-      // Signature for the curious who open the console (text in the site's language).
-      const message = document.querySelector("[data-mytko-console]")?.getAttribute("data-mytko-console");
-      if (message) console.info(`%cMytko.dev%c ${message}`, "padding:2px 8px;border-radius:4px;background:#0b110d;color:#b7e34d;font-weight:700", "color:inherit");
+      // v3.7 easter egg for the curious who open the console (src/site/signature.ts): the wordmark,
+      // who built the site and the way to the next secret, /humans.txt — in the site's language.
+      const signature = document.querySelector<HTMLElement>("[data-signature]");
+      if (signature) {
+        const { art = "", text = "", hint = "" } = signature.dataset;
+        console.info(
+          `%c${art}%c\n\n${text}\n%c${hint.replace("{url}", new URL("/humans.txt", location.href).href)}`,
+          "display:inline-block;padding:10px 14px;border-radius:8px;background:#0b110d;color:#c6f04f;font-family:ui-monospace,monospace;line-height:1.2",
+          "color:inherit;font-weight:600",
+          "color:#8a9a7a;font-style:italic",
+        );
+      }
     </script>
   </body>
 </html>
