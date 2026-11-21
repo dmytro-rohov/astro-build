@@ -3,7 +3,7 @@
 import { describe, expect, test } from "vitest";
 import { loadSite, SiteValidationError } from "../../src/site/loader";
 import { checkSubmission } from "../../src/lib/contact/checkSubmission";
-import { DEFAULT_FIELDS, fieldsOf, type FormField } from "../../src/lib/contact/fields";
+import { autocompleteOf, DEFAULT_FIELDS, fieldsOf, type FormField } from "../../src/lib/contact/fields";
 import pl from "../../src/i18n/dictionaries/pl";
 import en from "../../src/i18n/dictionaries/en";
 import { demoSite, writeSite } from "./helpers";
@@ -88,6 +88,17 @@ describe("the schema", () => {
       delete site.business.phone;
       delete site.business.email;
     }).join("\n")).toContain("contact.form.enabled: The form is off: add business.phone or business.email");
+  });
+
+  test("autofill: the field's own token, else by type, else by id (English and Polish); none on checkbox and select", () => {
+    const of = (id: string, type: FormField["type"] = "text", autocomplete?: FormField["autocomplete"]) => autocompleteOf({ id, type, required: false, width: "full", ...(autocomplete ? { autocomplete } : {}) });
+    expect([of("name"), of("subject"), of("message", "textarea"), of("contact", "email"), of("mobile", "tel")]).toEqual(["name", "off", undefined, "email", "tel"]);
+    expect([of("company"), of("firma"), of("city"), of("miasto"), of("postal-code"), of("kod-pocztowy"), of("nazwisko"), of("birthday", "date")]).toEqual(
+      ["organization", "organization", "address-level2", "address-level2", "postal-code", "postal-code", "family-name", "bday"],
+    );
+    expect([of("nip"), of("company", "text", "off"), of("country", "select")]).toEqual([undefined, "off", undefined]);
+    expect(issuesFor(withForm({ fields: [{ id: "email", type: "email", label: "E-mail", required: true }, { id: "vat", type: "text", label: "NIP", autocomplete: "organization" }] }))).toEqual([]);
+    expect(issuesFor(withForm({ fields: [{ id: "email", type: "email", label: "E-mail", required: true }, { id: "ok", type: "checkbox", label: "Tak", autocomplete: "name" }] })).join("\n")).toContain("contact.form.fields[1].autocomplete: No autofill for a checkbox field.");
   });
 
   test("a minimum the field can never reach is refused (a tel field takes 30 characters)", () => {

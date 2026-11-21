@@ -25,6 +25,33 @@ export type FormField = {
   options?: string[];
   minLength?: number;
   maxLength?: number;
+  /** The browser's autofill token; without it the engine picks one by the field's type and id (autocompleteOf). */
+  autocomplete?: AutocompleteToken;
+};
+
+/** Autofill tokens a field may set (HTML autofill, the ones a contact or quote form asks about), and "off". */
+export const AUTOCOMPLETE_TOKENS = [
+  "off", "name", "given-name", "family-name", "organization", "organization-title", "email", "tel",
+  "street-address", "address-line1", "address-line2", "postal-code", "address-level2", "address-level1", "country-name", "bday",
+] as const;
+export type AutocompleteToken = (typeof AUTOCOMPLETE_TOKENS)[number];
+
+/**
+ * A field's autofill by its id, English and Polish (WCAG 1.3.5: a field asking about the visitor says what it asks,
+ * and the browser fills it in): "company" and "firma" are an organization, "city" and "miasto" a town.
+ */
+export const AUTOCOMPLETE_BY_ID: Readonly<Record<string, AutocompleteToken>> = {
+  name: "name", "full-name": "name", "imie-nazwisko": "name",
+  "first-name": "given-name", "given-name": "given-name", imie: "given-name",
+  "last-name": "family-name", "family-name": "family-name", surname: "family-name", nazwisko: "family-name",
+  company: "organization", organization: "organization", firma: "organization",
+  "job-title": "organization-title", position: "organization-title", stanowisko: "organization-title",
+  address: "street-address", street: "street-address", "street-address": "street-address", adres: "street-address", ulica: "street-address",
+  city: "address-level2", town: "address-level2", miasto: "address-level2", miejscowosc: "address-level2",
+  "postal-code": "postal-code", zip: "postal-code", postcode: "postal-code", "kod-pocztowy": "postal-code",
+  region: "address-level1", state: "address-level1", wojewodztwo: "address-level1",
+  country: "country-name", kraj: "country-name",
+  birthday: "bday", "birth-date": "bday", "data-urodzenia": "bday",
 };
 
 /** A form asks at most this much: longer ones lose visitors. */
@@ -64,14 +91,16 @@ export const DEFAULT_FIELDS: readonly FormField[] = [
 export const fieldsOf = (form?: { fields?: readonly FormField[] } | null): readonly FormField[] => (form?.fields?.length ? form.fields : DEFAULT_FIELDS);
 
 /**
- * The browser's autofill for a field: by its type, the name field by its id; the default subject field off, as
- * before 3.8. Other fields leave it to the browser (an "off" would block autofill of a company or a city).
+ * The browser's autofill for a field: its own token; else by its type (email, tel); else by its id
+ * (AUTOCOMPLETE_BY_ID); the default subject field off, as before 3.8. Other fields leave it to the browser (an "off"
+ * would block autofill the browser could still offer).
  */
 export function autocompleteOf(field: FormField): string | undefined {
+  if (field.autocomplete) return field.autocomplete;
   if (field.type === "email") return "email";
   if (field.type === "tel") return "tel";
-  if (field.id === "name") return "name";
-  return field.id === "subject" ? "off" : undefined;
+  if (field.type === "checkbox" || field.type === "select") return undefined;
+  return AUTOCOMPLETE_BY_ID[field.id] ?? (field.id === "subject" ? "off" : undefined);
 }
 
 /** Whether the field shows a hint line under it: its own, or the dictionary's for the default e-mail field. */
@@ -90,3 +119,7 @@ export const maxLengthOf = (field: FormField) => Math.min(field.maxLength ?? TYP
 export const TEL = /^(?=(?:\D*\d){6})\+?[\d\s().\-/]{6,30}$/;
 export const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const DATE = /^\d{4}-\d{2}-\d{2}$/;
+/** A number as a number input sends it (also "1e5"), or with a decimal comma. */
+export const NUMBER = /^-?\d+([.,]\d+)?([eE][-+]?\d+)?$/;
+/** A field's id: lowercase letters, digits and "-", starting with a letter, at most 32 characters. */
+export const FIELD_ID = /^[a-z][a-z0-9-]{0,31}$/;

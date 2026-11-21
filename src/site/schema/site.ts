@@ -10,7 +10,7 @@ import { OVERRIDABLE_KEYS } from "../../design-system/theme";
 import { layoutTypes, sectionTypes } from "../registry";
 import { Action, DAYS, field, HttpsUrl, Id, imageSlot, Slug, text, Time, type ImageSlot } from "./fields";
 import { ICON_NAMES } from "../../design-system/icons/library";
-import { DEFAULT_FIELDS, FORM_DOM_IDS, FORM_FIELD_TYPES, ICON_TYPES, LENGTH_TYPES, MAX_FORM_FIELDS, PLACEHOLDER_TYPES, RESERVED_FIELD_IDS, TYPE_MAX, domIdsOf, fieldsOf } from "../../lib/contact/fields";
+import { AUTOCOMPLETE_TOKENS, DEFAULT_FIELDS, FIELD_ID, FORM_DOM_IDS, FORM_FIELD_TYPES, ICON_TYPES, LENGTH_TYPES, MAX_FORM_FIELDS, PLACEHOLDER_TYPES, RESERVED_FIELD_IDS, TYPE_MAX, domIdsOf, fieldsOf } from "../../lib/contact/fields";
 
 export const SCHEMA_VERSION = 1;
 
@@ -52,7 +52,7 @@ export const isReservedId = (id: string) => RESERVED_IDS.includes(id);
  * filled in. The privacy consent, the honeypot and the submit button are always there and are not fields.
  */
 const FormFieldSchema = z.strictObject({
-  id: field(z.string().regex(/^[a-z][a-z0-9-]{0,31}$/, 'Lowercase letters, digits and "-", starting with a letter, at most 32 characters.'), {
+  id: field(z.string().regex(FIELD_ID, 'Lowercase letters, digits and "-", starting with a letter, at most 32 characters.'), {
     label: "Identyfikator", fieldType: "text", editable: false,
     description: 'The field\'s name in the submission (e.g. "phone", "service"): lowercase letters, digits and "-", starting with a letter, at most 32 characters; unique in the form; not action, method, submit, reset or another name the form uses itself.',
   }),
@@ -66,6 +66,10 @@ const FormFieldSchema = z.strictObject({
   options: field(z.array(text(80)).min(2).max(20).optional(), { label: "Opcje", fieldType: "list", description: "The choices of a select (2 to 20)." }),
   minLength: field(z.number().int().min(1).max(TYPE_MAX.textarea).optional(), { label: "Najmniej znaków", fieldType: "text", description: "For text, textarea and tel." }),
   maxLength: field(z.number().int().min(1).max(TYPE_MAX.textarea).optional(), { label: "Najwięcej znaków", fieldType: "text", description: "For text, textarea and tel; never above the type's own limit." }),
+  autocomplete: field(z.enum(AUTOCOMPLETE_TOKENS).optional(), {
+    label: "Autouzupełnianie", fieldType: "select",
+    description: 'The browser\'s autofill (e.g. "organization", "postal-code"); without it the engine picks one by type and id ("company", "city", "postal-code", "firma", "miasto"…).',
+  }),
 });
 
 /** The contact form: on or off, its fields, its button. Without it: the form as before 3.8 (name, e-mail, subject, message). */
@@ -96,6 +100,7 @@ const ContactFormSchema = z
       if (item.type === "select" && !item.options) context.addIssue({ code: "custom", path: at("options"), message: "A select needs its options (2 to 20)." });
       if (item.type !== "select" && item.options) context.addIssue({ code: "custom", path: at("options"), message: "Only a select has options." });
       if (item.options && new Set(item.options).size !== item.options.length) context.addIssue({ code: "custom", path: at("options"), message: "Each option once." });
+      if (item.autocomplete && (item.type === "checkbox" || item.type === "select")) context.addIssue({ code: "custom", path: at("autocomplete"), message: `No autofill for a ${item.type} field.` });
       if (item.icon && !ICON_TYPES.includes(item.type)) context.addIssue({ code: "custom", path: at("icon"), message: `No icon for a ${item.type} field.` });
       if (item.placeholder && !PLACEHOLDER_TYPES.includes(item.type)) context.addIssue({ code: "custom", path: at("placeholder"), message: `No placeholder for a ${item.type} field.` });
       if ((item.minLength || item.maxLength) && !LENGTH_TYPES.includes(item.type)) context.addIssue({ code: "custom", path: at(item.maxLength ? "maxLength" : "minLength"), message: `Lengths are only for text, textarea and tel fields.` });

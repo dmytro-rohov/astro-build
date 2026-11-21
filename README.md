@@ -628,6 +628,10 @@ not in the browser console.
   the form is wide enough; pair half fields), `icon` (an engine icon at the start of text, email, tel,
   date and number fields), `minLength` / `maxLength` (text, textarea, tel; within the type's own limit;
   the minimum is checked by the server, in the site's language).
+- Autofill: `autocomplete` (an HTML token: `given-name`, `family-name`, `organization`, `street-address`,
+  `postal-code`, `address-level2`, `country-name`, `bday`, `off`…); without it the engine picks one by type
+  (email, tel) and by id in English and Polish (`company`/`firma`, `city`/`miasto`, `postal-code`/`kod-pocztowy`,
+  `last-name`/`nazwisko`…; `src/lib/contact/fields.ts` `AUTOCOMPLETE_BY_ID`). Not on checkbox and select.
 - Rules: at most 12 fields; `id`s unique, of lowercase letters, digits and `-`, starting with a letter,
   at most 32 characters; none of the form's own names (`website`, `privacy`, `siteid`, `lang`, `form`,
   `fields`) or the form element's properties a control would shadow (`action`, `method`, `submit`,
@@ -641,6 +645,15 @@ not in the browser console.
 - The e-mail lists every filled answer under its label in the form's order; the reply goes to the
   first e-mail field (none: no reply-to); the subject line uses a single-line `subject` field, else
   `name`, else the site's name.
+
+#### The form's contract in the catalog
+
+`npm run catalog` also writes, next to `catalog.json` in `dist-catalog/`, `form-contract.json` (field types, limits, patterns,
+rules, autofill, the default form, and the messages and e-mail texts of every language) and `form-check.mjs`
+(`lib/contact/fields.ts` + `checkSubmission.ts` as one plain ES module, no imports). A form service imports
+`form-check.mjs` and runs `checkSubmission(body, site's fields or defaultFields, messages[lang])` with any
+body that has `get(name)` (a `FormData`, a `URLSearchParams`): it judges a submission exactly as this engine's
+own `/api/contact` does. Both files are regenerated with the catalog; never edit them.
 
 #### Contact API contract (for the shared form service)
 

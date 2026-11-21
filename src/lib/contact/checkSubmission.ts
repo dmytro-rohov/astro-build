@@ -4,7 +4,7 @@
  * site's /api/contact uses it through validateContactForm, a form service and the tests directly.
  */
 import type { ContactFormData, ContactFormValue, ContactValidationError, ContactValidationResult } from "./contact.types";
-import { DATE, EMAIL, TEL, maxLengthOf, type FormField } from "./fields";
+import { DATE, EMAIL, NUMBER, TEL, maxLengthOf, type FormField } from "./fields";
 
 /** The part of a language dictionary the form's messages come from. */
 export type FormMessages = {
@@ -73,7 +73,7 @@ function check(field: FormField, formData: Submission, messages: FormMessages): 
   // A real day: "2026-02-31" parses (it rolls over to March), so the day must come back the same.
   if (field.type === "date" && !(DATE.test(value) && isRealDay(value))) return { value, error: e.dateInvalid };
   // As a number input sends it (also "1e5"), or with a decimal comma.
-  if (field.type === "number" && !/^-?\d+([.,]\d+)?([eE][-+]?\d+)?$/.test(value)) return { value, error: e.numberInvalid };
+  if (field.type === "number" && !NUMBER.test(value)) return { value, error: e.numberInvalid };
 
   // Counted as the browser's maxlength counts (UTF-16 units), as before 3.8.
   const length = value.length;
