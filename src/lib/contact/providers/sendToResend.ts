@@ -25,8 +25,9 @@ export async function sendToResend(data: ContactFormData) {
   const resend = new Resend(apiKey);
 
   // About what, else from whom, else just the site: a form without subject or name fields still has a subject line.
-  const subject = data.subject
-    ? format(t.email.subjectWithTopic, { siteName: siteConfig.name, subject: data.subject })
+  const topic = data.subject?.replace(/\s+/g, " ").slice(0, 150);
+  const subject = topic
+    ? format(t.email.subjectWithTopic, { siteName: siteConfig.name, subject: topic })
     : data.name
       ? format(t.email.subjectFromName, { siteName: siteConfig.name, name: data.name })
       : format(t.email.heading, { siteName: siteConfig.name });

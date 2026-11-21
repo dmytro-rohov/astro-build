@@ -19,7 +19,7 @@ import Textarea from "@/components/form/Textarea.astro";
 import Checkbox from "@/components/form/Checkbox.astro";
 import Select from "@/components/form/Select.astro";
 
-import { autocompleteOf, DEFAULT_FIELDS, maxLengthOf, type FormField as Field } from "@/lib/contact/fields";
+import { autocompleteOf, DEFAULT_FIELDS, hasHint, maxLengthOf, type FormField as Field } from "@/lib/contact/fields";
 import { fieldLabel } from "@/lib/contact/validateContactForm";
 import { t } from "@/i18n";
 
@@ -47,8 +47,9 @@ const {
   class: className,
 } = Astro.props;
 
-/** The hint under a field: its own, or the dictionary's for the default e-mail field. */
-const hintOf = (field: Field) => field.hint ?? (field.id === "email" && !field.label ? m.emailHint : undefined);
+/** The hint under a field: its own, or the dictionary's for the default e-mail field. A minimum length is the server's
+ * to check (its message speaks the site's language; a minlength attribute would bring the browser's own). */
+const hintOf = (field: Field) => field.hint ?? (hasHint(field) ? m.emailHint : undefined);
 const describedBy = (field: Field) => [hintOf(field) ? `contact-${field.id}-hint` : "", `contact-${field.id}-error`].filter(Boolean).join(" ");
 const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
 ---
@@ -85,7 +86,6 @@ const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
                   name={field.id}
                   rows={6}
                   placeholder={field.placeholder}
-                  minlength={field.minLength}
                   maxlength={maxLengthOf(field)}
                   required={field.required}
                   describedby={describedBy(field)}
@@ -101,9 +101,9 @@ const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
                   name={field.id}
                   type={(INPUT_TYPES as readonly string[]).includes(field.type) ? (field.type as (typeof INPUT_TYPES)[number]) : "text"}
                   inputmode={field.type === "number" ? "decimal" : undefined}
+                  step={field.type === "number" ? "any" : undefined}
                   placeholder={field.placeholder}
                   autocomplete={autocompleteOf(field)}
-                  minlength={field.minLength}
                   maxlength={field.type === "date" || field.type === "number" ? undefined : maxLengthOf(field)}
                   required={field.required}
                   describedby={describedBy(field)}
@@ -175,7 +175,16 @@ const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
     }
 
     const status = form.querySelector("[data-contact-status]");
-    const messages = form.dataset;
+    // Read through attributes and the prototype: a control named like a form property ("action", "reset")
+    // would shadow form.action or form.reset().
+    const messages = {
+      msgSending: form.getAttribute("data-msg-sending"),
+      msgSuccess: form.getAttribute("data-msg-success"),
+      msgCorrectFields: form.getAttribute("data-msg-correct-fields"),
+      msgGenericError: form.getAttribute("data-msg-generic-error"),
+    };
+    const action = form.getAttribute("action") ?? "";
+    const method = form.getAttribute("method") ?? "post";
     const submit = form.querySelector('button[type="submit"]');
 
     const clearErrors = () => {
@@ -216,8 +225,8 @@ const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
       }
 
       try {
-        const response = await fetch(form.action, {
-          method: form.method,
+        const response = await fetch(action, {
+          method,
           body: new FormData(form),
           headers: {
             Accept: "application/json",
@@ -245,7 +254,7 @@ const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
           return;
         }
 
-        form.reset();
+        HTMLFormElement.prototype.reset.call(form);
 
         if (status) {
           status.textContent = result.message || messages.msgSuccess || "";

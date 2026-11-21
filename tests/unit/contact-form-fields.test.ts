@@ -61,8 +61,38 @@ describe("the schema", () => {
     expect(text).toContain("contact.form.fields[5].icon: No icon for a textarea field.");
     expect(text).toMatch(/contact\.form\.fields\[5\]\.maxLength: Too big|contact\.form\.fields\[5\]\.maxLength: At most 5000/);
     expect(text).toContain("contact.form.fields[6].placeholder: No placeholder for a checkbox field.");
-    expect(text).toContain("contact.form.fields[7].maxLength: Lengths are only for text, textarea and tel fields.");
+    expect(text).toContain("contact.form.fields[7].minLength: Lengths are only for text, textarea and tel fields.");
     expect(text).toContain("contact.form.fields[8].id:");
+  });
+
+  test("no field takes a form property's name or another field's DOM ids; options once each", () => {
+    const issues = issuesFor(withForm({
+      fields: [
+        { id: "email", type: "email", label: "E-mail", required: true },
+        { id: "email-error", type: "text", label: "Zły" },
+        { id: "action", type: "text", label: "Akcja" },
+        { id: "reset", type: "checkbox", label: "Reset" },
+        { id: "pick", type: "select", label: "Wybór", options: ["a", "a", "b"] },
+      ],
+    })).join("\n");
+    expect(issues).toContain('contact.form.fields[1].id: Field id "email-error" clashes with an id the form already renders');
+    expect(issues).toContain('contact.form.fields[2].id: "action" is used by the form itself');
+    expect(issues).toContain('contact.form.fields[3].id: "reset" is used by the form itself');
+    expect(issues).toContain("contact.form.fields[4].options: Each option once.");
+  });
+
+  test("a form that is off: its fields need no reply field, but the business needs a phone or an e-mail", () => {
+    expect(issuesFor(withForm({ enabled: false, fields: [{ id: "note", type: "text", label: "Uwagi" }] }))).toEqual([]);
+    expect(issuesFor((site) => {
+      withForm({ enabled: false })(site);
+      delete site.business.phone;
+      delete site.business.email;
+    }).join("\n")).toContain("contact.form.enabled: The form is off: add business.phone or business.email");
+  });
+
+  test("a minimum the field can never reach is refused (a tel field takes 30 characters)", () => {
+    const issues = issuesFor(withForm({ fields: [{ id: "phone", type: "tel", label: "Telefon", required: true, minLength: 100 }] })).join("\n");
+    expect(issues).toContain("contact.form.fields[0].minLength: At most 30 for a tel field.");
   });
 
   test("the reply must reach the visitor: a required e-mail or phone field; at most 12 fields", () => {
@@ -125,10 +155,41 @@ describe("the submission", () => {
       { field: "service", message: "Wybierz jedną z opcji." },
       { field: "date", message: "Podaj prawidłową datę." },
       { field: "guests", message: "Podaj liczbę." },
-      { field: "details", message: "Szczegóły: najwyżej 1000 znaków." },
+      { field: "details", message: "Szczegóły: maksymalna liczba znaków to 1000." },
     ]);
     const required = checkSubmission(form({ privacy: "on" }), [{ id: "rodo", type: "checkbox", label: "Zgoda na kontakt", required: true, width: "full" }, { id: "email", type: "email", label: "E-mail", required: true, width: "full" }], en.contactForm);
     expect(!required.success && required.errors.map((error) => error.message)).toEqual(["Tick this box to send the message.", "E-mail: this field is required."]);
+  });
+
+  test("a phone has digits, a date is a real day, a number as a number input sends it", () => {
+    const fields: FormField[] = [
+      { id: "phone", type: "tel", label: "Telefon", required: true, width: "full" },
+      { id: "day", type: "date", label: "Dzień", required: false, width: "full" },
+      { id: "count", type: "number", label: "Ile", required: false, width: "full" },
+    ];
+    const errors = (values: Record<string, string>) => {
+      const result = checkSubmission(form({ ...values, privacy: "on" }), fields, pl.contactForm);
+      return result.success ? [] : result.errors.map((error) => error.field);
+    };
+    expect(errors({ phone: "------" })).toEqual(["phone"]);
+    expect(errors({ phone: "(( )) .." })).toEqual(["phone"]);
+    expect(errors({ phone: "+48 600 100 200", day: "2026-02-31" })).toEqual(["day"]);
+    expect(errors({ phone: "600-100-200", day: "2028-02-29", count: "1e5" })).toEqual([]);
+    expect(errors({ phone: "600100200", count: "12,5" })).toEqual([]);
+  });
+
+  test("the subject line and the sender only from single-line fields; lengths counted as the browser counts them", () => {
+    const fields: FormField[] = [
+      { id: "email", type: "email", label: "E-mail", required: true, width: "full" },
+      { id: "subject", type: "textarea", label: "Temat", required: false, width: "full" },
+      { id: "name", type: "checkbox", label: "Imię?", required: false, width: "full" },
+      { id: "short", type: "text", label: "Krótko", required: false, width: "full", maxLength: 4 },
+    ];
+    const result = checkSubmission(form({ email: "a@b.co", subject: "line1\nBcc: x@y.z", name: "on", privacy: "on" }), fields, pl.contactForm);
+    expect(result.success && [result.data.subject, result.data.name]).toEqual([undefined, undefined]);
+    // Two emoji are four UTF-16 units, as maxlength counts: five are too many.
+    expect(checkSubmission(form({ email: "a@b.co", short: "\u{1F600}\u{1F600}", privacy: "on" }), fields, pl.contactForm).success).toBe(true);
+    expect(checkSubmission(form({ email: "a@b.co", short: "\u{1F600}\u{1F600}x", privacy: "on" }), fields, pl.contactForm).success).toBe(false);
   });
 
   test("a valid one: values in the form's order, the reply by phone only, names that are no fields ignored", () => {

@@ -48,4 +48,19 @@ test("catalog.json describes every section, variant and archetype; the LLM schem
   expect(full.properties.pages).toBeDefined();
   expect(llm).not.toMatch(/"pattern"/);
   expect(llm).toMatch(/max \d+ characters/);
+
+  // Property names are names, not keywords: a form field keeps its minLength and maxLength and gets no "description".
+  const find = (node: unknown): Record<string, unknown> | undefined => {
+    if (!node || typeof node !== "object") return undefined;
+    const properties = (node as { properties?: Record<string, unknown> }).properties;
+    if (properties && "options" in properties && "placeholder" in properties) return properties;
+    for (const child of Object.values(node as Record<string, unknown>)) {
+      const found = find(child);
+      if (found) return found;
+    }
+    return undefined;
+  };
+  const formField = find(JSON.parse(llm));
+  expect(formField && Object.keys(formField)).toEqual(expect.arrayContaining(["minLength", "maxLength"]));
+  expect(formField).not.toHaveProperty("description");
 }, 60_000);

@@ -196,6 +196,12 @@ function forLlm(node: unknown): unknown {
   const notes: string[] = [];
 
   for (const [key, value] of Object.entries(source)) {
+    // A map of property names (a form field has properties named "minLength" and "maxLength"): the names stay, each
+    // value is a schema of its own.
+    if ((key === "properties" || key === "$defs" || key === "definitions") && value && typeof value === "object" && !Array.isArray(value)) {
+      result[key] = Object.fromEntries(Object.entries(value as Record<string, unknown>).map(([name, child]) => [name, forLlm(child)]));
+      continue;
+    }
     if (key === "minLength" && Number(value) > 1) notes.push(`at least ${value} characters`);
     else if (key === "maxLength") notes.push(`max ${value} characters`);
     else if (key === "minItems" && Number(value) > 0) notes.push(`at least ${value} items`);

@@ -10,7 +10,7 @@ import { OVERRIDABLE_KEYS } from "../../design-system/theme";
 import { layoutTypes, sectionTypes } from "../registry";
 import { Action, DAYS, field, HttpsUrl, Id, imageSlot, Slug, text, Time, type ImageSlot } from "./fields";
 import { ICON_NAMES } from "../../design-system/icons/library";
-import { FORM_FIELD_TYPES, ICON_TYPES, LENGTH_TYPES, MAX_FORM_FIELDS, PLACEHOLDER_TYPES, RESERVED_FIELD_IDS, TYPE_MAX, fieldsOf } from "../../lib/contact/fields";
+import { DEFAULT_FIELDS, FORM_DOM_IDS, FORM_FIELD_TYPES, ICON_TYPES, LENGTH_TYPES, MAX_FORM_FIELDS, PLACEHOLDER_TYPES, RESERVED_FIELD_IDS, TYPE_MAX, domIdsOf, fieldsOf } from "../../lib/contact/fields";
 
 export const SCHEMA_VERSION = 1;
 
@@ -31,16 +31,18 @@ export const RESERVED_SLUGS = [
 
 const RESERVED_PREFIXES = ["/api/", "/_astro/", "/fonts/", "/icons/", "/sitemap"];
 
-/** DOM ids the engine renders itself; section ids (also DOM ids) cannot take them. */
-const CONTACT_FIELDS = ["name", "email", "subject", "message", "website", "privacy"];
-
+/**
+ * DOM ids the engine renders itself; section ids (also DOM ids) cannot take them. The default form's ids here; a site's
+ * own form fields add theirs (the site's superRefine).
+ */
 export const RESERVED_IDS: readonly string[] = [
   "main-content",
   "navbar-menu",
   "cookie-consent-title",
   "cookie-consent-description",
-  "contact-email-hint",
-  ...CONTACT_FIELDS.flatMap((name) => [`contact-${name}`, `contact-${name}-error`]),
+  ...DEFAULT_FIELDS.flatMap(domIdsOf),
+  ...FORM_DOM_IDS,
+  "contact-website-error",
 ];
 
 export const isReservedId = (id: string) => RESERVED_IDS.includes(id);
@@ -52,15 +54,15 @@ export const isReservedId = (id: string) => RESERVED_IDS.includes(id);
 const FormFieldSchema = z.strictObject({
   id: field(z.string().regex(/^[a-z][a-z0-9-]{0,31}$/, 'Lowercase letters, digits and "-", starting with a letter, at most 32 characters.'), {
     label: "Identyfikator", fieldType: "text", editable: false,
-    description: 'The field\'s name in the submission (e.g. "phone", "service"); unique in the form.',
+    description: 'The field\'s name in the submission (e.g. "phone", "service"): lowercase letters, digits and "-", starting with a letter, at most 32 characters; unique in the form; not action, method, submit, reset or another name the form uses itself.',
   }),
   type: field(z.enum(FORM_FIELD_TYPES), { label: "Rodzaj pola", fieldType: "select", description: "text, email, tel, textarea (several lines), select (one of options), checkbox, date or number." }),
   label: field(text(80), { label: "Etykieta", fieldType: "text", description: "The visible label in the site's language; for a checkbox its text." }),
-  placeholder: field(text(120).optional(), { label: "Podpowiedź w polu", fieldType: "text", description: "An example shown in the empty field (not for checkbox and date)." }),
+  placeholder: field(text(120).optional(), { label: "Podpowiedź w polu", fieldType: "text", description: "An example shown in the empty field; for a select the text of its empty first choice (\"Choose…\" by default). Not for checkbox and date." }),
   hint: field(text(160).optional(), { label: "Opis pod polem", fieldType: "text", description: "A short help line under the field." }),
   required: field(z.boolean().default(false), { label: "Wymagane", fieldType: "toggle", description: "The form is not sent without it." }),
   width: field(z.enum(["full", "half"]).default("full"), { label: "Szerokość", fieldType: "select", description: '"half": next to another half field when the form is wide enough.' }),
-  icon: field(z.enum(ICON_NAMES).optional(), { label: "Ikona", fieldType: "select", description: "An icon at the start of the field (text, email, tel, date, number, select)." }),
+  icon: field(z.enum(ICON_NAMES).optional(), { label: "Ikona", fieldType: "select", description: "An icon at the start of the field (text, email, tel, date, number)." }),
   options: field(z.array(text(80)).min(2).max(20).optional(), { label: "Opcje", fieldType: "list", description: "The choices of a select (2 to 20)." }),
   minLength: field(z.number().int().min(1).max(TYPE_MAX.textarea).optional(), { label: "Najmniej znaków", fieldType: "text", description: "For text, textarea and tel." }),
   maxLength: field(z.number().int().min(1).max(TYPE_MAX.textarea).optional(), { label: "Najwięcej znaków", fieldType: "text", description: "For text, textarea and tel; never above the type's own limit." }),
@@ -73,26 +75,37 @@ const ContactFormSchema = z
       label: "Formularz na stronie", fieldType: "toggle",
       description: "false: the contact sections show the contact details only (a business card site, reached by phone or e-mail).",
     }),
-    fields: z.array(FormFieldSchema).min(1).max(MAX_FORM_FIELDS).optional().describe(`The form's fields in order, at most ${MAX_FORM_FIELDS}; at least one required email or tel field (so the reply can reach the visitor).`),
+    fields: field(z.array(FormFieldSchema).min(1).max(MAX_FORM_FIELDS).optional(), {
+      label: "Pola formularza", fieldType: "list",
+      description: `The form's fields in order, at most ${MAX_FORM_FIELDS}; at least one required email or tel field (so the reply can reach the visitor).`,
+    }),
     submitLabel: field(text(40).optional(), { label: "Tekst przycisku", fieldType: "text", description: "The submit button; a default from the language dictionary when empty." }),
   })
   .superRefine((form, context) => {
-    if (!form.fields) return;
+    if (!form.fields?.length) return;
     const ids = new Set<string>();
+    // Every DOM id the form renders, once: "email-error" as a field would clash with the e-mail field's error line.
+    const domIds = new Set<string>(FORM_DOM_IDS);
     form.fields.forEach((item, index) => {
       const at = (key: string) => ["fields", index, key];
       if (ids.has(item.id)) context.addIssue({ code: "custom", path: at("id"), message: `Duplicate field id "${item.id}".` });
+      else if (domIdsOf(item).some((id) => domIds.has(id))) context.addIssue({ code: "custom", path: at("id"), message: `Field id "${item.id}" clashes with an id the form already renders (contact-…-error, contact-…-hint).` });
       ids.add(item.id);
+      for (const id of domIdsOf(item)) domIds.add(id);
       if (RESERVED_FIELD_IDS.includes(item.id)) context.addIssue({ code: "custom", path: at("id"), message: `"${item.id}" is used by the form itself, choose another id.` });
       if (item.type === "select" && !item.options) context.addIssue({ code: "custom", path: at("options"), message: "A select needs its options (2 to 20)." });
       if (item.type !== "select" && item.options) context.addIssue({ code: "custom", path: at("options"), message: "Only a select has options." });
+      if (item.options && new Set(item.options).size !== item.options.length) context.addIssue({ code: "custom", path: at("options"), message: "Each option once." });
       if (item.icon && !ICON_TYPES.includes(item.type)) context.addIssue({ code: "custom", path: at("icon"), message: `No icon for a ${item.type} field.` });
       if (item.placeholder && !PLACEHOLDER_TYPES.includes(item.type)) context.addIssue({ code: "custom", path: at("placeholder"), message: `No placeholder for a ${item.type} field.` });
-      if ((item.minLength || item.maxLength) && !LENGTH_TYPES.includes(item.type)) context.addIssue({ code: "custom", path: at("maxLength"), message: `Lengths are only for text, textarea and tel fields.` });
+      if ((item.minLength || item.maxLength) && !LENGTH_TYPES.includes(item.type)) context.addIssue({ code: "custom", path: at(item.maxLength ? "maxLength" : "minLength"), message: `Lengths are only for text, textarea and tel fields.` });
       if (item.maxLength && item.maxLength > TYPE_MAX[item.type]) context.addIssue({ code: "custom", path: at("maxLength"), message: `At most ${TYPE_MAX[item.type]} for a ${item.type} field.` });
       if (item.minLength && item.maxLength && item.minLength > item.maxLength) context.addIssue({ code: "custom", path: at("minLength"), message: "minLength is above maxLength." });
+      // A minimum the field can never reach (a tel field takes 30 characters): the form could never be sent.
+      else if (item.minLength && item.minLength > TYPE_MAX[item.type]) context.addIssue({ code: "custom", path: at("minLength"), message: `At most ${TYPE_MAX[item.type]} for a ${item.type} field.` });
     });
-    if (!form.fields.some((item) => item.required && (item.type === "email" || item.type === "tel"))) {
+    // A form that is off sends nothing: its fields wait for it to be switched on.
+    if (form.enabled !== false && !form.fields.some((item) => item.required && (item.type === "email" || item.type === "tel"))) {
       context.addIssue({ code: "custom", path: ["fields"], message: "Add a required email or tel field: the reply has to reach the visitor." });
     }
   });
@@ -321,8 +334,13 @@ export const SiteSchema = z
     const pageIds = new Set<string>();
     const slugs = new Set<string>();
     const sectionIds = new Map<string, string>();
-    // The form's own DOM ids (contact-<field>, its error and hint): no section may take them.
-    const formIds = new Set(fieldsOf(site.contact.form).flatMap((item) => [`contact-${item.id}`, `contact-${item.id}-error`, `contact-${item.id}-hint`]));
+    // The form's own DOM ids (contact-<field>, its error and its hint): no section may take them.
+    const formIds = new Set(fieldsOf(site.contact.form).flatMap(domIdsOf));
+
+    // Without a form visitors call or write: the business needs a phone or an e-mail address.
+    if (site.contact.form?.enabled === false && !site.business.phone && !site.business.email) {
+      context.addIssue({ code: "custom", path: ["contact", "form", "enabled"], message: "The form is off: add business.phone or business.email so visitors can reach the business." });
+    }
 
     site.pages.forEach((page, pageIndex) => {
       const at = (...path: (string | number)[]) => ["pages", pageIndex, ...path];

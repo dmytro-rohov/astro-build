@@ -62,8 +62,10 @@
   }
 
   // A field with an icon (contact.form.fields[].icon): the icon inside the box, at its start.
+  // A grid: the control is a block (no descender gap under a textarea, as when it was a direct grid item).
   .contact-form__control {
     position: relative;
+    display: grid;
   }
 
   .contact-form__control--icon > .input,

@@ -131,7 +131,7 @@ export default {
     eyebrow: "Contact",
     title: "Laten we samen iets moois maken.",
     description: "Stuur ons een bericht, dan nemen we zo snel mogelijk contact met je op.",
-    descriptionNoForm: "Bel of schrijf ons, dan reageren we zo snel mogelijk.",
+    descriptionNoForm: "Bel of mail ons, dan nemen we zo snel mogelijk contact met je op.",
     detailsTitle: "Contactgegevens",
     nameLabel: "Naam",
     emailLabel: "E-mail",

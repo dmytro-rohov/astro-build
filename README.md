@@ -610,7 +610,8 @@ not in the browser console.
       { "id": "name", "type": "text", "label": "Imię", "required": true, "width": "half", "icon": "user" },
       { "id": "phone", "type": "tel", "label": "Telefon", "required": true, "width": "half", "icon": "phone" },
       { "id": "service", "type": "select", "label": "Czego potrzebujesz?", "required": true, "options": ["Bukiet", "Dekoracje ślubne"] },
-      { "id": "date", "type": "date", "label": "Termin", "width": "half" },
+      { "id": "date", "type": "date", "label": "Termin", "width": "half", "icon": "calendar" },
+      { "id": "guests", "type": "number", "label": "Liczba gości", "width": "half" },
       { "id": "details", "type": "textarea", "label": "Szczegóły", "placeholder": "Kolory, kwiaty, budżet…", "maxLength": 1000 },
       { "id": "callback", "type": "checkbox", "label": "Proszę o telefon zwrotny" }
     ]
@@ -620,19 +621,26 @@ not in the browser console.
 
 - Without `form` (or without `fields`) the form is the one before 3.8: name, e-mail, subject,
   message, with labels and messages from the dictionary (`src/lib/contact/fields.ts` `DEFAULT_FIELDS`).
-- Field types: `text`, `email`, `tel`, `textarea`, `select` (with 2–20 `options`), `checkbox` (its
-  `label` is its text), `date`, `number`. Each field: `label`, optional `placeholder` (not for checkbox and
-  date), `hint` (a line under it), `required`, `width` (`full`, or `half`: side by side when the form is
-  wide enough), `icon` (an engine icon at the start of text-like fields and selects), `minLength` /
-  `maxLength` (text, textarea, tel; never above the type's own limit).
-- Rules: at most 12 fields, unique `id`s (lowercase, `-`), none of the form's own names (`website`,
-  `privacy`, `siteid`, `lang`, `form`, `fields`), and at least one **required** `email` or `tel` field so
-  the reply can reach the visitor. Section ids cannot take the fields' DOM ids (`contact-<id>`,
-  `contact-<id>-error`, `contact-<id>-hint`).
+- Field types: `text`, `email`, `tel`, `textarea`, `select` (with 2–20 different `options`), `checkbox`
+  (its `label` is its text), `date`, `number`. Each field: `label`, optional `placeholder` (an example in
+  the empty field; for a select the text of its empty first choice, "Choose…" by default; not for
+  checkbox and date), `hint` (a line under it), `required`, `width` (`full`, or `half`: side by side when
+  the form is wide enough; pair half fields), `icon` (an engine icon at the start of text, email, tel,
+  date and number fields), `minLength` / `maxLength` (text, textarea, tel; within the type's own limit;
+  the minimum is checked by the server, in the site's language).
+- Rules: at most 12 fields; `id`s unique, of lowercase letters, digits and `-`, starting with a letter,
+  at most 32 characters; none of the form's own names (`website`, `privacy`, `siteid`, `lang`, `form`,
+  `fields`) or the form element's properties a control would shadow (`action`, `method`, `submit`,
+  `reset`, `elements`, `length`, `target`, `enctype`, `encoding`, `dataset`); no field id may produce
+  another's DOM id (`email` and `email-error`); at least one **required** `email` or `tel` field so the
+  reply can reach the visitor. Section ids cannot take the fields' DOM ids (`contact-<id>`,
+  `contact-<id>-error`, `contact-<id>-hint` when the field has a hint).
 - `"enabled": false`: no form on the site. Every contact variant shows the heading and the contact
-  details only (a business-card site reached by phone or e-mail); `showDetails` must then stay on.
+  details only (a business-card site reached by phone or e-mail): `business.phone` or `business.email` is
+  then required, `showDetails` must stay on, and a local site's `/api/contact` answers 404.
 - The e-mail lists every filled answer under its label in the form's order; the reply goes to the
-  first e-mail field (none: no reply-to); the subject line uses the `subject` field, else `name`.
+  first e-mail field (none: no reply-to); the subject line uses a single-line `subject` field, else
+  `name`, else the site's name.
 
 #### Contact API contract (for the shared form service)
 

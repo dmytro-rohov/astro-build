@@ -38,6 +38,11 @@ export async function POST({ request, clientAddress }: APIContext) {
       return respond(request, { success: false, message: messages.invalidSubmission }, 400);
     }
 
+    // No form on the site (contact.form.enabled false): nothing to send through here.
+    if (site.contact.form?.enabled === false) {
+      return respond(request, { success: false, message: messages.invalidSubmission }, 404);
+    }
+
     const formData = await request.formData();
 
     // Bots that fill the hidden field get a normal "sent" answer and nothing is sent.

@@ -30,14 +30,24 @@ export type FormField = {
 /** A form asks at most this much: longer ones lose visitors. */
 export const MAX_FORM_FIELDS = 12;
 
-/** Names the form uses for itself (the honeypot, the consent, a form service's hidden fields): no field takes them. */
-export const RESERVED_FIELD_IDS: readonly string[] = ["website", "privacy", "siteid", "lang", "form", "fields"];
+/**
+ * Names no field takes: the form's own (the honeypot, the consent, a form service's hidden fields) and the form
+ * element's properties a control of that name would shadow in the browser (form.action, form.reset…).
+ */
+export const RESERVED_FIELD_IDS: readonly string[] = [
+  "website", "privacy", "siteid", "lang", "form", "fields",
+  "action", "method", "target", "enctype", "encoding", "elements", "length", "submit", "reset", "dataset",
+];
 
 /** The longest value of each type, in characters; a field's maxLength may only lower it. */
 export const TYPE_MAX: Readonly<Record<FormFieldType, number>> = { text: 200, email: 254, tel: 30, textarea: 5000, select: 80, checkbox: 2, date: 10, number: 15 };
 
-/** Where an icon fits (a text-like box) and where a placeholder does (a checkbox and a date picker have none). */
-export const ICON_TYPES: readonly FormFieldType[] = ["text", "email", "tel", "date", "number", "select"];
+/**
+ * Where an icon fits (a text-like box; not a select: Safari ignores a native select's inline padding, the icon
+ * would cover the choice) and where a placeholder does (a checkbox and a date picker have none; a select's is the
+ * text of its empty first option).
+ */
+export const ICON_TYPES: readonly FormFieldType[] = ["text", "email", "tel", "date", "number"];
 export const PLACEHOLDER_TYPES: readonly FormFieldType[] = ["text", "email", "tel", "textarea", "number", "select"];
 /** Lengths are counted where the visitor types freely. */
 export const LENGTH_TYPES: readonly FormFieldType[] = ["text", "textarea", "tel"];
@@ -53,18 +63,30 @@ export const DEFAULT_FIELDS: readonly FormField[] = [
 /** The fields the site's form asks (its own list, else the default one). */
 export const fieldsOf = (form?: { fields?: readonly FormField[] } | null): readonly FormField[] => (form?.fields?.length ? form.fields : DEFAULT_FIELDS);
 
-/** The browser's autofill for a field: by its type, a name field by its id. */
+/**
+ * The browser's autofill for a field: by its type, the name field by its id; the default subject field off, as
+ * before 3.8. Other fields leave it to the browser (an "off" would block autofill of a company or a city).
+ */
 export function autocompleteOf(field: FormField): string | undefined {
   if (field.type === "email") return "email";
   if (field.type === "tel") return "tel";
   if (field.id === "name") return "name";
-  return field.type === "text" || field.type === "textarea" ? "off" : undefined;
+  return field.id === "subject" ? "off" : undefined;
 }
+
+/** Whether the field shows a hint line under it: its own, or the dictionary's for the default e-mail field. */
+export const hasHint = (field: FormField) => Boolean(field.hint) || (field.id === "email" && !field.label);
+
+/** The DOM ids the form renders for a field: the control, its error line and, with a hint, the hint. */
+export const domIdsOf = (field: FormField) => [`contact-${field.id}`, `contact-${field.id}-error`, ...(hasHint(field) ? [`contact-${field.id}-hint`] : [])];
+
+/** The DOM ids the form renders whatever its fields: the honeypot and the consent. */
+export const FORM_DOM_IDS: readonly string[] = ["contact-website", "contact-privacy", "contact-privacy-error"];
 
 /** The longest value the field takes. */
 export const maxLengthOf = (field: FormField) => Math.min(field.maxLength ?? TYPE_MAX[field.type], TYPE_MAX[field.type]);
 
-/** A phone number as people write it: digits with spaces, dots, dashes, brackets and a leading +. */
-export const TEL = /^\+?[\d\s().\-/]{6,30}$/;
+/** A phone number as people write it: at least 6 digits, with spaces, dots, dashes, brackets and a leading +. */
+export const TEL = /^(?=(?:\D*\d){6})\+?[\d\s().\-/]{6,30}$/;
 export const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const DATE = /^\d{4}-\d{2}-\d{2}$/;

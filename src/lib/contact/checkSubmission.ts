@@ -17,19 +17,22 @@ export type FormMessages = {
 
 const fill = (template: string, values: Record<string, string | number>) => template.replace(/\{(\w+)\}/g, (match, key: string) => (key in values ? String(values[key]) : match));
 
-function stringValue(formData: FormData, key: string) {
+/** What the submission is read from: a FormData, or anything with its get() (a form service's own parsed body). */
+export type Submission = { get(name: string): FormDataEntryValue | null };
+
+function stringValue(formData: Submission, key: string) {
   const value = formData.get(key);
   return typeof value === "string" ? value.trim() : "";
 }
 
 /** Single-line values end up in e-mail headers and lists: line breaks and other control characters become spaces. */
-function singleLine(formData: FormData, key: string) {
+function singleLine(formData: Submission, key: string) {
   // eslint-disable-next-line no-control-regex
   return stringValue(formData, key).replace(/[\u0000-\u001f\u007f]+/g, " ").trim();
 }
 
 /** True when the hidden honeypot field was filled in (a bot). */
-export const isHoneypotFilled = (formData: FormData) => stringValue(formData, "website") !== "";
+export const isHoneypotFilled = (formData: Submission) => stringValue(formData, "website") !== "";
 
 /** The field's label: its own, or the dictionary's for the default fields (name, e-mail, subject, message). */
 export function labelOf(field: FormField, messages: FormMessages) {
@@ -46,8 +49,13 @@ function messageFor(field: FormField, kind: "Required" | "TooShort" | "TooLong",
   return fill(messages.errors[general], { ...values, label: labelOf(field, messages) });
 }
 
+function isRealDay(value: string) {
+  const day = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(day.getTime()) && day.toISOString().slice(0, 10) === value;
+}
+
 /** One field's value, cleaned, and what is wrong with it (null when nothing). */
-function check(field: FormField, formData: FormData, messages: FormMessages): { value: string; error: string | null } {
+function check(field: FormField, formData: Submission, messages: FormMessages): { value: string; error: string | null } {
   const e = messages.errors;
   const raw = field.type === "textarea" ? stringValue(formData, field.id).replace(/\r\n/g, "\n") : singleLine(formData, field.id);
   // An unchecked checkbox is not sent at all.
@@ -62,10 +70,13 @@ function check(field: FormField, formData: FormData, messages: FormMessages): { 
   }
   if (field.type === "tel" && !TEL.test(value)) return { value, error: e.telInvalid };
   if (field.type === "select" && !(field.options ?? []).includes(value)) return { value, error: e.optionInvalid };
-  if (field.type === "date" && !(DATE.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`)))) return { value, error: e.dateInvalid };
-  if (field.type === "number" && !/^-?\d+([.,]\d+)?$/.test(value)) return { value, error: e.numberInvalid };
+  // A real day: "2026-02-31" parses (it rolls over to March), so the day must come back the same.
+  if (field.type === "date" && !(DATE.test(value) && isRealDay(value))) return { value, error: e.dateInvalid };
+  // As a number input sends it (also "1e5"), or with a decimal comma.
+  if (field.type === "number" && !/^-?\d+([.,]\d+)?([eE][-+]?\d+)?$/.test(value)) return { value, error: e.numberInvalid };
 
-  const length = [...value].length;
+  // Counted as the browser's maxlength counts (UTF-16 units), as before 3.8.
+  const length = value.length;
   if (field.minLength && length < field.minLength) return { value, error: messageFor(field, "TooShort", messages, { min: field.minLength }) };
   if (length > max) return { value, error: messageFor(field, "TooLong", messages, { max }) };
 
@@ -73,7 +84,7 @@ function check(field: FormField, formData: FormData, messages: FormMessages): { 
 }
 
 /** The submission against the fields; values under names that are not fields are ignored. */
-export function checkSubmission(formData: FormData, fields: readonly FormField[], messages: FormMessages): ContactValidationResult {
+export function checkSubmission(formData: Submission, fields: readonly FormField[], messages: FormMessages): ContactValidationResult {
   const errors: ContactValidationError[] = [];
   const values: ContactFormValue[] = [];
 
@@ -88,8 +99,9 @@ export function checkSubmission(formData: FormData, fields: readonly FormField[]
 
   if (errors.length > 0) return { success: false, errors };
 
-  // Where the reply goes, who wrote and about what: the first e-mail field, the "name" and "subject" fields.
-  const byId = (id: string) => values.find((item) => item.id === id)?.value || undefined;
+  // Where the reply goes, who wrote and about what: the first e-mail field, the "name" and "subject" fields when they
+  // are single-line ones (a subject from a textarea would be a multi-line mail header).
+  const byId = (id: string) => values.find((item) => item.id === id && (item.type === "text" || item.type === "select"))?.value || undefined;
   const data: ContactFormData = {
     values,
     replyTo: values.find((item) => item.type === "email" && item.value)?.value,

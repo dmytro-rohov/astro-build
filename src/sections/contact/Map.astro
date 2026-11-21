@@ -40,7 +40,7 @@ const PlaceHeading = headingLevel === "h1" ? "h2" : "h3";
 ---
 
 <SectionShell id={section.id} type="contact" variant="map" tone={props.tone} spacing={props.spacing}>
-  <div class="s-contact-map">
+  <div class:list={["s-contact-map", !withForm && "s-contact-map--no-form"]}>
     <div class="s-contact-map__main">
       <SectionHeader {...contactHeader(content, t, withForm)} headingLevel={headingLevel} align={props.align ?? "left"} />
       {withForm && <Form />}

@@ -131,7 +131,7 @@ export default {
     eyebrow: "İletişim",
     title: "Birlikte bir şeyler oluşturalım.",
     description: "Bize mesaj gönderin, en kısa sürede size dönüş yapalım.",
-    descriptionNoForm: "Bizi arayın ya da yazın, en kısa sürede dönüş yapalım.",
+    descriptionNoForm: "Bizi arayın ya da bize yazın, en kısa sürede size dönüş yapalım.",
     detailsTitle: "İletişim bilgileri",
     nameLabel: "Ad Soyad",
     emailLabel: "E-posta",

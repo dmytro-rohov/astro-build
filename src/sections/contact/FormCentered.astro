@@ -29,7 +29,7 @@ const SubHeading = headingLevel === "h1" ? "h2" : "h3";
 <SectionShell id={section.id} type="contact" variant="form-centered" tone={props.tone} spacing={props.spacing}>
   <div class="s-contact-centered">
     <SectionHeader {...contactHeader(content, t, withForm)} headingLevel={headingLevel} align={props.align ?? "center"} />
-    <div class:list={["s-contact-centered__card", details.length > 0 && withForm && "s-contact-centered__card--with-panel", !withForm && "s-contact-centered__card--no-form"]}>
+    {(withForm || details.length > 0) && <div class:list={["s-contact-centered__card", details.length > 0 && withForm && "s-contact-centered__card--with-panel", !withForm && "s-contact-centered__card--no-form"]}>
       {details.length > 0 && (
         <div class="s-contact-centered__panel">
           <SubHeading class="s-contact-centered__panel-title">{t.contactForm.detailsTitle}</SubHeading>
@@ -41,6 +41,6 @@ const SubHeading = headingLevel === "h1" ? "h2" : "h3";
           <Form />
         </div>
       )}
-    </div>
+    </div>}
   </div>
 </SectionShell>
