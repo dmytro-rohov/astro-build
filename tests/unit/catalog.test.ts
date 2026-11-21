@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import { expect, test } from "vitest";
 import { ARCHETYPE_IDS } from "../../src/design-system/archetypes";
 import { sectionTypes } from "../../src/site/registry";
@@ -22,7 +23,7 @@ test("the generated catalog covers every variant with min and max content and va
   }
 }, 60_000);
 
-test("catalog.json describes every section, variant and archetype; the LLM schema has no regex patterns", () => {
+test("catalog.json describes every section, variant and archetype; the LLM schema has no regex patterns", async () => {
   const out = fs.mkdtempSync(path.join(os.tmpdir(), "ai-catalog-"));
   execFileSync("npx", ["tsx", "scripts/site/catalog.ts", "--out", out], { stdio: "pipe" });
 
@@ -48,4 +49,39 @@ test("catalog.json describes every section, variant and archetype; the LLM schem
   expect(full.properties.pages).toBeDefined();
   expect(llm).not.toMatch(/"pattern"/);
   expect(llm).toMatch(/max \d+ characters/);
+
+  // Property names are names, not keywords: a form field keeps its minLength and maxLength and gets no "description".
+  const find = (node: unknown): Record<string, unknown> | undefined => {
+    if (!node || typeof node !== "object") return undefined;
+    const properties = (node as { properties?: Record<string, unknown> }).properties;
+    if (properties && "options" in properties && "placeholder" in properties) return properties;
+    for (const child of Object.values(node as Record<string, unknown>)) {
+      const found = find(child);
+      if (found) return found;
+    }
+    return undefined;
+  };
+  const formField = find(JSON.parse(llm));
+  expect(formField && Object.keys(formField)).toEqual(expect.arrayContaining(["minLength", "maxLength"]));
+  expect(formField).not.toHaveProperty("description");
+
+  // The contact form's contract: rules and texts of every language, and the check as a plain module that judges a
+  // submission as the engine does.
+  const contract = JSON.parse(fs.readFileSync(path.join(out, "form-contract.json"), "utf8"));
+  expect(Object.keys(contract.messages).sort()).toEqual([...languages.keys()].sort());
+  expect(contract.messages.pl.errors.fieldRequired).toBe("{label}: to pole jest wymagane.");
+  expect(contract.messages.en.email.checked).toBe("yes");
+  expect(contract.defaultFields.map((item: { id: string }) => item.id)).toEqual(["name", "email", "subject", "message"]);
+  expect(contract.reservedFieldIds).toContain("action");
+  const check = await import(pathToFileURL(path.join(out, "form-check.mjs")).href);
+  const data = new FormData();
+  data.append("name", "A");
+  data.append("email", "anna@example.com");
+  const result = check.checkSubmission(data, contract.defaultFields, contract.messages.pl);
+  expect(result.errors).toEqual([
+    { field: "name", message: "Imię musi mieć co najmniej 2 znaki." },
+    { field: "message", message: "Wpisz wiadomość." },
+    { field: "privacy", message: "Musisz zaakceptować politykę prywatności." },
+  ]);
+  expect(check.autocompleteOf({ id: "firma", type: "text", required: false, width: "full" })).toBe("organization");
 }, 60_000);

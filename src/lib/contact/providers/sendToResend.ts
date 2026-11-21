@@ -24,14 +24,18 @@ export async function sendToResend(data: ContactFormData) {
 
   const resend = new Resend(apiKey);
 
-  const subject = data.subject
-    ? format(t.email.subjectWithTopic, { siteName: siteConfig.name, subject: data.subject })
-    : format(t.email.subjectFromName, { siteName: siteConfig.name, name: data.name });
+  // About what, else from whom, else just the site: a form without subject or name fields still has a subject line.
+  const topic = data.subject?.replace(/\s+/g, " ").slice(0, 150);
+  const subject = topic
+    ? format(t.email.subjectWithTopic, { siteName: siteConfig.name, subject: topic })
+    : data.name
+      ? format(t.email.subjectFromName, { siteName: siteConfig.name, name: data.name })
+      : format(t.email.heading, { siteName: siteConfig.name });
 
   const { error } = await resend.emails.send({
     from: fromEmail,
     to: toEmail,
-    replyTo: data.email,
+    ...(data.replyTo ? { replyTo: data.replyTo } : {}),
     subject,
     html: createContactEmailHtml(data),
     text: createContactEmailText(data),

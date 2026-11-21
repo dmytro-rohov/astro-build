@@ -20,9 +20,10 @@ export type ContactDetail = {
 };
 
 /** Eyebrow, title and description, with the dictionary's defaults (a contact section always has a heading). */
-export function contactHeader(content: { eyebrow?: string; title?: string; description?: string }, t: Dictionary) {
+/** The section's heading; without a form on the site the default invitation is to call or write, not to send a message. */
+export function contactHeader(content: { eyebrow?: string; title?: string; description?: string }, t: Dictionary, withForm = true) {
   const m = t.contactForm;
-  return { eyebrow: content.eyebrow ?? m.eyebrow, title: content.title ?? m.title, description: content.description ?? m.description };
+  return { eyebrow: content.eyebrow ?? m.eyebrow, title: content.title ?? m.title, description: content.description ?? (withForm ? m.description : m.descriptionNoForm) };
 }
 
 /** "ul. Długa 42, 31-000 Kraków": street, then postal code and city. */

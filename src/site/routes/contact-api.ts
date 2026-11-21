@@ -1,5 +1,7 @@
 import type { APIContext } from "astro";
 import { isHoneypotFilled, validateContactForm } from "@/lib/contact/validateContactForm";
+import { fieldsOf } from "@/lib/contact/fields";
+import { site } from "virtual:site";
 import { sendContactMessage } from "@/lib/contact/sendContactMessage";
 import { createContactResponse } from "@/lib/contact/createContactResponse";
 import { getClientId, isRateLimited } from "@/lib/contact/rateLimit";
@@ -36,6 +38,11 @@ export async function POST({ request, clientAddress }: APIContext) {
       return respond(request, { success: false, message: messages.invalidSubmission }, 400);
     }
 
+    // No form on the site (contact.form.enabled false): nothing to send through here.
+    if (site.contact.form?.enabled === false) {
+      return respond(request, { success: false, message: messages.invalidSubmission }, 404);
+    }
+
     const formData = await request.formData();
 
     // Bots that fill the hidden field get a normal "sent" answer and nothing is sent.
@@ -43,7 +50,8 @@ export async function POST({ request, clientAddress }: APIContext) {
       return respond(request, { success: true, message: messages.success });
     }
 
-    const validation = validateContactForm(formData);
+    // The site's own fields (contact.form.fields), else the form as before 3.8.
+    const validation = validateContactForm(formData, fieldsOf(site.contact.form));
 
     if (!validation.success) {
       return respond(

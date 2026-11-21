@@ -1,12 +1,13 @@
 ---
 /**
- * The contact form: fields, consent, honeypot, status line and the script that sends it
- * with fetch (server field errors next to the fields, focus on the first invalid one).
- * Without JavaScript the browser posts it and the server redirects to a result page.
- * The section layouts around it are the contact variants (src/sections/contact/).
+ * The contact form: its fields (the site's contact.form.fields, else the form as before 3.8: name, e-mail, subject,
+ * message), consent, honeypot, status line and the script that sends it with fetch (server field errors next to the
+ * fields, focus on the first invalid one). Without JavaScript the browser posts it and the server redirects to a result
+ * page. The section layouts around it are the contact variants (src/sections/contact/).
  */
 import Link from "@/components/ui/Link.astro";
 import Button from "@/components/ui/Button.astro";
+import Icon from "@/components/media/Icon.astro";
 
 import FormGroup from "@/components/form/FormGroup.astro";
 import FormField from "@/components/form/FormField.astro";
@@ -16,8 +17,10 @@ import FieldError from "@/components/form/FieldError.astro";
 import Input from "@/components/form/Input.astro";
 import Textarea from "@/components/form/Textarea.astro";
 import Checkbox from "@/components/form/Checkbox.astro";
+import Select from "@/components/form/Select.astro";
 
-import { CONTACT_LIMITS } from "@/lib/contact/limits";
+import { autocompleteOf, DEFAULT_FIELDS, hasHint, maxLengthOf, type FormField as Field } from "@/lib/contact/fields";
+import { fieldLabel } from "@/lib/contact/validateContactForm";
 import { t } from "@/i18n";
 
 const m = t.contactForm;
@@ -27,6 +30,8 @@ export interface Props {
   method?: "post";
   submitLabel?: string;
   privacyHref?: string;
+  /** The form's fields in order (lib/contact/fields.ts); the default form when not given. */
+  fields?: readonly Field[];
   /** Extra hidden fields sent with the form (e.g. siteId for the form service). */
   hiddenFields?: Record<string, string>;
   class?: string;
@@ -37,9 +42,16 @@ const {
   method = "post",
   submitLabel = m.submit,
   privacyHref = "/privacy",
+  fields = DEFAULT_FIELDS,
   hiddenFields = {},
   class: className,
 } = Astro.props;
+
+/** The hint under a field: its own, or the dictionary's for the default e-mail field. A minimum length is the server's
+ * to check (its message speaks the site's language; a minlength attribute would bring the browser's own). */
+const hintOf = (field: Field) => field.hint ?? (hasHint(field) ? m.emailHint : undefined);
+const describedBy = (field: Field) => [hintOf(field) ? `contact-${field.id}-hint` : "", `contact-${field.id}-error`].filter(Boolean).join(" ");
+const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
 ---
 
 <form
@@ -53,79 +65,63 @@ const {
   data-msg-generic-error={m.genericError}
 >
   <FormGroup gap="lg" class="contact-form__fields">
-    <FormField class="contact-form__field--half">
-      <Label for="contact-name" required>
-        {m.nameLabel}
-      </Label>
+    {fields.map((field) => (
+      <FormField class:list={[field.width === "half" && "contact-form__field--half", `contact-form__field--${field.type}`]}>
+        {field.type === "checkbox" ? (
+          <Checkbox id={`contact-${field.id}`} name={field.id} required={field.required} describedby={describedBy(field)}>
+            {fieldLabel(field)}{field.required && <span class="contact-form__required" aria-hidden="true"> *</span>}
+          </Checkbox>
+        ) : (
+          <Fragment>
+            <Label for={`contact-${field.id}`} required={field.required}>
+              {fieldLabel(field)}
+            </Label>
 
-      <Input
-        id="contact-name"
-        name="name"
-        type="text"
-        autocomplete="name"
-        maxlength={CONTACT_LIMITS.nameMax}
-        required
-        describedby="contact-name-error"
-      />
+            <div class:list={["contact-form__control", field.icon && "contact-form__control--icon"]}>
+              {field.icon && <Icon name={field.icon} class="contact-form__icon" />}
 
-      <FieldError id="contact-name-error" class="contact-form__error" data-error-for="name" />
-    </FormField>
+              {field.type === "textarea" ? (
+                <Textarea
+                  id={`contact-${field.id}`}
+                  name={field.id}
+                  rows={6}
+                  placeholder={field.placeholder}
+                  maxlength={maxLengthOf(field)}
+                  required={field.required}
+                  describedby={describedBy(field)}
+                />
+              ) : field.type === "select" ? (
+                <Select id={`contact-${field.id}`} name={field.id} required={field.required} describedby={describedBy(field)}>
+                  <option value="">{field.placeholder ?? m.selectPlaceholder}</option>
+                  {(field.options ?? []).map((option) => <option value={option}>{option}</option>)}
+                </Select>
+              ) : (
+                <Input
+                  id={`contact-${field.id}`}
+                  name={field.id}
+                  type={(INPUT_TYPES as readonly string[]).includes(field.type) ? (field.type as (typeof INPUT_TYPES)[number]) : "text"}
+                  inputmode={field.type === "number" ? "decimal" : undefined}
+                  step={field.type === "number" ? "any" : undefined}
+                  placeholder={field.placeholder}
+                  autocomplete={autocompleteOf(field)}
+                  maxlength={field.type === "date" || field.type === "number" ? undefined : maxLengthOf(field)}
+                  required={field.required}
+                  describedby={describedBy(field)}
+                />
+              )}
+            </div>
+          </Fragment>
+        )}
 
-    <FormField class="contact-form__field--half">
-      <Label for="contact-email" required>
-        {m.emailLabel}
-      </Label>
+        {hintOf(field) && (
+          <FieldHint id={`contact-${field.id}-hint`}>
+            {hintOf(field)}
+          </FieldHint>
+        )}
 
-      <Input
-        id="contact-email"
-        name="email"
-        type="email"
-        autocomplete="email"
-        maxlength={CONTACT_LIMITS.emailMax}
-        required
-        describedby="contact-email-hint contact-email-error"
-      />
-
-      <FieldHint id="contact-email-hint">
-        {m.emailHint}
-      </FieldHint>
-
-      <FieldError id="contact-email-error" class="contact-form__error" data-error-for="email" />
-    </FormField>
-
-    <FormField>
-      <Label for="contact-subject">
-        {m.subjectLabel}
-      </Label>
-
-      <Input
-        id="contact-subject"
-        name="subject"
-        type="text"
-        autocomplete="off"
-        maxlength={CONTACT_LIMITS.subjectMax}
-        describedby="contact-subject-error"
-      />
-
-      <FieldError id="contact-subject-error" class="contact-form__error" data-error-for="subject" />
-    </FormField>
-
-    <FormField>
-      <Label for="contact-message" required>
-        {m.messageLabel}
-      </Label>
-
-      <Textarea
-        id="contact-message"
-        name="message"
-        rows={6}
-        maxlength={CONTACT_LIMITS.messageMax}
-        required
-        describedby="contact-message-error"
-      />
-
-      <FieldError id="contact-message-error" class="contact-form__error" data-error-for="message" />
-    </FormField>
+        <FieldError id={`contact-${field.id}-error`} class="contact-form__error" data-error-for={field.id} />
+      </FormField>
+    ))}
 
     {Object.entries(hiddenFields).map(([name, value]) => (
       <input type="hidden" name={name} value={value} />
@@ -179,7 +175,16 @@ const {
     }
 
     const status = form.querySelector("[data-contact-status]");
-    const messages = form.dataset;
+    // Read through attributes and the prototype: a control named like a form property ("action", "reset")
+    // would shadow form.action or form.reset().
+    const messages = {
+      msgSending: form.getAttribute("data-msg-sending"),
+      msgSuccess: form.getAttribute("data-msg-success"),
+      msgCorrectFields: form.getAttribute("data-msg-correct-fields"),
+      msgGenericError: form.getAttribute("data-msg-generic-error"),
+    };
+    const action = form.getAttribute("action") ?? "";
+    const method = form.getAttribute("method") ?? "post";
     const submit = form.querySelector('button[type="submit"]');
 
     const clearErrors = () => {
@@ -220,8 +225,8 @@ const {
       }
 
       try {
-        const response = await fetch(form.action, {
-          method: form.method,
+        const response = await fetch(action, {
+          method,
           body: new FormData(form),
           headers: {
             Accept: "application/json",
@@ -249,7 +254,7 @@ const {
           return;
         }
 
-        form.reset();
+        HTMLFormElement.prototype.reset.call(form);
 
         if (status) {
           status.textContent = result.message || messages.msgSuccess || "";

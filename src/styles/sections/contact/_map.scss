@@ -151,4 +151,11 @@
       box-shadow: var(--elevation-card-hover);
     }
   }
+
+  // No form on the site: the heading beside the middle of the map, not at its top.
+  @include mq(lg) {
+    .s-contact-map--no-form .s-contact-map__main {
+      align-self: center;
+    }
+  }
 }

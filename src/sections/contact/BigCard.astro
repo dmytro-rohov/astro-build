@@ -18,16 +18,20 @@ export interface Props {
 const { section, headingLevel } = Astro.props;
 const { content, props } = section;
 const details = content.showDetails ? contactDetails(site.business, t) : [];
+// The site may have no form (contact.form.enabled false): then the details take the whole section.
+const withForm = site.contact.form?.enabled !== false;
 ---
 
 <SectionShell id={section.id} type="contact" variant="big-card" tone={props.tone} spacing={props.spacing}>
-  <div class="s-contact-card">
+  <div class:list={["s-contact-card", !withForm && "s-contact-card--no-form"]}>
     <div class="s-contact-card__intro">
-      <SectionHeader {...contactHeader(content, t)} headingLevel={headingLevel} align={props.align ?? "left"} class="s-contact-card__header" />
+      <SectionHeader {...contactHeader(content, t, withForm)} headingLevel={headingLevel} align={props.align ?? "left"} class="s-contact-card__header" />
       {details.length > 0 && <DetailList details={details} look="compact" class="s-contact-card__details" />}
     </div>
-    <div class="s-contact-card__form">
-      <Form />
-    </div>
+    {withForm && (
+      <div class="s-contact-card__form">
+        <Form />
+      </div>
+    )}
   </div>
 </SectionShell>

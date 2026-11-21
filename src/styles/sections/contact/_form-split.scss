@@ -63,4 +63,20 @@
       grid-template-columns: minmax(0, 1fr);
     }
   }
+
+  // No form on the site (contact.form.enabled false): the heading and the details take the section,
+  // the details side by side from tablets on.
+  @include mq(lg) {
+    .s-contact-split--no-form {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .s-contact-split--no-form .s-contact-split__aside {
+      position: static;
+    }
+
+    .s-contact-split--no-form .s-contact-details {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
 }

@@ -26,7 +26,7 @@
     display: grid;
     gap: var(--spacing-xl) var(--spacing-lg);
     padding: var(--spacing-2xl) var(--spacing-lg);
-    margin: var(--spacing-xl) 0 0;
+    margin: 0;
     list-style: none;
     background: var(--color-background-muted);
     border-radius: var(--radius-card);
@@ -171,5 +171,10 @@
       height: 3.25rem;
       margin: 0;
     }
+  }
+
+  // Space from the form above it; without a form the section's own gap is enough.
+  .s-contact-columns__form + .s-contact-columns__band {
+    margin-block-start: var(--spacing-xl);
   }
 }

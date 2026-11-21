@@ -16,6 +16,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import ts from "typescript";
 import { z } from "zod";
 import { archetypes } from "../../src/design-system/archetypes";
 import { ACCENT_FAMILIES, accentFamily } from "../../src/design-system/theme/families";
@@ -25,6 +26,10 @@ import { ENGINE_VERSION } from "../../src/site/engine";
 import { layoutTypes, sectionTypes } from "../../src/site/registry";
 import type { FieldMeta, ImageSlot } from "../../src/site/schema/fields";
 import { RESERVED_SLUGS, SCHEMA_VERSION, SiteSchema } from "../../src/site/schema/site";
+import {
+  AUTOCOMPLETE_BY_ID, AUTOCOMPLETE_TOKENS, DATE, DEFAULT_FIELDS, EMAIL, FIELD_ID, FORM_DOM_IDS, FORM_FIELD_TYPES, ICON_TYPES,
+  LENGTH_TYPES, MAX_FORM_FIELDS, NUMBER, PLACEHOLDER_TYPES, RESERVED_FIELD_IDS, TEL, TYPE_MAX,
+} from "../../src/lib/contact/fields";
 import { getFlag } from "./args";
 import { writeJson } from "./lib";
 
@@ -196,6 +201,12 @@ function forLlm(node: unknown): unknown {
   const notes: string[] = [];
 
   for (const [key, value] of Object.entries(source)) {
+    // A map of property names (a form field has properties named "minLength" and "maxLength"): the names stay, each
+    // value is a schema of its own.
+    if ((key === "properties" || key === "$defs" || key === "definitions") && value && typeof value === "object" && !Array.isArray(value)) {
+      result[key] = Object.fromEntries(Object.entries(value as Record<string, unknown>).map(([name, child]) => [name, forLlm(child)]));
+      continue;
+    }
     if (key === "minLength" && Number(value) > 1) notes.push(`at least ${value} characters`);
     else if (key === "maxLength") notes.push(`max ${value} characters`);
     else if (key === "minItems" && Number(value) > 0) notes.push(`at least ${value} items`);
@@ -210,6 +221,65 @@ function forLlm(node: unknown): unknown {
 
   return result;
 }
+
+/**
+ * The contact form's contract (contact.form, engine 3.8) for a form service and a generator outside the engine: the
+ * field types, limits and rules, the default form, the messages and e-mail texts of every language, and the check
+ * itself as one plain ES module (form-check.mjs: lib/contact/fields.ts + checkSubmission.ts compiled), so the
+ * service judges a submission exactly as this engine's own /api/contact does. Regenerated with the catalog.
+ */
+type FormDictionary = { contactForm: Record<string, unknown> & { errors: Record<string, string> }; email: Record<string, string> };
+const formMessages = Object.fromEntries(await Promise.all(languages.map(async (language) => {
+  const { default: dictionary } = (await import(pathToFileURL(path.join(dictionaryDir, `${language.code}.ts`)).href)) as { default: FormDictionary };
+  const m = dictionary.contactForm;
+  const pick = (keys: string[]) => Object.fromEntries(keys.map((key) => [key, m[key]]));
+  return [language.code, {
+    ...pick(["nameLabel", "emailLabel", "subjectLabel", "messageLabel", "emailHint", "selectPlaceholder", "submit", "sending", "success", "correctFields", "invalidSubmission", "genericError", "rateLimited"]),
+    errors: m.errors,
+    email: { heading: dictionary.email.heading, subjectWithTopic: dictionary.email.subjectWithTopic, subjectFromName: dictionary.email.subjectFromName, checked: dictionary.email.checked },
+  }] as const;
+})));
+const formContract = {
+  engine: ENGINE_VERSION,
+  check: "form-check.mjs",
+  fieldTypes: FORM_FIELD_TYPES,
+  maxFields: MAX_FORM_FIELDS,
+  typeMax: TYPE_MAX,
+  iconTypes: ICON_TYPES,
+  placeholderTypes: PLACEHOLDER_TYPES,
+  lengthTypes: LENGTH_TYPES,
+  reservedFieldIds: RESERVED_FIELD_IDS,
+  formDomIds: FORM_DOM_IDS,
+  patterns: { id: FIELD_ID.source, tel: TEL.source, email: EMAIL.source, date: DATE.source, number: NUMBER.source },
+  autocomplete: { tokens: AUTOCOMPLETE_TOKENS, byId: AUTOCOMPLETE_BY_ID },
+  defaultFields: DEFAULT_FIELDS,
+  rules: [
+    `At most ${MAX_FORM_FIELDS} fields, ids unique and matching "id", none of reservedFieldIds.`,
+    "At least one required email or tel field while the form is on (enabled not false).",
+    "options (2 to 20, each once) only on a select; icon only on iconTypes; placeholder only on placeholderTypes.",
+    "minLength/maxLength only on lengthTypes, within typeMax; no autocomplete on checkbox and select.",
+    "No field's DOM ids (contact-<id>, contact-<id>-error, contact-<id>-hint with a hint) may repeat another's or formDomIds.",
+    "Without fields the form is defaultFields, with the dictionary's labels (messages.<lang>.nameLabel…).",
+    "enabled false: no form; the business needs a phone or an e-mail; the service sends nothing for that site.",
+  ],
+  messages: formMessages,
+};
+
+/** lib/contact/fields.ts and checkSubmission.ts as one ES module, types gone (no imports left). */
+function formCheckModule() {
+  const compile = (file: string) =>
+    ts.transpileModule(fs.readFileSync(path.resolve("src/lib/contact", file), "utf8"), {
+      compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
+    }).outputText.replace(/^import [^;]+ from "\.\/[\w.]+";\n/gm, "");
+  return [
+    `// Generated by scripts/site/catalog.ts from src/lib/contact (engine ${ENGINE_VERSION}). Do not edit: regenerate the catalog.`,
+    compile("fields.ts"),
+    compile("checkSubmission.ts"),
+  ].join("\n");
+}
+
+writeJson(path.join(out, "form-contract.json"), formContract);
+fs.writeFileSync(path.join(out, "form-check.mjs"), formCheckModule());
 
 writeJson(path.join(out, "site.schema.json"), { title: "Mytko site.json", ...fullSchema });
 writeJson(path.join(out, "site.schema.llm.json"), { title: "Mytko site.json (for LLM structured output)", ...(forLlm(fullSchema) as object) });

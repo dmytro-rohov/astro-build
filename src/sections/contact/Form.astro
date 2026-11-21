@@ -1,6 +1,11 @@
 ---
-/** ContactForm wired to the site's contact mode: this site's /api/contact (local) or the form service (remote). */
+/**
+ * ContactForm wired to the site: its fields and button (contact.form), and where it posts: this site's /api/contact
+ * (local) or the form service (remote). Nothing when the site has no form (contact.form.enabled false): the contact
+ * variants then show the details only.
+ */
 import ContactForm from "@/components/form/ContactForm.astro";
+import { fieldsOf } from "@/lib/contact/fields";
 import { site } from "virtual:site";
 
 export interface Props {
@@ -8,12 +13,17 @@ export interface Props {
 }
 
 const remote = site.contact.mode === "remote" ? site.contact : undefined;
+const form = site.contact.form;
 ---
 
-<ContactForm
-  action={remote ? remote.endpoint : "/api/contact"}
-  hiddenFields={remote ? { siteId: site.siteId, lang: site.lang } : {}}
-  method="post"
-  privacyHref="/privacy"
-  class={Astro.props.class}
-/>
+{form?.enabled !== false && (
+  <ContactForm
+    action={remote ? remote.endpoint : "/api/contact"}
+    hiddenFields={remote ? { siteId: site.siteId, lang: site.lang } : {}}
+    method="post"
+    privacyHref="/privacy"
+    fields={fieldsOf(form)}
+    submitLabel={form?.submitLabel}
+    class={Astro.props.class}
+  />
+)}

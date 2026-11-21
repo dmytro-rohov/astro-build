@@ -54,4 +54,11 @@
       gap: var(--spacing-3xl);
     }
   }
+
+  // No form on the site: the heading and the details fill the card.
+  @include mq(lg) {
+    .s-contact-card--no-form {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
 }
