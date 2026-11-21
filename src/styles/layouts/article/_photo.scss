@@ -23,6 +23,18 @@
     flex-basis: 100%;
   }
 
+  .a-photo__captions {
+    display: grid;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-sm);
+  }
+
+  .a-photo__caption {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
   .a-photo__text {
     display: grid;
     align-content: start;

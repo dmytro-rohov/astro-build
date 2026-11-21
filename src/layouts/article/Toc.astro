@@ -35,7 +35,7 @@ const withToc = article.chapters.filter((chapter) => chapter.level === 2).length
       <div class="a-toc__main">
         {withToc && <TocList chapters={article.chapters} collapsible class="a-toc__fold" />}
         <Body article={article} />
-        <End article={article} share={article.share && !withToc} />
+        <End article={article} class="a-toc__end" />
       </div>
       {withToc && (
         <aside class="a-toc__side">

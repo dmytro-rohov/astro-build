@@ -23,6 +23,8 @@ export function GET({ site: siteUrl }: APIContext) {
   const absolute = (path: string) => new URL(path, siteUrl).href;
   const page = site.pages.find((entry) => entry.slug === blog.path);
   const posts = selectPosts(blog.posts).filter((post) => !post.seo.noindex);
+  // The newest change of any post in the feed (an old post updated today changes the feed too).
+  const latest = posts.map((post) => post.updated ?? post.date).sort().at(-1);
   const category = (id?: string) => blog.categories.find((entry) => entry.id === id)?.name;
 
   const items = posts.map((post) => {
@@ -48,7 +50,7 @@ export function GET({ site: siteUrl }: APIContext) {
     `    <link>${escape(absolute(blog.path))}</link>`,
     `    <description>${escape(t.feedDescription.replace("{siteName}", site.meta.name))}</description>`,
     `    <language>${site.lang}</language>`,
-    ...(posts[0] ? [`    <lastBuildDate>${rssDate(posts[0].updated ?? posts[0].date)}</lastBuildDate>`] : []),
+    ...(latest ? [`    <lastBuildDate>${rssDate(latest)}</lastBuildDate>`] : []),
     `    <atom:link href="${escape(absolute("/rss.xml"))}" rel="self" type="application/rss+xml"/>`,
     ...items,
     "  </channel>",

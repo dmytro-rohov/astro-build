@@ -27,6 +27,8 @@ export interface Props {
 const article = articleOf(Astro.props.post);
 const photos = article.photos.map(getAsset);
 const short = article.post.format === "short" && photos.length > 0;
+// A short post shows its photos above (the slider), so their captions go under it.
+const captions = short ? article.post.body.flatMap((block) => ((block.type === "image" || block.type === "gallery") && block.caption ? [block.caption] : [])) : [];
 ---
 
 {article.progress && !short && <Progress />}
@@ -42,6 +44,11 @@ const short = article.post.format === "short" && photos.length > 0;
           </Slider>
         ) : (
           <PostCover post={article.post} aspect={short ? [4, 5] : [16, 9]} widths={[480, 768, 1080, 1440]} sizes={short ? "(min-width: 1024px) 640px, 100vw" : "(min-width: 1280px) 1216px, 100vw"} priority="high" content class="a-photo__image" />
+        )}
+        {captions.length > 0 && (
+          <div class="a-photo__captions">
+            {captions.map((caption) => <p class="a-photo__caption">{caption}</p>)}
+          </div>
         )}
       </div>}
       <div class="a-photo__text">

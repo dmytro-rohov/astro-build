@@ -80,6 +80,8 @@ describe("blog helpers", () => {
         { type: "heading", level: 3, text: "Wstęp" },
         { type: "heading", level: 2, text: "5 kroków" },
         { type: "heading", level: 2, text: "!!!" },
+        { type: "heading", level: 2, text: "5 kroków" },
+        { type: "heading", level: 3, text: "Navbar menu" },
       ],
     });
     expect(chapters.map((chapter) => [chapter.id, chapter.level, chapter.block])).toEqual([
@@ -87,6 +89,8 @@ describe("blog helpers", () => {
       ["wstep-2", 3, 2],
       ["r-5-krokow", 2, 3],
       ["rozdzial", 2, 4],
+      ["r-5-krokow-2", 2, 5],
+      ["navbar-menu-2", 3, 6],
     ]);
   });
 

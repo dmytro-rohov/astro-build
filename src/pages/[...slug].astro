@@ -67,7 +67,7 @@ if (post && blog) {
   jsonLd = blogSchema({
     url: absolute(page.slug),
     title: page.title,
-    posts: selectPosts(blog.posts).map((entry) => ({ title: entry.title, url: absolute(postPath(blog, entry)), published: entry.date })),
+    posts: selectPosts(blog.posts).filter((entry) => !entry.seo.noindex).map((entry) => ({ title: entry.title, url: absolute(postPath(blog, entry)), published: entry.date })),
     siteUrl,
   });
 } else {

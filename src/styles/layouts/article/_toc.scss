@@ -52,6 +52,15 @@
       margin-inline: 0;
     }
 
+    // With the side bar the share buttons are there; below lg they stay at the end of the text.
+    .a-toc:not(.a-toc--single) .a-toc__end .article-share {
+      display: none;
+    }
+
+    .a-toc:not(.a-toc--single) .a-toc__end .article-end__row:not(:has(.article-tags)) {
+      display: none;
+    }
+
     .a-toc--single .a-toc__main > :is(.prose, .article-end) {
       margin-inline: auto;
     }

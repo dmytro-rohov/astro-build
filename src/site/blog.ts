@@ -77,6 +77,12 @@ export function slugify(value: string): string {
 export type Chapter = { id: string; text: string; level: 2 | 3; block: number };
 
 /** The post's headings with unique ids (the table of contents and the anchors). */
+/** Ids of the engine's own parts on a post page: a chapter never takes one. */
+const RESERVED_IDS = new Set([
+  "main-content", "navbar-menu", "cookie-consent-title", "cookie-consent-description",
+  "article-toc-title", "article-cta-title", "article-related-title",
+]);
+
 export function postChapters(post: Pick<Post, "body">): Chapter[] {
   const used = new Set<string>();
 
@@ -85,8 +91,9 @@ export function postChapters(post: Pick<Post, "body">): Chapter[] {
 
     const base = slugify(block.text) || "rozdzial";
     // An id must not start with a digit for CSS selectors, nor clash with the engine's own ids.
-    let id = /^\d/.test(base) ? `r-${base}` : base;
-    for (let n = 2; used.has(id) || id === "main-content"; n++) id = `${base}-${n}`;
+    const start = /^\d/.test(base) ? `r-${base}` : base;
+    let id = start;
+    for (let n = 2; used.has(id) || RESERVED_IDS.has(id); n++) id = `${start}-${n}`;
     used.add(id);
 
     return [{ id, text: block.text, level: block.level, block: index }];
