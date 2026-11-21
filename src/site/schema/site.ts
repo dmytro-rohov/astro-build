@@ -9,6 +9,8 @@ import { fontPairs, type FontPairId } from "../../design-system/fonts/library";
 import { OVERRIDABLE_KEYS } from "../../design-system/theme";
 import { layoutTypes, sectionTypes } from "../registry";
 import { Action, DAYS, field, HttpsUrl, Id, imageSlot, Slug, text, Time, type ImageSlot } from "./fields";
+import { ICON_NAMES } from "../../design-system/icons/library";
+import { FORM_FIELD_TYPES, ICON_TYPES, LENGTH_TYPES, MAX_FORM_FIELDS, PLACEHOLDER_TYPES, RESERVED_FIELD_IDS, TYPE_MAX, fieldsOf } from "../../lib/contact/fields";
 
 export const SCHEMA_VERSION = 1;
 
@@ -42,6 +44,58 @@ export const RESERVED_IDS: readonly string[] = [
 ];
 
 export const isReservedId = (id: string) => RESERVED_IDS.includes(id);
+
+/**
+ * One field of the contact form (lib/contact/fields.ts has its rules): what it asks, how it looks, whether it must be
+ * filled in. The privacy consent, the honeypot and the submit button are always there and are not fields.
+ */
+const FormFieldSchema = z.strictObject({
+  id: field(z.string().regex(/^[a-z][a-z0-9-]{0,31}$/, 'Lowercase letters, digits and "-", starting with a letter, at most 32 characters.'), {
+    label: "Identyfikator", fieldType: "text", editable: false,
+    description: 'The field\'s name in the submission (e.g. "phone", "service"); unique in the form.',
+  }),
+  type: field(z.enum(FORM_FIELD_TYPES), { label: "Rodzaj pola", fieldType: "select", description: "text, email, tel, textarea (several lines), select (one of options), checkbox, date or number." }),
+  label: field(text(80), { label: "Etykieta", fieldType: "text", description: "The visible label in the site's language; for a checkbox its text." }),
+  placeholder: field(text(120).optional(), { label: "Podpowiedź w polu", fieldType: "text", description: "An example shown in the empty field (not for checkbox and date)." }),
+  hint: field(text(160).optional(), { label: "Opis pod polem", fieldType: "text", description: "A short help line under the field." }),
+  required: field(z.boolean().default(false), { label: "Wymagane", fieldType: "toggle", description: "The form is not sent without it." }),
+  width: field(z.enum(["full", "half"]).default("full"), { label: "Szerokość", fieldType: "select", description: '"half": next to another half field when the form is wide enough.' }),
+  icon: field(z.enum(ICON_NAMES).optional(), { label: "Ikona", fieldType: "select", description: "An icon at the start of the field (text, email, tel, date, number, select)." }),
+  options: field(z.array(text(80)).min(2).max(20).optional(), { label: "Opcje", fieldType: "list", description: "The choices of a select (2 to 20)." }),
+  minLength: field(z.number().int().min(1).max(TYPE_MAX.textarea).optional(), { label: "Najmniej znaków", fieldType: "text", description: "For text, textarea and tel." }),
+  maxLength: field(z.number().int().min(1).max(TYPE_MAX.textarea).optional(), { label: "Najwięcej znaków", fieldType: "text", description: "For text, textarea and tel; never above the type's own limit." }),
+});
+
+/** The contact form: on or off, its fields, its button. Without it: the form as before 3.8 (name, e-mail, subject, message). */
+const ContactFormSchema = z
+  .strictObject({
+    enabled: field(z.boolean().default(true), {
+      label: "Formularz na stronie", fieldType: "toggle",
+      description: "false: the contact sections show the contact details only (a business card site, reached by phone or e-mail).",
+    }),
+    fields: z.array(FormFieldSchema).min(1).max(MAX_FORM_FIELDS).optional().describe(`The form's fields in order, at most ${MAX_FORM_FIELDS}; at least one required email or tel field (so the reply can reach the visitor).`),
+    submitLabel: field(text(40).optional(), { label: "Tekst przycisku", fieldType: "text", description: "The submit button; a default from the language dictionary when empty." }),
+  })
+  .superRefine((form, context) => {
+    if (!form.fields) return;
+    const ids = new Set<string>();
+    form.fields.forEach((item, index) => {
+      const at = (key: string) => ["fields", index, key];
+      if (ids.has(item.id)) context.addIssue({ code: "custom", path: at("id"), message: `Duplicate field id "${item.id}".` });
+      ids.add(item.id);
+      if (RESERVED_FIELD_IDS.includes(item.id)) context.addIssue({ code: "custom", path: at("id"), message: `"${item.id}" is used by the form itself, choose another id.` });
+      if (item.type === "select" && !item.options) context.addIssue({ code: "custom", path: at("options"), message: "A select needs its options (2 to 20)." });
+      if (item.type !== "select" && item.options) context.addIssue({ code: "custom", path: at("options"), message: "Only a select has options." });
+      if (item.icon && !ICON_TYPES.includes(item.type)) context.addIssue({ code: "custom", path: at("icon"), message: `No icon for a ${item.type} field.` });
+      if (item.placeholder && !PLACEHOLDER_TYPES.includes(item.type)) context.addIssue({ code: "custom", path: at("placeholder"), message: `No placeholder for a ${item.type} field.` });
+      if ((item.minLength || item.maxLength) && !LENGTH_TYPES.includes(item.type)) context.addIssue({ code: "custom", path: at("maxLength"), message: `Lengths are only for text, textarea and tel fields.` });
+      if (item.maxLength && item.maxLength > TYPE_MAX[item.type]) context.addIssue({ code: "custom", path: at("maxLength"), message: `At most ${TYPE_MAX[item.type]} for a ${item.type} field.` });
+      if (item.minLength && item.maxLength && item.minLength > item.maxLength) context.addIssue({ code: "custom", path: at("minLength"), message: "minLength is above maxLength." });
+    });
+    if (!form.fields.some((item) => item.required && (item.type === "email" || item.type === "tel"))) {
+      context.addIssue({ code: "custom", path: ["fields"], message: "Add a required email or tel field: the reply has to reach the visitor." });
+    }
+  });
 
 /** Section types whose title is optional and has no fallback. */
 const OPTIONAL_TITLE_TYPES = ["stats", "logo-cloud", "embed"] as const;
@@ -248,10 +302,11 @@ export const SiteSchema = z
       .default({}),
     contact: z
       .discriminatedUnion("mode", [
-        z.strictObject({ mode: z.literal("local").describe("Node server with /api/contact (Docker).") }),
+        z.strictObject({ mode: z.literal("local").describe("Node server with /api/contact (Docker)."), form: ContactFormSchema.optional() }),
         z.strictObject({
           mode: z.literal("remote").describe("Static site; the form posts to a shared form service."),
           endpoint: HttpsUrl.describe("Form service URL (see the contact API contract in the README)."),
+          form: ContactFormSchema.optional(),
         }),
       ])
       .default({ mode: "local" }),
@@ -266,6 +321,8 @@ export const SiteSchema = z
     const pageIds = new Set<string>();
     const slugs = new Set<string>();
     const sectionIds = new Map<string, string>();
+    // The form's own DOM ids (contact-<field>, its error and hint): no section may take them.
+    const formIds = new Set(fieldsOf(site.contact.form).flatMap((item) => [`contact-${item.id}`, `contact-${item.id}-error`, `contact-${item.id}-hint`]));
 
     site.pages.forEach((page, pageIndex) => {
       const at = (...path: (string | number)[]) => ["pages", pageIndex, ...path];
@@ -294,8 +351,13 @@ export const SiteSchema = z
           context.addIssue({ code: "custom", path: at("sections", 0, "content", "title"), message: `The first section of a page needs a title (it becomes the page's h1).` });
         }
 
-        if (isReservedId(section.id)) {
+        if (isReservedId(section.id) || formIds.has(section.id)) {
           context.addIssue({ code: "custom", path: at("sections", sectionIndex, "id"), message: `Section id "${section.id}" is used by the engine — choose another.` });
+        }
+
+        // Without a form a contact section shows the details only: they cannot be switched off too.
+        if (section.type === "contact" && site.contact.form?.enabled === false && "showDetails" in section.content && section.content.showDetails === false) {
+          context.addIssue({ code: "custom", path: at("sections", sectionIndex, "content", "showDetails"), message: "The form is off (contact.form.enabled): the contact details must be shown." });
         }
 
         if ((ONE_PER_PAGE as readonly string[]).includes(section.type)) {

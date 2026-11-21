@@ -21,22 +21,26 @@ export interface Props {
 const { section, headingLevel } = Astro.props;
 const { content, props } = section;
 const details = content.showDetails ? contactDetails(site.business, t) : [];
+// The site may have no form (contact.form.enabled false): then the details take the whole section.
+const withForm = site.contact.form?.enabled !== false;
 const SubHeading = headingLevel === "h1" ? "h2" : "h3";
 ---
 
 <SectionShell id={section.id} type="contact" variant="form-centered" tone={props.tone} spacing={props.spacing}>
   <div class="s-contact-centered">
-    <SectionHeader {...contactHeader(content, t)} headingLevel={headingLevel} align={props.align ?? "center"} />
-    <div class:list={["s-contact-centered__card", details.length > 0 && "s-contact-centered__card--with-panel"]}>
+    <SectionHeader {...contactHeader(content, t, withForm)} headingLevel={headingLevel} align={props.align ?? "center"} />
+    <div class:list={["s-contact-centered__card", details.length > 0 && withForm && "s-contact-centered__card--with-panel", !withForm && "s-contact-centered__card--no-form"]}>
       {details.length > 0 && (
         <div class="s-contact-centered__panel">
           <SubHeading class="s-contact-centered__panel-title">{t.contactForm.detailsTitle}</SubHeading>
           <DetailList details={details} look="brand" />
         </div>
       )}
-      <div class="s-contact-centered__form">
-        <Form />
-      </div>
+      {withForm && (
+        <div class="s-contact-centered__form">
+          <Form />
+        </div>
+      )}
     </div>
   </div>
 </SectionShell>

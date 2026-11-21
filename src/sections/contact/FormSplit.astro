@@ -18,13 +18,15 @@ export interface Props {
 const { section, headingLevel } = Astro.props;
 const { content, props } = section;
 const details = content.showDetails ? contactDetails(site.business, t) : [];
+// The site may have no form (contact.form.enabled false): then the details take the whole section.
+const withForm = site.contact.form?.enabled !== false;
 const SubHeading = headingLevel === "h1" ? "h2" : "h3";
 ---
 
 <SectionShell id={section.id} type="contact" variant="form-split" tone={props.tone} spacing={props.spacing}>
-  <div class="s-contact-split">
+  <div class:list={["s-contact-split", !withForm && "s-contact-split--no-form"]}>
     <div class="s-contact-split__aside">
-      <SectionHeader {...contactHeader(content, t)} headingLevel={headingLevel} align={props.align ?? "left"} />
+      <SectionHeader {...contactHeader(content, t, withForm)} headingLevel={headingLevel} align={props.align ?? "left"} />
       {details.length > 0 && (
         <div class="s-contact-split__details">
           <SubHeading class="s-contact-split__details-title">{t.contactForm.detailsTitle}</SubHeading>
@@ -32,8 +34,10 @@ const SubHeading = headingLevel === "h1" ? "h2" : "h3";
         </div>
       )}
     </div>
-    <div class="s-contact-split__form">
-      <Form />
-    </div>
+    {withForm && (
+      <div class="s-contact-split__form">
+        <Form />
+      </div>
+    )}
   </div>
 </SectionShell>

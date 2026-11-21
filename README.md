@@ -555,10 +555,12 @@ sendContactMessage.ts
 console delivery / Resend
 ```
 
-Server-side checks: required fields, email format, length limits
-(`src/lib/contact/limits.ts`, also used as `maxlength` in the form), privacy
-consent, honeypot, line breaks removed from name/subject (email header safety) and
-a rate limit of 5 valid messages per 10 minutes per IP (invalid attempts do not count).
+Server-side checks follow the form's fields (`contact.form.fields`, or the default form):
+required fields, the type of each (email, phone, a select's options, date, number), length
+limits (also `maxlength` in the form), privacy consent, honeypot, line breaks removed from
+single-line values (email header safety) and a rate limit of 5 valid messages per 10 minutes
+per IP (invalid attempts do not count). The pure check is `src/lib/contact/checkSubmission.ts`
+(no Astro: a form service can use it with the site's field list and a dictionary).
 A filled honeypot gets a normal "sent" answer and nothing is sent.
 
 Without JavaScript the form still works: the browser posts it natively and the
@@ -597,6 +599,41 @@ not in the browser console.
   Serve the output with any static server — `deploy/Caddyfile.example` has the same headers
   and caching as `server.mjs` (which also serves static builds: `OUT_DIR=<dir> node server.mjs`).
 
+### The form's fields (`contact.form`, since 3.8)
+
+```json
+"contact": {
+  "mode": "local",
+  "form": {
+    "submitLabel": "Poproś o wycenę",
+    "fields": [
+      { "id": "name", "type": "text", "label": "Imię", "required": true, "width": "half", "icon": "user" },
+      { "id": "phone", "type": "tel", "label": "Telefon", "required": true, "width": "half", "icon": "phone" },
+      { "id": "service", "type": "select", "label": "Czego potrzebujesz?", "required": true, "options": ["Bukiet", "Dekoracje ślubne"] },
+      { "id": "date", "type": "date", "label": "Termin", "width": "half" },
+      { "id": "details", "type": "textarea", "label": "Szczegóły", "placeholder": "Kolory, kwiaty, budżet…", "maxLength": 1000 },
+      { "id": "callback", "type": "checkbox", "label": "Proszę o telefon zwrotny" }
+    ]
+  }
+}
+```
+
+- Without `form` (or without `fields`) the form is the one before 3.8: name, e-mail, subject,
+  message, with labels and messages from the dictionary (`src/lib/contact/fields.ts` `DEFAULT_FIELDS`).
+- Field types: `text`, `email`, `tel`, `textarea`, `select` (with 2–20 `options`), `checkbox` (its
+  `label` is its text), `date`, `number`. Each field: `label`, optional `placeholder` (not for checkbox and
+  date), `hint` (a line under it), `required`, `width` (`full`, or `half`: side by side when the form is
+  wide enough), `icon` (an engine icon at the start of text-like fields and selects), `minLength` /
+  `maxLength` (text, textarea, tel; never above the type's own limit).
+- Rules: at most 12 fields, unique `id`s (lowercase, `-`), none of the form's own names (`website`,
+  `privacy`, `siteid`, `lang`, `form`, `fields`), and at least one **required** `email` or `tel` field so
+  the reply can reach the visitor. Section ids cannot take the fields' DOM ids (`contact-<id>`,
+  `contact-<id>-error`, `contact-<id>-hint`).
+- `"enabled": false`: no form on the site. Every contact variant shows the heading and the contact
+  details only (a business-card site reached by phone or e-mail); `showDetails` must then stay on.
+- The e-mail lists every filled answer under its label in the form's order; the reply goes to the
+  first e-mail field (none: no reply-to); the subject line uses the `subject` field, else `name`.
+
 #### Contact API contract (for the shared form service)
 
 `POST <endpoint>` with `multipart/form-data` or `application/x-www-form-urlencoded`:
@@ -605,10 +642,7 @@ not in the browser console.
 |---|---|---|
 | `siteId` | yes | `site.json` siteId — the service maps it to the site's domain and recipient |
 | `lang` | yes | site language, for messages and emails |
-| `name` | yes | 2–100 chars, single line |
-| `email` | yes | valid email, ≤ 254 chars |
-| `subject` | no | ≤ 150 chars, single line |
-| `message` | yes | 10–5000 chars |
+| the form's fields | as set | one value per field `id` of `contact.form.fields` (checked by their rules: the service keeps the site's field list, given with the site, and runs `checkSubmission`); without a list the default form: `name` (2–100 chars, single line), `email` (valid, ≤ 254), `subject` (optional, ≤ 150, single line), `message` (10–5000) |
 | `privacy` | yes | non-empty (checkbox `on`) |
 | `website` | — | honeypot: when filled, answer like a success and send nothing |
 

@@ -23,16 +23,20 @@ export interface Props {
 const { section, headingLevel } = Astro.props;
 const { content, props } = section;
 const details = content.showDetails ? contactDetails(site.business, t) : [];
+// The site may have no form (contact.form.enabled false): then the details take the whole section.
+const withForm = site.contact.form?.enabled !== false;
 const hours = hoursRows(site.business.hours, t);
 const ColumnHeading = headingLevel === "h1" ? "h2" : "h3";
 ---
 
 <SectionShell id={section.id} type="contact" variant="info-columns" tone={props.tone} spacing={props.spacing}>
   <div class="s-contact-columns">
-    <SectionHeader {...contactHeader(content, t)} headingLevel={headingLevel} align={props.align ?? "center"} />
-    <div class="s-contact-columns__form">
-      <Form />
-    </div>
+    <SectionHeader {...contactHeader(content, t, withForm)} headingLevel={headingLevel} align={props.align ?? "center"} />
+    {withForm && (
+      <div class="s-contact-columns__form">
+        <Form />
+      </div>
+    )}
     {details.length > 0 && (
       <ul class:list={["s-contact-columns__band", `s-contact-columns__band--count-${details.length}`]}>
         {details.map((detail) => (

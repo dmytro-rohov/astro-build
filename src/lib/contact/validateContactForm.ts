@@ -1,99 +1,17 @@
-import type {
-  ContactFormData,
-  ContactValidationError,
-  ContactValidationResult,
-} from "./contact.types";
-import { CONTACT_LIMITS as L } from "./limits";
-import { format, t } from "@/i18n";
+import type { ContactValidationResult } from "./contact.types";
+import { checkSubmission, labelOf } from "./checkSubmission";
+import { DEFAULT_FIELDS, type FormField } from "./fields";
+import { t } from "@/i18n";
 
-const e = t.contactForm.errors;
+export { isHoneypotFilled } from "./checkSubmission";
 
-function getStringValue(formData: FormData, key: string) {
-  const value = formData.get(key);
-
-  if (typeof value !== "string") {
-    return "";
-  }
-
-  return value.trim();
-}
+/** The field's label in the site's language (the default fields' from the dictionary). */
+export const fieldLabel = (field: FormField) => labelOf(field, t.contactForm);
 
 /**
- * Single-line fields (name, subject) end up in email headers:
- * line breaks and other control characters are replaced with spaces.
+ * The submission checked against the form's fields (the site's own list, else the form as before 3.8) with the
+ * site's language: checkSubmission() with this site's dictionary.
  */
-function getSingleLineValue(formData: FormData, key: string) {
-  // eslint-disable-next-line no-control-regex
-  return getStringValue(formData, key).replace(/[\u0000-\u001f\u007f]+/g, " ").trim();
-}
-
-/** True when the hidden honeypot field was filled in (a bot). */
-export function isHoneypotFilled(formData: FormData) {
-  return getStringValue(formData, "website") !== "";
-}
-
-function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-export function validateContactForm(formData: FormData): ContactValidationResult {
-  const data: ContactFormData = {
-    name: getSingleLineValue(formData, "name"),
-    email: getStringValue(formData, "email"),
-    subject: getSingleLineValue(formData, "subject"),
-    message: getStringValue(formData, "message"),
-  };
-
-  // An unchecked checkbox is not sent at all; an empty value is not consent either.
-  const privacyAccepted = getStringValue(formData, "privacy") !== "";
-
-  const errors: ContactValidationError[] = [];
-
-  const add = (field: ContactValidationError["field"], message: string) => {
-    errors.push({ field, message });
-  };
-
-  if (!data.name) {
-    add("name", e.nameRequired);
-  } else if (data.name.length < L.nameMin) {
-    add("name", format(e.nameTooShort, { min: L.nameMin }));
-  } else if (data.name.length > L.nameMax) {
-    add("name", format(e.nameTooLong, { max: L.nameMax }));
-  }
-
-  if (!data.email) {
-    add("email", e.emailRequired);
-  } else if (data.email.length > L.emailMax) {
-    add("email", format(e.emailTooLong, { max: L.emailMax }));
-  } else if (!isValidEmail(data.email)) {
-    add("email", e.emailInvalid);
-  }
-
-  if (data.subject && data.subject.length > L.subjectMax) {
-    add("subject", format(e.subjectTooLong, { max: L.subjectMax }));
-  }
-
-  if (!data.message) {
-    add("message", e.messageRequired);
-  } else if (data.message.length < L.messageMin) {
-    add("message", format(e.messageTooShort, { min: L.messageMin }));
-  } else if (data.message.length > L.messageMax) {
-    add("message", format(e.messageTooLong, { max: L.messageMax }));
-  }
-
-  if (!privacyAccepted) {
-    add("privacy", e.privacyRequired);
-  }
-
-  if (errors.length > 0) {
-    return {
-      success: false,
-      errors,
-    };
-  }
-
-  return {
-    success: true,
-    data,
-  };
+export function validateContactForm(formData: FormData, fields: readonly FormField[] = DEFAULT_FIELDS): ContactValidationResult {
+  return checkSubmission(formData, fields, t.contactForm);
 }

@@ -74,4 +74,9 @@
       border-width: 1rem;
     }
   }
+
+  // No form on the site: the details panel is the whole card.
+  .s-contact-centered__card--no-form .s-contact-centered__panel {
+    border-radius: inherit;
+  }
 }

@@ -22,13 +22,15 @@ export interface Props {
 const { section, headingLevel } = Astro.props;
 const { content, props } = section;
 const methods = content.showDetails ? contactMethods(contactDetails(site.business, t), t) : [];
+// The site may have no form (contact.form.enabled false): then the details take the whole section.
+const withForm = site.contact.form?.enabled !== false;
 const MethodHeading = headingLevel === "h1" ? "h2" : "h3";
 ---
 
 <SectionShell id={section.id} type="contact" variant="methods" tone={props.tone} spacing={props.spacing}>
-  <div class="s-contact-methods">
+  <div class:list={["s-contact-methods", !withForm && "s-contact-methods--no-form"]}>
     <div class="s-contact-methods__intro">
-      <SectionHeader {...contactHeader(content, t)} headingLevel={headingLevel} align={props.align ?? "left"} />
+      <SectionHeader {...contactHeader(content, t, withForm)} headingLevel={headingLevel} align={props.align ?? "left"} />
       {methods.length > 0 && (
         <ul class="s-contact-methods__list">
           {methods.map((method) => (
@@ -46,8 +48,10 @@ const MethodHeading = headingLevel === "h1" ? "h2" : "h3";
         </ul>
       )}
     </div>
-    <div class="s-contact-methods__panel">
-      <Form />
-    </div>
+    {withForm && (
+      <div class="s-contact-methods__panel">
+        <Form />
+      </div>
+    )}
   </div>
 </SectionShell>

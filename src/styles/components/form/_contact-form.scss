@@ -60,4 +60,30 @@
   .contact-form__submit {
     width: 100%;
   }
+
+  // A field with an icon (contact.form.fields[].icon): the icon inside the box, at its start.
+  .contact-form__control {
+    position: relative;
+  }
+
+  .contact-form__control--icon > .input,
+  .contact-form__control--icon > .select {
+    padding-inline-start: calc(var(--spacing-md) + 1.5rem);
+  }
+
+  .contact-form__icon {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: var(--spacing-md);
+    width: 1.125rem;
+    height: 1.125rem;
+    color: var(--color-text-muted);
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  // A required checkbox field (its text is its label): the same mark as a label's.
+  .contact-form__required {
+    color: var(--color-feedback-error);
+  }
 }

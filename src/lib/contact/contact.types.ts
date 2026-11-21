@@ -1,12 +1,19 @@
+import type { FormFieldType } from "./fields";
+
+/** One answer of the form, with the label the visitor saw (the e-mail lists them in the form's order). */
+export type ContactFormValue = { id: string; type: FormFieldType; label: string; value: string };
+
+/** A valid submission: its answers, and where the reply goes, who wrote and about what (when the form asks). */
 export type ContactFormData = {
-  name: string;
-  email: string;
+  values: ContactFormValue[];
+  replyTo?: string;
+  name?: string;
   subject?: string;
-  message: string;
 };
 
 export type ContactValidationError = {
-  field: keyof ContactFormData | "privacy" | "form";
+  /** The field's id, "privacy" (the consent) or "form" (the whole submission). */
+  field: string;
   message: string;
 };
 

@@ -11,9 +11,20 @@ function escapeHtml(value: string) {
     .replaceAll("'", "&#039;");
 }
 
+/** The HTML e-mail: every answer under its label, in the form's order (empty optional ones left out). */
 export function createContactEmailHtml(data: ContactFormData) {
-  const subject = data.subject || t.email.noSubject;
   const heading = format(t.email.heading, { siteName: siteConfig.name });
+  const rows = data.values
+    .filter((item) => item.value)
+    .map((item) => {
+      const value = item.type === "checkbox" ? t.email.checked : item.value;
+      return item.type === "textarea"
+        ? `<hr style="border: 0; border-top: 1px solid #ddd; margin: 24px 0;" />
+      <p><strong>${escapeHtml(item.label)}:</strong></p>
+      <p>${escapeHtml(value).replaceAll("\n", "<br />")}</p>`
+        : `<p><strong>${escapeHtml(item.label)}:</strong> ${escapeHtml(value)}</p>`;
+    })
+    .join("\n      ");
 
   return `
     <div lang="${lang}" style="font-family: Arial, sans-serif; line-height: 1.5; color: #111;">
@@ -21,14 +32,7 @@ export function createContactEmailHtml(data: ContactFormData) {
         ${escapeHtml(heading)}
       </h1>
 
-      <p><strong>${t.email.name}:</strong> ${escapeHtml(data.name)}</p>
-      <p><strong>${t.email.email}:</strong> ${escapeHtml(data.email)}</p>
-      <p><strong>${t.email.subject}:</strong> ${escapeHtml(subject)}</p>
-
-      <hr style="border: 0; border-top: 1px solid #ddd; margin: 24px 0;" />
-
-      <p><strong>${t.email.message}:</strong></p>
-      <p>${escapeHtml(data.message).replaceAll("\n", "<br />")}</p>
+      ${rows}
     </div>
   `;
 }

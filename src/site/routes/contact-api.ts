@@ -1,5 +1,7 @@
 import type { APIContext } from "astro";
 import { isHoneypotFilled, validateContactForm } from "@/lib/contact/validateContactForm";
+import { fieldsOf } from "@/lib/contact/fields";
+import { site } from "virtual:site";
 import { sendContactMessage } from "@/lib/contact/sendContactMessage";
 import { createContactResponse } from "@/lib/contact/createContactResponse";
 import { getClientId, isRateLimited } from "@/lib/contact/rateLimit";
@@ -43,7 +45,8 @@ export async function POST({ request, clientAddress }: APIContext) {
       return respond(request, { success: true, message: messages.success });
     }
 
-    const validation = validateContactForm(formData);
+    // The site's own fields (contact.form.fields), else the form as before 3.8.
+    const validation = validateContactForm(formData, fieldsOf(site.contact.form));
 
     if (!validation.success) {
       return respond(

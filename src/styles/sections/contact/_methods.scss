@@ -137,4 +137,15 @@
       inset: -100vh -100vw 25% 40%;
     }
   }
+
+  // No form on the site: the ways to get in touch take the section, side by side when there is room.
+  @include mq(lg) {
+    .s-contact-methods--no-form {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .s-contact-methods--no-form .s-contact-methods__list {
+      grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    }
+  }
 }
