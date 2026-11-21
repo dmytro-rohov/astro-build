@@ -1,0 +1,46 @@
+---
+/**
+ * v3.9 "author": the text with a sticky side card: who writes (photo, role, a sentence) and the
+ * button that brings the reader to the business. Phones: the card after the text.
+ */
+import Container from "@/components/layouts/Container.astro";
+import PostCover from "@/components/blog/PostCover.astro";
+import AuthorCard from "@/layouts/article/parts/AuthorCard.astro";
+import Body from "@/layouts/article/parts/Body.astro";
+import End from "@/layouts/article/parts/End.astro";
+import Head from "@/layouts/article/parts/Head.astro";
+import Progress from "@/layouts/article/parts/Progress.astro";
+import Related from "@/layouts/article/parts/Related.astro";
+import Share from "@/layouts/article/parts/Share.astro";
+import { articleOf } from "@/layouts/article/data";
+import type { Post } from "@/site/schema/blog";
+import "@/styles/layouts/article/_shared.scss";
+import "@/styles/layouts/article/_author.scss";
+
+export interface Props {
+  post: Post;
+}
+
+const article = articleOf(Astro.props.post);
+---
+
+{article.progress && <Progress />}
+<article class="article a-author" data-overflow-check>
+  <Container size="xl">
+    <div class="a-author__grid">
+      <div class="a-author__main">
+        <Head article={article} />
+        <PostCover post={article.post} aspect={[3, 2]} widths={[480, 768, 1080, 1440]} sizes="(min-width: 1024px) 760px, 100vw" priority="high" content class="a-author__cover" />
+        <Body article={article} />
+        <End article={article} share={false} cta={false} />
+      </div>
+      <div class="a-author__side">
+        <div class="a-author__sticky">
+          <AuthorCard article={article} cta />
+          {article.share && <Share article={article} />}
+        </div>
+      </div>
+    </div>
+  </Container>
+</article>
+<Related article={article} />

@@ -1,0 +1,52 @@
+// Posts: featured (Featured.astro). The first post across the full width, the others as cards.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-posts-featured {
+    display: grid;
+    gap: var(--spacing-2xl) var(--spacing-lg);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-posts-featured__lead .post-card__title {
+    font-size: var(--font-size-2xl);
+    line-height: var(--line-height-tight);
+  }
+
+  .s-posts-featured__lead .post-card__excerpt {
+    -webkit-line-clamp: 4;
+    font-size: var(--font-size-lg);
+  }
+
+  @include mq(sm) {
+    .s-posts-featured {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .s-posts-featured__lead {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @include mq(lg) {
+    .s-posts-featured {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: var(--spacing-xl);
+    }
+
+    .s-posts-featured__lead > .post-card {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      align-items: center;
+      gap: var(--spacing-2xl);
+      padding-bottom: var(--spacing-2xl);
+      border-bottom: 1px solid var(--color-border-default);
+    }
+
+    .s-posts-featured__lead .post-card__title {
+      font-size: var(--font-size-4xl);
+    }
+  }
+}

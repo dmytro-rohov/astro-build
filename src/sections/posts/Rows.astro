@@ -1,0 +1,48 @@
+---
+/** v3.9 posts "rows": one post per row, the cover on the left (a small square on phones), the text on the right. */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import PostCover from "@/components/blog/PostCover.astro";
+import PostMeta from "@/components/blog/PostMeta.astro";
+import PostsFrame from "@/components/blog/PostsFrame.astro";
+import { postUrl } from "@/components/blog/data";
+import { postsList } from "@/sections/posts/list";
+import type { VariantOf } from "@/site/types";
+import "@/styles/blog/_card.scss";
+import "@/styles/sections/posts/_rows.scss";
+
+export interface Props {
+  section: VariantOf<"posts", "rows">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const { posts, categories, perPage, itemHeading: Title } = postsList(section, headingLevel);
+const align = props.align ?? "left";
+---
+
+<SectionShell id={section.id} type="posts" variant="rows" tone={props.tone} spacing={props.spacing}>
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={align} />
+    <PostsFrame count={posts.length} categories={categories} perPage={perPage} link={content.link} align={align}>
+      <ul class="s-posts-rows">
+        {posts.map((post) => (
+          <li data-post data-post-category={post.category}>
+            <article class="post-card s-posts-rows__row">
+              <div class="post-card__media s-posts-rows__media">
+                <PostCover post={post} aspect={[4, 3]} widths={[240, 480, 640]} sizes="(min-width: 768px) 320px, 96px" />
+              </div>
+              <div class="post-card__text">
+                <PostMeta post={post} />
+                <Title class="post-card__title"><a class="post-card__link" href={postUrl(post)}>{post.title}</a></Title>
+                <p class="post-card__excerpt">{post.excerpt}</p>
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </PostsFrame>
+  </Stack>
+</SectionShell>

@@ -140,6 +140,16 @@ export const sectionComponentPaths: Record<string, Record<string, string>> = {
     marquee: "@/sections/logo-cloud/Marquee.astro",
     "color-tiles": "@/sections/logo-cloud/ColorTiles.astro",
   },
+  posts: {
+    cards: "@/sections/posts/Cards.astro",
+    featured: "@/sections/posts/Featured.astro",
+    rows: "@/sections/posts/Rows.astro",
+    magazine: "@/sections/posts/Magazine.astro",
+    minimal: "@/sections/posts/Minimal.astro",
+    "photo-grid": "@/sections/posts/PhotoGrid.astro",
+    carousel: "@/sections/posts/Carousel.astro",
+    timeline: "@/sections/posts/Timeline.astro",
+  },
   embed: {
     full: "@/sections/embed/Embed.astro",
     split: "@/sections/embed/Embed.astro",
@@ -163,6 +173,16 @@ export const layoutComponentPaths: Record<string, Record<string, string>> = {
     "contact-first": "@/layouts/footer/ContactFirst.astro",
     "big-name": "@/layouts/footer/BigName.astro",
     "rounded-card": "@/layouts/footer/RoundedCard.astro",
+  },
+  // v3.9: the page of one blog post (only sites with a blog import it).
+  article: {
+    toc: "@/layouts/article/Toc.astro",
+    classic: "@/layouts/article/Classic.astro",
+    cover: "@/layouts/article/Cover.astro",
+    split: "@/layouts/article/Split.astro",
+    editorial: "@/layouts/article/Editorial.astro",
+    author: "@/layouts/article/Author.astro",
+    photo: "@/layouts/article/Photo.astro",
   },
 };
 

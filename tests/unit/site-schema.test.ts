@@ -73,9 +73,10 @@ describe("site-wide rules", () => {
   });
 
   test("duplicate slug and page id", () => {
+    const copy = demoSite().pages.length;
     const issues = issuesFor((site) => site.pages.push({ ...site.pages[1] }));
-    expect(issues).toContain('pages[2].id: Duplicate page id "contact".');
-    expect(issues).toContain('pages[2].slug: Duplicate slug "/contact".');
+    expect(issues).toContain(`pages[${copy}].id: Duplicate page id "contact".`);
+    expect(issues).toContain(`pages[${copy}].slug: Duplicate slug "/contact".`);
   });
 
   test.each(["/privacy", "/api/contact", "/contact/sent", "/404", "/fonts/x"])("reserved slug %s", (slug) => {

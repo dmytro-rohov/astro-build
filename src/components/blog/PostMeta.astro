@@ -1,0 +1,23 @@
+---
+/** v3.9: category, date and reading time of a post in one quiet line (dots between them in CSS). */
+import { categoryName, postDate, readingLabel } from "@/components/blog/data";
+import type { Post } from "@/site/schema/blog";
+import "@/styles/blog/_meta.scss";
+
+export interface Props {
+  post: Post;
+  category?: boolean;
+  reading?: boolean;
+  dateStyle?: "long" | "medium" | "short";
+  class?: string;
+}
+
+const { post, category = true, reading = true, dateStyle = "long", class: className } = Astro.props;
+const name = category ? categoryName(post.category) : undefined;
+---
+
+<p class:list={["post-meta", className]}>
+  {name && <span class="post-meta__category">{name}</span>}
+  <time class="post-meta__date" datetime={post.date}>{postDate(post.date, dateStyle)}</time>
+  {reading && post.format === "article" && <span class="post-meta__reading">{readingLabel(post)}</span>}
+</p>

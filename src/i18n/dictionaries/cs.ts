@@ -118,6 +118,37 @@ export default {
     },
   },
 
+  // v3.9: blog lists (posts section) and post pages (layout.article).
+  blog: {
+    empty: "První články brzy přibudou.",
+    readMore: "Číst dál",
+    allPosts: "Všechny články",
+    showMore: "Zobrazit další články",
+    filterLabel: "Kategorie",
+    filterAll: "Vše",
+    published: "Publikováno {date}",
+    updated: "Aktualizováno {date}",
+    readingTime: "{minutes} min čtení",
+    toc: "Obsah",
+    related: "Mohlo by vás zajímat",
+    newer: "Novější článek",
+    older: "Starší článek",
+    share: "Sdílet",
+    copyLink: "Kopírovat odkaz",
+    copied: "Odkaz zkopírován",
+    shareEmail: "E-mail",
+    tags: "Štítky",
+    progress: "Průběh čtení",
+    author: "Autor",
+    ctaTitle: "Máte otázky? Rádi pomůžeme.",
+    ctaText: "Napište nebo zavolejte, odpovíme co nejdříve.",
+    ctaButton: "Kontaktujte nás",
+    photos: "Fotografie",
+    breadcrumb: "Drobečková navigace",
+    rss: "RSS kanál",
+    feedDescription: "Články z blogu {siteName}.",
+  },
+
   cookies: {
     title: "Volitelná analytika",
     description:

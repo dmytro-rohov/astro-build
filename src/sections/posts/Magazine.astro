@@ -1,0 +1,58 @@
+---
+/**
+ * v3.9 posts "magazine": one big post with the title on its photo, two medium ones beside it, then
+ * small cards; like a news portal. Phones: the big one, then compact rows.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import PostCover from "@/components/blog/PostCover.astro";
+import PostMeta from "@/components/blog/PostMeta.astro";
+import PostsFrame from "@/components/blog/PostsFrame.astro";
+import { postUrl } from "@/components/blog/data";
+import { postsList } from "@/sections/posts/list";
+import type { VariantOf } from "@/site/types";
+import "@/styles/blog/_card.scss";
+import "@/styles/sections/posts/_magazine.scss";
+
+export interface Props {
+  section: VariantOf<"posts", "magazine">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+// The grid depends on the order (big, medium, small): no category buttons.
+const { posts, perPage, itemHeading: Title } = postsList(section, headingLevel, { filter: false });
+const align = props.align ?? "left";
+const size = (index: number) => (index === 0 ? "big" : index < 3 ? "medium" : "small");
+---
+
+<SectionShell id={section.id} type="posts" variant="magazine" tone={props.tone} spacing={props.spacing} width="xl">
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={align} />
+    <PostsFrame count={posts.length} categories={[]} perPage={Math.max(perPage, 3)} link={content.link} align={align}>
+      <ul class:list={["s-posts-magazine", posts.length === 1 && "s-posts-magazine--one"]}>
+        {posts.map((post, index) => (
+          <li data-post class={`s-posts-magazine__item s-posts-magazine__item--${size(index)}`}>
+            <article class="post-card">
+              <div class="post-card__media">
+                <PostCover
+                  post={post}
+                  aspect={index === 0 ? [4, 3] : [3, 2]}
+                  widths={index === 0 ? [640, 960, 1280] : [320, 480, 640]}
+                  sizes={index === 0 ? "(min-width: 1024px) 640px, 100vw" : "(min-width: 1024px) 320px, (min-width: 640px) 50vw, 120px"}
+                />
+              </div>
+              <div class="post-card__text">
+                <PostMeta post={post} reading={index < 3} />
+                <Title class="post-card__title"><a class="post-card__link" href={postUrl(post)}>{post.title}</a></Title>
+                {index < 3 && <p class="post-card__excerpt">{post.excerpt}</p>}
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </PostsFrame>
+  </Stack>
+</SectionShell>

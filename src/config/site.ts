@@ -93,6 +93,9 @@ export const siteConfig = {
     menuButton: site.layout.navbar.props.menuButton ?? "label",
   },
 
+  /** v3.9: title of the RSS feed (/rss.xml) when the site's blog has posts, else undefined. */
+  blogFeed: site.blog?.posts.length ? `${site.meta.name}: ${site.pages.find((page) => page.slug === site.blog?.path)?.title ?? "Blog"}` : undefined,
+
   footer: {
     description: footerContent.description ?? "",
     groups: footerGroups,

@@ -154,6 +154,37 @@ export const en = {
     },
   },
 
+  // v3.9: blog lists (posts section) and post pages (layout.article).
+  blog: {
+    empty: "The first posts are coming soon.",
+    readMore: "Read more",
+    allPosts: "All posts",
+    showMore: "Show more posts",
+    filterLabel: "Categories",
+    filterAll: "All",
+    published: "Published {date}",
+    updated: "Updated {date}",
+    readingTime: "{minutes} min read",
+    toc: "Contents",
+    related: "Read also",
+    newer: "Newer post",
+    older: "Older post",
+    share: "Share",
+    copyLink: "Copy link",
+    copied: "Link copied",
+    shareEmail: "E-mail",
+    tags: "Tags",
+    progress: "Reading progress",
+    author: "Author",
+    ctaTitle: "Have a question? We are happy to help.",
+    ctaText: "Write or call us, we will reply as soon as we can.",
+    ctaButton: "Contact us",
+    photos: "Photos",
+    breadcrumb: "Breadcrumb",
+    rss: "RSS feed",
+    feedDescription: "Posts from {siteName}.",
+  },
+
   cookies: {
     title: "Optional analytics",
     description:

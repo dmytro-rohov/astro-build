@@ -11,7 +11,7 @@ module.exports = {
     collect: {
       startServerCommand: `node server.mjs ${PORT}`,
       startServerReadyPattern: "Server listening",
-      url: [`http://localhost:${PORT}/`, `http://localhost:${PORT}/contact`],
+      url: [`http://localhost:${PORT}/`, `http://localhost:${PORT}/contact`, `http://localhost:${PORT}/blog/why-fast-pages-win`],
       numberOfRuns: 1,
       chromePath: chromium.executablePath(),
       settings: {

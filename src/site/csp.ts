@@ -23,12 +23,12 @@ export type Directive = `${DirectiveName}${string}`;
 export type SiteCsp = { directives: Directive[]; scriptResources: string[] };
 
 /** Origins of the embeds of a site (maps, booking, video). */
-export function embedOrigins(site: Pick<Site, "pages">): string[] {
+export function embedOrigins(site: Pick<Site, "pages"> & Partial<Pick<Site, "blog">>): string[] {
   const urls = siteEmbedUrls(site);
   return [...new Set(urls.map((url) => embedProvider(url)?.origin).filter((origin): origin is string => Boolean(origin)))].sort();
 }
 
-export function cspForSite(site: Pick<Site, "contact" | "pages">, gaId: string): SiteCsp {
+export function cspForSite(site: Pick<Site, "contact" | "pages"> & Partial<Pick<Site, "blog">>, gaId: string): SiteCsp {
   const analytics = Boolean(gaId);
   const frames = embedOrigins(site);
   const formOrigin = site.contact.mode === "remote" ? new URL(site.contact.endpoint).origin : undefined;

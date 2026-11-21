@@ -1,0 +1,78 @@
+---
+/**
+ * v3.9: the table of contents (h2 chapters with their h3). As a sticky side list it highlights the
+ * chapter being read (aria-current, set by the script); `collapsible`: a closed <details> above the
+ * text (phones). Without JavaScript the links still jump to the chapters.
+ */
+import { t } from "@/i18n";
+import type { Chapter } from "@/site/blog";
+
+export interface Props {
+  chapters: Chapter[];
+  collapsible?: boolean;
+  class?: string;
+}
+
+const { chapters, collapsible = false, class: className } = Astro.props;
+// h3 chapters hang under the h2 before them.
+const tree = chapters.reduce<{ chapter: Chapter; children: Chapter[] }[]>((list, chapter) => {
+  if (chapter.level === 3 && list.length) list.at(-1)!.children.push(chapter);
+  else list.push({ chapter, children: [] });
+  return list;
+}, []);
+---
+
+{collapsible ? (
+  <details class:list={["article-toc", "article-toc--collapsible", className]}>
+    <summary class="article-toc__title">{t.blog.toc}</summary>
+    <ol class="article-toc__list">
+      {tree.map(({ chapter, children }) => (
+        <li>
+          <a href={`#${chapter.id}`}>{chapter.text}</a>
+          {children.length > 0 && <ol>{children.map((child) => <li><a href={`#${child.id}`}>{child.text}</a></li>)}</ol>}
+        </li>
+      ))}
+    </ol>
+  </details>
+) : (
+  <nav class:list={["article-toc", className]} aria-labelledby="article-toc-title" data-toc>
+    <p class="article-toc__title" id="article-toc-title">{t.blog.toc}</p>
+    <ol class="article-toc__list">
+      {tree.map(({ chapter, children }) => (
+        <li>
+          <a href={`#${chapter.id}`} data-toc-link={chapter.id}>{chapter.text}</a>
+          {children.length > 0 && <ol>{children.map((child) => <li><a href={`#${child.id}`} data-toc-link={child.id}>{child.text}</a></li>)}</ol>}
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}
+
+<script>
+  // The chapter at the top of the screen is the current one: its link gets aria-current="true".
+  for (const toc of document.querySelectorAll<HTMLElement>("[data-toc]")) {
+    const links = new Map([...toc.querySelectorAll<HTMLAnchorElement>("[data-toc-link]")].map((link) => [link.dataset.tocLink ?? "", link]));
+    const headings = [...links.keys()].map((id) => document.getElementById(id)).filter((heading): heading is HTMLElement => Boolean(heading));
+    if (!headings.length) continue;
+
+    let current = "";
+    const update = () => {
+      const line = window.innerHeight * 0.25;
+      const passed = headings.filter((heading) => heading.getBoundingClientRect().top <= line);
+      const id = (passed.at(-1) ?? headings[0]).id;
+      if (id === current) return;
+      current = id;
+      for (const [key, link] of links) {
+        if (key === id) link.setAttribute("aria-current", "true");
+        else link.removeAttribute("aria-current");
+      }
+    };
+
+    let frame = 0;
+    window.addEventListener("scroll", () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(update);
+    }, { passive: true });
+    update();
+  }
+</script>

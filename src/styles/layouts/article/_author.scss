@@ -1,0 +1,46 @@
+// Article: author (Author.astro). The text with a sticky card of the author and the button.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .a-author__grid {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  .a-author__main {
+    display: grid;
+    gap: var(--spacing-xl);
+    min-width: 0;
+  }
+
+  .a-author__cover {
+    border-radius: var(--radius-card);
+  }
+
+  .a-author__sticky {
+    display: grid;
+    gap: var(--spacing-lg);
+  }
+
+  .a-author__main .prose > *,
+  .a-author__main .article-end {
+    margin-inline: 0;
+  }
+
+  .a-author__cta {
+    width: 100%;
+  }
+
+  @include mq(lg) {
+    .a-author__grid {
+      grid-template-columns: minmax(0, 1fr) 20rem;
+      gap: var(--spacing-3xl);
+    }
+
+    .a-author__sticky {
+      position: sticky;
+      top: calc(var(--header-offset, 0px) + var(--spacing-xl));
+    }
+  }
+}

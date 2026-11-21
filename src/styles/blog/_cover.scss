@@ -1,0 +1,38 @@
+// v3.9 blog: a post's photo cropped for a list or a page (PostCover.astro).
+@use "../abstracts/layers";
+
+@layer widgets {
+  .post-cover {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-image);
+    background-color: var(--color-background-muted);
+    object-fit: cover;
+  }
+
+  .post-cover--3x2 { aspect-ratio: 3 / 2; }
+  .post-cover--4x3 { aspect-ratio: 4 / 3; }
+  .post-cover--16x9 { aspect-ratio: 16 / 9; }
+  .post-cover--16x10 { aspect-ratio: 16 / 10; }
+  .post-cover--2x1 { aspect-ratio: 2 / 1; }
+  .post-cover--1x1 { aspect-ratio: 1; }
+  .post-cover--4x5 { aspect-ratio: 4 / 5; }
+
+  // No photo: the brand color with the title's first letter.
+  .post-cover--empty {
+    display: grid;
+    place-items: center;
+    background-color: var(--color-action-primary);
+    background-image: linear-gradient(135deg, transparent, rgb(0 0 0 / 22%));
+    color: var(--color-action-primary-text);
+  }
+
+  .post-cover__letter {
+    font-family: var(--font-family-heading);
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    font-weight: var(--heading-weight, var(--font-weight-bold));
+    line-height: 1;
+    opacity: 0.85;
+  }
+}

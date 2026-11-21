@@ -1,0 +1,20 @@
+---
+/** v3.9: Home › Blog › the post (the same trail as the BreadcrumbList in the page's JSON-LD). */
+import { t } from "@/i18n";
+import type { Article } from "@/layouts/article/data";
+
+export interface Props {
+  article: Article;
+  class?: string;
+}
+
+const { article, class: className } = Astro.props;
+---
+
+<nav class:list={["article-crumbs", className]} aria-label={t.blog.breadcrumb}>
+  <ol>
+    <li><a href="/">{t.nav.home}</a></li>
+    <li><a href={article.blogPath}>{article.blogTitle}</a></li>
+    <li><span aria-current="page">{article.post.title}</span></li>
+  </ol>
+</nav>

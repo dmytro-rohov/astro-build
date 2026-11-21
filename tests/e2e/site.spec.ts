@@ -12,7 +12,12 @@ import { test, expect } from "./fixtures";
 
 const enabled = process.env.SITE_SMOKE === "1";
 const siteDir = path.resolve(process.env.SITE_DIR ?? ".generated/catalog");
-const pages: { slug: string }[] = enabled ? JSON.parse(fs.readFileSync(path.join(siteDir, "site.json"), "utf8")).pages : [];
+// Pages and v3.9 the blog's posts (each one is a page of its own).
+const siteJson = enabled ? JSON.parse(fs.readFileSync(path.join(siteDir, "site.json"), "utf8")) : { pages: [] };
+const pages: { slug: string }[] = [
+  ...siteJson.pages,
+  ...(siteJson.blog?.posts ?? []).map((post: { slug: string }) => ({ slug: `${siteJson.blog.path ?? "/blog"}/${post.slug}` })),
+];
 
 test.describe(`site ${path.basename(siteDir)}`, () => {
   test.skip(!enabled, "set SITE_SMOKE=1 with SITE_DIR pointing at a site directory");
@@ -71,6 +76,21 @@ test.describe(`site ${path.basename(siteDir)}`, () => {
 
               if (rect.left < box.left - 1 || rect.right > box.right + 1) {
                 found.push(`${section.id}: <${element.tagName.toLowerCase()} class="${element.className}"> sticks out of the container`);
+                break;
+              }
+            }
+          }
+
+          // v3.9: a blog post's page is not a section: nothing in it may stick out of the screen.
+          for (const article of document.querySelectorAll<HTMLElement>("[data-overflow-check]")) {
+            for (const element of article.querySelectorAll<HTMLElement>("*")) {
+              if (element.closest("[aria-hidden='true'], .visually-hidden, svg, [data-slider-track] > *")) continue;
+
+              const rect = element.getBoundingClientRect();
+              if (!rect.width || !rect.height) continue;
+
+              if (rect.left < -1 || rect.right > root.clientWidth + 1) {
+                found.push(`article: <${element.tagName.toLowerCase()} class="${element.className}"> sticks out of the screen`);
                 break;
               }
             }

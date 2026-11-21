@@ -1,0 +1,57 @@
+// Article: split (Split.astro). Desktops: the cover sticky in the left half, the text scrolls right.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .a-split {
+    padding-top: 0;
+  }
+
+  .a-split__media .post-cover {
+    border-radius: 0;
+    aspect-ratio: 4 / 3;
+  }
+
+  .a-split__text {
+    display: grid;
+    gap: var(--spacing-xl);
+    min-width: 0;
+    padding-inline: var(--container-padding, var(--spacing-md));
+  }
+
+  @include mq(lg) {
+    .a-split {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: start;
+      gap: 0;
+      padding-bottom: 0;
+    }
+
+    .a-split__media {
+      position: sticky;
+      top: var(--header-offset, 0);
+      height: calc(100vh - var(--header-offset, 0px));
+    }
+
+    .a-split__media .post-cover {
+      height: 100%;
+      aspect-ratio: auto;
+    }
+
+    .a-split__text {
+      padding: var(--spacing-3xl) clamp(var(--spacing-xl), 5vw, var(--spacing-4xl));
+    }
+
+    .a-split__text .prose > * {
+      margin-inline: 0;
+    }
+
+    .a-split__text .article-end {
+      margin-inline: 0;
+    }
+
+    .a-split + .article-related {
+      margin-top: 0;
+    }
+  }
+}

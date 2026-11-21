@@ -118,6 +118,37 @@ export default {
     },
   },
 
+  // v3.9: blog lists (posts section) and post pages (layout.article).
+  blog: {
+    empty: "Первые записи скоро появятся.",
+    readMore: "Читать дальше",
+    allPosts: "Все записи",
+    showMore: "Показать ещё записи",
+    filterLabel: "Категории",
+    filterAll: "Все",
+    published: "Опубликовано {date}",
+    updated: "Обновлено {date}",
+    readingTime: "{minutes} мин чтения",
+    toc: "Содержание",
+    related: "Читайте также",
+    newer: "Более новая запись",
+    older: "Более старая запись",
+    share: "Поделиться",
+    copyLink: "Копировать ссылку",
+    copied: "Ссылка скопирована",
+    shareEmail: "E-mail",
+    tags: "Теги",
+    progress: "Прогресс чтения",
+    author: "Автор",
+    ctaTitle: "Есть вопросы? Будем рады помочь.",
+    ctaText: "Напишите или позвоните, мы ответим как можно скорее.",
+    ctaButton: "Связаться с нами",
+    photos: "Фото",
+    breadcrumb: "Навигационная цепочка",
+    rss: "RSS-лента",
+    feedDescription: "Записи блога {siteName}.",
+  },
+
   cookies: {
     title: "Необязательная аналитика",
     description:

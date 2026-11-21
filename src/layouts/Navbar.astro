@@ -50,13 +50,17 @@ function normalizePath(path: string) {
   return path.replace(/\/$/, "");
 }
 
-function isActiveLink(href: string) {
-  if (href.startsWith("http")) return false;
-  if (href.startsWith("#")) return false;
+/** "page" for the current page; v3.9 "true" for the page above it (the blog on one of its posts). */
+function isActiveLink(href: string): "page" | "true" | undefined {
+  if (href.startsWith("http")) return undefined;
+  if (href.startsWith("#")) return undefined;
   // Section links (/#features) point inside a page, not to the current page itself.
-  if (href.includes("#")) return false;
+  if (href.includes("#")) return undefined;
 
-  return normalizePath(href) === normalizePath(currentPath);
+  const link = normalizePath(href);
+  const current = normalizePath(currentPath);
+  if (link === current) return "page";
+  return link !== "/" && current.startsWith(`${link}/`) ? "true" : undefined;
 }
 
 // Split navbar: the first half of the links left of the logo, the rest and the button (the last
@@ -112,7 +116,7 @@ const lists = split && items.length > 1
               external={item.external}
               variant="nav"
               class="navbar__link"
-              aria-current={isActiveLink(item.href) ? "page" : undefined}
+              aria-current={isActiveLink(item.href)}
             >
               {item.label}
             </Link>

@@ -1,0 +1,29 @@
+---
+/**
+ * v3.9: the top of a post: the trail, category, date and reading time, the title (the page's only
+ * h1), the excerpt as a lead and the byline. Layouts choose the alignment and the size.
+ */
+import Breadcrumbs from "@/layouts/article/parts/Breadcrumbs.astro";
+import Byline from "@/layouts/article/parts/Byline.astro";
+import PostMeta from "@/components/blog/PostMeta.astro";
+import type { Article } from "@/layouts/article/data";
+
+export interface Props {
+  article: Article;
+  align?: "left" | "center";
+  size?: "md" | "lg" | "xl";
+  crumbs?: boolean;
+  lead?: boolean;
+  class?: string;
+}
+
+const { article, align = "left", size = "lg", crumbs = true, lead = true, class: className } = Astro.props;
+---
+
+<header class:list={["article-head", `article-head--${align}`, `article-head--${size}`, className]}>
+  {crumbs && <Breadcrumbs article={article} />}
+  <PostMeta post={article.post} class="article-head__meta" />
+  <h1 class="article-head__title">{article.post.title}</h1>
+  {lead && <p class="article-head__lead">{article.post.excerpt}</p>}
+  <Byline article={article} />
+</header>

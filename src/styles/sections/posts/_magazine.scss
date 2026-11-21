@@ -1,0 +1,131 @@
+// Posts: magazine (Magazine.astro). Desktop: the big post (2 × 2 cells, title on the photo), two
+// medium rows beside it, then small cards four in a row. Phones: the big one, then compact rows.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-posts-magazine {
+    display: grid;
+    gap: var(--spacing-lg);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  // The big post: its photo fills the tile, the text sits on a dark gradient.
+  .s-posts-magazine__item--big > .post-card {
+    overflow: hidden;
+    align-content: end;
+    min-height: 22rem;
+    border-radius: var(--radius-card);
+    isolation: isolate;
+  }
+
+  .s-posts-magazine__item--big .post-card__media {
+    position: absolute;
+    z-index: -1;
+    border-radius: 0;
+    inset: 0;
+  }
+
+  .s-posts-magazine__item--big .post-card__media .post-cover {
+    height: 100%;
+    aspect-ratio: auto;
+  }
+
+  .s-posts-magazine__item--big .post-card__media::after {
+    position: absolute;
+    background: linear-gradient(180deg, rgb(0 0 0 / 0%) 25%, rgb(0 0 0 / 82%) 100%);
+    content: "";
+    inset: 0;
+  }
+
+  .s-posts-magazine__item--big .post-card__text {
+    align-self: end;
+    padding: var(--spacing-xl);
+    color: #fff;
+  }
+
+  .s-posts-magazine__item--big :is(.post-meta, .post-meta__category, .post-card__excerpt) {
+    color: rgb(255 255 255 / 88%);
+  }
+
+  .s-posts-magazine__item--big .post-card__title {
+    color: #fff;
+    font-size: var(--font-size-2xl);
+    line-height: var(--line-height-tight);
+  }
+
+  // Medium and small posts on phones: a small photo beside the title.
+  .s-posts-magazine__item--medium > .post-card,
+  .s-posts-magazine__item--small > .post-card {
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    align-items: start;
+    gap: var(--spacing-md);
+  }
+
+  .s-posts-magazine__item--medium .post-card__excerpt {
+    display: none;
+  }
+
+  @include mq(md) {
+    .s-posts-magazine {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .s-posts-magazine__item--big {
+      grid-column: 1 / -1;
+    }
+
+    .s-posts-magazine__item--big > .post-card {
+      min-height: 26rem;
+    }
+
+    .s-posts-magazine__item--big .post-card__title {
+      font-size: var(--font-size-3xl);
+    }
+
+    .s-posts-magazine__item--small > .post-card {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @include mq(lg) {
+    .s-posts-magazine {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--spacing-xl);
+    }
+
+    .s-posts-magazine__item--big {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    .s-posts-magazine--one .s-posts-magazine__item--big {
+      grid-column: 1 / -1;
+    }
+
+    .s-posts-magazine__item--big > .post-card {
+      height: 100%;
+      min-height: 30rem;
+    }
+
+    .s-posts-magazine__item--medium {
+      grid-column: span 2;
+    }
+
+    .s-posts-magazine__item--medium > .post-card {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: var(--spacing-lg);
+    }
+
+    .s-posts-magazine__item--medium .post-card__excerpt {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+    }
+
+    .s-posts-magazine__item--small .post-card__title {
+      font-size: var(--font-size-base);
+    }
+  }
+}

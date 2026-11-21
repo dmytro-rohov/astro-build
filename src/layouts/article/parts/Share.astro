@@ -1,0 +1,69 @@
+---
+/**
+ * v3.9: share the post: plain links to Facebook, LinkedIn, WhatsApp and e-mail (no scripts of those
+ * sites, nothing loads before a click) and "copy link" (shown only with JavaScript).
+ */
+import { t } from "@/i18n";
+import type { Article } from "@/layouts/article/data";
+
+export interface Props {
+  article: Article;
+  /** A column of round buttons (side bars) instead of a row with the label. */
+  compact?: boolean;
+  class?: string;
+}
+
+const { article, compact = false, class: className } = Astro.props;
+const url = new URL(article.url, Astro.site ?? Astro.url.origin).href;
+const encoded = encodeURIComponent(url);
+const title = encodeURIComponent(article.post.title);
+const links = [
+  { id: "facebook", label: "Facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${encoded}`, path: "M14 8.5V6.8c0-.8.5-1 1-1h2V2.2h-2.8C11.1 2.2 10 4.3 10 6.6v1.9H7.5V12H10v9.8h4V12h2.8l.4-3.5H14Z" },
+  { id: "linkedin", label: "LinkedIn", href: `https://www.linkedin.com/sharing/share-offsite/?url=${encoded}`, path: "M6.9 8.8H3.3V21h3.6V8.8ZM5.1 3a2.1 2.1 0 1 0 0 4.2 2.1 2.1 0 0 0 0-4.2ZM21 14.3c0-3.4-1.8-5.8-4.9-5.8-1.6 0-2.7.8-3.2 1.7V8.8H9.4V21H13v-6.3c0-1.6.6-2.8 2.1-2.8s2 1.2 2 2.9V21H21v-6.7Z" },
+  { id: "whatsapp", label: "WhatsApp", href: `https://wa.me/?text=${title}%20${encoded}`, path: "M12 2.5a9.5 9.5 0 0 0-8.2 14.3L2.5 21.5l4.8-1.3A9.5 9.5 0 1 0 12 2.5Zm0 1.8a7.7 7.7 0 1 1-3.9 14.3l-.3-.2-2.8.8.8-2.7-.2-.3A7.7 7.7 0 0 1 12 4.3Zm-3 3.6c-.2 0-.5 0-.7.3-.3.3-1 .9-1 2.3s1 2.7 1.2 2.9c.1.2 2 3.1 4.9 4.3 2.4.9 2.9.8 3.4.7.5 0 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4l-.5-.3-1.9-.9c-.3-.1-.4-.1-.6.1l-.8 1c-.2.2-.3.2-.6.1-.3-.2-1.2-.4-2.3-1.4-.8-.8-1.4-1.7-1.6-2-.1-.3 0-.4.1-.5l.4-.5.3-.5v-.5l-.9-2.1c-.2-.5-.4-.5-.6-.5H9Z" },
+  { id: "email", label: t.blog.shareEmail, href: `mailto:?subject=${title}&body=${encoded}`, path: "M3 5.5h18v13H3v-13Zm1.8 1.8v.3l7.2 5.4 7.2-5.4v-.3H4.8Zm14.4 2.6L12 15.2 4.8 9.9v6.8h14.4V9.9Z" },
+];
+---
+
+<div class:list={["article-share", compact && "article-share--compact", className]} data-share>
+  {!compact && <p class="article-share__label">{t.blog.share}</p>}
+  <ul class="article-share__list">
+    {links.map((link) => (
+      <li>
+        <a class="article-share__button" href={link.href} target={link.id === "email" ? undefined : "_blank"} rel="noopener noreferrer" aria-label={`${t.blog.share}: ${link.label}`}>
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d={link.path} fill="currentColor" /></svg>
+        </a>
+      </li>
+    ))}
+    <li data-share-copy hidden>
+      <button type="button" class="article-share__button" aria-label={t.blog.copyLink} data-share-url={url} data-share-done={t.blog.copied}>
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M10 14a4.5 4.5 0 0 0 6.4.4l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.2 1.2M14 10a4.5 4.5 0 0 0-6.4-.4l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.2-1.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+      </button>
+    </li>
+  </ul>
+  <p class="visually-hidden" aria-live="polite" data-share-status></p>
+</div>
+
+<script>
+  for (const share of document.querySelectorAll<HTMLElement>("[data-share]")) {
+    const item = share.querySelector<HTMLElement>("[data-share-copy]");
+    const button = item?.querySelector<HTMLButtonElement>("button");
+    const status = share.querySelector<HTMLElement>("[data-share-status]");
+    if (!item || !button || !navigator.clipboard) continue;
+
+    item.hidden = false;
+    button.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.shareUrl ?? location.href);
+        if (status) status.textContent = button.dataset.shareDone ?? "";
+        button.dataset.done = "";
+        window.setTimeout(() => {
+          delete button.dataset.done;
+          if (status) status.textContent = "";
+        }, 2500);
+      } catch {
+        // The browser refused (no permission): the address bar still has the link.
+      }
+    });
+  }
+</script>

@@ -1,0 +1,55 @@
+---
+/**
+ * v3.9 "photo": a photo post like on Instagram. The photos large on the left (several: a slider with
+ * dots), the short text, date and tags beside them. A long article ("article" format) gets the photo
+ * on top and the text below; a post without any photo is the text alone.
+ */
+import Container from "@/components/layouts/Container.astro";
+import Img from "@/components/media/Img.astro";
+import Slider from "@/components/widgets/Slider.astro";
+import PostCover from "@/components/blog/PostCover.astro";
+import Body from "@/layouts/article/parts/Body.astro";
+import End from "@/layouts/article/parts/End.astro";
+import Head from "@/layouts/article/parts/Head.astro";
+import Progress from "@/layouts/article/parts/Progress.astro";
+import Related from "@/layouts/article/parts/Related.astro";
+import { articleOf } from "@/layouts/article/data";
+import { getAsset } from "@/site/assets";
+import { t } from "@/i18n";
+import type { Post } from "@/site/schema/blog";
+import "@/styles/layouts/article/_shared.scss";
+import "@/styles/layouts/article/_photo.scss";
+
+export interface Props {
+  post: Post;
+}
+
+const article = articleOf(Astro.props.post);
+const photos = article.photos.map(getAsset);
+const short = article.post.format === "short" && photos.length > 0;
+---
+
+{article.progress && !short && <Progress />}
+<article class:list={["article", "a-photo", !short && "a-photo--long"]} data-overflow-check>
+  <Container size="xl">
+    <div class="a-photo__grid">
+      {photos.length > 0 && <div class="a-photo__media">
+        {photos.length > 1 && short ? (
+          <Slider label={t.blog.photos} single dots={photos.length} class="a-photo__slider">
+            {photos.map((photo) => (
+              <li><Img src={photo.image} alt={photo.alt} kind={photo.alt ? "content" : "decorative"} aspect={[4, 5]} focal={photo.focal} widths={[480, 768, 1080]} sizes="(min-width: 1024px) 640px, 100vw" class="a-photo__image" /></li>
+            ))}
+          </Slider>
+        ) : (
+          <PostCover post={article.post} aspect={short ? [4, 5] : [16, 9]} widths={[480, 768, 1080, 1440]} sizes={short ? "(min-width: 1024px) 640px, 100vw" : "(min-width: 1280px) 1216px, 100vw"} priority="high" content class="a-photo__image" />
+        )}
+      </div>}
+      <div class="a-photo__text">
+        <Head article={article} size="md" lead={!short} />
+        <Body article={article} skipPhotos={short} />
+        <End article={article} />
+      </div>
+    </div>
+  </Container>
+</article>
+<Related article={article} />

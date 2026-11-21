@@ -118,6 +118,37 @@ export default {
     },
   },
 
+  // v3.9: blog lists (posts section) and post pages (layout.article).
+  blog: {
+    empty: "De eerste berichten verschijnen binnenkort.",
+    readMore: "Lees verder",
+    allPosts: "Alle berichten",
+    showMore: "Meer berichten tonen",
+    filterLabel: "Categorieën",
+    filterAll: "Alle",
+    published: "Gepubliceerd op {date}",
+    updated: "Bijgewerkt op {date}",
+    readingTime: "{minutes} min leestijd",
+    toc: "Inhoud",
+    related: "Lees ook",
+    newer: "Nieuwer bericht",
+    older: "Ouder bericht",
+    share: "Delen",
+    copyLink: "Link kopiëren",
+    copied: "Link gekopieerd",
+    shareEmail: "E-mail",
+    tags: "Tags",
+    progress: "Leesvoortgang",
+    author: "Auteur",
+    ctaTitle: "Vragen? We helpen je graag.",
+    ctaText: "Stuur ons een bericht of bel ons, we reageren zo snel mogelijk.",
+    ctaButton: "Neem contact op",
+    photos: "Foto’s",
+    breadcrumb: "Kruimelpad",
+    rss: "RSS-feed",
+    feedDescription: "Berichten van de blog van {siteName}.",
+  },
+
   cookies: {
     title: "Optionele analyse",
     description:

@@ -81,9 +81,12 @@ export function embedProvider(value: string): EmbedProvider | undefined {
   }
 }
 
-/** Embed URLs a site shows: embed sections and the map of a contact section in the "map" variant. */
-export function siteEmbedUrls(site: Pick<Site, "pages">): string[] {
-  return site.pages
+/**
+ * Embed URLs a site shows: embed sections, the map of a contact section in the "map" variant, and
+ * v3.9 the videos in blog posts.
+ */
+export function siteEmbedUrls(site: Pick<Site, "pages"> & Partial<Pick<Site, "blog">>): string[] {
+  const sections = site.pages
     .flatMap((page) => page.sections)
     .flatMap((section) => {
       if (section.type === "embed") return [section.content.url];
@@ -91,4 +94,6 @@ export function siteEmbedUrls(site: Pick<Site, "pages">): string[] {
       if (section.type === "hours-location" && section.variant === "map" && section.content.mapEmbed) return [section.content.mapEmbed];
       return [];
     });
+  const videos = (site.blog?.posts ?? []).flatMap((post) => post.body.flatMap((block) => (block.type === "video" ? [block.url] : [])));
+  return [...sections, ...videos];
 }

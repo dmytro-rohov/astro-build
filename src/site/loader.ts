@@ -13,6 +13,7 @@ import { SPOTLIGHT_ITEMS } from "../sections/testimonials/schema";
 import type { ImageSlot } from "./schema/fields";
 import { AssetsSchema, type Assets } from "./schema/assets";
 import { META_IMAGE_SLOTS, SiteSchema, type Site } from "./schema/site";
+import { BlogSchema } from "./schema/blog";
 import { findImageSlots, valuesAt } from "./schema/slots";
 import { fontFamilies, fontPairs, pairScripts, scriptsForLanguage } from "../design-system/fonts/library";
 import { checkContrast, resolveTheme } from "../design-system/theme";
@@ -110,6 +111,13 @@ function checkImageSlots(site: Site, assets: Assets, dir: string): string[] {
       }
     });
   });
+
+  // v3.9: covers, photos and galleries of the blog's posts, the author's portrait.
+  if (site.blog) {
+    for (const { path, slot } of findImageSlots(BlogSchema)) {
+      for (const found of valuesAt(site.blog, path)) uses.push({ ref: found.value, slot, at: ["blog", ...found.at] });
+    }
+  }
 
   for (const { ref, slot, at } of uses) {
     if (typeof ref !== "string") continue;
@@ -239,6 +247,8 @@ export function loadSite(dir = resolveSiteDir()): LoadedSite {
     "privacy: the privacy policy is generated from a template — have it reviewed (controller, legal bases, retention) before launch.",
     ...(site.business.email ? [] : ["business.email: no public email — the privacy policy and contact sections show no email address."]),
     ...(site.meta.url || process.env.SITE_URL ? [] : ["meta.url: not set — canonical links and the sitemap use http://localhost:4321."]),
+    ...(site.blog && !site.blog.posts.length ? ['blog.posts: the blog has no posts yet; its lists show "coming soon".'] : []),
+    ...(site.layout.article && !site.blog ? ["layout.article: the site has no blog, so the article layout is not used."] : []),
     // Only the schemes the site can show (both for "auto").
     ...theme.adjustments
       .filter((adjustment) => theme.colorScheme === "auto" || adjustment.scheme === theme.colorScheme)

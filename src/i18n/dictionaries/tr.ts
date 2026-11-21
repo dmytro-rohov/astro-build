@@ -118,6 +118,37 @@ export default {
     },
   },
 
+  // v3.9: blog lists (posts section) and post pages (layout.article).
+  blog: {
+    empty: "İlk yazılar çok yakında.",
+    readMore: "Devamını oku",
+    allPosts: "Tüm yazılar",
+    showMore: "Daha fazla yazı göster",
+    filterLabel: "Kategoriler",
+    filterAll: "Tümü",
+    published: "Yayınlanma: {date}",
+    updated: "Güncellenme: {date}",
+    readingTime: "{minutes} dk okuma",
+    toc: "İçindekiler",
+    related: "Bunlar da ilginizi çekebilir",
+    newer: "Daha yeni yazı",
+    older: "Daha eski yazı",
+    share: "Paylaş",
+    copyLink: "Bağlantıyı kopyala",
+    copied: "Bağlantı kopyalandı",
+    shareEmail: "E-posta",
+    tags: "Etiketler",
+    progress: "Okuma ilerlemesi",
+    author: "Yazar",
+    ctaTitle: "Sorularınız mı var? Memnuniyetle yardımcı oluruz.",
+    ctaText: "Bize yazın veya bizi arayın, en kısa sürede yanıt veririz.",
+    ctaButton: "Bize ulaşın",
+    photos: "Fotoğraflar",
+    breadcrumb: "Gezinti yolu",
+    rss: "RSS akışı",
+    feedDescription: "{siteName} blogundan yazılar.",
+  },
+
   cookies: {
     title: "İsteğe bağlı analiz",
     description:

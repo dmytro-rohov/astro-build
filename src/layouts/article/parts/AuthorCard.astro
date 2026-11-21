@@ -1,0 +1,38 @@
+---
+/** v3.9: who writes (blog.author: photo, name, role, a sentence); with `cta` also the call to action button. */
+import { site } from "virtual:site";
+import Button from "@/components/ui/Button.astro";
+import Img from "@/components/media/Img.astro";
+import { t } from "@/i18n";
+import { getAsset } from "@/site/assets";
+import type { Article } from "@/layouts/article/data";
+
+export interface Props {
+  article: Article;
+  cta?: boolean;
+  class?: string;
+}
+
+const { article, cta = false, class: className } = Astro.props;
+const author = article.author;
+const name = author?.name ?? site.business.name ?? site.meta.name;
+const photo = author?.photo ? getAsset(author.photo) : undefined;
+const initials = name.split(/\s+/).slice(0, 2).map((word) => word.charAt(0)).join("");
+---
+
+<aside class:list={["article-author", className]} aria-label={t.blog.author}>
+  <div class="article-author__head">
+    {photo ? (
+      <Img src={photo.image} alt="" kind="decorative" aspect={[1, 1]} focal={photo.focal} widths={[160]} sizes="80px" class="article-author__photo" />
+    ) : (
+      <span class="article-author__photo article-author__photo--initials" aria-hidden="true">{initials}</span>
+    )}
+    <p class="article-author__who">
+      <span class="article-author__label">{t.blog.author}</span>
+      <span class="article-author__name">{name}</span>
+      {author?.role && <span class="article-author__role">{author.role}</span>}
+    </p>
+  </div>
+  {author?.bio && <p class="article-author__bio">{author.bio}</p>}
+  {cta && article.cta && <Button href={article.cta.action.href} class="article-author__cta">{article.cta.action.label}</Button>}
+</aside>

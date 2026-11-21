@@ -1,0 +1,63 @@
+---
+/** v3.9 posts "timeline": the posts by month on a vertical line: date, title, excerpt and a small photo. */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import PostCover from "@/components/blog/PostCover.astro";
+import PostsFrame from "@/components/blog/PostsFrame.astro";
+import { categoryName, postDate, postUrl } from "@/components/blog/data";
+import { postsList } from "@/sections/posts/list";
+import { lang } from "@/i18n";
+import { postImage, postsByMonth } from "@/site/blog";
+import { monthLabel } from "@/site/dates";
+import type { VariantOf } from "@/site/types";
+import "@/styles/blog/_card.scss";
+import "@/styles/sections/posts/_timeline.scss";
+
+export interface Props {
+  section: VariantOf<"posts", "timeline">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const { posts, categories, perPage, itemHeading: Month } = postsList(section, headingLevel);
+const Title = Month === "h2" ? "h3" : "h4";
+const align = props.align ?? "left";
+---
+
+<SectionShell id={section.id} type="posts" variant="timeline" tone={props.tone} spacing={props.spacing}>
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={align} />
+    <PostsFrame count={posts.length} categories={categories} perPage={perPage} link={content.link} align={align}>
+      <div class="s-posts-timeline">
+        {postsByMonth(posts).map((group) => (
+          <div class="s-posts-timeline__month" data-post-group>
+            <Month class="s-posts-timeline__label">{monthLabel(group.month, lang)}</Month>
+            <ol class="s-posts-timeline__list">
+              {group.posts.map((post) => (
+                <li data-post data-post-category={post.category}>
+                  <article class:list={["post-card", "s-posts-timeline__entry", postImage(post) && "s-posts-timeline__entry--photo"]}>
+                    <div class="s-posts-timeline__text">
+                      <p class="s-posts-timeline__date">
+                        <time datetime={post.date}>{postDate(post.date, "medium")}</time>
+                        {categoryName(post.category) && <span class="s-posts-timeline__category">{categoryName(post.category)}</span>}
+                      </p>
+                      <Title class="post-card__title"><a class="post-card__link" href={postUrl(post)}>{post.title}</a></Title>
+                      <p class="post-card__excerpt">{post.excerpt}</p>
+                    </div>
+                    {postImage(post) && (
+                      <div class="post-card__media s-posts-timeline__media">
+                        <PostCover post={post} aspect={[1, 1]} widths={[160, 320]} sizes="(min-width: 768px) 128px, 80px" />
+                      </div>
+                    )}
+                  </article>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))}
+      </div>
+    </PostsFrame>
+  </Stack>
+</SectionShell>

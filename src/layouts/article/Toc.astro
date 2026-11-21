@@ -1,0 +1,51 @@
+---
+/**
+ * v3.9 "toc": the text on the left, a sticky table of contents (and the share buttons) on the right
+ * that follows the reading. Phones: the contents as a folded list above the text. A post with fewer
+ * than two chapters is a single centered column.
+ */
+import Container from "@/components/layouts/Container.astro";
+import PostCover from "@/components/blog/PostCover.astro";
+import Body from "@/layouts/article/parts/Body.astro";
+import End from "@/layouts/article/parts/End.astro";
+import Head from "@/layouts/article/parts/Head.astro";
+import Progress from "@/layouts/article/parts/Progress.astro";
+import Related from "@/layouts/article/parts/Related.astro";
+import Share from "@/layouts/article/parts/Share.astro";
+import TocList from "@/layouts/article/parts/Toc.astro";
+import { articleOf } from "@/layouts/article/data";
+import type { Post } from "@/site/schema/blog";
+import "@/styles/layouts/article/_shared.scss";
+import "@/styles/layouts/article/_toc.scss";
+
+export interface Props {
+  post: Post;
+}
+
+const article = articleOf(Astro.props.post);
+const withToc = article.chapters.filter((chapter) => chapter.level === 2).length >= 2;
+---
+
+{article.progress && <Progress />}
+<article class:list={["article", "a-toc", !withToc && "a-toc--single"]} data-overflow-check>
+  <Container size="xl">
+    <Head article={article} class="a-toc__head" />
+    <PostCover post={article.post} aspect={[16, 9]} widths={[640, 960, 1280, 1600]} sizes="(min-width: 1280px) 1216px, 100vw" priority="high" content class="a-toc__cover" />
+    <div class="a-toc__grid">
+      <div class="a-toc__main">
+        {withToc && <TocList chapters={article.chapters} collapsible class="a-toc__fold" />}
+        <Body article={article} />
+        <End article={article} share={article.share && !withToc} />
+      </div>
+      {withToc && (
+        <aside class="a-toc__side">
+          <div class="a-toc__sticky">
+            <TocList chapters={article.chapters} />
+            {article.share && <Share article={article} compact />}
+          </div>
+        </aside>
+      )}
+    </div>
+  </Container>
+</article>
+<Related article={article} />

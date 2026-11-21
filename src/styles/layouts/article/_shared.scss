@@ -1,0 +1,499 @@
+// v3.9: what every article layout shares (src/layouts/article/parts): the top of the post, the
+// trail, the byline, the table of contents, sharing, the author card, the box at the end, the
+// older/newer links, "read also" and the progress bar.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .article {
+    display: grid;
+    gap: var(--spacing-2xl);
+    padding-block: var(--spacing-xl) var(--spacing-3xl);
+  }
+
+  .article > .container {
+    display: grid;
+    gap: var(--spacing-xl);
+  }
+
+  // The top of the post.
+  .article-head {
+    display: grid;
+    gap: var(--spacing-md);
+    max-width: 48rem;
+  }
+
+  .article-head--center {
+    justify-items: center;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .article-head--center .post-meta,
+  .article-head--center .article-crumbs ol {
+    justify-content: center;
+  }
+
+  .article-head__title {
+    margin: 0;
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--heading-weight, var(--font-weight-bold));
+    letter-spacing: var(--heading-tracking, normal);
+    line-height: var(--line-height-tight);
+    overflow-wrap: anywhere;
+    hyphens: auto;
+    text-wrap: balance;
+  }
+
+  .article-head--md .article-head__title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .article-head__lead {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+  }
+
+  @include mq(md) {
+    .article-head--lg .article-head__title {
+      font-size: var(--font-size-4xl);
+    }
+
+    .article-head--xl {
+      max-width: 60rem;
+    }
+
+    .article-head--xl .article-head__title {
+      font-size: var(--font-size-5xl);
+    }
+
+    .article-head--xl .article-head__lead {
+      font-size: var(--font-size-xl);
+    }
+  }
+
+  // Home › Blog › the post.
+  .article-crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0;
+    padding: 0;
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    list-style: none;
+  }
+
+  .article-crumbs li + li::before {
+    margin-inline: 0.5em;
+    content: "›";
+  }
+
+  .article-crumbs a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.18em;
+  }
+
+  .article-crumbs a:hover {
+    color: var(--color-text-primary);
+    text-decoration-color: currentcolor;
+  }
+
+  // The current post's title is already the h1: shortened in the trail.
+  .article-crumbs [aria-current] {
+    display: inline-block;
+    max-width: 16rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+    white-space: nowrap;
+  }
+
+  .article-byline {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin: 0;
+    font-size: var(--font-size-sm);
+  }
+
+  .article-byline__photo {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+  }
+
+  .article-byline__text {
+    display: grid;
+    text-align: start;
+  }
+
+  .article-byline__name {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .article-byline__updated {
+    color: var(--color-text-secondary);
+  }
+
+  // Table of contents: a side list (sticky) or a folded list above the text.
+  .article-toc {
+    display: grid;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+  }
+
+  .article-toc__title {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide, 0.06em);
+    text-transform: uppercase;
+  }
+
+  .article-toc__list,
+  .article-toc__list ol {
+    display: grid;
+    gap: 0.125rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .article-toc__list ol {
+    margin-block-start: 0.125rem;
+    padding-inline-start: var(--spacing-sm);
+  }
+
+  .article-toc a {
+    display: block;
+    padding: 0.375rem 0 0.375rem var(--spacing-sm);
+    border-inline-start: 2px solid var(--color-border-default);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-snug);
+    text-decoration: none;
+  }
+
+  .article-toc a:hover {
+    color: var(--color-text-primary);
+  }
+
+  .article-toc a[aria-current="true"] {
+    border-inline-start-color: var(--color-action-primary);
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .article-toc--collapsible {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    background: var(--color-background-surface);
+  }
+
+  .article-toc--collapsible summary {
+    min-height: 2.75rem;
+    align-content: center;
+    cursor: pointer;
+  }
+
+  .article-toc--collapsible .article-toc__list {
+    padding-block-end: var(--spacing-sm);
+  }
+
+  // Share links: round buttons.
+  .article-share {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
+  .article-share__label {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .article-share__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .article-share__button {
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid var(--color-border-default);
+    border-radius: 50%;
+    background: var(--color-background-surface);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    place-items: center;
+    transition: border-color var(--motion-duration-fast) var(--motion-easing-standard), color var(--motion-duration-fast) var(--motion-easing-standard);
+  }
+
+  .article-share__button:hover,
+  .article-share__button[data-done] {
+    border-color: var(--color-action-primary);
+    color: var(--color-action-primary);
+  }
+
+  .article-share--compact {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  // Tags.
+  .article-tags ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .article-tags li {
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-background-muted);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  // After the text.
+  .article-end {
+    display: grid;
+    gap: var(--spacing-xl);
+    width: 100%;
+    max-width: 42rem;
+    margin-inline: auto;
+    margin-top: var(--spacing-xl);
+  }
+
+  .article-end__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-border-default);
+  }
+
+  .article-cta {
+    display: grid;
+    justify-items: start;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-card);
+    background: var(--color-action-primary);
+    color: var(--color-action-primary-text);
+  }
+
+  .article-cta p {
+    margin: 0;
+  }
+
+  .article-cta__title {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--heading-weight, var(--font-weight-bold));
+    line-height: var(--line-height-tight);
+  }
+
+  // The brand box needs a button that stands out on the brand color.
+  .article-cta .article-cta__button {
+    margin-top: var(--spacing-xs);
+    border-color: transparent;
+    background: var(--color-background-primary);
+    color: var(--color-text-primary);
+  }
+
+  .article-adjacent {
+    display: grid;
+    gap: var(--spacing-md);
+  }
+
+  .article-adjacent__link {
+    display: grid;
+    gap: 0.25rem;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .article-adjacent__link:hover {
+    border-color: var(--color-action-primary);
+  }
+
+  .article-adjacent__link--newer {
+    text-align: end;
+  }
+
+  .article-adjacent__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  .article-adjacent__link--newer .article-adjacent__label {
+    justify-content: flex-end;
+  }
+
+  .article-adjacent__arrow {
+    transform: scaleX(-1);
+  }
+
+  .article-adjacent__title {
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
+  }
+
+  @include mq(md) {
+    .article-adjacent {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .article-adjacent__link--newer:only-child {
+      grid-column: 2;
+    }
+  }
+
+  // Author card (the author layout's side, or under the text).
+  .article-author {
+    display: grid;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    background: var(--color-background-surface);
+  }
+
+  .article-author__head {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .article-author__photo {
+    flex: none;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 50%;
+  }
+
+  .article-author__photo--initials {
+    display: grid;
+    background: var(--color-action-primary);
+    color: var(--color-action-primary-text);
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    place-items: center;
+  }
+
+  .article-author__who {
+    display: grid;
+    margin: 0;
+  }
+
+  .article-author__label {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+    letter-spacing: var(--letter-spacing-wide, 0.06em);
+    text-transform: uppercase;
+  }
+
+  .article-author__name {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .article-author__role,
+  .article-author__bio {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+  }
+
+  // "Read also".
+  .article-related {
+    padding-block: var(--spacing-3xl);
+    background: var(--color-background-muted);
+  }
+
+  .article-related__title {
+    margin: 0 0 var(--spacing-xl);
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-2xl);
+  }
+
+  .article-related__list {
+    display: grid;
+    gap: var(--spacing-xl);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  @include mq(sm) {
+    .article-related__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @include mq(lg) {
+    .article-related__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  // Reading progress: a thin bar over the very top of the screen.
+  .article-progress {
+    position: fixed;
+    z-index: 60;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    border: 0;
+    appearance: none;
+    background: transparent;
+    color: var(--color-action-primary);
+    pointer-events: none;
+  }
+
+  .article-progress::-webkit-progress-bar {
+    background: transparent;
+  }
+
+  .article-progress::-webkit-progress-value {
+    background: var(--color-action-primary);
+  }
+
+  .article-progress::-moz-progress-bar {
+    background: var(--color-action-primary);
+  }
+}

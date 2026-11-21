@@ -5,7 +5,7 @@ theme, layout) in, a fast, accessible, secure static site out. Built for an
 orchestrator (Mytko Website Factory) that turns a client brief into two clearly
 different designs from the same content — but just as usable by hand.
 
-- **18 section types, 104 variants**, 8 navbars and 8 footers, all validated by Zod schemas
+- **19 section types, 112 variants**, 8 navbars, 8 footers and 7 blog post layouts, all validated by Zod schemas
 - **149 Lucide icons** for small businesses (per-site sprite), embeds (maps, Calendly, video) loaded on click
 - **8 archetypes** (style presets) × brand accent with automatic WCAG AA correction,
   12 local font pairs (Latin, Latin Extended, Cyrillic), light / dark / auto schemes
@@ -174,6 +174,7 @@ the migrated site is validated like any build.
 | `cta` | `boxed` (glow over a dot grid), `banner` (edge-to-edge band, brand bar, stacked actions), `rings` (brand card, concentric circles), `gradient-cards` (gradient band with wave lines, facts on floating cards), `faces` (light card, round photos around it — tinted dots without them), `band-card` (light card on a brand band, spaced uppercase title); optional `highlights` (gradient-cards) and `images` (faces); `description` optional |
 | `contact` | `form-split` (details as icon rows beside the form card), `form-centered` (one card: details on a brand panel + form), `info-columns` (open form, then large icon columns over a brand strip), `big-card` (one large card on a soft brand gradient), `methods` (call / write / visit action cards, form panel over a deep brand block), `map` (form + tall map with a place card) — details and hours from `business`, the same form in every layout; optional `mapUrl` (map embed) |
 | `hours-location` | `card`, `compact` (one-row contact bar), `today` (door sign: the week day by day, today marked, live "open now" status), `map` (side panel + a map loaded after a click from the optional `mapEmbed`, a drawn map without it), `image-side` (photo of the place with an overlapping card, optional `image`), `week-strip` (seven day tiles with a 24-hour track) — hours, address, phone from `business`; days with the same hours are grouped ("Pn–Pt"); the status is computed in the browser in the business time zone (from `address.country`, default Europe/Warsaw) |
+| `posts` | `cards`, `featured` (the newest post large, cards below), `rows` (photo left, text right), `magazine` (one big post with its title on the photo, two medium, small cards), `minimal` (typographic rows without photos), `photo-grid` (square photo tiles like an Instagram profile), `carousel` (cards in a slider), `timeline` (posts by month on a vertical line). The blog's posts from `blog.posts` (v3.9, [Blog](#blog)); props `limit`, `category`, `filter` (category buttons), `perPage` ("show more") |
 | `stats` | `row`, `cards`, `rings` (progress rings), `bars` (progress bars, two columns), `chart-cards` (decorative mini charts), `highlight` (one big number + text), `bento` (tiles, first on the brand color); key numbers, accent tone allowed, optional `items[].progress` 0–100 |
 | `process` | `steps` (one connecting line), `timeline` (alternating around a central line), `cards` (outlined numbers), `wave` (wavy path), `snake` (line looping over and under round nodes), `chevrons` (rings with numbered arrows) — 2–8 steps, optional icons and time labels; all collapse to one vertical sequence on phones |
 | `team` | `cards` (portraits 4:5), `compact` (round photos, balanced rows), `social-cards` (big round photo, icon links on its edge), `spotlight` (featured person in the middle, on the brand color), `color-tiles` (arch portraits on tiles of rotating soft colors), `directory` (dense small cards) — initials wherever a photo is missing, optional `members[].socials` icon links |
@@ -345,6 +346,8 @@ import { t, format } from "@/i18n";
 
 - `robots.txt` is generated with the sitemap URL; `/api/` is disallowed.
 - `humans.txt` names the site owner and the Factory ([Factory Signature](#factory-signature)).
+- `rss.xml` lists the blog's posts (v3.9, only on sites with posts); every page announces it with
+  `<link rel="alternate" type="application/rss+xml">`. Posts are in the sitemap like pages.
 - URLs have no trailing slash (`trailingSlash: "never"`) — canonical links and the
   sitemap use the same form; `/contact/` redirects to `/contact`.
 - `src/config/indexing.ts`:
@@ -366,6 +369,10 @@ the FAQ widget adds a separate `FAQPage` block:
 - `BreadcrumbList` — automatic Home › page on subpages; override with
   `<BaseLayout breadcrumbs={[...]}>` or turn off with `breadcrumbs={false}`
 - `FAQPage` — added by the `FAQ` widget (`structuredData={false}` to turn off)
+- v3.9: `BlogPosting` on every post page (headline, dates, image, category, tags, word count, the
+  blog's author as a `Person` or the business), `Blog` with its posts on the blog page; post pages
+  have `og:type` article with `article:published_time`, `modified_time`, `section` and `tag`, and
+  the trail Home › Blog › post
 
 Extra nodes (Service, Product, Event…) can be passed with `<BaseLayout jsonLd={...}>`.
 
@@ -993,6 +1000,72 @@ usual. Opened on its own, outside a frame, a preview build behaves like a normal
 
 ---
 
+## Blog
+
+v3.9: a site may have a blog. The posts live in `blog` in site.json, outside `pages` (no page limit,
+each post has its own date, cover, category and tags); every post gets its own page at
+`<blog.path>/<slug>`.
+
+```jsonc
+"blog": {
+  "path": "/blog",                       // a page in pages[] with a "posts" section
+  "author": { "name": "Anna Kowalska", "role": "instruktorka", "bio": "…", "photo": "asset:anna" },
+  "categories": [{ "id": "porady", "name": "Porady" }],
+  "posts": [{
+    "id": "pierwsza-lekcja", "slug": "jak-przygotowac-sie-do-pierwszej-lekcji",
+    "title": "…", "excerpt": "…", "date": "2026-11-15", "updated": "2026-11-18",
+    "format": "article",                 // or "short": a photo post (photos and a few sentences)
+    "cover": "asset:hero", "category": "porady", "tags": ["początkujący"],
+    "body": [
+      { "type": "paragraph", "text": "**bold**, *italic*, [link](/cennik)" },
+      { "type": "heading", "level": 2, "text": "Co założyć" },
+      { "type": "list", "ordered": true, "items": ["…"] },
+      { "type": "quote", "text": "…", "cite": "Anna" },
+      { "type": "image", "image": "asset:sala", "caption": "…", "wide": true },
+      { "type": "gallery", "images": ["asset:g-1", "asset:g-2"] },
+      { "type": "video", "url": "https://www.youtube.com/embed/…", "title": "…" },
+      { "type": "callout", "title": "Wskazówka", "text": "…" },
+      { "type": "cta", "title": "…", "action": { "label": "Zapisz się", "href": "/kontakt" } }
+    ]
+  }]
+}
+```
+
+- **The list** is the `posts` section (8 layouts, see the section table). On the blog page it shows
+  every post with category buttons and "show more" (`perPage`, default 9); anywhere else
+  `limit` gives "latest posts" (e.g. 3 on the home page) and `link` points to the blog. A blog
+  without posts shows "coming soon". Without JavaScript every post is shown.
+- **The post page** uses the site's article layout, `layout.article` (default `classic`; one per
+  site, only sites with a blog load it):
+
+| Layout | Look |
+|---|---|
+| `toc` | the text left, a sticky table of contents right that marks the chapter being read (phones: a folded list above the text); posts with fewer than two chapters get one column |
+| `classic` | one narrow column: meta, title, lead, the cover, the text |
+| `cover` | the cover across the first screen with the title on it, the text below |
+| `split` | desktops: the cover sticky in the left half, the text scrolling on the right |
+| `editorial` | a very large centered title, a wide cover, a drop cap, large pull quotes, wide photos |
+| `author` | the text with a sticky card: the author and the call to action button |
+| `photo` | photo posts like on Instagram: the photos (a slider) left, the short text right |
+
+  Every layout has the trail Home › Blog › post, category, date and reading time, the byline, tags,
+  share links (Facebook, LinkedIn, WhatsApp, e-mail, copy link: plain links, no third-party
+  scripts), a call to action box (`layout.article.content.ctaTitle` / `ctaText` / `ctaAction`,
+  default: the contact section), older/newer post and "read also" (the same category first).
+  Props `progress` (reading bar), `share` and `related` turn those off.
+- **Rules:** at most 60 posts; slugs unique and free (not a page, not an engine path); categories
+  must exist; `updated` not before `date`; text is richtext-lite (no HTML); videos only from the
+  allowed players (they load on click and join the CSP's `frame-src`); covers at least 800 px wide
+  (3:2), photos in the text 640 px, gallery tiles 400 px (checked like section images). Post dates
+  are shown in the site's language (`src/site/dates.ts`).
+- **Pure helpers** (`src/site/blog.ts`, tested): order, chapters and their ids, reading time,
+  related and adjacent posts, months, the post's photos, its meta description.
+- **Tooling:** `scripts/site/lib.ts` lists posts as pages (report, screenshots), the site e2e test
+  checks every post page (one h1, JSON-LD, nothing sticking out at 320/768/1440 px, axe), and the
+  generated catalog has a blog at its limits shown in a different article layout per archetype.
+
+---
+
 ## Factory Signature
 
 v3.7: every site carries a few quiet easter eggs that lead to one another (`src/site/signature.ts`).
@@ -1011,8 +1084,16 @@ factory" lockup is a brand name and stays the same everywhere.
 
 ## Version
 
-Current version: **v3.7** (`3.7.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
+Current version: **v3.9** (`3.9.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
 starter is kept on the `v2` branch / tag `v2.0.0`.
+
+v3.9: blog. Posts in `blog` (own pages at `<blog.path>/<slug>`, blocks: paragraph, heading, list,
+quote, image, gallery, video, callout, cta), the `posts` section in 8 layouts, 7 article layouts
+(`layout.article`), RSS, BlogPosting JSON-LD and article meta, the blog's menu link marked on its
+posts ([Blog](#blog)). Sites with a blog should ask for `"engine": "^3.9.0"`.
+
+v3.8: the contact form's own fields (`contact.form`: on/off, up to 12 fields of 8 types, the button
+text), validated the same way by the engine and the form service.
 
 v3.7: Factory signature — "Powered by mytko factory" with a secret mark in the footer (replaces
 "Website by Mytko.dev"), a source comment, a console note, `/humans.txt` and the Factory's generator

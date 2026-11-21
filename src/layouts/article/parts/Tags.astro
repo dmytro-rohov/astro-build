@@ -1,0 +1,19 @@
+---
+/** v3.9: the post's tags (plain labels: tags have no pages of their own). */
+import { t } from "@/i18n";
+import type { Article } from "@/layouts/article/data";
+
+export interface Props {
+  article: Article;
+  class?: string;
+}
+
+const { article, class: className } = Astro.props;
+---
+
+{article.post.tags.length > 0 && (
+  <div class:list={["article-tags", className]}>
+    <p class="visually-hidden">{t.blog.tags}</p>
+    <ul>{article.post.tags.map((tag) => <li>#{tag}</li>)}</ul>
+  </div>
+)}
