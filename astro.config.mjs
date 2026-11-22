@@ -41,8 +41,9 @@ for (const page of siteData.pages) {
 }
 
 // v3.9: so are blog posts marked noindex.
-for (const post of siteData.blog?.posts ?? []) {
-  if (post.seo?.noindex) noindexPaths.push(`${siteData.blog.path}/${post.slug}`);
+const blog = siteData.blog;
+for (const post of blog?.posts ?? []) {
+  if (blog && post.seo.noindex) noindexPaths.push(`${blog.path}/${post.slug}`);
 }
 
 const siteUrl = new URL(env.SITE_URL || siteData.meta.url || "http://localhost:4321");
