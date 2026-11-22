@@ -108,3 +108,30 @@ test("factory signature: source comment, generator, humans.txt and the secret fo
   await card.locator(".factory-signature__close").click();
   await expect(card).toBeHidden();
 });
+
+test("blog: posts list with category buttons, post page with BlogPosting and the menu link, RSS feed", async ({ page, request }) => {
+  await page.goto("/blog");
+  const buttons = page.locator("[data-posts-category]");
+  await expect(buttons).toHaveCount(3);
+  await page.getByRole("button", { name: "News" }).click();
+  await expect(page.locator("#blog-posts [data-post]:visible")).toHaveCount(1);
+  await page.getByRole("button", { name: "All" }).click();
+  await expect(page.locator("#blog-posts [data-post]:visible")).toHaveCount(2);
+
+  await page.goto("/blog/why-fast-pages-win");
+  await expect(page.locator("h1")).toHaveText("Why fast pages win more clients");
+  await expect(page.locator('meta[property="og:type"]')).toHaveAttribute("content", "article");
+  await expect(page.locator('meta[property="article:published_time"]')).toHaveAttribute("content", "2026-11-12");
+  const graph = JSON.parse((await page.locator('script[type="application/ld+json"]').first().textContent()) ?? "{}")["@graph"] as { "@type": string }[];
+  expect(graph.map((node) => node["@type"])).toEqual(expect.arrayContaining(["BlogPosting", "BreadcrumbList"]));
+  await expect(page.locator('.navbar a[href="/blog"]').first()).toHaveAttribute("aria-current", "true");
+  await expect(page.locator(".article-toc a")).not.toHaveCount(0);
+
+  const feed = await request.get("/rss.xml");
+  expect(feed.status()).toBe(200);
+  // A static file: the server types it by its extension (feed readers take application/xml).
+  expect(feed.headers()["content-type"]).toMatch(/xml/);
+  const xml = await feed.text();
+  expect(xml).toMatch(/<link>https?:\/\/[^<]+\/blog\/why-fast-pages-win<\/link>/);
+  expect(xml.match(/<item>/g)).toHaveLength(2);
+});

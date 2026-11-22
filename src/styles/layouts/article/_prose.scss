@@ -1,0 +1,220 @@
+// v3.9: a blog post's text (parts/Body.astro): a comfortable measure, chapters, lists, quotes,
+// photos, galleries, videos, boxes. `--editorial` adds a drop cap and quotes in the margin.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .prose {
+    --measure: 42rem;
+
+    display: grid;
+    gap: var(--spacing-lg);
+    color: var(--color-text-primary);
+    font-size: clamp(1.0625rem, 0.3vw + 1rem, 1.1875rem);
+    line-height: 1.75;
+    overflow-wrap: break-word;
+  }
+
+  .prose > * {
+    width: 100%;
+    max-width: var(--measure);
+    margin: 0;
+    margin-inline: auto;
+  }
+
+  .prose a:not(.button) {
+    color: var(--color-action-primary);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  .prose strong {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .prose__heading {
+    margin-top: var(--spacing-xl);
+    font-family: var(--font-family-heading);
+    font-weight: var(--heading-weight, var(--font-weight-bold));
+    letter-spacing: var(--heading-tracking, normal);
+    line-height: var(--line-height-tight);
+    scroll-margin-top: calc(var(--header-offset, 0px) + var(--spacing-lg));
+  }
+
+  h2.prose__heading {
+    font-size: var(--font-size-2xl);
+  }
+
+  h3.prose__heading {
+    margin-top: var(--spacing-md);
+    font-size: var(--font-size-xl);
+  }
+
+  @include mq(md) {
+    h2.prose__heading {
+      font-size: var(--font-size-3xl);
+    }
+
+    h3.prose__heading {
+      font-size: var(--font-size-2xl);
+    }
+  }
+
+  .prose__list {
+    display: grid;
+    gap: var(--spacing-xs);
+    padding-inline-start: 1.5em;
+  }
+
+  .prose__list li::marker {
+    color: var(--color-action-primary);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .prose__quote {
+    padding: var(--spacing-xs) 0 var(--spacing-xs) var(--spacing-lg);
+    border-inline-start: 3px solid var(--color-action-primary);
+  }
+
+  .prose__quote blockquote {
+    margin: 0;
+  }
+
+  .prose__quote p {
+    margin: 0;
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-xl);
+    font-style: italic;
+    line-height: var(--line-height-snug);
+  }
+
+  .prose__quote figcaption {
+    margin-top: var(--spacing-sm);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .prose__figure,
+  .prose__gallery {
+    display: grid;
+    gap: var(--spacing-sm);
+  }
+
+  .prose__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-image);
+  }
+
+  .prose figcaption {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-snug);
+  }
+
+  .prose__figure--wide {
+    max-width: min(100%, 64rem);
+  }
+
+  .prose__tiles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-xs);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  @include mq(md) {
+    .prose__tiles--3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .prose__video {
+    max-width: var(--measure);
+  }
+
+  .prose__callout {
+    display: grid;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-inline-start: 4px solid var(--color-action-primary);
+    border-radius: var(--radius-card);
+    background: var(--color-background-muted);
+    font-size: 0.95em;
+  }
+
+  .prose__callout p {
+    margin: 0;
+  }
+
+  .prose__callout-title {
+    font-weight: var(--font-weight-bold);
+  }
+
+  .prose__cta {
+    display: grid;
+    justify-items: start;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    background: var(--color-background-surface);
+  }
+
+  .prose__cta p {
+    margin: 0;
+  }
+
+  .prose__cta-title {
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-xl);
+    font-weight: var(--heading-weight, var(--font-weight-bold));
+    line-height: var(--line-height-tight);
+  }
+
+  .prose__cta-text {
+    color: var(--color-text-secondary);
+  }
+
+  // Editorial: a drop cap on the first paragraph, quotes and wide photos breaking out of the column.
+  .prose--editorial > p:first-child::first-letter {
+    float: inline-start;
+    margin: 0.08em 0.12em 0 0;
+    color: var(--color-action-primary);
+    font-family: var(--font-family-heading);
+    font-size: 3.6em;
+    font-weight: var(--heading-weight, var(--font-weight-bold));
+    line-height: 0.85;
+  }
+
+  // Pull quotes wider than the text, between two lines; wide photos fill the layout's width.
+  .prose--editorial .prose__quote {
+    max-width: min(100%, calc(var(--measure) + 12rem));
+    padding: var(--spacing-lg) 0;
+    border: 0;
+    border-block: 1px solid var(--color-border-strong);
+    text-align: center;
+  }
+
+  .prose--editorial .prose__quote p {
+    font-size: clamp(1.5rem, 2.4vw + 0.5rem, 2.25rem);
+  }
+
+  .prose--editorial .prose__quote p::before {
+    display: block;
+    color: var(--color-action-primary);
+    content: "\201C" / "";
+    font-size: 2.5em;
+    font-style: normal;
+    line-height: 0.7;
+  }
+
+  .prose--editorial .prose__figure--wide {
+    max-width: 100%;
+  }
+}

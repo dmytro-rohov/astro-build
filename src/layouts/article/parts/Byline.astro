@@ -1,0 +1,26 @@
+---
+/** v3.9: the author (small photo and name, else the business) and the update date when there is one. */
+import { site } from "virtual:site";
+import Img from "@/components/media/Img.astro";
+import { postDate } from "@/components/blog/data";
+import { format, t } from "@/i18n";
+import { getAsset } from "@/site/assets";
+import type { Article } from "@/layouts/article/data";
+
+export interface Props {
+  article: Article;
+}
+
+const { article } = Astro.props;
+const name = article.author?.name ?? site.business.name ?? site.meta.name;
+const photo = article.author?.photo ? getAsset(article.author.photo) : undefined;
+const updated = article.post.updated && article.post.updated !== article.post.date ? article.post.updated : undefined;
+---
+
+<p class="article-byline">
+  {photo && <Img src={photo.image} alt="" kind="decorative" aspect={[1, 1]} focal={photo.focal} widths={[80]} sizes="40px" class="article-byline__photo" />}
+  <span class="article-byline__text">
+    <span class="article-byline__name">{name}</span>
+    {updated && <span class="article-byline__updated">{format(t.blog.updated, { date: postDate(updated) })}</span>}
+  </span>
+</p>

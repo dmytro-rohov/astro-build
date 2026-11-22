@@ -161,3 +161,55 @@ export function schemaGraph(nodes: JsonLdNode[]): JsonLdNode {
 export function serializeJsonLd(data: unknown): string {
   return JSON.stringify(data).replace(/</g, "\\u003c");
 }
+
+/** v3.9: one blog post (BlogPosting): its page, dates, image, author and the business as publisher. */
+export function blogPostingSchema(options: {
+  url: string;
+  title: string;
+  description: string;
+  image?: string;
+  published: string;
+  modified?: string;
+  section?: string;
+  tags: string[];
+  words: number;
+  /** The blog's author; without one the business wrote it. */
+  author?: { name: string; role?: string; image?: string };
+  siteUrl: URL | string;
+}): JsonLdNode {
+  const organization = { "@id": schemaIds.organization(options.siteUrl) };
+
+  return compact({
+    "@type": "BlogPosting",
+    "@id": `${options.url}#article`,
+    mainEntityOfPage: { "@id": `${options.url}#webpage` },
+    url: options.url,
+    headline: options.title,
+    description: options.description,
+    image: options.image ? [options.image] : undefined,
+    datePublished: options.published,
+    dateModified: options.modified ?? options.published,
+    articleSection: options.section,
+    keywords: options.tags.join(", "),
+    wordCount: options.words,
+    inLanguage: lang,
+    author: options.author
+      ? { "@type": "Person", name: options.author.name, jobTitle: options.author.role, image: options.author.image, worksFor: organization }
+      : organization,
+    publisher: organization,
+    isPartOf: { "@id": schemaIds.website(options.siteUrl) },
+  });
+}
+
+/** v3.9: the blog page (Blog) with its posts. */
+export function blogSchema(options: { url: string; title: string; posts: { title: string; url: string; published: string }[]; siteUrl: URL | string }): JsonLdNode {
+  return compact({
+    "@type": "Blog",
+    "@id": `${options.url}#blog`,
+    url: options.url,
+    name: options.title,
+    inLanguage: lang,
+    publisher: { "@id": schemaIds.organization(options.siteUrl) },
+    blogPost: options.posts.map((post) => ({ "@type": "BlogPosting", headline: post.title, url: post.url, datePublished: post.published })),
+  });
+}

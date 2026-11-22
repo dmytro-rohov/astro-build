@@ -1,0 +1,53 @@
+---
+/**
+ * v3.9 posts "photo-grid": square photo tiles like an Instagram profile, the title on the photo.
+ * A photo post with several photos shows a small "more photos" mark; one without a photo is a brand tile
+ * with its title.
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import PostCover from "@/components/blog/PostCover.astro";
+import PostsFrame from "@/components/blog/PostsFrame.astro";
+import { postDate, postUrl } from "@/components/blog/data";
+import { postsList } from "@/sections/posts/list";
+import { postImage, postPhotos } from "@/site/blog";
+import type { VariantOf } from "@/site/types";
+import "@/styles/sections/posts/_photo-grid.scss";
+
+export interface Props {
+  section: VariantOf<"posts", "photo-grid">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const { posts, categories, perPage, itemHeading: Title } = postsList(section, headingLevel);
+const align = props.align ?? "center";
+---
+
+<SectionShell id={section.id} type="posts" variant="photo-grid" tone={props.tone} spacing={props.spacing}>
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={align} />
+    <PostsFrame count={posts.length} categories={categories} perPage={props.perPage ?? Math.max(perPage, 12)} link={content.link} align={align}>
+      <ul class="s-posts-tiles">
+        {posts.map((post) => (
+          <li data-post data-post-category={post.category}>
+            <article class:list={["s-posts-tiles__tile", !postImage(post) && "s-posts-tiles__tile--plain"]}>
+              <PostCover post={post} aspect={[1, 1]} widths={[240, 400, 640]} sizes="(min-width: 1024px) 320px, 50vw" class="s-posts-tiles__photo" />
+              {post.format === "short" && postPhotos(post).length > 1 && (
+                <svg class="s-posts-tiles__more" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+                  <path d="M8 3h11a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm-5 5v11a2 2 0 0 0 2 2h11" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                </svg>
+              )}
+              <div class="s-posts-tiles__caption">
+                <Title class="s-posts-tiles__title"><a class="s-posts-tiles__link" href={postUrl(post)}>{post.title}</a></Title>
+                <time class="s-posts-tiles__date" datetime={post.date}>{postDate(post.date, "medium")}</time>
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </PostsFrame>
+  </Stack>
+</SectionShell>

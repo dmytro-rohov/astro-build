@@ -40,6 +40,12 @@ for (const page of siteData.pages) {
   if (page.seo.noindex) noindexPaths.push(page.slug);
 }
 
+// v3.9: so are blog posts marked noindex.
+const blog = siteData.blog;
+for (const post of blog?.posts ?? []) {
+  if (blog && post.seo.noindex) noindexPaths.push(`${blog.path}/${post.slug}`);
+}
+
 const siteUrl = new URL(env.SITE_URL || siteData.meta.url || "http://localhost:4321");
 
 // Analytics: site.json analytics.gaId; PUBLIC_GA_MEASUREMENT_ID overrides it (test builds).

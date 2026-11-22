@@ -1,0 +1,44 @@
+---
+/**
+ * v3.9 "cover": the cover fills the first screen with the title on it (darkened under the text),
+ * the text follows in a narrow column. Without a photo: a brand-colored band.
+ */
+import Container from "@/components/layouts/Container.astro";
+import Img from "@/components/media/Img.astro";
+import Body from "@/layouts/article/parts/Body.astro";
+import End from "@/layouts/article/parts/End.astro";
+import Head from "@/layouts/article/parts/Head.astro";
+import Progress from "@/layouts/article/parts/Progress.astro";
+import Related from "@/layouts/article/parts/Related.astro";
+import { articleOf } from "@/layouts/article/data";
+import { getAsset } from "@/site/assets";
+import { postImage } from "@/site/blog";
+import type { Post } from "@/site/schema/blog";
+import "@/styles/layouts/article/_shared.scss";
+import "@/styles/layouts/article/_cover.scss";
+
+export interface Props {
+  post: Post;
+}
+
+const article = articleOf(Astro.props.post);
+const ref = postImage(article.post);
+const photo = ref ? getAsset(ref) : undefined;
+---
+
+{article.progress && <Progress />}
+<article class="article a-cover" data-overflow-check>
+  <div class:list={["a-cover__hero", !photo && "a-cover__hero--plain"]}>
+    {photo && (
+      <Img src={photo.image} alt={photo.alt} kind={photo.alt ? "content" : "decorative"} aspect={[16, 9]} focal={photo.focal} widths={[640, 960, 1280, 1920]} sizes="100vw" priority="high" quality={64} class="a-cover__image" />
+    )}
+    <Container size="lg" class="a-cover__inner">
+      <Head article={article} align="center" size="xl" class="a-cover__head" />
+    </Container>
+  </div>
+  <Container size="md">
+    <Body article={article} />
+    <End article={article} />
+  </Container>
+</article>
+<Related article={article} />

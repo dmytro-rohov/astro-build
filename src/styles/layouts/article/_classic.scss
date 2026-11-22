@@ -1,0 +1,15 @@
+// Article: classic (Classic.astro). One narrow column.
+@use "../../abstracts/layers";
+
+@layer widgets {
+  // The top lines up with the text column below the cover.
+  .a-classic .article-head {
+    width: 100%;
+    max-width: 42rem;
+    margin-inline: auto;
+  }
+
+  .a-classic__cover {
+    border-radius: var(--radius-card);
+  }
+}

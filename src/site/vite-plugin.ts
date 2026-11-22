@@ -4,7 +4,8 @@
  * - "virtual:site/analytics"      → { gaId } only, safe to import in browser scripts
  * - "virtual:section-components"  → { sectionComponents } for the variants the site uses
  *   (its components bring their styles, so unused variants add no CSS)
- * - "virtual:layout-components"   → { layoutComponents } the same for the footer variant
+ * - "virtual:layout-components"   → { layoutComponents } the same for the footer variant (and v3.9 the
+ *   article layout of a site with a blog)
  * - "virtual:navbar-style"         → imports the style file of the site's navbar variant (v3.5)
  * - "virtual:editor-bridge"       → { EditorBridge, editorOrigin }: the editor preview bridge, only
  *   when the build has an editor origin (v3.6); otherwise null and the bridge is not even imported
@@ -50,11 +51,15 @@ function sectionComponentsModule(site: Site): string {
   ].join("\n");
 }
 
-/** Imports the component of each layout element's variant (footer: one per site). */
+/**
+ * Imports the component of each layout element's variant (footer: one per site). v3.9: the article
+ * layout only for a site with a blog ("classic" when the site picks none).
+ */
 function layoutComponentsModule(site: Site): string {
-  const entries = Object.entries(layoutComponentPaths).map(([type, variants]) => {
-    const variant = site.layout[type as keyof Site["layout"]].variant;
-    return [type, variants[variant]] as const;
+  const entries = Object.entries(layoutComponentPaths).flatMap(([type, variants]) => {
+    if (type === "article") return site.blog ? [[type, variants[site.layout.article?.variant ?? "classic"]] as const] : [];
+    const variant = site.layout[type as "navbar" | "footer"].variant;
+    return [[type, variants[variant]] as const];
   });
 
   return [

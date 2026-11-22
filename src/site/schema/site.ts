@@ -10,6 +10,7 @@ import { OVERRIDABLE_KEYS } from "../../design-system/theme";
 import { layoutTypes, sectionTypes } from "../registry";
 import { Action, DAYS, field, HttpsUrl, Id, imageSlot, Slug, text, Time, type ImageSlot } from "./fields";
 import { ICON_NAMES } from "../../design-system/icons/library";
+import { BlogSchema } from "./blog";
 import { AUTOCOMPLETE_TOKENS, DEFAULT_FIELDS, FIELD_ID, FORM_DOM_IDS, FORM_FIELD_TYPES, ICON_TYPES, LENGTH_TYPES, MAX_FORM_FIELDS, PLACEHOLDER_TYPES, RESERVED_FIELD_IDS, TYPE_MAX, domIdsOf, fieldsOf } from "../../lib/contact/fields";
 
 export const SCHEMA_VERSION = 1;
@@ -26,7 +27,7 @@ export const META_IMAGE_SLOTS = {
  */
 export const RESERVED_SLUGS = [
   "/api", "/contact/sent", "/contact/failed", "/privacy",
-  "/404", "/500", "/robots.txt", "/site.webmanifest", "/_astro", "/fonts", "/icons",
+  "/404", "/500", "/robots.txt", "/humans.txt", "/rss.xml", "/site.webmanifest", "/_astro", "/fonts", "/icons",
 ] as const;
 
 const RESERVED_PREFIXES = ["/api/", "/_astro/", "/fonts/", "/icons/", "/sitemap"];
@@ -264,7 +265,7 @@ const NavigationSchema = z.strictObject({
   items: z.array(Action).max(8).optional().describe("Manual menu (used when auto is false)."),
 });
 
-export const SiteSchema = z
+const SiteBase = z
   .strictObject({
     $schema: z.string().optional(),
     schemaVersion: z.literal(SCHEMA_VERSION),
@@ -331,10 +332,16 @@ export const SiteSchema = z
     layout: z.strictObject({
       navbar: layoutTypes.navbar.schema,
       footer: layoutTypes.footer.schema,
+      // v3.9: the page of one blog post; "classic" when the site has a blog but no choice.
+      article: layoutTypes.article.schema.optional(),
     }),
     navigation: NavigationSchema.default({ auto: true }),
     pages: z.array(PageSchema).min(1).max(12),
-  })
+    // v3.9: posts and their page (src/site/schema/blog.ts).
+    blog: BlogSchema.optional(),
+  });
+
+export const SiteSchema = SiteBase
   .superRefine((site, context) => {
     const pageIds = new Set<string>();
     const slugs = new Set<string>();
@@ -403,6 +410,8 @@ export const SiteSchema = z
       });
     });
 
+    checkBlog(site, context);
+
     if (!slugs.has("/")) {
       context.addIssue({ code: "custom", path: ["pages"], message: 'A home page with slug "/" is required.' });
     }
@@ -446,6 +455,50 @@ export const SiteSchema = z
       eachHref(page.sections, ["pages", pageIndex, "sections"], (href, path) => checkLink(href.startsWith("#") ? `${page.slug}${href}` : href, path)),
     );
   });
+
+/** v3.9: the blog page exists and lists the posts, post addresses are free, categories exist. */
+function checkBlog(site: z.output<typeof SiteBase>, context: z.core.$RefinementCtx) {
+  const listed = site.pages.flatMap((page, pageIndex) =>
+    page.sections.flatMap((section, sectionIndex) => (section.type === "posts" ? [{ page, pageIndex, section, sectionIndex }] : [])),
+  );
+  const { blog } = site;
+
+  if (!blog) {
+    for (const { pageIndex, sectionIndex } of listed) {
+      context.addIssue({ code: "custom", path: ["pages", pageIndex, "sections", sectionIndex, "type"], message: 'A "posts" section needs the site\'s blog (add "blog" with its posts).' });
+    }
+    return;
+  }
+
+  const blogPage = site.pages.find((page) => page.slug === blog.path);
+  if (!blogPage) {
+    context.addIssue({ code: "custom", path: ["blog", "path"], message: `No page "${blog.path}": add the blog page (with a posts section) to pages.` });
+  } else if (!blogPage.sections.some((section) => section.type === "posts")) {
+    context.addIssue({ code: "custom", path: ["blog", "path"], message: `The blog page "${blog.path}" needs a "posts" section that lists the posts.` });
+  }
+
+  const categories = new Set(blog.categories.map((category) => category.id));
+  for (const { pageIndex, section, sectionIndex } of listed) {
+    const category = (section.props as { category?: string }).category;
+    if (category && !categories.has(category)) {
+      context.addIssue({ code: "custom", path: ["pages", pageIndex, "sections", sectionIndex, "props", "category"], message: `No category "${category}" in blog.categories.` });
+    }
+  }
+
+  const pageSlugs = new Set(site.pages.map((page) => page.slug));
+  const postSlugs = new Set<string>();
+  blog.posts.forEach((post, index) => {
+    const at = (...path: (string | number)[]) => ["blog", "posts", index, ...path];
+    const path = `${blog.path}/${post.slug}`;
+
+    if (postSlugs.has(post.slug)) context.addIssue({ code: "custom", path: at("slug"), message: `Duplicate post slug "${post.slug}".` });
+    postSlugs.add(post.slug);
+    if (pageSlugs.has(path)) context.addIssue({ code: "custom", path: at("slug"), message: `"${path}" is already a page.` });
+    if (isReservedSlug(path)) context.addIssue({ code: "custom", path: at("slug"), message: `"${path}" is reserved by the engine.` });
+    if (post.category && !categories.has(post.category)) context.addIssue({ code: "custom", path: at("category"), message: `No category "${post.category}" in blog.categories.` });
+    if (post.updated && post.updated < post.date) context.addIssue({ code: "custom", path: at("updated"), message: "The update date is before the publication date." });
+  });
+}
 
 export type Site = z.infer<typeof SiteSchema>;
 export type SiteInput = z.input<typeof SiteSchema>;

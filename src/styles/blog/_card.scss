@@ -1,0 +1,93 @@
+// v3.9 blog: a post in a list. The title link covers the whole card (one tab stop, one name).
+@use "../abstracts/layers";
+
+@layer widgets {
+  .post-card {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-sm);
+    min-width: 0;
+    margin: 0;
+  }
+
+  .post-card__media {
+    overflow: hidden;
+    border-radius: var(--radius-image);
+  }
+
+  .post-card__media .post-cover {
+    border-radius: 0;
+    transition: transform var(--motion-duration-normal) var(--motion-easing-standard);
+  }
+
+  .post-card__text {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-sm);
+    min-width: 0;
+  }
+
+  .post-card__title {
+    margin: 0;
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-xl);
+    font-weight: var(--heading-weight, var(--font-weight-bold));
+    letter-spacing: var(--heading-tracking, normal);
+    line-height: var(--line-height-snug);
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  .post-card__link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .post-card__link::after {
+    position: absolute;
+    border-radius: inherit;
+    content: "";
+    inset: 0;
+  }
+
+  .post-card__link:focus-visible {
+    outline: none;
+  }
+
+  .post-card:has(.post-card__link:focus-visible) {
+    border-radius: var(--radius-card);
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 4px;
+  }
+
+  .post-card:hover .post-card__link {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  .post-card__excerpt {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    color: var(--color-text-secondary);
+    -webkit-line-clamp: 3;
+    line-height: var(--line-height-relaxed);
+  }
+
+  .post-card__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    color: var(--color-action-primary);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .post-card:hover .post-card__media .post-cover {
+      transform: scale(1.04);
+    }
+  }
+}

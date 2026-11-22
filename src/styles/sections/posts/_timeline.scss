@@ -1,0 +1,107 @@
+// Posts: timeline (Timeline.astro). Months on a vertical line, a dot per post.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-posts-timeline {
+    --line: var(--color-border-strong);
+
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  .s-posts-timeline__month {
+    display: grid;
+    gap: var(--spacing-md);
+  }
+
+  .s-posts-timeline__label {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-tight);
+  }
+
+  .s-posts-timeline__list {
+    display: grid;
+    gap: var(--spacing-lg);
+    padding: 0 0 0 var(--spacing-xl);
+    margin: 0 0 0 0.4375rem;
+    border-left: 2px solid var(--line);
+    list-style: none;
+  }
+
+  .s-posts-timeline__list > li {
+    position: relative;
+  }
+
+  // The dot on the line.
+  .s-posts-timeline__list > li::before {
+    position: absolute;
+    top: 0.3rem;
+    left: calc(-1 * var(--spacing-xl) - 0.5rem);
+    width: 0.875rem;
+    height: 0.875rem;
+    border: 3px solid var(--color-background-primary);
+    border-radius: 50%;
+    background: var(--color-action-primary);
+    content: "";
+  }
+
+  .s-posts-timeline__entry {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: var(--spacing-md);
+  }
+
+  .s-posts-timeline__entry--photo {
+    grid-template-columns: minmax(0, 1fr) 5rem;
+  }
+
+  .s-posts-timeline__text {
+    display: grid;
+    gap: var(--spacing-xs);
+    min-width: 0;
+  }
+
+  .s-posts-timeline__date {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.75em;
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  .s-posts-timeline__category {
+    color: var(--color-action-primary);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .s-posts-timeline__entry .post-card__excerpt {
+    -webkit-line-clamp: 2;
+  }
+
+  @include mq(md) {
+    .s-posts-timeline__month {
+      grid-template-columns: 12rem minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .s-posts-timeline__label {
+      position: sticky;
+      top: calc(var(--header-offset, 0px) + var(--spacing-lg));
+      font-size: var(--font-size-2xl);
+    }
+
+    .s-posts-timeline__entry--photo {
+      grid-template-columns: minmax(0, 1fr) 8rem;
+      gap: var(--spacing-xl);
+    }
+
+    .s-posts-timeline__entry .post-card__title {
+      font-size: var(--font-size-xl);
+    }
+  }
+}

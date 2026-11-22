@@ -1,0 +1,54 @@
+// Article: cover (Cover.astro). The photo across the first screen, the title on it.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .a-cover {
+    padding-top: 0;
+  }
+
+  .a-cover__hero {
+    position: relative;
+    display: grid;
+    align-items: end;
+    min-height: min(78vh, 46rem);
+    overflow: hidden;
+    padding-block: var(--spacing-3xl) var(--spacing-2xl);
+    background: var(--color-background-inverse, #111);
+    color: #fff;
+    isolation: isolate;
+  }
+
+  .a-cover__image {
+    position: absolute;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    inset: 0;
+  }
+
+  // Dark at the bottom where the text is.
+  .a-cover__hero::after {
+    position: absolute;
+    z-index: -1;
+    background: linear-gradient(180deg, rgb(0 0 0 / 35%) 0%, rgb(0 0 0 / 45%) 45%, rgb(0 0 0 / 82%) 100%);
+    content: "";
+    inset: 0;
+  }
+
+  .a-cover__hero--plain {
+    min-height: min(56vh, 32rem);
+    background: var(--color-action-primary);
+    color: var(--color-action-primary-text);
+  }
+
+  .a-cover__hero--plain::after {
+    background: linear-gradient(135deg, transparent, rgb(0 0 0 / 25%));
+  }
+
+  .a-cover__head :is(.article-head__title, .post-meta, .post-meta__category, .article-head__lead, .article-crumbs ol, .article-byline__updated) {
+    color: inherit;
+  }
+
+}

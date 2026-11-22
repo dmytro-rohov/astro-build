@@ -1,0 +1,32 @@
+---
+/** v3.9: the older and the newer post, as two links with their titles. */
+import { postUrl } from "@/components/blog/data";
+import Icon from "@/components/media/Icon.astro";
+import { t } from "@/i18n";
+import type { Article } from "@/layouts/article/data";
+
+export interface Props {
+  article: Article;
+  class?: string;
+}
+
+const { article, class: className } = Astro.props;
+const { older, newer } = article.adjacent;
+---
+
+{(older || newer) && (
+  <nav class:list={["article-adjacent", className]} aria-label={`${t.blog.older} / ${t.blog.newer}`}>
+    {older && (
+      <a class="article-adjacent__link article-adjacent__link--older" href={postUrl(older)} rel="prev">
+        <span class="article-adjacent__label"><Icon name="arrow-right" size="1em" class="article-adjacent__arrow" />{t.blog.older}</span>
+        <span class="article-adjacent__title">{older.title}</span>
+      </a>
+    )}
+    {newer && (
+      <a class="article-adjacent__link article-adjacent__link--newer" href={postUrl(newer)} rel="next">
+        <span class="article-adjacent__label">{t.blog.newer}<Icon name="arrow-right" size="1em" /></span>
+        <span class="article-adjacent__title">{newer.title}</span>
+      </a>
+    )}
+  </nav>
+)}

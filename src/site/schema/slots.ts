@@ -44,6 +44,11 @@ export function findImageSlots(schema: z.ZodType, path: SlotPath = []): { path: 
     return findImageSlots(inner.element as z.ZodType, [...path, "[]"]);
   }
 
+  // v3.9: blocks of a blog post (a union by type): every option's slots, on the same path.
+  if (inner instanceof z.ZodUnion) {
+    return (inner.options as z.ZodType[]).flatMap((option) => findImageSlots(option, path));
+  }
+
   return [];
 }
 

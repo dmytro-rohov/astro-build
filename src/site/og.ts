@@ -11,7 +11,12 @@ import { focalToPosition } from "@/site/focal";
 export const OG_SIZE = { width: 1200, height: 630 } as const;
 
 export async function ogImageFor(page?: Page): Promise<string> {
-  const ref = page?.seo.image ?? site.meta.seo.image;
+  return ogImageOf(page?.seo.image);
+}
+
+/** v3.9: the same for any image (a blog post's cover), falling back to meta.seo.image and /og-cover.jpg. */
+export async function ogImageOf(imageRef?: string): Promise<string> {
+  const ref = imageRef ?? site.meta.seo.image;
 
   if (!ref) {
     return "/og-cover.jpg";

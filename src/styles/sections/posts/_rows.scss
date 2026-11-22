@@ -1,0 +1,54 @@
+// Posts: rows (Rows.astro). A small square photo beside the text on phones, a wide one from tablets.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-posts-rows {
+    display: grid;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .s-posts-rows > li + li {
+    border-top: 1px solid var(--color-border-default);
+  }
+
+  .s-posts-rows__row {
+    grid-template-columns: 6rem minmax(0, 1fr);
+    align-items: start;
+    gap: var(--spacing-md);
+    padding-block: var(--spacing-lg);
+  }
+
+  .s-posts-rows__media .post-cover {
+    aspect-ratio: 1;
+  }
+
+  .s-posts-rows__row .post-card__excerpt {
+    -webkit-line-clamp: 2;
+  }
+
+  @include mq-down(sm) {
+    .s-posts-rows__row .post-card__excerpt {
+      display: none;
+    }
+  }
+
+  @include mq(md) {
+    .s-posts-rows__row {
+      grid-template-columns: 18rem minmax(0, 1fr);
+      align-items: center;
+      gap: var(--spacing-2xl);
+      padding-block: var(--spacing-xl);
+    }
+
+    .s-posts-rows__media .post-cover {
+      aspect-ratio: 4 / 3;
+    }
+
+    .s-posts-rows__row .post-card__title {
+      font-size: var(--font-size-2xl);
+    }
+  }
+}

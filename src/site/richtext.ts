@@ -49,6 +49,11 @@ export function renderRichTextLite(value: string): string {
     .join("");
 }
 
+/** v3.9: one line of richtext-lite without the <p> (list items): line breaks become <br>. */
+export function renderRichTextInline(value: string): string {
+  return renderInline(escapeHtml(value.trim())).replace(/\s*\n\s*/g, "<br>");
+}
+
 /** Plain text without the markers (meta tags, JSON-LD). */
 export function richTextLiteToPlain(value: string): string {
   return value

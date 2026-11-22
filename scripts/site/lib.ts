@@ -139,7 +139,14 @@ export function serve(context: SiteContext, port = servePort()): Promise<{ url: 
   });
 }
 
-export const pagesOf = (context: SiteContext) => context.loaded.site.pages.map((page) => ({ id: page.id, slug: page.slug, title: page.title }));
+/** Every page of the site: pages[] and v3.9 the blog's posts (their own pages). */
+export const pagesOf = (context: SiteContext) => {
+  const { pages, blog } = context.loaded.site;
+  return [
+    ...pages.map((page) => ({ id: page.id, slug: page.slug, title: page.title })),
+    ...(blog?.posts ?? []).map((post) => ({ id: `post-${post.id}`, slug: `${blog!.path}/${post.slug}`, title: post.title })),
+  ];
+};
 
 export function writeJson(file: string, data: unknown) {
   fs.mkdirSync(path.dirname(file), { recursive: true });

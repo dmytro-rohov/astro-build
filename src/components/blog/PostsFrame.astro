@@ -1,0 +1,89 @@
+---
+/**
+ * v3.9: what every list of posts shares: the empty state, the category buttons and "show more".
+ * The layout's items carry data-post (and data-post-category); a month group data-post-group.
+ * Without JavaScript every post is shown and the buttons stay hidden.
+ */
+import Button from "@/components/ui/Button.astro";
+import Icon from "@/components/media/Icon.astro";
+import { t } from "@/i18n";
+import "@/styles/blog/_frame.scss";
+
+export interface Props {
+  count: number;
+  categories: { id: string; name: string }[];
+  perPage: number;
+  link?: { label: string; href: string };
+  align?: "left" | "center";
+  class?: string;
+}
+
+const { count, categories, perPage, link, align = "center", class: className } = Astro.props;
+---
+
+<div class:list={["posts-frame", className]} data-posts data-per-page={perPage}>
+  {count === 0 ? (
+    <p class="posts-frame__empty">{t.blog.empty}</p>
+  ) : (
+    <>
+      {categories.length > 0 && (
+        <div class:list={["posts-filter", `posts-filter--${align}`]} role="group" aria-label={t.blog.filterLabel} data-posts-filter hidden>
+          <button type="button" class="posts-filter__button" aria-pressed="true" data-posts-category="">{t.blog.filterAll}</button>
+          {categories.map((category) => (
+            <button type="button" class="posts-filter__button" aria-pressed="false" data-posts-category={category.id}>{category.name}</button>
+          ))}
+        </div>
+      )}
+      <slot />
+      <div class="posts-frame__more" data-posts-more hidden>
+        <button type="button" class="button button--secondary button--md">{t.blog.showMore}</button>
+      </div>
+    </>
+  )}
+  {link && (
+    <div class:list={["posts-frame__link", `posts-frame__link--${align}`]}>
+      <Button href={link.href} variant="secondary">{link.label}<Icon name="arrow-right" size="1.125em" /></Button>
+    </div>
+  )}
+</div>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-posts]")) {
+    const items = [...root.querySelectorAll<HTMLElement>("[data-post]")];
+    const perPage = Number(root.dataset.perPage) || items.length;
+    const filter = root.querySelector<HTMLElement>("[data-posts-filter]");
+    const more = root.querySelector<HTMLElement>("[data-posts-more]");
+    let category = "";
+    let shown = perPage;
+
+    const matching = () => items.filter((item) => !category || item.dataset.postCategory === category);
+
+    const render = () => {
+      const visible = new Set(matching().slice(0, shown));
+      for (const item of items) item.hidden = !visible.has(item);
+      // A month of the timeline without a visible post disappears with its heading.
+      for (const group of root.querySelectorAll<HTMLElement>("[data-post-group]")) group.hidden = !group.querySelector("[data-post]:not([hidden])");
+      if (more) more.hidden = matching().length <= shown;
+    };
+
+    filter?.removeAttribute("hidden");
+    filter?.addEventListener("click", (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-posts-category]");
+      if (!button) return;
+      category = button.dataset.postsCategory ?? "";
+      shown = perPage;
+      for (const other of filter.querySelectorAll("[data-posts-category]")) other.setAttribute("aria-pressed", String(other === button));
+      render();
+    });
+
+    more?.querySelector("button")?.addEventListener("click", () => {
+      const first = matching()[shown];
+      shown += perPage;
+      render();
+      // Keyboard and screen reader users continue at the first new post.
+      first?.querySelector<HTMLElement>("a")?.focus();
+    });
+
+    render();
+  }
+</script>

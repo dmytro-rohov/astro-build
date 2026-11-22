@@ -1,0 +1,46 @@
+---
+/** v3.9 posts "cards": a grid of cards (3 per row on desktops): cover, category, date, title, excerpt. */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import PostCover from "@/components/blog/PostCover.astro";
+import PostMeta from "@/components/blog/PostMeta.astro";
+import PostsFrame from "@/components/blog/PostsFrame.astro";
+import { postUrl } from "@/components/blog/data";
+import { postsList } from "@/sections/posts/list";
+import type { VariantOf } from "@/site/types";
+import "@/styles/blog/_card.scss";
+import "@/styles/sections/posts/_cards.scss";
+
+export interface Props {
+  section: VariantOf<"posts", "cards">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+const { posts, categories, perPage, itemHeading: Title } = postsList(section, headingLevel);
+const align = props.align ?? "left";
+---
+
+<SectionShell id={section.id} type="posts" variant="cards" tone={props.tone} spacing={props.spacing} width="xl">
+  <Stack space="xl">
+    <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={align} />
+    <PostsFrame count={posts.length} categories={categories} perPage={perPage} link={content.link} align={align}>
+      <ul class="s-posts-cards">
+        {posts.map((post) => (
+          <li data-post data-post-category={post.category}>
+            <article class="post-card s-posts-cards__card">
+              <div class="post-card__media">
+                <PostCover post={post} sizes="(min-width: 1280px) 400px, (min-width: 640px) 50vw, 100vw" />
+              </div>
+              <PostMeta post={post} />
+              <Title class="post-card__title"><a class="post-card__link" href={postUrl(post)}>{post.title}</a></Title>
+              <p class="post-card__excerpt">{post.excerpt}</p>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </PostsFrame>
+  </Stack>
+</SectionShell>

@@ -1,0 +1,37 @@
+---
+/** v3.9: "Read also" after the post: up to three cards, the same category first. */
+import Container from "@/components/layouts/Container.astro";
+import PostCover from "@/components/blog/PostCover.astro";
+import PostMeta from "@/components/blog/PostMeta.astro";
+import { postUrl } from "@/components/blog/data";
+import { t } from "@/i18n";
+import type { Article } from "@/layouts/article/data";
+import "@/styles/blog/_card.scss";
+
+export interface Props {
+  article: Article;
+}
+
+const { article } = Astro.props;
+---
+
+{article.related.length > 0 && (
+  <section class="article-related" aria-labelledby="article-related-title">
+    <Container size="xl">
+      <h2 class="article-related__title" id="article-related-title">{t.blog.related}</h2>
+      <ul class="article-related__list">
+        {article.related.map((post) => (
+          <li>
+            <article class="post-card">
+              <div class="post-card__media">
+                <PostCover post={post} sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw" />
+              </div>
+              <PostMeta post={post} reading={false} />
+              <h3 class="post-card__title"><a class="post-card__link" href={postUrl(post)}>{post.title}</a></h3>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+)}

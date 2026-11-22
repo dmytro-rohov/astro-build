@@ -118,6 +118,37 @@ export default {
     },
   },
 
+  // v3.9: blog lists (posts section) and post pages (layout.article).
+  blog: {
+    empty: "Les premiers articles arrivent bientôt.",
+    readMore: "Lire la suite",
+    allPosts: "Tous les articles",
+    showMore: "Afficher plus d’articles",
+    filterLabel: "Catégories",
+    filterAll: "Tous",
+    published: "Publié le {date}",
+    updated: "Mis à jour le {date}",
+    readingTime: "{minutes} min de lecture",
+    toc: "Sommaire",
+    related: "À lire aussi",
+    newer: "Article plus récent",
+    older: "Article plus ancien",
+    share: "Partager",
+    copyLink: "Copier le lien",
+    copied: "Lien copié",
+    shareEmail: "E-mail",
+    tags: "Mots-clés",
+    progress: "Progression de la lecture",
+    author: "Auteur",
+    ctaTitle: "Des questions ? Nous sommes là pour vous aider.",
+    ctaText: "Écrivez-nous ou appelez-nous, nous vous répondrons au plus vite.",
+    ctaButton: "Nous contacter",
+    photos: "Photos",
+    breadcrumb: "Fil d’Ariane",
+    rss: "Flux RSS",
+    feedDescription: "Articles du blog de {siteName}.",
+  },
+
   cookies: {
     title: "Mesure d’audience facultative",
     description:

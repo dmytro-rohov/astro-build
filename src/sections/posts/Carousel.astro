@@ -1,0 +1,49 @@
+---
+/** v3.9 posts "carousel": cards in a sideways slider with arrows; for "latest posts" on the home page. */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import SectionHeader from "@/sections/_shared/SectionHeader.astro";
+import Slider from "@/components/widgets/Slider.astro";
+import Stack from "@/components/layouts/Stack.astro";
+import PostCover from "@/components/blog/PostCover.astro";
+import PostMeta from "@/components/blog/PostMeta.astro";
+import PostsFrame from "@/components/blog/PostsFrame.astro";
+import { postUrl } from "@/components/blog/data";
+import { postsList } from "@/sections/posts/list";
+import type { VariantOf } from "@/site/types";
+import "@/styles/blog/_card.scss";
+import "@/styles/sections/posts/_carousel.scss";
+
+export interface Props {
+  section: VariantOf<"posts", "carousel">;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const { content, props } = section;
+// A slider shows everything it has: no buttons, no "show more".
+const { posts, itemHeading: Title } = postsList(section, headingLevel, { filter: false });
+const align = props.align ?? "left";
+---
+
+<SectionShell id={section.id} type="posts" variant="carousel" tone={props.tone} spacing={props.spacing} width="xl">
+  <Stack space="xl">
+    {posts.length === 0 && <SectionHeader eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align={align} />}
+    <PostsFrame count={posts.length} categories={[]} perPage={Math.max(posts.length, 1)} link={content.link} align={align}>
+      <Slider label={content.title} class="s-posts-carousel">
+        <SectionHeader slot="head" eyebrow={content.eyebrow} title={content.title} description={content.description} headingLevel={headingLevel} align="left" />
+        {posts.map((post) => (
+          <li data-post>
+            <article class="post-card s-posts-carousel__card">
+              <div class="post-card__media">
+                <PostCover post={post} sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 85vw" />
+              </div>
+              <PostMeta post={post} />
+              <Title class="post-card__title"><a class="post-card__link" href={postUrl(post)}>{post.title}</a></Title>
+              <p class="post-card__excerpt">{post.excerpt}</p>
+            </article>
+          </li>
+        ))}
+      </Slider>
+    </PostsFrame>
+  </Stack>
+</SectionShell>

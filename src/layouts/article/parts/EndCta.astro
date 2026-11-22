@@ -1,0 +1,21 @@
+---
+/** v3.9: the box at the end of every post that turns a reader into a client (layout.article content or defaults). */
+import Button from "@/components/ui/Button.astro";
+import type { Article } from "@/layouts/article/data";
+
+export interface Props {
+  article: Article;
+  class?: string;
+}
+
+const { article, class: className } = Astro.props;
+const cta = article.cta;
+---
+
+{cta && (
+  <aside class:list={["article-cta", className]} aria-labelledby="article-cta-title">
+    <p class="article-cta__title" id="article-cta-title">{cta.title}</p>
+    <p class="article-cta__text">{cta.text}</p>
+    <Button href={cta.action.href} class="article-cta__button">{cta.action.label}</Button>
+  </aside>
+)}

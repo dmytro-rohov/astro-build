@@ -1,0 +1,12 @@
+// Posts: carousel (Carousel.astro). Cards in the engine's slider (components/_slider.scss).
+@use "../../abstracts/layers";
+
+@layer widgets {
+  .s-posts-carousel .slider__track > li {
+    display: flex;
+  }
+
+  .s-posts-carousel__card {
+    width: 100%;
+  }
+}

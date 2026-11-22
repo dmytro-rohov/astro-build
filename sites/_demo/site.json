@@ -1,7 +1,7 @@
 {
   "$schema": "../../dist-catalog/site.schema.json",
   "schemaVersion": 1,
-  "engine": "^3.0.0",
+  "engine": "^3.9.0",
   "siteId": "demo",
   "lang": "en",
   "meta": {
@@ -60,6 +60,14 @@
           }
         ]
       }
+    },
+    "article": {
+      "variant": "toc",
+      "props": {},
+      "content": {
+        "ctaTitle": "Want a page like this?",
+        "ctaText": "Tell us about your project and we will reply within a day."
+      }
     }
   },
   "navigation": {
@@ -72,6 +80,10 @@
       {
         "label": "Features",
         "href": "/#features"
+      },
+      {
+        "label": "Blog",
+        "href": "/blog"
       },
       {
         "label": "Contact",
@@ -211,6 +223,22 @@
               }
             ]
           }
+        },
+        {
+          "id": "latest-posts",
+          "type": "posts",
+          "variant": "cards",
+          "props": {
+            "limit": 2
+          },
+          "content": {
+            "eyebrow": "Blog",
+            "title": "Latest from the blog",
+            "link": {
+              "label": "All posts",
+              "href": "/blog"
+            }
+          }
         }
       ]
     },
@@ -230,6 +258,123 @@
           }
         }
       ]
+    },
+    {
+      "id": "blog",
+      "slug": "/blog",
+      "title": "Blog",
+      "description": "Guides and notes about building fast, accessible landing pages with Astro Starter.",
+      "sections": [
+        {
+          "id": "blog-posts",
+          "type": "posts",
+          "variant": "rows",
+          "props": {},
+          "content": {
+            "eyebrow": "Blog",
+            "title": "Guides and notes",
+            "description": "How we build fast, accessible pages, step by step."
+          }
+        }
+      ]
     }
-  ]
+  ],
+  "blog": {
+    "path": "/blog",
+    "categories": [
+      {
+        "id": "guides",
+        "name": "Guides"
+      },
+      {
+        "id": "news",
+        "name": "News"
+      }
+    ],
+    "posts": [
+      {
+        "id": "fast-pages",
+        "slug": "why-fast-pages-win",
+        "title": "Why fast pages win more clients",
+        "excerpt": "A slow page loses visitors before they read a word. What makes a landing page fast, and how this starter keeps it that way.",
+        "date": "2026-11-12",
+        "category": "guides",
+        "tags": [
+          "performance",
+          "seo"
+        ],
+        "cover": "asset:hero",
+        "body": [
+          {
+            "type": "paragraph",
+            "text": "Visitors decide in seconds. A page that loads quickly keeps them reading, ranks better and works on weak phone connections."
+          },
+          {
+            "type": "heading",
+            "level": 2,
+            "text": "What makes a page slow"
+          },
+          {
+            "type": "list",
+            "ordered": false,
+            "items": [
+              "Large images sent to every screen.",
+              "Fonts loaded from other servers.",
+              "Scripts that block the first paint."
+            ]
+          },
+          {
+            "type": "heading",
+            "level": 2,
+            "text": "How the starter keeps it fast"
+          },
+          {
+            "type": "paragraph",
+            "text": "Images are resized at build time, fonts are local and only the styles of the sections in use are loaded. See the [features](/#features)."
+          },
+          {
+            "type": "callout",
+            "title": "Tip",
+            "text": "Check a page with *Lighthouse* before every release."
+          },
+          {
+            "type": "quote",
+            "text": "Performance is a feature your visitors notice before any other.",
+            "cite": "Astro Starter team"
+          },
+          {
+            "type": "heading",
+            "level": 2,
+            "text": "Next steps"
+          },
+          {
+            "type": "paragraph",
+            "text": "Start from a fixture site, change the content and build."
+          }
+        ]
+      },
+      {
+        "id": "release",
+        "slug": "starter-release-notes",
+        "title": "A blog for every site",
+        "excerpt": "Sites built with the engine can now have a blog: posts, categories and seven article layouts.",
+        "date": "2026-11-20",
+        "format": "short",
+        "category": "news",
+        "tags": [
+          "release"
+        ],
+        "body": [
+          {
+            "type": "image",
+            "image": "asset:hero"
+          },
+          {
+            "type": "paragraph",
+            "text": "Posts, categories, an RSS feed and seven article layouts are in. Enjoy!"
+          }
+        ]
+      }
+    ]
+  }
 }

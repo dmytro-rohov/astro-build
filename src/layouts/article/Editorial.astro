@@ -1,0 +1,40 @@
+---
+/**
+ * v3.9 "editorial": magazine style. A very large centered title and lead, a wide cover, the text with
+ * a drop cap, large pull quotes and wide photos breaking out of the column.
+ */
+import Container from "@/components/layouts/Container.astro";
+import PostCover from "@/components/blog/PostCover.astro";
+import Body from "@/layouts/article/parts/Body.astro";
+import End from "@/layouts/article/parts/End.astro";
+import Head from "@/layouts/article/parts/Head.astro";
+import Progress from "@/layouts/article/parts/Progress.astro";
+import Related from "@/layouts/article/parts/Related.astro";
+import { articleOf } from "@/layouts/article/data";
+import type { Post } from "@/site/schema/blog";
+import "@/styles/layouts/article/_shared.scss";
+import "@/styles/layouts/article/_editorial.scss";
+
+export interface Props {
+  post: Post;
+}
+
+const article = articleOf(Astro.props.post);
+---
+
+{article.progress && <Progress />}
+<article class="article a-editorial" data-overflow-check>
+  <Container size="lg">
+    <Head article={article} align="center" size="xl" class="a-editorial__head" />
+  </Container>
+  <Container size="xl">
+    <PostCover post={article.post} aspect={[2, 1]} widths={[640, 960, 1280, 1600]} sizes="(min-width: 1280px) 1216px, 100vw" priority="high" content class="a-editorial__cover" />
+  </Container>
+  <Container size="lg">
+    <Body article={article} editorial />
+  </Container>
+  <Container size="md">
+    <End article={article} />
+  </Container>
+</article>
+<Related article={article} />

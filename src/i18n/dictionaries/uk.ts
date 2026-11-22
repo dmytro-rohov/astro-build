@@ -140,6 +140,37 @@ export default {
     },
   },
 
+  // v3.9: blog lists (posts section) and post pages (layout.article).
+  blog: {
+    empty: "Перші дописи з’являться незабаром.",
+    readMore: "Читати далі",
+    allPosts: "Усі дописи",
+    showMore: "Показати більше дописів",
+    filterLabel: "Категорії",
+    filterAll: "Усі",
+    published: "Опубліковано {date}",
+    updated: "Оновлено {date}",
+    readingTime: "{minutes} хв читання",
+    toc: "Зміст",
+    related: "Читайте також",
+    newer: "Новіший допис",
+    older: "Старіший допис",
+    share: "Поділитися",
+    copyLink: "Копіювати посилання",
+    copied: "Посилання скопійовано",
+    shareEmail: "Ел. пошта",
+    tags: "Теги",
+    progress: "Прогрес читання",
+    author: "Автор",
+    ctaTitle: "Маєте запитання? Охоче допоможемо.",
+    ctaText: "Напишіть або зателефонуйте, ми відповімо якнайшвидше.",
+    ctaButton: "Зв’язатися з нами",
+    photos: "Фото",
+    breadcrumb: "Навігаційний ланцюжок",
+    rss: "RSS-стрічка",
+    feedDescription: "Дописи з блогу {siteName}.",
+  },
+
   cookies: {
     title: "Необов’язкова аналітика",
     description:

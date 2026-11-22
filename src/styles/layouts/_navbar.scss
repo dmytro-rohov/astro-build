@@ -245,7 +245,7 @@
   }
 
   .navbar__link:hover,
-  .navbar__link[aria-current="page"] {
+  .navbar__link:is([aria-current="page"], [aria-current="true"]) {
     background: var(--color-background-muted);
   }
 

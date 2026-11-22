@@ -1,0 +1,26 @@
+// Posts: cards (Cards.astro). One column on phones, two on tablets, three on desktops.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .s-posts-cards {
+    display: grid;
+    gap: var(--spacing-2xl) var(--spacing-lg);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  @include mq(sm) {
+    .s-posts-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @include mq(lg) {
+    .s-posts-cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: var(--spacing-xl);
+    }
+  }
+}

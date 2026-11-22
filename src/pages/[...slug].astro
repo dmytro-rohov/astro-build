@@ -1,36 +1,110 @@
 ---
 /**
- * Every page of the site comes from site.json (pages[]). Engine pages
- * (privacy, contact results, 404/500, API) live next to this file.
+ * Every page of the site comes from site.json (pages[]), and v3.9 every blog post (blog.posts) at
+ * <blog.path>/<slug> in the site's article layout. Engine pages (privacy, contact results, 404/500,
+ * API, RSS) live next to this file.
  */
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import SectionRenderer from "@/site/SectionRenderer.astro";
 import { site } from "virtual:site";
+import { layoutComponents } from "virtual:layout-components";
 import type { Page } from "@/site/schema/site";
-import { ogImageFor } from "@/site/og";
+import type { Post } from "@/site/schema/blog";
+import { ogImageFor, ogImageOf } from "@/site/og";
+import { postDescription, postImage, postPath, postText, selectPosts } from "@/site/blog";
+import { blogPostingSchema, blogSchema } from "@/lib/seo/schema";
+import { getAsset } from "@/site/assets";
+import { getImage } from "astro:assets";
+import { t } from "@/i18n";
 
 export function getStaticPaths() {
-  return site.pages.map((page) => ({
-    params: { slug: page.slug === "/" ? undefined : page.slug.slice(1) },
-    props: { page },
-  }));
+  const blog = site.blog;
+  return [
+    ...site.pages.map((page) => ({
+      params: { slug: page.slug === "/" ? undefined : page.slug.slice(1) },
+      props: { page },
+    })),
+    ...(blog?.posts ?? []).map((post) => ({
+      params: { slug: postPath(blog!, post).slice(1) },
+      props: { post },
+    })),
+  ];
 }
 
-interface Props {
-  page: Page;
+type Props = { page: Page; post?: undefined } | { post: Post; page?: undefined };
+
+const { page, post } = Astro.props as Props;
+const siteUrl = Astro.site ?? Astro.url.origin;
+const absolute = (path: string) => new URL(path, siteUrl).toString();
+const blog = site.blog;
+
+let pageImage: string | undefined;
+let jsonLd: Record<string, unknown> | undefined;
+let article: { published: string; modified?: string; section?: string; tags: string[] } | undefined;
+
+if (post && blog) {
+  const ref = postImage(post);
+  pageImage = await ogImageOf(ref);
+  const author = blog.author;
+  const authorImage = author?.photo ? (await getImage({ src: getAsset(author.photo).image, width: 400, height: 400, fit: "cover", format: "jpg" })).src : undefined;
+  const section = blog.categories.find((category) => category.id === post.category)?.name;
+  article = { published: post.date, modified: post.updated, section, tags: post.tags };
+  jsonLd = blogPostingSchema({
+    url: absolute(postPath(blog, post)),
+    title: post.title,
+    description: postDescription(post),
+    image: absolute(pageImage),
+    published: post.date,
+    modified: post.updated,
+    section,
+    tags: post.tags,
+    words: postText(post).split(/\s+/).filter(Boolean).length,
+    author: author ? { name: author.name, role: author.role, image: authorImage ? absolute(authorImage) : undefined } : undefined,
+    siteUrl,
+  });
+} else if (page && blog && page.slug === blog.path) {
+  pageImage = await ogImageFor(page);
+  jsonLd = blogSchema({
+    url: absolute(page.slug),
+    title: page.title,
+    posts: selectPosts(blog.posts).filter((entry) => !entry.seo.noindex).map((entry) => ({ title: entry.title, url: absolute(postPath(blog, entry)), published: entry.date })),
+    siteUrl,
+  });
+} else {
+  pageImage = await ogImageFor(page);
 }
 
-const { page } = Astro.props;
-const isHome = page.slug === "/";
-const image = await ogImageFor(page);
+const blogPage = blog ? site.pages.find((entry) => entry.slug === blog.path) : undefined;
+const Article = layoutComponents.article;
 ---
 
-<BaseLayout
-  title={page.title}
-  titleIsFull={isHome}
-  description={page.description}
-  image={image}
-  robots={page.seo.noindex ? "noindex, follow" : "index, follow, max-image-preview:large"}
->
-  <SectionRenderer sections={page.sections} />
-</BaseLayout>
+{post && blog ? (
+  <BaseLayout
+    title={post.title}
+    description={postDescription(post)}
+    image={pageImage}
+    imageAlt={postImage(post) ? getAsset(postImage(post)!).alt || post.title : post.title}
+    robots={post.seo.noindex ? "noindex, follow" : "index, follow, max-image-preview:large"}
+    pageType="article"
+    article={article}
+    jsonLd={jsonLd}
+    breadcrumbs={[
+      { name: t.nav.home, path: "/" },
+      { name: blogPage?.title ?? t.blog.allPosts, path: blog.path },
+      { name: post.title, path: postPath(blog, post) },
+    ]}
+  >
+    <Article post={post} />
+  </BaseLayout>
+) : (
+  <BaseLayout
+    title={page!.title}
+    titleIsFull={page!.slug === "/"}
+    description={page!.description}
+    image={pageImage}
+    robots={page!.seo.noindex ? "noindex, follow" : "index, follow, max-image-preview:large"}
+    jsonLd={jsonLd}
+  >
+    <SectionRenderer sections={page!.sections} />
+  </BaseLayout>
+)}

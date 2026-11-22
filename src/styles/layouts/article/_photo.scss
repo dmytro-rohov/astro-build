@@ -1,0 +1,71 @@
+// Article: photo (Photo.astro). The photos large on the left, the short text beside them.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .a-photo__grid {
+    display: grid;
+    gap: var(--spacing-xl);
+  }
+
+  .a-photo__media {
+    min-width: 0;
+  }
+
+  .a-photo__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-card);
+  }
+
+  .a-photo__slider .slider__track > li {
+    flex-basis: 100%;
+  }
+
+  .a-photo__captions {
+    display: grid;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-sm);
+  }
+
+  .a-photo__caption {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  .a-photo__text {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-lg);
+    min-width: 0;
+  }
+
+  .a-photo__text .prose > *,
+  .a-photo__text .article-end {
+    margin-inline: 0;
+  }
+
+  .a-photo__text .article-end {
+    margin-top: 0;
+  }
+
+  @include mq(lg) {
+    .a-photo:not(.a-photo--long) .a-photo__grid {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      align-items: start;
+      gap: var(--spacing-3xl);
+    }
+
+    .a-photo:not(.a-photo--long) .a-photo__text {
+      position: sticky;
+      top: calc(var(--header-offset, 0px) + var(--spacing-xl));
+    }
+
+    .a-photo--long .a-photo__text {
+      max-width: 48rem;
+      margin-inline: auto;
+    }
+  }
+}

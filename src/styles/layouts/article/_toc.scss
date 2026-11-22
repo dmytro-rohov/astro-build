@@ -1,0 +1,81 @@
+// Article: toc (Toc.astro). Text left, a sticky table of contents right (desktops).
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  // A narrower page than the site's wide sections: the text and the contents stay close together.
+  .a-toc > .container {
+    --container-max: 68rem;
+  }
+
+  .a-toc__cover {
+    border-radius: var(--radius-card);
+  }
+
+  .a-toc__grid {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  .a-toc__main {
+    display: grid;
+    gap: var(--spacing-xl);
+    min-width: 0;
+  }
+
+  .a-toc__main > .article-toc--collapsible,
+  .a-toc__main > .prose {
+    width: 100%;
+    max-width: 42rem;
+    margin-inline: auto;
+  }
+
+  .a-toc__side {
+    display: none;
+  }
+
+  @include mq(lg) {
+    .a-toc .a-toc__grid {
+      grid-template-columns: minmax(0, 1fr) 16rem;
+      gap: var(--spacing-3xl);
+    }
+
+    .a-toc--single .a-toc__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .a-toc__fold {
+      display: none;
+    }
+
+    .a-toc .a-toc__main > :is(.prose, .article-end) {
+      margin-inline: 0;
+    }
+
+    // With the side bar the share buttons are there; below lg they stay at the end of the text.
+    .a-toc:not(.a-toc--single) .a-toc__end .article-share {
+      display: none;
+    }
+
+    .a-toc:not(.a-toc--single) .a-toc__end .article-end__row:not(:has(.article-tags)) {
+      display: none;
+    }
+
+    .a-toc--single .a-toc__main > :is(.prose, .article-end) {
+      margin-inline: auto;
+    }
+
+    .a-toc__side {
+      display: block;
+    }
+
+    .a-toc__sticky {
+      position: sticky;
+      top: calc(var(--header-offset, 0px) + var(--spacing-xl));
+      display: grid;
+      gap: var(--spacing-xl);
+      max-height: calc(100vh - var(--header-offset, 0px) - var(--spacing-2xl));
+      overflow-y: auto;
+    }
+  }
+}

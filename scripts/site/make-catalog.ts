@@ -9,6 +9,11 @@
  *
  * Usage: tsx scripts/site/make-catalog.ts [--out .generated/catalog]
  *        [--archetype energetic] [--navbar simple] [--footer columns] [--footer-tone dark] [--lang pl]
+ *        [--article toc]
+ *
+ * v3.9: the site also has a blog: posts with minimum and maximum content (every block type at its
+ * limits, a photo post, a post without any photo), shown by the posts sections and on their own
+ * pages in the article layout of --article.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -17,6 +22,7 @@ import { z } from "zod";
 import { layoutTypes, sectionTypes } from "../../src/site/registry";
 import { loadSite, SiteValidationError } from "../../src/site/loader";
 import { ONE_PER_PAGE } from "../../src/site/schema/site";
+import { BLOG_IMAGE_SLOTS } from "../../src/site/schema/blog";
 import type { FieldMeta, ImageSlot } from "../../src/site/schema/fields";
 import { getFlag } from "./args";
 
@@ -28,6 +34,7 @@ const navbar = getFlag("navbar") ?? "simple";
 const footer = getFlag("footer") ?? "columns";
 const footerTone = getFlag("footer-tone");
 const lang = getFlag("lang") ?? "pl";
+const article = getFlag("article") ?? "toc";
 
 // Long, real Polish words test hyphenation and wrapping.
 const LONG_TEXT =
@@ -161,6 +168,67 @@ function example(schema: z.ZodType, mode: Mode, key: string, index = 0): unknown
 
 const ONE_PER_PAGE_TYPES: readonly string[] = ONE_PER_PAGE;
 
+// Props that refer to the site's own data cannot be invented: a posts list shows every category.
+function propsOf(type: string, props: unknown) {
+  if (type !== "posts") return props;
+  const rest = { ...(props as Record<string, unknown>) };
+  delete rest.category;
+  return rest;
+}
+
+/** v3.9: the blog of the catalog site: posts at their limits and the edge cases. */
+function blogOf() {
+  const long = (length: number) => textOf(length, false);
+  const categories = Array.from({ length: 12 }, (_, index) => ({ id: `kategoria-${index + 1}`, name: long(30 - String(index).length) }));
+  const max = {
+    id: "wpis-max",
+    slug: "wpis-z-maksymalna-trescia",
+    title: long(110),
+    excerpt: textOf(240, false),
+    date: "2026-11-20",
+    updated: "2026-11-21",
+    cover: asset(BLOG_IMAGE_SLOTS.cover),
+    category: categories[11].id,
+    tags: Array.from({ length: 5 }, (_, index) => long(28) + index),
+    body: [
+      { type: "paragraph", text: richTextOf(2000, "max") },
+      { type: "heading", level: 2, text: long(120) },
+      { type: "list", ordered: false, items: Array.from({ length: 8 }, () => richTextOf(400, "max")) },
+      { type: "heading", level: 3, text: long(120) },
+      { type: "quote", text: textOf(600, false), cite: long(80) },
+      { type: "image", image: asset(BLOG_IMAGE_SLOTS.image), caption: long(200), wide: true },
+      { type: "heading", level: 2, text: `${long(100)} 2` },
+      { type: "gallery", images: Array.from({ length: 12 }, () => asset(BLOG_IMAGE_SLOTS.gallery)), caption: long(200) },
+      { type: "list", ordered: true, items: Array.from({ length: 8 }, () => richTextOf(400, "max")) },
+      { type: "video", url: "https://www.youtube.com/embed/aqz-KE-bpKQ", title: long(120) },
+      { type: "callout", title: long(80), text: richTextOf(800, "max") },
+      { type: "heading", level: 2, text: `${long(100)} 3` },
+      { type: "cta", title: long(90), text: textOf(200, false), action: { label: long(30), href: "/" } },
+    ],
+  };
+  const photo = {
+    id: "wpis-zdjecia",
+    slug: "wpis-ze-zdjeciami",
+    title: "Wpis ze zdjęciami",
+    excerpt: "Krótki wpis z galerią zdjęć, jak post z Instagrama.",
+    date: "2026-11-10",
+    format: "short",
+    category: categories[0].id,
+    tags: ["zdjęcia"],
+    body: [
+      { type: "gallery", images: Array.from({ length: 3 }, () => asset(BLOG_IMAGE_SLOTS.gallery)) },
+      { type: "paragraph", text: "Kilka zdań pod zdjęciami." },
+    ],
+  };
+  const min = { id: "wpis-min", slug: "min", title: "Ok", excerpt: "Krótka zajawka wpisu.", date: "2026-10-01", body: [{ type: "paragraph", text: "Krótko." }] };
+  const shortWithoutPhoto = { id: "wpis-bez-zdjec", slug: "bez-zdjec", title: "Wpis bez zdjęć", excerpt: "Krótki wpis, który nie ma ani jednego zdjęcia.", date: "2026-09-01", format: "short", body: [{ type: "paragraph", text: "Tylko tekst." }] };
+  return {
+    author: { name: long(60), role: long(60), bio: textOf(240, false), photo: asset(BLOG_IMAGE_SLOTS.author) },
+    categories,
+    posts: [max, photo, min, shortWithoutPhoto],
+  };
+}
+
 const sectionsOf = (type: (typeof sectionTypes)[number]) =>
   Object.keys(type.variants).flatMap((variant) =>
     (["min", "max"] as const).map((mode) => {
@@ -170,7 +238,7 @@ const sectionsOf = (type: (typeof sectionTypes)[number]) =>
         type: type.type,
         variant,
         // MAX also sets every variant prop (last option, toggles on), so props get rendered too.
-        props: mode === "max" && definition.props ? example(definition.props, "max", "props") : {},
+        props: mode === "max" && definition.props ? propsOf(type.type, example(definition.props, "max", "props")) : {},
         content: example(type.content, mode, "content"),
       };
     }),
@@ -224,6 +292,10 @@ for (const sections of onePerPage) {
   sections.forEach((section, index) => pages[index].sections.push(section));
 }
 
+// The blog page is the first page with a posts section (the packer puts them after the home page).
+const blogPage = pages.find((page) => page.sections.some((section) => section.type === "posts"));
+if (!blogPage || blogPage.slug === "/") throw new Error("make-catalog: the posts sections need a page of their own (the blog page)");
+
 const site = {
   schemaVersion: 1,
   engine: "^3.0.0",
@@ -248,9 +320,11 @@ const site = {
   layout: {
     navbar: { variant: navbar, props: {}, content: example(layoutTypes.navbar.content, "max", "content") },
     footer: { variant: footer, props: footerTone ? { tone: footerTone } : {}, content: example(layoutTypes.footer.content, "max", "content") },
+    article: { variant: article, props: {}, content: example(layoutTypes.article.content, "max", "content") },
   },
   navigation: { auto: true },
   pages,
+  blog: { path: blogPage.slug, ...blogOf() },
 };
 
 fs.rmSync(out, { recursive: true, force: true });

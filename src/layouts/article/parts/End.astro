@@ -1,0 +1,30 @@
+---
+/** v3.9: what follows the text in every layout: tags and sharing, the call to action, older/newer post. */
+import Adjacent from "@/layouts/article/parts/Adjacent.astro";
+import EndCta from "@/layouts/article/parts/EndCta.astro";
+import Share from "@/layouts/article/parts/Share.astro";
+import Tags from "@/layouts/article/parts/Tags.astro";
+import type { Article } from "@/layouts/article/data";
+
+export interface Props {
+  article: Article;
+  /** The layout shows the share buttons elsewhere (a side bar). */
+  share?: boolean;
+  /** The layout shows the call to action elsewhere (the author card). */
+  cta?: boolean;
+  class?: string;
+}
+
+const { article, share = article.share, cta = true, class: className } = Astro.props;
+---
+
+<footer class:list={["article-end", className]}>
+  {(article.post.tags.length > 0 || share) && (
+    <div class="article-end__row">
+      <Tags article={article} />
+      {share && <Share article={article} />}
+    </div>
+  )}
+  {cta && <EndCta article={article} />}
+  <Adjacent article={article} />
+</footer>

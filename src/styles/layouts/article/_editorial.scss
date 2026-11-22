@@ -1,0 +1,18 @@
+// Article: editorial (Editorial.astro). A huge centered title, a wide cover, magazine text.
+@use "../../abstracts/layers";
+@use "../../abstracts/mixins" as *;
+
+@layer widgets {
+  .a-editorial__head {
+    padding-block: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .a-editorial__head .article-head__title {
+    font-size: clamp(2.25rem, 5vw + 1rem, 4.75rem);
+    line-height: 1.05;
+  }
+
+  .a-editorial__cover {
+    border-radius: var(--radius-card);
+  }
+}

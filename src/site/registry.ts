@@ -21,15 +21,18 @@ import { processSteps } from "../sections/process/schema";
 import { logoCloud } from "../sections/logo-cloud/schema";
 import { embed } from "../sections/embed/schema";
 import { suggestion } from "../sections/suggestion/schema";
+import { posts } from "../sections/posts/schema";
 import { footer } from "../layout/footer/schema";
 import { navbar } from "../layout/navbar/schema";
+import { article } from "../layout/article/schema";
 
 export const sectionTypes = [
   hero, about, services, features, stats, processSteps, team, schedule, testimonials,
-  gallery, logoCloud, pricing, faq, cta, contact, hoursLocation, embed, suggestion,
+  gallery, logoCloud, pricing, faq, cta, contact, hoursLocation, posts, embed, suggestion,
 ] as const;
 
-export const layoutTypes = { navbar, footer } as const;
+// v3.9: `article` is optional in site.json (only sites with a blog have it).
+export const layoutTypes = { navbar, footer, article } as const;
 
 /** Reserved for v3.1: sections composed from primitives directly in JSON. */
 export const RESERVED_SECTION_TYPES = ["composed"] as const;
