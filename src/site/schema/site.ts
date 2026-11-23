@@ -261,7 +261,7 @@ const ThemeSchema = z.strictObject({
 });
 
 const NavigationSchema = z.strictObject({
-  auto: z.boolean().default(true).describe("Build the menu from pages[].nav."),
+  auto: z.boolean().default(true).describe("Build the menu: the pages (pages[].nav), on a one-page site its sections as anchors (sections[].nav)."),
   items: z.array(Action).max(8).optional().describe("Manual menu (used when auto is false)."),
 });
 

@@ -134,6 +134,14 @@ site still gets a report with the readable issues.
 - Section ids are also DOM ids and cannot take the engine's own (`main-content`,
   `navbar-menu`, `contact-name`…). At most one `contact` and one `faq` section per page.
   Every `href` to `/#id` or `/page#id` (menu, buttons, footer) must hit a section id.
+- **The menu** (`navigation.auto`, the default; `src/site/menu.ts`): a site of several pages lists
+  its pages (`pages[].nav`). v3.10: a one-page site (one page besides the blog's) lists that page's
+  sections as anchors (`/#id`), on computers and in the phone menu: by default `services`, `about`,
+  `pricing`, `contact`, `testimonials`, `gallery`, `team`, `faq`, `process`, `schedule`, `features`,
+  `hours-location`, `posts`, at most 6 (those first in this list stay), each under its type's word
+  in the site's language; then the blog's page. A section's `nav` decides for it:
+  `"nav": { "show": false }` keeps it out, `"show": true` puts any section in, `"label"` (24 characters)
+  is its own word (e.g. "O mnie" on a personal site). The footer's default link group follows the menu.
 - `business.type` is one of the schema.org types listed in `BUSINESS_TYPES`
   (`src/site/schema/site.ts`, also in `catalog.json`); `meta.url` is an origin without a path.
 - Errors are listed per field, e.g.
@@ -1069,8 +1077,8 @@ each post has its own date, cover, category and tags); every post gets its own p
 ## Factory Signature
 
 v3.7: every site carries a few quiet easter eggs that lead to one another (`src/site/signature.ts`).
-Their texts are in the site's language (`signature` in every dictionary); the "Powered by mytko
-factory" lockup is a brand name and stays the same everywhere.
+Their texts are in the site's language (`signature` in every dictionary); the "Powered by Mytko
+Factory" lockup is a brand name and stays the same everywhere.
 
 | Where | What |
 |---|---|
@@ -1078,14 +1086,18 @@ factory" lockup is a brand name and stays the same everywhere.
 | browser console | the wordmark on a dark card, a link to factory.mytko.dev and the way to `/humans.txt` |
 | `/humans.txt` | the site owner, Mytko Website Factory and the studio, language, last build date, technology; ends with the hint to the footer mark (`<link rel="author">` points to it) |
 | `<meta name="generator">` | `Mytko Website Factory <engine version>`; Astro's own generator tag stays as a second one |
-| footer | "Powered by [mark] mytko factory" at the end of the bottom row; the link goes to factory.mytko.dev (`rel="noopener nofollow"`: a footer link on every client site must not look like a link scheme). The mark is a button that opens a native popover (no script) with a few words about how the site was made. |
+| footer | "Powered by [mark] Mytko Factory" at the end of the bottom row; the link goes to factory.mytko.dev (`rel="noopener nofollow"`: a footer link on every client site must not look like a link scheme). The mark is a button that opens a native popover (no script) with a few words about how the site was made. |
 
 ---
 
 ## Version
 
-Current version: **v3.9** (`3.9.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
+Current version: **v3.10** (`3.10.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
 starter is kept on the `v2` branch / tag `v2.0.0`.
+
+v3.10: a one-page site's menu lists its sections as anchors (it showed only the home page), with a
+section-level `nav` (`show`, `label`) and the section words in all 12 languages; anchor targets clear
+the real height of the sticky header; "Powered by Mytko Factory" with a capital M.
 
 v3.9: blog. Posts in `blog` (own pages at `<blog.path>/<slug>`, blocks: paragraph, heading, list,
 quote, image, gallery, video, callout, cta), the `posts` section in 8 layouts, 7 article layouts
@@ -1095,7 +1107,7 @@ posts ([Blog](#blog)). Sites with a blog should ask for `"engine": "^3.9.0"`.
 v3.8: the contact form's own fields (`contact.form`: on/off, up to 12 fields of 8 types, the button
 text), validated the same way by the engine and the form service.
 
-v3.7: Factory signature — "Powered by mytko factory" with a secret mark in the footer (replaces
+v3.7: Factory signature — "Powered by Mytko Factory" with a secret mark in the footer (replaces
 "Website by Mytko.dev"), a source comment, a console note, `/humans.txt` and the Factory's generator
 meta tag, all in the site's language ([Factory Signature](#factory-signature)).
 

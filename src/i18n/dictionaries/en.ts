@@ -110,6 +110,22 @@ export const en = {
     features: "Features",
     components: "Components",
     contact: "Contact",
+    /** v3.10: the menu words of the section types (a one-page site's menu, src/site/menu.ts). */
+    sections: {
+      about: "About",
+      services: "Services",
+      features: "Features",
+      pricing: "Pricing",
+      process: "How it works",
+      team: "Team",
+      testimonials: "Reviews",
+      gallery: "Gallery",
+      faq: "FAQ",
+      schedule: "Schedule",
+      posts: "Blog",
+      "hours-location": "Location",
+      contact: "Contact",
+    },
   },
 
   footer: {
@@ -124,7 +140,7 @@ export const en = {
     follow: "Follow us",
   },
 
-  // v3.7: the Factory easter eggs (src/site/signature.ts). "Powered by mytko factory" is a brand name, not translated.
+  // v3.7: the Factory easter eggs (src/site/signature.ts). "Powered by Mytko Factory" is a brand name, not translated.
   signature: {
     comment: "{siteName} was built with Mytko Website Factory: {url}",
     commentHint: "Curious how it works? Open the browser console (F12), something is waiting for you there.",

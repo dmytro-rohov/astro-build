@@ -6,7 +6,7 @@
  * optional content fields it actually shows.
  */
 import { z } from "zod";
-import { Id } from "./fields";
+import { Id, text } from "./fields";
 
 export const SECTION_TONES = ["default", "muted", "inverse", "accent"] as const;
 
@@ -46,7 +46,18 @@ type VariantUnion<Base extends z.ZodRawShape, Variants, Content extends z.ZodObj
   { [Name in keyof Variants]: VariantObject<Base, Name, Variants[Name], Content> }[keyof Variants][]
 >;
 
-type SectionBase<Type extends string> = { id: typeof Id; type: z.ZodLiteral<Type> };
+/**
+ * v3.10: the section in a one-page site's menu (navigation.auto, src/site/menu.ts): shown or not (by default by its
+ * type), under its own word (by default its type's word in the site's language).
+ */
+export const SectionNav = z
+  .strictObject({
+    show: z.boolean().optional().describe("In the one-page menu or not; by default by the section's type."),
+    label: text(24).optional().describe("Menu word; by default the type's word in the site's language."),
+  })
+  .describe("v3.10: the one-page site's menu (anchor links to the sections).");
+
+type SectionBase<Type extends string> = { id: typeof Id; type: z.ZodLiteral<Type>; nav: z.ZodOptional<typeof SectionNav> };
 
 export type SectionTypeDefinition<
   Type extends string,
@@ -106,6 +117,7 @@ export function defineSectionType<
     {
       id: Id.describe("Stable section id, unique in the site. Also used as the HTML anchor (#id)."),
       type: z.literal(definition.type).describe(definition.description),
+      nav: SectionNav.optional(),
     },
     definition.variants,
     definition.content,

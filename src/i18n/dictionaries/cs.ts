@@ -74,6 +74,21 @@ export default {
     features: "Funkce",
     components: "Komponenty",
     contact: "Kontakt",
+    sections: {
+      about: "O nás",
+      services: "Nabídka",
+      features: "Výhody",
+      pricing: "Ceník",
+      process: "Jak pracujeme",
+      team: "Tým",
+      testimonials: "Recenze",
+      gallery: "Galerie",
+      faq: "Otázky",
+      schedule: "Rozvrh",
+      posts: "Blog",
+      "hours-location": "Kde nás najdete",
+      contact: "Kontakt",
+    },
   },
 
   footer: {
@@ -88,7 +103,7 @@ export default {
     contact: "Kontakt",
   },
 
-  // v3.7: the Factory easter eggs (src/site/signature.ts). "Powered by mytko factory" is a brand name, not translated.
+  // v3.7: the Factory easter eggs (src/site/signature.ts). "Powered by Mytko Factory" is a brand name, not translated.
   signature: {
     comment: "Web {siteName} vznikl v Mytko Website Factory: {url}",
     commentHint: "Zajímá vás, jak funguje? Otevřete konzoli prohlížeče (F12), něco tam na vás čeká.",

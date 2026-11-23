@@ -74,6 +74,21 @@ export default {
     features: "Özellikler",
     components: "Bileşenler",
     contact: "İletişim",
+    sections: {
+      about: "Hakkımızda",
+      services: "Hizmetler",
+      features: "Avantajlar",
+      pricing: "Fiyatlar",
+      process: "Nasıl çalışıyoruz",
+      team: "Ekip",
+      testimonials: "Yorumlar",
+      gallery: "Galeri",
+      faq: "SSS",
+      schedule: "Program",
+      posts: "Blog",
+      "hours-location": "Konum",
+      contact: "İletişim",
+    },
   },
 
   footer: {
@@ -88,7 +103,7 @@ export default {
     contact: "İletişim",
   },
 
-  // v3.7: the Factory easter eggs (src/site/signature.ts). "Powered by mytko factory" is a brand name, not translated.
+  // v3.7: the Factory easter eggs (src/site/signature.ts). "Powered by Mytko Factory" is a brand name, not translated.
   signature: {
     comment: "{siteName} web sitesi Mytko Website Factory ile oluşturuldu: {url}",
     commentHint: "Nasıl çalıştığını merak mı ediyorsunuz? Tarayıcı konsolunu açın (F12), orada sizi bir şey bekliyor.",
