@@ -7,6 +7,7 @@ import { ENGINE_RANGE_PATTERN, ENGINE_VERSION, satisfiesEngine } from "../engine
 import { ARCHETYPE_IDS } from "../../design-system/archetypes";
 import { fontPairs, type FontPairId } from "../../design-system/fonts/library";
 import { OVERRIDABLE_KEYS } from "../../design-system/theme";
+import { BUTTON_HOVER_EFFECTS, BUTTON_KINDS, BUTTON_RADII, BUTTON_RANGES, BUTTON_SHADOWS, BUTTON_WEIGHTS, TRANSPARENT } from "../../design-system/theme/buttons";
 import { layoutTypes, sectionTypes } from "../registry";
 import { Action, DAYS, field, HttpsUrl, Id, imageSlot, Slug, text, Time, type ImageSlot } from "./fields";
 import { ICON_NAMES } from "../../design-system/icons/library";
@@ -246,6 +247,36 @@ const Hex = z.string().regex(/^#[0-9a-fA-F]{6}$/, "Hex color, e.g. #e4572e.").tr
 
 const ColorOverrides = z.partialRecord(z.enum(OVERRIDABLE_KEYS), Hex);
 
+/** v3.11: a number of a button property, within its range and on its step (BUTTON_RANGES). */
+const stepped = ({ min, max, step, unit }: { min: number; max: number; step: number; unit: string }, what: string) =>
+  z
+    .number()
+    .min(min)
+    .max(max)
+    .refine((value) => Math.abs(value / step - Math.round(value / step)) < 1e-6, `${what}: a multiple of ${step}${unit}.`)
+    .describe(`${what} in ${unit} (${min} to ${max}, step ${step}).`);
+const ButtonColor = z.union([Hex, z.literal(TRANSPARENT)]);
+const ButtonColors = z.strictObject({
+  text: Hex.optional().describe("The label."),
+  background: ButtonColor.optional().describe('Hex, or "transparent".'),
+  border: ButtonColor.optional().describe("Hex, or \"transparent\"; a primary button's follows its background."),
+});
+const ButtonStyleSchema = ButtonColors.extend({
+  hover: ButtonColors.optional().describe("On hover; colors not set follow the resting ones (the background a shade darker)."),
+  paddingX: stepped(BUTTON_RANGES.paddingX, "Side padding of the usual size (small and large buttons scale)").optional(),
+  paddingY: stepped(BUTTON_RANGES.paddingY, "Top and bottom padding, added inside the minimum height").optional(),
+  borderWidth: stepped(BUTTON_RANGES.borderWidth, "Border width").optional(),
+  radius: z.enum(BUTTON_RADII).optional().describe('Corners in rem, or "pill".'),
+  weight: z.union(BUTTON_WEIGHTS.map((weight) => z.literal(weight)) as [z.ZodLiteral<400>, z.ZodLiteral<500>, z.ZodLiteral<600>, z.ZodLiteral<700>]).optional(),
+  uppercase: z.boolean().optional(),
+  letterSpacing: stepped(BUTTON_RANGES.letterSpacing, "Letter spacing").optional(),
+  shadow: z.enum(BUTTON_SHADOWS).optional(),
+  hoverEffect: z.enum(BUTTON_HOVER_EFFECTS).optional().describe("\"lift\" is the theme's own."),
+});
+const ButtonStylesSchema = z
+  .strictObject(Object.fromEntries(BUTTON_KINDS.map((kind) => [kind, ButtonStyleSchema.optional()])) as Record<(typeof BUTTON_KINDS)[number], z.ZodOptional<typeof ButtonStyleSchema>>)
+  .describe("v3.11: the site's own look of each kind of button, for every button of that kind. Contrast problems are warnings, not errors.");
+
 const ThemeSchema = z.strictObject({
   archetype: z.enum(ARCHETYPE_IDS).default("default").describe("Style preset: colors, fonts, shapes, spacing, section tones."),
   colorScheme: z.enum(["light", "dark", "auto"]).optional().describe("Defaults to the archetype's scheme."),
@@ -258,6 +289,7 @@ const ThemeSchema = z.strictObject({
     .strictObject({ light: ColorOverrides.optional(), dark: ColorOverrides.optional() })
     .optional()
     .describe("Exceptional manual color tokens; must pass WCAG AA as they are (no auto-adjust)."),
+  buttons: ButtonStylesSchema.optional(),
 });
 
 const NavigationSchema = z.strictObject({

@@ -47,7 +47,30 @@
   },
   "theme": {
     "archetype": "premium-dark",
-    "accent": "#d4a537"
+    "accent": "#d4a537",
+    "buttons": {
+      "primary": {
+        "background": "#d4a537",
+        "text": "#1c1917",
+        "radius": "0",
+        "paddingX": 2.5,
+        "uppercase": true,
+        "letterSpacing": 0.12,
+        "weight": 700,
+        "shadow": "strong",
+        "hoverEffect": "glow"
+      },
+      "secondary": {
+        "background": "transparent",
+        "border": "#f5e6c8",
+        "text": "#f5e6c8",
+        "borderWidth": 2
+      },
+      "ghost": {
+        "uppercase": true,
+        "letterSpacing": 0.08
+      }
+    }
   },
   "layout": {
     "navbar": {

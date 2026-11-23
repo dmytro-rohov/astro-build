@@ -8,6 +8,7 @@ import { fontPairs, type FontPairId } from "../fonts/library";
 import { semanticColors as v2Light, semanticColorsDark as v2Dark } from "../tokens/semantic/color-semantic";
 import { adjustForContrast, bestText, contrast, mix, withLightness, hexToOklch } from "./color";
 import { neutralScale } from "./neutrals";
+import type { ButtonStyles } from "./buttons";
 
 export type SemanticPalette = {
   text: { primary: string; secondary: string; muted: string; inverse: string };
@@ -33,6 +34,8 @@ export type ThemeInput = {
   accent?: string;
   fontPair?: FontPairId;
   overrides?: { light?: Partial<Record<OverrideKey, string>>; dark?: Partial<Record<OverrideKey, string>> };
+  /** v3.11: the site's own button styles (./buttons.ts); not part of the palette. */
+  buttons?: ButtonStyles;
 };
 
 export type ContrastAdjustment = { scheme: "light" | "dark"; token: string; from: string; to: string };

@@ -51,10 +51,12 @@
     padding-inline: var(--spacing-xl) var(--spacing-xs);
     font-family: var(--font-family-base);
     font-size: clamp(var(--font-size-base), 1.5vw, var(--font-size-xl));
-    letter-spacing: 0;
-    text-transform: uppercase;
+
+    // v3.11: uppercase pill, until the site sets these for its main button (theme.buttons).
+    letter-spacing: var(--button-primary-tracking, 0);
+    text-transform: var(--button-primary-case, uppercase);
     vertical-align: 0.12em;
-    border-radius: var(--radius-pill);
+    border-radius: var(--button-primary-radius, var(--radius-pill));
   }
 
   .s-hero-bold__arrow {
@@ -62,8 +64,10 @@
     place-items: center;
     width: 2.5em;
     height: 2.5em;
-    color: var(--color-action-primary);
-    background: var(--color-action-primary-text);
+
+    // The button's own colours swapped (v3.11: also the site's button style).
+    color: var(--button-current-bg);
+    background: var(--button-current-text);
     border-radius: 50%;
   }
 

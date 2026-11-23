@@ -7,6 +7,7 @@
  * - src/design-system/theme.generated.json — resolved theme (for build reports)
  *
  * Colors come from the archetype and site.json theme; failing contrast stops here.
+ * v3.11: the site's button styles (theme.buttons) as --button-<kind>-<name> (theme/buttons.ts).
  * Usage: SITE_DIR=sites/_demo tsx src/design-system/utils/cssVars.ts
  */
 import fs from "fs";
@@ -14,6 +15,7 @@ import path from "path";
 import { loadSite, resolveSiteDir, SiteValidationError } from "../../site/loader";
 import { fontPairs, fontStack } from "../fonts/library";
 import { accentPalette, resolveTheme, type SemanticPalette } from "../theme";
+import { BUTTON_KINDS, buttonColorVars, buttonVars, vanishingKinds } from "../theme/buttons";
 import { relativeLuminance } from "../theme/color";
 import { shapeTokens } from "../theme/shape";
 import { tokens } from "../tokens/index";
@@ -94,6 +96,24 @@ const flatTokens = { ...flatten(allTokens as unknown as TokenObject), ...logoVar
 const colorShape = Object.fromEntries(Object.entries(shape).filter(([, value]) => String(value).includes("var(--color-")));
 const colorVars = (palette: SemanticPalette) => ({ ...flatten({ color: palette } as unknown as TokenObject), ...logoVars(palette), ...colorShape });
 
+// v3.11: the site's button styles (theme.buttons) on :root, only what it sets. A part of the page with
+// its own palette (inverse and accent sections, bars, footers, the other color scheme) re-declares
+// each kind's colors: the site's where they stay visible there, "initial" where they would vanish
+// (the theme's buttons adapted to that part stay). The site's own scheme needs nothing.
+const buttons = site.theme.buttons;
+const ownButtonVars = buttonVars(buttons);
+const buttonScope = (palette: SemanticPalette): Record<string, TokenValue> => {
+  const vanishing = vanishingKinds(buttons, palette);
+  return Object.fromEntries(
+    BUTTON_KINDS.flatMap((kind) =>
+      buttonColorVars(kind)
+        .filter((name) => name in ownButtonVars)
+        .map((name) => [name, vanishing.includes(kind) ? "initial" : ownButtonVars[name]]),
+    ),
+  );
+};
+const scoped = (palette: SemanticPalette) => ({ ...colorVars(palette), ...buttonScope(palette) });
+
 const lines = (values: Record<string, TokenValue>, indent = "  ") =>
   Object.entries(values)
     .map(([key, value]) => `${indent}--${key}: ${value};`)
@@ -108,11 +128,12 @@ const css = `/* AUTO-GENERATED FILE – DO NOT EDIT */
 :root {
   color-scheme: light;
 ${lines(flatTokens)}
+${lines(ownButtonVars)}
 }
 
 :root .section--tone-inverse {
   color-scheme: dark;
-${lines(colorVars(theme.dark))}
+${lines(scoped(theme.dark))}
 }
 
 /* Footer (v3.5): tone "brand" and its brand surfaces (cta band, cards' contact card) get the accent palette like accent sections. */
@@ -120,7 +141,7 @@ ${lines(colorVars(theme.dark))}
 :root .site-footer--tone-brand,
 :root .site-footer__brand-surface,
 :root .site-header--brand-bar {
-${lines(colorVars(accentPalette(theme.light)))}
+${lines(scoped(accentPalette(theme.light)))}
 }
 
 :root[data-theme="dark"] {
@@ -132,30 +153,30 @@ ${lines(colorVars(theme.dark))}
 :root[data-theme="dark"] .site-footer--tone-brand,
 :root[data-theme="dark"] .site-footer__brand-surface,
 :root[data-theme="dark"] .site-header--brand-bar {
-${lines(colorVars(accentPalette(theme.dark)))}
+${lines(scoped(accentPalette(theme.dark)))}
 }
 
 :root[data-theme="dark"] .section--tone-inverse {
   color-scheme: light;
-${lines(colorVars(theme.light))}
+${lines(scoped(theme.light))}
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
     color-scheme: dark;
-${lines(colorVars(theme.dark), "    ")}
+${lines(scoped(theme.dark), "    ")}
   }
 
   :root:not([data-theme]) .section--tone-inverse {
     color-scheme: light;
-${lines(colorVars(theme.light), "    ")}
+${lines(scoped(theme.light), "    ")}
   }
 
   :root:not([data-theme]) .section--tone-accent,
   :root:not([data-theme]) .site-footer--tone-brand,
   :root:not([data-theme]) .site-footer__brand-surface,
   :root:not([data-theme]) .site-header--brand-bar {
-${lines(colorVars(accentPalette(theme.dark)), "    ")}
+${lines(scoped(accentPalette(theme.dark)), "    ")}
   }
 }
 
@@ -167,13 +188,13 @@ ${lines(colorVars(accentPalette(theme.dark)), "    ")}
 :root .site-footer__band--image,
 :root .site-header--dark-bar {
   color-scheme: dark;
-${lines(colorVars(theme.dark))}
+${lines(scoped(theme.dark))}
 }
 
 /* Light footers: the light palette, also in dark sites. */
 :root .site-footer--tone-light {
   color-scheme: light;
-${lines(colorVars(theme.light))}
+${lines(scoped(theme.light))}
 }
 `;
 

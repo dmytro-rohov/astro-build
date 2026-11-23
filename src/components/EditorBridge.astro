@@ -3,7 +3,9 @@
  * v3.6: editor preview bridge, only in preview builds for the factory editor (PREVIEW_EDITOR_ORIGIN,
  * "virtual:editor-bridge"; production builds do not import it). In the editor's iframe the page
  * lists its sections, follows the panel (section order and visibility without a reload, the section
- * in focus) and reports clicks on sections. Messages go to the editor's origin only, and only the
+ * in focus) and reports clicks on sections. v3.11: a click on a button reports its kind (and does
+ * nothing else), the editor highlights a kind and shows a button style live (theme.buttons, the same
+ * custom properties the build makes). Messages go to the editor's origin only, and only the
  * editor (the parent window, its origin) is listened to. Opened outside a frame, the page works as
  * usual. Protocol: README "Editor Preview Bridge".
  */
@@ -20,11 +22,70 @@ const { origin } = Astro.props;
 <span hidden data-editor-origin={origin}></span>
 
 <script>
-  import { parseEditorMessage, sectionOrder, type BridgeSection } from "@/site/editor-bridge";
+  import { buttonKindOf, parseEditorMessage, sectionOrder, type BridgeSection } from "@/site/editor-bridge";
+  import { BUTTON_KINDS, buttonColorVars, buttonVars, vanishingKinds, type ButtonPalette, type ButtonStyles } from "@/design-system/theme/buttons";
 
   const FOCUS = "is-editor-focus";
   // The page's sections (SectionShell) in their current order.
   const sections = () => [...document.querySelectorAll<HTMLElement>("main > [data-section-type]")];
+
+  // The parts of the page with their own palette (design-system/utils/cssVars.ts): there a kind's
+  // colors stay only where they would not vanish, as in the build.
+  const SCOPES = [
+    ".section--tone-inverse", ".section--tone-accent", ".site-footer--tone-brand", ".site-footer__brand-surface",
+    ".site-header--brand-bar", ".section.s-hero--cover-image", ".lightbox", ".site-footer--tone-dark",
+    ".site-footer__band--image", ".site-header--dark-bar", ".site-footer--tone-light",
+  ].join(", ");
+  const PROPERTIES = ["padding-x-sm", "padding-x-md", "padding-x-lg", "padding-y", "border-width", "radius", "weight", "case", "tracking", "shadow", "lift", "glow"];
+  const ALL_VARS = BUTTON_KINDS.flatMap((kind) => [...buttonColorVars(kind), ...PROPERTIES.map((name) => `button-${kind}-${name}`)]);
+  const HEX = /^#[0-9a-f]{6}$/i;
+
+  /** The palette an element's buttons are drawn with (its color tokens), or undefined when unreadable. */
+  function paletteOf(element: Element): ButtonPalette | undefined {
+    const style = getComputedStyle(element);
+    const token = (name: string) => style.getPropertyValue(`--color-${name}`).trim();
+    const palette = {
+      background: { primary: token("background-primary"), muted: token("background-muted") },
+      border: { default: token("border-default") },
+      action: {
+        primary: token("action-primary"), primaryHover: token("action-primary-hover"), primaryText: token("action-primary-text"),
+        secondary: token("action-secondary"), secondaryHover: token("action-secondary-hover"), secondaryText: token("action-secondary-text"),
+      },
+    };
+    const values = [palette.background.primary, palette.background.muted, palette.border.default, ...Object.values(palette.action)];
+    return values.every((value) => HEX.test(value)) ? palette : undefined;
+  }
+
+  /**
+   * A button style shown live: every button custom property set inline on the page (what the style
+   * leaves out as "initial", so the built style does not show through) and, in each part with its own
+   * palette, the kinds' colors kept or reset like the build does. null: back to the built style.
+   */
+  function showButtonStyles(styles: ButtonStyles | null) {
+    const root = document.documentElement;
+    const scopes = [...document.querySelectorAll<HTMLElement>(SCOPES)];
+    for (const element of [root, ...scopes]) for (const name of ALL_VARS) element.style.removeProperty(`--${name}`);
+    if (!styles) return;
+
+    const vars = buttonVars(styles);
+    for (const name of ALL_VARS) root.style.setProperty(`--${name}`, vars[name] ?? "initial");
+
+    // An "auto" site seen in the dark scheme: the page itself is the other scheme's palette.
+    const foreignRoot = !root.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches;
+    for (const element of foreignRoot ? [root, ...scopes] : scopes) {
+      const palette = paletteOf(element);
+      if (!palette) continue;
+      const vanishing = vanishingKinds(styles, palette);
+      for (const kind of BUTTON_KINDS) {
+        for (const name of buttonColorVars(kind)) element.style.setProperty(`--${name}`, vars[name] && !vanishing.includes(kind) ? vars[name] : "initial");
+      }
+    }
+  }
+
+  function highlightButtons(kind: string | null) {
+    if (kind) document.documentElement.dataset.editorButtons = kind;
+    else delete document.documentElement.dataset.editorButtons;
+  }
 
   function start(origin: string) {
     const post = (message: object) => window.parent.postMessage(message, origin);
@@ -33,6 +94,8 @@ const { origin } = Astro.props;
     post({
       type: "factory:ready",
       page: location.pathname,
+      // v3.11: what this engine's bridge can do beyond sections.
+      features: ["buttons"],
       sections: sections().map((section): BridgeSection => ({
         id: section.id,
         type: section.dataset.sectionType ?? "",
@@ -61,13 +124,30 @@ const { origin } = Astro.props;
         const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         focused?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
       }
+
+      if (message?.type === "factory:button-style") {
+        showButtonStyles(message.styles);
+        post({ type: "factory:button-style-applied" });
+      }
+
+      if (message?.type === "factory:focus-buttons") highlightButtons(message.kind);
     });
 
     // Links do not leave the page (other pages, tel:, mailto:, new tabs): the panel is the place to
     // edit. Links within the page, buttons, forms and widgets work as usual; any click inside a
-    // section selects it.
+    // section selects it. v3.11: a button the site styles (a kind of theme.buttons) does nothing on a
+    // click, not even its form or its frame: its kind is highlighted and reported instead.
     document.addEventListener("click", (event) => {
       const target = event.target instanceof Element ? event.target : undefined;
+      const kind = buttonKindOf(target);
+      if (kind) {
+        event.preventDefault();
+        event.stopPropagation();
+        highlightButtons(kind);
+        post({ type: "factory:button", kind, section: target?.closest<HTMLElement>("main > [data-section-type]")?.id ?? null });
+        return;
+      }
+
       const link = target?.closest("a[href]");
       const withinPage = link instanceof HTMLAnchorElement && link.hash && link.origin === location.origin && link.pathname === location.pathname && !link.target;
       if (link && !withinPage) event.preventDefault();

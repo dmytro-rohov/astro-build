@@ -31,9 +31,13 @@
 
   // Everything in the capsule is round too, the button included (also on square-button archetypes).
   .site-header--floating .navbar__link,
-  .site-header--floating .navbar__toggle,
-  .site-header--floating .navbar__cta {
+  .site-header--floating .navbar__toggle {
     border-radius: var(--radius-pill);
+  }
+
+  // A pill, until the site sets the main button's corners (v3.11 theme.buttons).
+  .site-header--floating .navbar__cta {
+    border-radius: var(--button-primary-radius, var(--radius-pill));
   }
 
   @include mq(md) {
