@@ -13,4 +13,18 @@
     outline: 3px solid var(--color-focus-ring);
     outline-offset: -3px;
   }
+
+  // v3.11: the buttons of the kind open in the editor (html[data-editor-buttons]).
+  [data-editor-buttons="primary"] .button--primary,
+  [data-editor-buttons="secondary"] .button--secondary,
+  [data-editor-buttons="ghost"] .button--ghost {
+    outline: 2px dashed var(--color-focus-ring);
+    outline-offset: 3px;
+  }
+
+  // The keyboard's focus still shows on a highlighted button.
+  [data-editor-buttons] .button:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
 }

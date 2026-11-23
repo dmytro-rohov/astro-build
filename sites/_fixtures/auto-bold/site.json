@@ -52,7 +52,25 @@
   },
   "theme": {
     "archetype": "bold",
-    "accent": "#ca8a04"
+    "accent": "#ca8a04",
+    "buttons": {
+      "primary": {
+        "background": "#111111",
+        "text": "#ffffff",
+        "radius": "pill",
+        "paddingX": 2,
+        "paddingY": 0.25,
+        "weight": 600
+      },
+      "secondary": {
+        "radius": "pill",
+        "shadow": "soft"
+      },
+      "ghost": {
+        "text": "#111111",
+        "hoverEffect": "none"
+      }
+    }
   },
   "layout": {
     "navbar": {

@@ -61,5 +61,10 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+
+    // No lift on hover either (it would jump without its transition).
+    .button:hover {
+      transform: none;
+    }
   }
 }

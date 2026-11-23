@@ -56,9 +56,11 @@
     place-items: center;
     width: 2.5rem;
     height: 2.5rem;
-    color: var(--color-action-primary);
-    background: var(--color-action-primary-text);
-    border-radius: var(--radius-button);
+
+    // v3.11: the button's colours and corners as it shows them (also the site's button style).
+    color: var(--button-current-bg);
+    background: var(--button-current-text);
+    border-radius: var(--button-current-radius);
   }
 
   .s-cta-copy__knob svg {

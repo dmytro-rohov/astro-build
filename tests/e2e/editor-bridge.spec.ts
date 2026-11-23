@@ -129,8 +129,8 @@ test.describe("editor bridge", () => {
     await expect(preview.locator("[data-cookie-consent]")).toBeHidden();
     // A link to another page in the header: no navigation, nothing selected (not a section).
     await preview.locator('header a[href="/contact"]:visible').first().click();
-    // A link to another page inside a section: no navigation, the section is selected.
-    const link = preview.locator('main > [data-section-type] a[href="/contact"]').first();
+    // A link to another page inside a section (not a button, v3.11): no navigation, the section is selected.
+    const link = preview.locator('main > [data-section-type] a[href^="/blog/"]:not(.button)').first();
     const linkSection = await link.evaluate((element) => element.closest("[data-section-type]")!.id);
     await link.click();
     // Plain text inside a section.
@@ -143,10 +143,46 @@ test.describe("editor bridge", () => {
     expect(preview.url()).toBe(`${baseURL}/`);
     expect(await received(page, "factory:ready"), "no navigation").toHaveLength(1);
 
-    // A link within the page works as usual (and selects its section too).
-    await preview.locator('main > [data-section-type] a[href^="/#"]').first().click();
+    // A link within the page works as usual (the header's: it scrolls, selects nothing).
+    await preview.locator('header a[href^="/#"]:visible').first().click();
     await expect.poll(() => preview.url()).toMatch(/\/#.+$/);
-    await expect.poll(async () => (await received(page, "factory:select")).length).toBe(3);
+    expect(await received(page, "factory:select")).toHaveLength(2);
+  });
+
+  test("buttons (v3.11): a click reports the kind and does nothing else, a kind is highlighted, a style shows live", async ({ page, baseURL }) => {
+    await preview.locator("[data-consent-reject]").click();
+    expect(await received(page, "factory:ready").then(([ready]) => ready.data.features)).toEqual(["buttons"]);
+    const cta = preview.locator('main > [data-section-type] a.button--primary[href="/contact"]').first();
+    const ctaSection = await cta.evaluate((element) => element.closest("[data-section-type]")!.id);
+    await cta.click();
+    await preview.locator("main a.button--ghost").first().click();
+
+    await expect.poll(async () => (await received(page, "factory:button")).map((message) => message.data)).toEqual([
+      { type: "factory:button", kind: "primary", section: ctaSection },
+      { type: "factory:button", kind: "ghost", section: expect.any(String) },
+    ]);
+    expect(await received(page, "factory:select"), "a button selects no section").toHaveLength(0);
+    expect(preview.url(), "a button does not navigate").toBe(`${baseURL}/`);
+    await expect(preview.locator("html")).toHaveAttribute("data-editor-buttons", "ghost");
+
+    await send(page, { type: "factory:focus-buttons", kind: "secondary" }, siteOrigin);
+    await expect(preview.locator("html")).toHaveAttribute("data-editor-buttons", "secondary");
+    await send(page, { type: "factory:focus-buttons", kind: null }, siteOrigin);
+    await expect(preview.locator("html")).not.toHaveAttribute("data-editor-buttons");
+
+    // The colors a button shows (custom properties, not the transition of its background).
+    const shown = () => cta.evaluate((element) => getComputedStyle(element).getPropertyValue("--button-current-bg").trim());
+    await send(page, { type: "factory:button-style", styles: { primary: { background: "#123456", radius: "pill" } } }, siteOrigin);
+    await expect.poll(async () => (await received(page, "factory:button-style-applied")).length).toBe(1);
+    await expect.poll(shown).toBe("#123456");
+    // Text that would be CSS never reaches the page.
+    await send(page, { type: "factory:button-style", styles: { primary: { background: "red;} body { display: none" } } }, siteOrigin);
+    await expect.poll(async () => (await received(page, "factory:button-style-applied")).length).toBe(2);
+    expect(await preview.locator("body").evaluate((body) => getComputedStyle(body).display)).not.toBe("none");
+    // null: back to the built style.
+    await send(page, { type: "factory:button-style", styles: null }, siteOrigin);
+    await expect.poll(async () => (await received(page, "factory:button-style-applied")).length).toBe(3);
+    await expect.poll(shown).not.toBe("#123456");
   });
 
   test("messages from another origin are ignored", async ({ page }) => {

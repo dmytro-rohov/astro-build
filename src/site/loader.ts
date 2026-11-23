@@ -17,6 +17,7 @@ import { BlogSchema } from "./schema/blog";
 import { findImageSlots, valuesAt } from "./schema/slots";
 import { fontFamilies, fontPairs, pairScripts, scriptsForLanguage } from "../design-system/fonts/library";
 import { checkContrast, resolveTheme } from "../design-system/theme";
+import { BUTTON_KINDS, buttonIssues, type ButtonIssue } from "../design-system/theme/buttons";
 
 export const DEFAULT_SITE_DIR = "sites/_demo";
 
@@ -249,6 +250,9 @@ export function loadSite(dir = resolveSiteDir()): LoadedSite {
     ...(site.meta.url || process.env.SITE_URL ? [] : ["meta.url: not set — canonical links and the sitemap use http://localhost:4321."]),
     ...(site.blog && !site.blog.posts.length ? ['blog.posts: the blog has no posts yet; its lists show "coming soon".'] : []),
     ...(site.layout.article && !site.blog ? ["layout.article: the site has no blog, so the article layout is not used."] : []),
+    // v3.11: the site's button styles are its own choice: weak contrast is a warning (in the scheme
+    // the site shows first); where a kind would vanish, the theme's adapted buttons stay (cssVars.ts).
+    ...BUTTON_KINDS.flatMap((kind) => buttonIssues(kind, site.theme.buttons?.[kind], theme[theme.colorScheme === "dark" ? "dark" : "light"]).map(buttonWarning)),
     // Only the schemes the site can show (both for "auto").
     ...theme.adjustments
       .filter((adjustment) => theme.colorScheme === "auto" || adjustment.scheme === theme.colorScheme)
@@ -280,4 +284,10 @@ export function loadSite(dir = resolveSiteDir()): LoadedSite {
   ];
 
   return { dir, site, assets, warnings };
+}
+
+const BUTTON_CHECKS: Record<ButtonIssue["check"], string> = { text: "the label", hoverText: "the label on hover", shape: "the button against the page" };
+
+function buttonWarning(issue: ButtonIssue): string {
+  return `theme.buttons.${issue.kind}: ${BUTTON_CHECKS[issue.check]} (${issue.foreground} on ${issue.background}) has contrast ${issue.ratio}:1, WCAG AA asks for ${issue.required}:1.`;
 }

@@ -267,6 +267,55 @@ local QA tool (replaces the v2 `/playground` page) and is never deployed.
 - **Inverse sections** use the opposite scheme's palette, so everything inside keeps its contrast.
 - `npm run build:system` generates tokens and fonts for `SITE_DIR`; the output is not committed.
 
+#### Button styles (`theme.buttons`, since 3.11)
+
+A site may give each kind of button its own look, for every button of that kind: `primary` (the
+main action), `secondary` (a quieter button) and `ghost` (a button that looks like a link; `danger`
+is not styled by sites). Every property is optional; what is not set stays the theme's design.
+
+```json
+"theme": {
+  "archetype": "warm",
+  "accent": "#c2410c",
+  "buttons": {
+    "primary": { "background": "#123456", "text": "#ffffff", "radius": "pill", "paddingX": 1.75, "uppercase": true, "letterSpacing": 0.05, "hoverEffect": "glow" },
+    "secondary": { "background": "transparent", "border": "#123456", "text": "#123456", "borderWidth": 2 },
+    "ghost": { "text": "#123456" }
+  }
+}
+```
+
+| Property | Values |
+|---|---|
+| `text`, `background`, `border` | `#rrggbb`; `background` and `border` also `"transparent"` |
+| `hover.text`, `hover.background`, `hover.border` | the same; not set: the resting color (the background a shade darker; a primary border follows its background) |
+| `paddingX` | 0.5 to 2.5 rem, step 0.125: the usual size; small and large buttons scale (×2/3, ×4/3) |
+| `paddingY` | 0 to 1.25 rem, step 0.125, added inside the minimum height (a button never gets smaller) |
+| `borderWidth` | 0 to 3 px |
+| `radius` | `"0"`, `"0.25"`, `"0.5"`, `"0.75"`, `"1"`, `"1.5"` (rem) or `"pill"` |
+| `weight` | 400, 500, 600, 700 (the fonts are variable) |
+| `uppercase`, `letterSpacing` | true/false; 0 to 0.12 em, step 0.01 |
+| `shadow` | `"none"`, `"soft"`, `"strong"` |
+| `hoverEffect` | `"lift"` (the theme's own), `"glow"`, `"none"`; no lift with reduced motion |
+
+- The properties become CSS custom properties `--button-<kind>-<name>`, only for what the site sets
+  (`design-system/theme/buttons.ts`); `styles/components/_button.scss` reads them with the theme's
+  tokens as the fallback. A site without `theme.buttons` looks exactly as before.
+- **Contrast is a warning, not an error** (the build goes on): the label against its background, on
+  hover too (4.5:1), and the button against the page (3:1, by its background or its border). Only
+  colors the site sets are judged.
+- **Parts of the page with their own palette** (inverse and accent sections, the brand and dark bars,
+  footers, the cover hero, the other color scheme): a kind keeps the site's colors there unless they
+  would vanish (the same checks against that palette); then the theme's button adapted to that part
+  stays. Its shape, text and effects still follow the site.
+- Section styles follow the site's buttons: the CTA's knob and the bold hero's arrow take the button's
+  colors (`--button-current-*`), the floating navbar's and the bold hero's pills keep their pill until
+  the site sets a radius. Exceptions: the brand-bar navbar button keeps its outlined colors, and the
+  narrow pricing table keeps its own side padding.
+- `npm run catalog` writes `dist-catalog/button-styles.mjs` (the same code bundled into one plain ES
+  module) for an editor: the properties and ranges, `buttonVars`, `buttonIssues`, `fixContrast` and
+  `buttonDefaults(theme)` (each kind's colors in both schemes, the page, the theme's radius).
+
 ### Assets and images
 
 Images are referenced as `"asset:<id>"` and described in `assets/assets.json`:
@@ -1000,6 +1049,13 @@ window with the editor's origin. The editor sends its messages after `factory:re
 | preview → editor | `{ type: "factory:layout-applied" }` | after every layout message |
 | editor → preview | `{ type: "factory:focus", id }` | smooth scroll to the section (instant with reduced motion) and an outline (`.is-editor-focus`) until the next focus; `id: null` clears it |
 | preview → editor | `{ type: "factory:select", id }` | the visitor clicked inside a section |
+| preview → editor | `{ type: "factory:button", kind, section }` | v3.11: a click on a button the site styles (`primary`, `secondary`, `ghost`): nothing else happens (no link, no form, no frame); its kind is highlighted; `section` is the section's id or `null` (header, footer) |
+| editor → preview | `{ type: "factory:button-style", styles }` | v3.11: a `theme.buttons` value shown live, without a rebuild: checked value by value (anything else dropped) and set as the same custom properties the build makes, with the same rule for parts with their own palette; `styles: null` goes back to the built style |
+| preview → editor | `{ type: "factory:button-style-applied" }` | after every style message |
+| editor → preview | `{ type: "factory:focus-buttons", kind }` | v3.11: a dashed outline on every button of the kind; `kind: null` clears it |
+
+`factory:ready` also carries `features: ["buttons"]` since 3.11 (an editor offers button styles only
+then).
 
 In the editor, links do not leave the page: a click on a link to another page, `tel:`, `mailto:` or
 a new tab only selects its section (the panel is the place to edit; header and footer links do
@@ -1092,8 +1148,14 @@ Factory" lockup is a brand name and stays the same everywhere.
 
 ## Version
 
-Current version: **v3.10** (`3.10.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
+Current version: **v3.11** (`3.11.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
 starter is kept on the `v2` branch / tag `v2.0.0`.
+
+v3.11: the site's own button styles (`theme.buttons`: colors with hover, padding, border, radius,
+weight, uppercase and letter spacing, shadow, hover effect, per kind of button), contrast as
+warnings, the theme's buttons kept where the site's would vanish ([Button styles](#button-styles-themebuttons-since-311));
+the editor bridge reports clicks on buttons and shows a button style live; the catalog's
+`button-styles.mjs`. Sites with button styles should ask for `"engine": "^3.11.0"`.
 
 v3.10: a one-page site's menu lists its sections as anchors (it showed only the home page), with a
 section-level `nav` (`show`, `label`) and the section words in all 12 languages; anchor targets clear

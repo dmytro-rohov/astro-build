@@ -35,7 +35,8 @@
     font-weight: var(--font-weight-semibold);
   }
 
-  // Outlined button in the ink colour, filled on hover (ink with brand-coloured text).
+  // Outlined button in the ink colour, filled on hover (ink with brand-coloured text). v3.11: the
+  // site's button style (theme.buttons) gives it its shape, text and effects, not its colours.
   .site-header--brand-bar .navbar__cta {
     color: var(--color-text-primary);
     background: transparent;

@@ -1,19 +1,53 @@
 @use "../abstracts/mixins" as *;
 
+// v3.11: every part of a button's look reads a custom property of its kind, --button-<kind>-<name>
+// (site.json theme.buttons through design-system/theme/buttons.ts, generated only for what the site
+// sets), with the theme's design as the fallback. Each kind class maps its properties to
+// --button-kind-* and gives its defaults in --button-default-*; the base rule uses them. The
+// fallbacks resolve on the button itself, so inverse and accent sections keep their own palette.
+// --button-current-* are what a button shows, for what is drawn inside it (the CTA's knob, the
+// bold hero's arrow).
+
+$button-properties: (
+  text, bg, border, hover-text, hover-bg, hover-border, padding-x-sm, padding-x-md, padding-x-lg,
+  padding-y, border-width, radius, weight, case, tracking, shadow, lift, glow, glow-color
+);
+
+@mixin button-kind($kind) {
+  @each $name in $button-properties {
+    --button-kind-#{$name}: var(--button-#{$kind}-#{$name});
+  }
+}
+
 @layer components {
   .button {
+    --button-current-text: var(--button-kind-text, var(--button-default-text));
+    --button-current-bg: var(--button-kind-bg, var(--button-default-bg));
+    --button-current-border: var(--button-kind-border, var(--button-default-border));
+    --button-current-hover-text: var(--button-kind-hover-text, var(--button-current-text));
+    --button-current-hover-bg: var(--button-kind-hover-bg, var(--button-default-hover-bg));
+    --button-current-hover-border: var(--button-kind-hover-border, var(--button-default-hover-border));
+    --button-current-radius: var(--button-kind-radius, var(--radius-button));
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--spacing-sm);
-    border: 1px solid transparent;
-    border-radius: var(--radius-button);
+    padding-block: var(--button-kind-padding-y, 0);
+    padding-inline: var(--button-size-padding-x, var(--button-default-padding-x));
+    color: var(--button-current-text);
+    background: var(--button-current-bg);
+    border: var(--button-kind-border-width, 1px) solid var(--button-current-border);
+    border-radius: var(--button-current-radius);
     font-family: inherit;
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--button-kind-weight, var(--font-weight-semibold));
     max-width: 100%;
     line-height: var(--line-height-snug);
     text-align: center;
     text-decoration: none;
+    text-transform: var(--button-kind-case, none);
+    letter-spacing: var(--button-kind-tracking, normal);
+    box-shadow: var(--button-kind-shadow, 0 0 #0000), 0 0 0 0 transparent;
 
     // Long labels wrap (balanced) instead of overflowing on phones.
     text-wrap: balance;
@@ -28,73 +62,90 @@
       box-shadow var(--motion-duration-fast) var(--motion-easing-standard);
   }
 
+  // Sizes: the minimum height stays (padding set by the site is added inside it), the side padding
+  // set by the site is the usual size's and scales for small and large buttons (buttons.ts).
   .button--sm {
+    --button-size-padding-x: var(--button-kind-padding-x-sm);
+    --button-default-padding-x: var(--spacing-md);
+
     min-height: 2.25rem;
-    padding-inline: var(--spacing-md);
     font-size: var(--font-size-sm);
   }
 
   .button--md {
+    --button-size-padding-x: var(--button-kind-padding-x-md);
+    --button-default-padding-x: var(--spacing-lg);
+
     min-height: 2.75rem;
-    padding-inline: var(--spacing-lg);
     font-size: var(--font-size-sm);
   }
 
   .button--lg {
+    --button-size-padding-x: var(--button-kind-padding-x-lg);
+    --button-default-padding-x: var(--spacing-xl);
+
     min-height: 3.25rem;
-    padding-inline: var(--spacing-xl);
     font-size: var(--font-size-base);
   }
 
   .button--primary {
-    color: var(--color-action-primary-text);
-    background: var(--color-action-primary);
-    border-color: var(--color-action-primary);
-  }
+    @include button-kind(primary);
 
-  .button--primary:hover {
-    background: var(--color-action-primary-hover);
-    border-color: var(--color-action-primary-hover);
+    --button-default-text: var(--color-action-primary-text);
+    --button-default-bg: var(--color-action-primary);
+    --button-default-border: var(--color-action-primary);
+    --button-default-hover-bg: var(--color-action-primary-hover);
+    --button-default-hover-border: var(--color-action-primary-hover);
   }
 
   .button--secondary {
-    color: var(--color-action-secondary-text);
-    background: var(--color-action-secondary);
-    border-color: var(--color-border-default);
-  }
+    @include button-kind(secondary);
 
-  .button--secondary:hover {
-    background: var(--color-action-secondary-hover);
+    --button-default-text: var(--color-action-secondary-text);
+    --button-default-bg: var(--color-action-secondary);
+    --button-default-border: var(--color-border-default);
+    --button-default-hover-bg: var(--color-action-secondary-hover);
+    --button-default-hover-border: var(--color-border-default);
   }
 
   .button--ghost {
-    color: var(--color-action-primary);
-    background: transparent;
-    border-color: transparent;
-  }
+    @include button-kind(ghost);
 
-  .button--ghost:hover {
-    background: var(--color-background-muted);
+    --button-default-text: var(--color-action-primary);
+    --button-default-bg: transparent;
+    --button-default-border: transparent;
+    --button-default-hover-bg: var(--color-background-muted);
+    --button-default-hover-border: transparent;
   }
 
   // Secondary actions next to a primary button (hero, CTA, sections) are ghost buttons with
   // the same height and side padding, not bare text links.
   .button--ghost.button--lg {
-    padding-inline: var(--spacing-lg);
+    --button-default-padding-x: var(--spacing-lg);
   }
 
+  // Not a kind a site styles: the theme's feedback color only.
   .button--danger {
-    color: var(--color-text-inverse);
-    background: var(--color-feedback-error);
-    border-color: var(--color-feedback-error);
+    --button-default-text: var(--color-text-inverse);
+    --button-default-bg: var(--color-feedback-error);
+    --button-default-border: var(--color-feedback-error);
+    --button-default-hover-bg: var(--color-feedback-error);
+    --button-default-hover-border: var(--color-feedback-error);
   }
 
   .button--danger:hover {
     filter: brightness(0.95);
   }
 
+  // On hover: the kind's hover colors; one pixel up (the theme's "lift"), or a ring ("glow").
   .button:hover {
-    transform: translateY(-1px);
+    color: var(--button-current-hover-text);
+    background: var(--button-current-hover-bg);
+    border-color: var(--button-current-hover-border);
+    transform: translateY(var(--button-kind-lift, -1px));
+    box-shadow:
+      var(--button-kind-shadow, 0 0 #0000),
+      0 0 0 var(--button-kind-glow, 0) color-mix(in srgb, var(--button-kind-glow-color, var(--button-current-hover-bg)) 40%, transparent);
   }
 
   // Phones: the actions of a section (primary + secondary) stack at full width.
