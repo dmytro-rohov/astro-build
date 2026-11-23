@@ -8,6 +8,7 @@
 import { site } from "virtual:site";
 import { getDictionary } from "@/i18n/dictionaries";
 import { resolveTheme } from "@/design-system/theme";
+import { menuLinks, pageLinks } from "@/site/menu";
 
 export type SiteLink = {
   label: string;
@@ -30,21 +31,14 @@ export type SiteColorScheme = "light" | "dark" | "auto";
 
 const t = getDictionary(site.lang);
 
-/** Pages shown in the menu, in order, as links. */
-function pageLinks(): SiteLink[] {
-  return site.pages
-    .map((page, index) => ({ page, index }))
-    .filter(({ page }) => page.nav.show)
-    .sort((a, b) => (a.page.nav.order ?? a.index) - (b.page.nav.order ?? b.index))
-    .map(({ page }) => ({ label: page.nav.label ?? page.title, href: page.slug }));
-}
-
-const nav: SiteLink[] = site.navigation.auto ? pageLinks() : (site.navigation.items ?? []);
+/** v3.10: the pages of a site of several pages, the sections of a one-page site as anchors (src/site/menu.ts). */
+const autoLinks: SiteLink[] = menuLinks(site, t.nav.sections);
+const nav: SiteLink[] = site.navigation.auto ? autoLinks : (site.navigation.items ?? []);
 
 const footerContent = site.layout.footer.content;
 
 const footerGroups: SiteLinkGroup[] = footerContent.groups ?? [
-  { title: site.meta.name, links: pageLinks() },
+  { title: site.meta.name, links: site.navigation.auto ? autoLinks : pageLinks(site) },
   { title: t.footer.legal, links: [{ label: t.footer.privacyPolicy, href: "/privacy" }] },
 ];
 

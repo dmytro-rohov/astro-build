@@ -3,8 +3,8 @@
     min-height: 100%;
     scroll-behavior: smooth;
 
-    // Anchor targets (/#features) are not hidden under the sticky header.
-    scroll-padding-top: 5rem;
+    // Anchor targets (/#features) are not hidden under the sticky header (its real height, BaseLayout.astro).
+    scroll-padding-top: calc(var(--header-offset, 4.5rem) + 0.5rem);
   }
 
   body {

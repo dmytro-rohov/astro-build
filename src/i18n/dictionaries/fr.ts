@@ -74,6 +74,21 @@ export default {
     features: "Fonctionnalités",
     components: "Composants",
     contact: "Contact",
+    sections: {
+      about: "À propos",
+      services: "Services",
+      features: "Atouts",
+      pricing: "Tarifs",
+      process: "Notre méthode",
+      team: "Équipe",
+      testimonials: "Avis",
+      gallery: "Galerie",
+      faq: "FAQ",
+      schedule: "Planning",
+      posts: "Blog",
+      "hours-location": "Accès",
+      contact: "Contact",
+    },
   },
 
   footer: {
@@ -88,7 +103,7 @@ export default {
     contact: "Contact",
   },
 
-  // v3.7: the Factory easter eggs (src/site/signature.ts). "Powered by mytko factory" is a brand name, not translated.
+  // v3.7: the Factory easter eggs (src/site/signature.ts). "Powered by Mytko Factory" is a brand name, not translated.
   signature: {
     comment: "Le site {siteName} a été créé avec Mytko Website Factory : {url}",
     commentHint: "Curieux de savoir comment il fonctionne ? Ouvrez la console du navigateur (F12), quelque chose vous y attend.",
