@@ -51,8 +51,11 @@ const strings = (value: unknown): string[] => (Array.isArray(value) ? value.filt
 
 const HEX = /^#[0-9a-fA-F]{6}$/;
 const isKind = (value: unknown): value is ButtonKind => BUTTON_KINDS.includes(value as ButtonKind);
-const inRange = (value: unknown, range: { min: number; max: number }) =>
-  typeof value === "number" && Number.isFinite(value) && value >= range.min && value <= range.max ? value : undefined;
+/** A number within the range, on its step (the schema's rule): the preview shows only what can be saved. */
+const inRange = (value: unknown, range: { min: number; max: number; step: number }) =>
+  typeof value === "number" && Number.isFinite(value) && value >= range.min && value <= range.max
+    ? Number((Math.round(value / range.step) * range.step).toFixed(4))
+    : undefined;
 const oneOf = <T>(value: unknown, options: readonly T[]) => (options.includes(value as T) ? (value as T) : undefined);
 const colorOf = (value: unknown, transparent: boolean) =>
   typeof value === "string" && (HEX.test(value) || (transparent && value === TRANSPARENT)) ? value.toLowerCase() : undefined;

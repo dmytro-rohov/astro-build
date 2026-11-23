@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { buttonDefaults } from "../../src/design-system/theme/button-defaults";
-import { buttonIssues, buttonPaint, buttonVars, fixContrast, setColors, vanishingKinds } from "../../src/design-system/theme/buttons";
+import { buttonIssues, buttonPaint, buttonScopeVars, buttonVars, fixContrast, hoverShade, setColors, vanishingKinds } from "../../src/design-system/theme/buttons";
 import { contrast } from "../../src/design-system/theme/color";
 import { accentPalette, resolveTheme } from "../../src/design-system/theme";
 import { loadSite, SiteValidationError } from "../../src/site/loader";
@@ -61,6 +61,11 @@ describe("colors", () => {
     expect(setColors("primary", {})).toEqual({});
   });
 
+  test("hover shows also on black", () => {
+    expect(contrast(hoverShade("#000000"), "#000000")).toBeGreaterThan(1.2);
+    expect(contrast(hoverShade("#ffffff"), "#ffffff")).toBeGreaterThan(1.1);
+  });
+
   test("the theme's colors where the site sets none", () => {
     expect(buttonPaint("primary", { text: "#000000" }, theme.light)).toMatchObject({ text: "#000000", background: theme.light.action.primary });
     expect(buttonPaint("ghost", undefined, theme.light)).toMatchObject({ background: "transparent", hoverBackground: theme.light.background.muted });
@@ -87,6 +92,11 @@ describe("custom properties", () => {
       "button-ghost-lift": "0px",
     });
     expect(vars["button-primary-glow-color"]).toBe(vars["button-primary-hover-bg"]);
+    // "No shadow" draws nothing but keeps the hover glow's list valid.
+    expect(buttonVars({ primary: { shadow: "none", hoverEffect: "glow" } })["button-primary-shadow"]).toBe("0 0 #0000");
+    // A button without a hover background glows in its text's color.
+    expect(buttonVars({ ghost: { hoverEffect: "glow" } })["button-ghost-glow-color"]).toBe("currentColor");
+    expect(buttonVars({ secondary: { background: "transparent", text: "#123456", hoverEffect: "glow" } })["button-secondary-glow-color"]).toBe("#123456");
     expect(vars["button-ghost-glow"]).toBeUndefined();
     expect(Object.keys(vars).some((name) => name.startsWith("button-secondary"))).toBe(false);
   });
@@ -109,6 +119,11 @@ describe("contrast", () => {
     expect(vanishingKinds(styles, theme.light)).toEqual([]);
     // Dark navy text without a background vanishes on the dark palette.
     expect(vanishingKinds(styles, theme.dark)).toContain("ghost");
+    // A part re-declares each kind: reset where it vanishes, the site's colors where they show; its own scheme: nothing.
+    const scope = buttonScopeVars({ ...styles, ghost: { text: "#ffffff" } }, accentPalette(theme.light));
+    expect(scope["button-primary-bg"]).toBe("initial");
+    expect(scope["button-ghost-text"]).toBe("#ffffff");
+    expect(buttonScopeVars(styles, theme.light, { own: true })).toEqual({});
   });
 
   test("a fix moves only the lightness, to the nearest color that reads", () => {

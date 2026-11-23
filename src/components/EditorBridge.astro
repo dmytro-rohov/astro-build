@@ -70,11 +70,13 @@ const { origin } = Astro.props;
     const vars = buttonVars(styles);
     for (const name of ALL_VARS) root.style.setProperty(`--${name}`, vars[name] ?? "initial");
 
-    // An "auto" site seen in the dark scheme: the page itself is the other scheme's palette.
+    // An "auto" site seen in the dark scheme: the page itself is the other scheme's palette. Parts in the
+    // page's own palette (a dark footer on a dark site) follow the page, as in the build.
     const foreignRoot = !root.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches;
+    const own = foreignRoot ? "" : JSON.stringify(paletteOf(root));
     for (const element of foreignRoot ? [root, ...scopes] : scopes) {
       const palette = paletteOf(element);
-      if (!palette) continue;
+      if (!palette || JSON.stringify(palette) === own) continue;
       const vanishing = vanishingKinds(styles, palette);
       for (const kind of BUTTON_KINDS) {
         for (const name of buttonColorVars(kind)) element.style.setProperty(`--${name}`, vars[name] && !vanishing.includes(kind) ? vars[name] : "initial");

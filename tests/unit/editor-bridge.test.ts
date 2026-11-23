@@ -69,6 +69,10 @@ describe("v3.11 button styles", () => {
     });
   });
 
+  test("numbers snap to their step (only what can be saved is shown)", () => {
+    expect(parseButtonStyles({ primary: { paddingX: 1.3, borderWidth: 1.5, letterSpacing: 0.055 } })).toEqual({ primary: { paddingX: 1.25, borderWidth: 2, letterSpacing: 0.06 } });
+  });
+
   test("text that would be CSS never passes", () => {
     expect(parseButtonStyles({ primary: { background: "red;} body{display:none", text: "url(x)", radius: "0; color: red" } })).toEqual({ primary: {} });
     expect(parseButtonStyles("primary")).toBeUndefined();

@@ -15,7 +15,7 @@ import path from "path";
 import { loadSite, resolveSiteDir, SiteValidationError } from "../../site/loader";
 import { fontPairs, fontStack } from "../fonts/library";
 import { accentPalette, resolveTheme, type SemanticPalette } from "../theme";
-import { BUTTON_KINDS, buttonColorVars, buttonVars, vanishingKinds } from "../theme/buttons";
+import { buttonScopeVars, buttonVars } from "../theme/buttons";
 import { relativeLuminance } from "../theme/color";
 import { shapeTokens } from "../theme/shape";
 import { tokens } from "../tokens/index";
@@ -99,20 +99,11 @@ const colorVars = (palette: SemanticPalette) => ({ ...flatten({ color: palette }
 // v3.11: the site's button styles (theme.buttons) on :root, only what it sets. A part of the page with
 // its own palette (inverse and accent sections, bars, footers, the other color scheme) re-declares
 // each kind's colors: the site's where they stay visible there, "initial" where they would vanish
-// (the theme's buttons adapted to that part stay). The site's own scheme needs nothing.
+// (the theme's buttons adapted to that part stay). Parts in the site's own scheme need nothing.
 const buttons = site.theme.buttons;
 const ownButtonVars = buttonVars(buttons);
-const buttonScope = (palette: SemanticPalette): Record<string, TokenValue> => {
-  const vanishing = vanishingKinds(buttons, palette);
-  return Object.fromEntries(
-    BUTTON_KINDS.flatMap((kind) =>
-      buttonColorVars(kind)
-        .filter((name) => name in ownButtonVars)
-        .map((name) => [name, vanishing.includes(kind) ? "initial" : ownButtonVars[name]]),
-    ),
-  );
-};
-const scoped = (palette: SemanticPalette) => ({ ...colorVars(palette), ...buttonScope(palette) });
+const ownPalette = theme.colorScheme === "dark" ? theme.dark : theme.light;
+const scoped = (palette: SemanticPalette) => ({ ...colorVars(palette), ...buttonScopeVars(buttons, palette, { own: palette === ownPalette }) });
 
 const lines = (values: Record<string, TokenValue>, indent = "  ") =>
   Object.entries(values)

@@ -82,10 +82,13 @@ export const BUTTON_SIZE_SCALE = { sm: 2 / 3, md: 1, lg: 4 / 3 } as const;
 const opaque = (color: string | undefined): color is string => Boolean(color) && color !== TRANSPARENT;
 const round = (value: number, digits = 4) => Number(value.toFixed(digits));
 
-/** A shade for hover: a little darker, or lighter on a very dark color (like the theme's own). */
+/**
+ * A shade for hover: a little darker, or lighter on a very dark color (like the theme's own). Near black the steps
+ * of OKLCH lightness hardly show, so a dark color goes at least to a dark grey that does.
+ */
 export function hoverShade(color: string): string {
   const lightness = hexToOklch(color).l;
-  return withLightness(color, lightness >= 0.3 ? lightness - 0.07 : Math.min(0.97, lightness + 0.1));
+  return withLightness(color, lightness >= 0.3 ? lightness - 0.07 : Math.min(0.97, Math.max(lightness + 0.1, 0.27)));
 }
 
 /**
@@ -193,11 +196,29 @@ export function fixContrast(color: string, against: string, min: number): string
   return candidates[0] ?? (contrast("#000000", against) > contrast("#ffffff", against) ? "#000000" : "#ffffff");
 }
 
+/**
+ * A part of the page with its own palette (an accent or inverse section, a bar, a footer, the other color scheme):
+ * each kind's colors again, the site's where they stay visible there, "initial" where they would vanish (the theme's
+ * button adapted to that part stays). `own`: the palette of the scheme the site shows, nothing to re-declare (contrast
+ * there is only a warning: the part shows the site's buttons like the page does).
+ */
+export function buttonScopeVars(styles: ButtonStyles | undefined, palette: ButtonPalette, { own = false } = {}): Record<string, string> {
+  if (own) return {};
+  const vars = buttonVars(styles);
+  const vanishing = vanishingKinds(styles, palette);
+  return Object.fromEntries(
+    BUTTON_KINDS.flatMap((kind) =>
+      buttonColorVars(kind).filter((name) => name in vars).map((name) => [name, vanishing.includes(kind) ? "initial" : vars[name]]),
+    ),
+  );
+}
+
 /** The color custom properties of a kind (without "--"): reset where the kind would vanish. */
 export const buttonColorVars = (kind: ButtonKind) =>
   ["text", "bg", "border", "hover-text", "hover-bg", "hover-border", "glow-color"].map((name) => `button-${kind}-${name}`);
 
-const SHADOWS: Record<ButtonShadow, string> = { none: "none", soft: "var(--elevation-card)", strong: "var(--elevation-dropdown)" };
+// "none" as a shadow that draws nothing: the value sits in a list with the hover glow (the keyword would void it).
+const SHADOWS: Record<ButtonShadow, string> = { none: "0 0 #0000", soft: "var(--elevation-card)", strong: "var(--elevation-dropdown)" };
 const COLOR_VARS: [keyof ButtonPaint, string][] = [
   ["text", "text"], ["background", "bg"], ["border", "border"],
   ["hoverText", "hover-text"], ["hoverBackground", "hover-bg"], ["hoverBorder", "hover-border"],
@@ -232,7 +253,9 @@ export function buttonVars(styles: ButtonStyles | undefined): Record<string, str
     if (style.hoverEffect && style.hoverEffect !== "lift") vars[name("lift")] = "0px";
     if (style.hoverEffect === "glow") {
       vars[name("glow")] = "0.25rem";
-      const glow = opaque(colors.hoverBackground) ? colors.hoverBackground : colors.text;
+      // The ring in the hover background's color; a button without one (transparent) glows in its text's color.
+      const transparentHover = colors.hoverBackground === TRANSPARENT || (kind === "ghost" && colors.hoverBackground === undefined);
+      const glow = opaque(colors.hoverBackground) ? colors.hoverBackground : colors.text ?? (transparentHover ? "currentColor" : undefined);
       if (glow) vars[name("glow-color")] = glow;
     }
   }
