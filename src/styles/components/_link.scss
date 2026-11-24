@@ -22,8 +22,11 @@
     cursor: pointer;
   }
 
-  // Links inside running text are underlined, not only colored (WCAG 1.4.1).
-  :where(p, li, dd, td, label) > .link {
+  // Links inside running text are underlined, not only colored (WCAG 1.4.1). v3.12: anywhere in a
+  // paragraph, a description, a table cell or a label (inside bold, or a checkbox's text like the
+  // consent's privacy link); in a list item only as its direct child (menus are lists of links).
+  :where(p, dd, td, label) .link,
+  :where(li) > .link {
     text-decoration: underline;
     text-underline-offset: 0.2em;
   }
