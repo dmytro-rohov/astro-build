@@ -118,6 +118,7 @@ const Article = layoutComponents.article;
     seoTitle={page!.seo.title}
     description={pageDescription}
     image={pageImage}
+    imageAlt={page!.seo.image ? getAsset(page!.seo.image).alt || page!.title : undefined}
     robots={page!.seo.noindex ? "noindex, follow" : "index, follow, max-image-preview:large"}
     jsonLd={jsonLd}
   >

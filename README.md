@@ -950,7 +950,7 @@ content hash in each file name, and generates:
 - `src/styles/abstracts/_fonts.scss` — `@font-face` rules (variable weight range,
   `unicode-range`) and a metric-matched `"<Family> Fallback"` face per family
   (local Arial / Times New Roman with `size-adjust` and ascent/descent overrides);
-- `src/design-system/fonts.generated.ts` — the regular face of the main script is preloaded
+- `src/design-system/fonts.generated.ts`: the regular face of the main script is preloaded
   (v3.12: `latin-ext` too for languages whose letters are in it, e.g. Polish, Czech, Turkish:
   `preloadSubsets` in `library.ts`, so ą ę ł ś ż come without a second font swap);
 - `public/fonts/LICENSES.txt` — the licenses of the shipped fonts.

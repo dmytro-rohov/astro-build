@@ -14,7 +14,7 @@
  *   Text is converted to vector paths with fontkit, so the result does not
  *   depend on fonts installed on the machine.
  *
- * Logo (v3.12) — for structured data, which wants a raster image of at least 112×112:
+ * Logo (v3.12), for structured data, which wants a raster image of at least 112×112:
  * - public/icons/logo.png: meta.logo (SVG or PNG) at most 600 px, padded to 112 px each way.
  *   Without meta.logo an uploaded meta.icon serves (icon-512.png); a monogram is no logo.
  *

@@ -5,7 +5,7 @@
  *   with a content hash in each file name (cached for a year by server.mjs)
  * - src/styles/abstracts/_fonts.scss — @font-face rules (variable weight range,
  *   unicode-range) and a metric-matched "<Family> Fallback" per family
- * - src/design-system/fonts.generated.ts — files to <link rel="preload"> (v3.12: latin-ext too for
+ * - src/design-system/fonts.generated.ts: files to <link rel="preload"> (v3.12: latin-ext too for
  *   languages with letters in it, preloadSubsets in the font library)
  * - public/fonts/LICENSES.txt — OFL licenses of the shipped fonts
  *
