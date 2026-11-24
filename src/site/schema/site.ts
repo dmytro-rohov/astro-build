@@ -263,6 +263,13 @@ const PageSchema = z.strictObject({
     fieldType: "textarea",
     description: "Meta description, 50–160 characters. Defaults to the home page: meta.description; other pages: the start of their sections' texts (v3.12), else meta.description.",
   }),
+  updated: z.iso
+    .date()
+    .optional()
+    .describe(
+      "v3.12: date of the last real change of the page's content (YYYY-MM-DD), the sitemap's lastmod. Without it the page has none " +
+        "(a page listing posts: its newest post). Set it when the content changes, never to the build date.",
+    ),
   nav: z
     .strictObject({
       show: z.boolean().default(true),

@@ -1,4 +1,7 @@
 // @ts-check
+import { readdir, readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "astro/config";
 import { loadEnv } from "vite";
 import node from "@astrojs/node";
@@ -13,6 +16,7 @@ import { loadSite, resolveSiteDir, SiteValidationError } from "./src/site/loader
 import { siteVitePlugin } from "./src/site/vite-plugin.ts";
 import { cspForSite } from "./src/site/csp.ts";
 import { previewEditorOrigin } from "./src/site/editor-bridge.ts";
+import { sitemapDates } from "./src/site/sitemap.ts";
 
 const env = loadEnv(process.env.NODE_ENV ?? "development", process.cwd(), "");
 
@@ -48,6 +52,9 @@ for (const post of blog?.posts ?? []) {
 }
 
 const siteUrl = new URL(env.SITE_URL || siteData.meta.url || "http://localhost:4321");
+
+// v3.12: <lastmod> where the site knows when a page changed (src/site/sitemap.ts).
+const lastmod = sitemapDates(siteData);
 
 // Analytics: site.json analytics.gaId; PUBLIC_GA_MEASUREMENT_ID overrides it (test builds).
 const gaId = env.PUBLIC_GA_MEASUREMENT_ID || siteData.analytics.gaId || "";
@@ -146,7 +153,29 @@ export default defineConfig({
 
               return ![...noindexPaths, ...sitemapExcludedPaths].includes(pathname);
             },
+            // v3.12: lastmod where the site knows the date.
+            serialize: (item) => {
+              const date = lastmod.get(normalizePath(new URL(item.url).pathname));
+
+              return date ? { ...item, lastmod: date } : item;
+            },
           }),
+          {
+            // v3.12: @astrojs/sitemap writes the home page as "https://host" (trailingSlash "never"); its canonical
+            // link is "https://host/". Runs after the sitemap integration has written its files.
+            name: "mytko-sitemap-home",
+            hooks: {
+              "astro:build:done": async ({ dir }) => {
+                const outDir = fileURLToPath(dir);
+                const home = `<loc>${siteUrl.origin}</loc>`;
+
+                for (const file of (await readdir(outDir)).filter((name) => /^sitemap-\d+\.xml$/.test(name))) {
+                  const xml = await readFile(path.join(outDir, file), "utf8");
+                  if (xml.includes(home)) await writeFile(path.join(outDir, file), xml.replace(home, `<loc>${siteUrl.origin}/</loc>`));
+                }
+              },
+            },
+          },
         ]),
   ],
 

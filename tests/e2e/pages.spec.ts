@@ -63,6 +63,9 @@ test("robots.txt, sitemap and manifest", async ({ request }) => {
   expect(sitemap).toContain("/contact</loc>");
   expect(sitemap).not.toContain("/contact/sent");
   expect(sitemap).not.toContain("/privacy");
+  // v3.12: the home page as in its canonical link, lastmod from the posts' dates.
+  expect(sitemap).toMatch(/<loc>https?:\/\/[^<]+\/<\/loc>/);
+  expect(sitemap).toMatch(/\/blog\/why-fast-pages-win<\/loc><lastmod>2026-11-12/);
 
   const manifest = await (await request.get("/site.webmanifest")).json();
   expect(manifest.icons.length).toBeGreaterThan(0);
