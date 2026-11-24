@@ -511,11 +511,21 @@ import { t } from "@/i18n";
       gap: 0.5rem;
     }
 
+    // Both choices in one row where they fit (still the same size).
     .cookie-consent__button {
-      flex: 1 1 8rem;
+      flex: 1 1 6.5rem;
       min-height: 2.5rem;
       padding: 0.4rem 0.75rem;
       font-size: 0.875rem;
+    }
+  }
+
+  // Phones: closer to the screen's edges, a little more room for the text.
+  @media (width < 40rem) {
+    .cookie-consent {
+      right: 0.5rem;
+      bottom: 0.5rem;
+      left: 0.5rem;
     }
   }
 </style>
