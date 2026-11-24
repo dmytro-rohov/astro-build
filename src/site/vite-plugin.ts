@@ -8,6 +8,8 @@
  * - "virtual:layout-components"   → { layoutComponents } the same for the footer variant (and v3.9 the
  *   article layout of a site with a blog)
  * - "virtual:navbar-style"         → imports the style file of the site's navbar variant (v3.5)
+ * - "virtual:custom-layouts.css"  → v3.13: the checked, scoped CSS of the custom layouts the site's sections use
+ *   (src/sections/custom/css.ts), imported by the custom section's component
  * - "virtual:editor-bridge"       → { EditorBridge, editorOrigin }: the editor preview bridge, only
  *   when the build has an editor origin (v3.6); otherwise null and the bridge is not even imported
  * The site is re-validated whenever site.json or assets.json change (dev server).
@@ -16,6 +18,8 @@ import path from "node:path";
 import type { Plugin } from "vite";
 import { layoutComponentPaths, navbarStylePaths, sectionComponentPaths } from "./components";
 import { loadSite } from "./loader";
+import { compileCss } from "../sections/custom/css";
+import { CUSTOM_TYPE } from "../sections/custom/layout";
 import type { Site } from "./schema/site";
 
 const SITE_ID = "virtual:site";
@@ -24,7 +28,14 @@ const COMPONENTS_ID = "virtual:section-components";
 const LAYOUT_COMPONENTS_ID = "virtual:layout-components";
 const NAVBAR_STYLE_ID = "virtual:navbar-style";
 const EDITOR_BRIDGE_ID = "virtual:editor-bridge";
-const IDS = [SITE_ID, ANALYTICS_ID, COMPONENTS_ID, LAYOUT_COMPONENTS_ID, NAVBAR_STYLE_ID, EDITOR_BRIDGE_ID];
+const CUSTOM_CSS_ID = "virtual:custom-layouts.css";
+const IDS = [SITE_ID, ANALYTICS_ID, COMPONENTS_ID, LAYOUT_COMPONENTS_ID, NAVBAR_STYLE_ID, EDITOR_BRIDGE_ID, CUSTOM_CSS_ID];
+const CUSTOM_COMPONENT = "@/sections/custom/Custom.astro";
+
+/** v3.13: the names of the custom layouts the site's sections use. */
+const usedCustomLayouts = (site: Site) => [
+  ...new Set(site.pages.flatMap((page) => page.sections.filter((section) => section.type === CUSTOM_TYPE).map((section) => section.variant))),
+];
 
 /** Imports the components of the section variants used on the site's pages, in registry order. */
 function sectionComponentsModule(site: Site): string {
@@ -44,6 +55,13 @@ function sectionComponentsModule(site: Site): string {
     if (variantEntries.length > 0) {
       entries.push(`${JSON.stringify(type)}: { ${variantEntries.join(", ")} }`);
     }
+  }
+
+  // v3.13: one component draws every custom layout.
+  const custom = usedCustomLayouts(site);
+  if (custom.length) {
+    const index = files.push(CUSTOM_COMPONENT) - 1;
+    entries.push(`${JSON.stringify(CUSTOM_TYPE)}: { ${custom.map((name) => `${JSON.stringify(name)}: Component${index}`).join(", ")} }`);
   }
 
   return [
@@ -99,6 +117,12 @@ export function siteVitePlugin(siteDir: string, options: { gaId: string; editorO
         return options.editorOrigin
           ? `export { default as EditorBridge } from "@/components/EditorBridge.astro";\nexport const editorOrigin = ${JSON.stringify(options.editorOrigin)};`
           : `export const EditorBridge = null;\nexport const editorOrigin = "";`;
+      }
+
+      if (id === resolved(CUSTOM_CSS_ID)) {
+        return usedCustomLayouts(site)
+          .map((name) => compileCss(name, site.customLayouts?.[name]?.css ?? "").css)
+          .join("\n");
       }
 
       if (id === resolved(COMPONENTS_ID)) {

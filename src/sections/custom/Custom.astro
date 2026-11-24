@@ -1,0 +1,40 @@
+---
+/**
+ * v3.13: a custom section (src/sections/custom/layout.ts): the site's own layout named by the section's variant, drawn
+ * from its checked template with the section's content. Its styles are in the site's stylesheet
+ * ("virtual:custom-layouts.css", only the layouts the site uses).
+ */
+import SectionShell from "@/sections/_shared/SectionShell.astro";
+import CustomNodes from "./CustomNodes.astro";
+import { site } from "virtual:site";
+import { contentSchemaOf, type CustomSection } from "./layout";
+import { compileTemplate } from "./template";
+import "virtual:custom-layouts.css";
+
+export interface Props {
+  section: CustomSection;
+  headingLevel: "h1" | "h2";
+}
+
+const { section, headingLevel } = Astro.props;
+const layout = site.customLayouts?.[section.variant];
+
+if (!layout) {
+  throw new Error(`[site] No custom layout "${section.variant}" for section "${section.id}".`);
+}
+
+// Validated by the loader already: parsing again gives the trimmed values and the defaults.
+const content = contentSchemaOf(layout.fields).parse(section.content) as Record<string, unknown>;
+const { nodes } = compileTemplate(layout.template, layout.fields);
+---
+
+<SectionShell
+  id={section.id}
+  type="custom"
+  variant={section.variant}
+  tone={section.props.tone}
+  spacing={section.props.spacing}
+  width={section.props.width}
+>
+  <CustomNodes nodes={nodes} scope={content} fields={layout.fields} headingLevel={headingLevel} />
+</SectionShell>

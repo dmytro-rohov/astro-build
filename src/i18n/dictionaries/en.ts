@@ -90,6 +90,13 @@ export const en = {
     pause: "Pause scrolling",
   },
 
+  // v3.13: before/after comparison (components/widgets/Compare.astro); the slider is named "<label>: <before> / <after>".
+  compare: {
+    before: "Before",
+    after: "After",
+    label: "Comparison",
+  },
+
   lightbox: {
     label: "Photo viewer",
     close: "Close",

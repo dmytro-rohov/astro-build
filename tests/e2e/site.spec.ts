@@ -113,6 +113,22 @@ test.describe(`site ${path.basename(siteDir)}`, () => {
       }
     });
 
+    // v3.13: every before/after compare (custom sections) turns live and its slider moves the line.
+    test(`${slug}: before/after compares move with their slider`, async ({ page }) => {
+      await page.goto(slug);
+      const compares = page.locator("[data-compare]");
+      const count = await compares.count();
+      test.skip(count === 0, "no compare on this page");
+
+      for (let index = 0; index < count; index++) {
+        const compare = compares.nth(index);
+        await expect(compare).toHaveClass(/compare--live/);
+        await compare.locator("[data-compare-range]").focus();
+        await page.keyboard.press("End");
+        await expect.poll(() => compare.locator(".compare__item--after").evaluate((element) => getComputedStyle(element).clipPath)).toContain("100%");
+      }
+    });
+
     test(`${slug}: no WCAG AA violations`, async ({ page }) => {
       await page.goto(slug);
       await page.waitForTimeout(300);

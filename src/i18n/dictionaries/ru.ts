@@ -302,6 +302,13 @@ export default {
     ask: "Спросите нас",
   },
 
+  // v3.13: before/after comparison (components/widgets/Compare.astro); the slider is named "<label>: <before> / <after>".
+  compare: {
+    before: "До",
+    after: "После",
+    label: "Сравнение",
+  },
+
   lightbox: {
     label: "Просмотр фотографий",
     close: "Закрыть",

@@ -12,6 +12,7 @@ import { layoutTypes, sectionTypes } from "../registry";
 import { Action, DAYS, field, HttpsUrl, Id, imageSlot, Slug, text, Time, type ImageSlot } from "./fields";
 import { ICON_NAMES } from "../../design-system/icons/library";
 import { BlogSchema } from "./blog";
+import { contentSchemaOf, CUSTOM_TYPE, CustomLayoutSchema, CustomSectionSchema } from "../../sections/custom/layout";
 import { TITLE_MAX } from "../seo";
 import { AUTOCOMPLETE_TOKENS, DEFAULT_FIELDS, FIELD_ID, FORM_DOM_IDS, FORM_FIELD_TYPES, ICON_TYPES, LENGTH_TYPES, MAX_FORM_FIELDS, PLACEHOLDER_TYPES, RESERVED_FIELD_IDS, TYPE_MAX, domIdsOf, fieldsOf } from "../../lib/contact/fields";
 
@@ -155,7 +156,8 @@ export function isReservedSlug(slug: string): boolean {
   return (RESERVED_SLUGS as readonly string[]).includes(slug) || RESERVED_PREFIXES.some((prefix) => slug.startsWith(prefix));
 }
 
-type SectionSchemas = (typeof sectionTypes)[number]["schema"];
+// v3.13: and the custom section, drawn by one of the site's own layouts (src/sections/custom/layout.ts).
+type SectionSchemas = (typeof sectionTypes)[number]["schema"] | typeof CustomSectionSchema;
 
 /**
  * Discriminated by `type`, then by `variant` (nested unions give precise errors
@@ -165,7 +167,7 @@ type SectionSchemas = (typeof sectionTypes)[number]["schema"];
 export const SectionSchema = z.discriminatedUnion(
   "type",
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  sectionTypes.map((type) => type.schema) as any,
+  [...sectionTypes.map((type) => type.schema), CustomSectionSchema] as any,
 ) as unknown as z.ZodType<z.output<SectionSchemas>, z.input<SectionSchemas>>;
 
 const Address = z.strictObject({
@@ -448,6 +450,11 @@ const SiteBase = z
     pages: z.array(PageSchema).min(1).max(12),
     // v3.9: posts and their page (src/site/schema/blog.ts).
     blog: BlogSchema.optional(),
+    // v3.13: the site's own layouts by name, drawn by its "custom" sections (src/sections/custom/layout.ts).
+    customLayouts: z
+      .record(Id, CustomLayoutSchema)
+      .optional()
+      .describe("v3.13: layouts made for this site (fields, template, css), each drawn by the sections of type \"custom\" whose variant names it."),
   });
 
 export const SiteSchema = SiteBase
@@ -488,6 +495,19 @@ export const SiteSchema = SiteBase
       const perPage = new Map<string, number>();
 
       page.sections.forEach((section, sectionIndex) => {
+        // v3.13: a custom section names a layout of the site and fills its fields.
+        if (section.type === CUSTOM_TYPE) {
+          const layout = site.customLayouts?.[section.variant];
+          if (!layout) {
+            context.addIssue({ code: "custom", path: at("sections", sectionIndex, "variant"), message: `No layout "${section.variant}" in customLayouts.` });
+          } else {
+            const parsed = contentSchemaOf(layout.fields).safeParse(section.content);
+            for (const issue of parsed.success ? [] : parsed.error.issues) {
+              context.addIssue({ code: "custom", path: at("sections", sectionIndex, "content", ...(issue.path as (string | number)[])), message: issue.message });
+            }
+          }
+        }
+
         const previous = sectionIds.get(section.id);
 
         // The first section renders the page's only <h1>; these types have an optional title.
