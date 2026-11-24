@@ -3,7 +3,8 @@
  * Description, social icons, link groups and contact in a calm row, then the business name
  * (or `wordmark`) in giant letters across the full width. The name is decoration here — the
  * copyright line says it — so screen readers skip it. A script fits it to the width once the
- * fonts are in; without it the length classes keep it inside.
+ * fonts are in; without it the length classes keep it inside. v3.12: fitted again whenever the
+ * width or the heading font changes, and never wider than the page (WCAG 1.4.10).
  */
 import Contact from "./Contact.astro";
 import Groups from "./Groups.astro";
@@ -36,18 +37,38 @@ const size = word.length <= 6 ? "xl" : word.length <= 10 ? "lg" : word.length <=
 </p>
 
 <script>
-  // Measured on one line at 10cqi; the size scales with the container, so once is enough.
-  // Sizes come in half-cqi steps from the stylesheet (no inline styles under the CSP); a name
-  // that would get smaller than 8cqi keeps wrapping instead.
-  const fit = () => {
-    for (const mark of document.querySelectorAll<HTMLElement>("[data-wordmark]")) {
-      const text = mark.firstElementChild as HTMLElement;
-      mark.dataset.fit = "measure";
-      const size = Math.min(34, Math.floor(((10 * mark.clientWidth) / text.offsetWidth) * 2) / 2);
-      if (size >= 8) mark.dataset.fit = String(size);
-      else delete mark.dataset.fit;
-    }
+  // Measured on one line at 10cqi; the size scales with the container. Sizes come in half-cqi steps
+  // from the stylesheet (no inline styles under the CSP); a name that would get smaller than 8cqi
+  // keeps wrapping instead.
+  const marks = [...document.querySelectorAll<HTMLElement>("[data-wordmark]")];
+  const fit = (mark: HTMLElement) => {
+    const text = mark.firstElementChild as HTMLElement;
+    mark.dataset.fit = "measure";
+    const size = Math.min(34, Math.floor(((10 * mark.clientWidth) / text.offsetWidth) * 2) / 2);
+    if (size >= 8) mark.dataset.fit = String(size);
+    else delete mark.dataset.fit;
   };
+  const fitAll = () => marks.forEach(fit);
 
-  document.fonts.ready.then(fit);
+  // v3.12: fonts.ready can settle before the heading font is even asked for, and a measure with the
+  // fallback font left the name wider than a phone. Fitted again once that font is in, after any
+  // font loads, and when the width changes (rotation, zoom, a scrollbar).
+  if (marks.length) {
+    const style = getComputedStyle(marks[0]);
+    document.fonts.load(`${style.fontWeight} 1em ${style.fontFamily}`, marks[0].textContent ?? "").then(fitAll, fitAll);
+    document.fonts.ready.then(fitAll);
+    document.fonts.addEventListener("loadingdone", fitAll);
+
+    // Only a new width refits: a refit changes the height, which must not start it again.
+    const widths = new WeakMap<Element, number>();
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const width = Math.round(entry.contentRect.width);
+        if (widths.get(entry.target) === width) continue;
+        widths.set(entry.target, width);
+        fit(entry.target as HTMLElement);
+      }
+    });
+    marks.forEach((mark) => observer.observe(mark));
+  }
 </script>
