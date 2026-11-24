@@ -75,6 +75,20 @@ export function scriptsForLanguage(lang: string): Script[] {
   return CYRILLIC_LANGUAGES.includes(lang.split("-")[0]) ? ["latin", "cyrillic"] : ["latin", "latin-ext"];
 }
 
+/**
+ * v3.12: Latin languages whose everyday letters are in latin-ext, not latin (ą ę ł ś ż, č ř ů, ğ ş İ, ő ű, ă ș ț…).
+ * Their pages need both subsets from the first paint. German, French, Spanish, Italian, Portuguese and Dutch
+ * letters are all in latin.
+ */
+export const LATIN_EXT_LANGUAGES = ["pl", "cs", "sk", "tr", "hu", "ro", "hr", "sl", "lt", "lv", "et", "az", "mt", "sq", "vi"];
+
+/** v3.12: the subsets to preload for a language: its main script, and latin-ext where its letters need it. */
+export function preloadSubsets(lang: string): Script[] {
+  const code = lang.split("-")[0];
+  if (CYRILLIC_LANGUAGES.includes(code)) return ["cyrillic"];
+  return LATIN_EXT_LANGUAGES.includes(code) ? ["latin", "latin-ext"] : ["latin"];
+}
+
 /** CSS font stack with the generated metric-matched fallback. */
 export function fontStack(id: FontFamilyId): string {
   const { family, category } = fontFamilies[id];

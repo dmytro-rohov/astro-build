@@ -5,7 +5,8 @@
  *   with a content hash in each file name (cached for a year by server.mjs)
  * - src/styles/abstracts/_fonts.scss — @font-face rules (variable weight range,
  *   unicode-range) and a metric-matched "<Family> Fallback" per family
- * - src/design-system/fonts.generated.ts — files to <link rel="preload">
+ * - src/design-system/fonts.generated.ts — files to <link rel="preload"> (v3.12: latin-ext too for
+ *   languages with letters in it, preloadSubsets in the font library)
  * - public/fonts/LICENSES.txt — OFL licenses of the shipped fonts
  *
  * Usage: SITE_DIR=sites/_demo tsx scripts/build-fonts.ts
@@ -14,7 +15,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import * as fontkit from "fontkit";
-import { fontFamilies, fontPairs, scriptsForLanguage, type FontFamilyId } from "../src/design-system/fonts/library";
+import { fontFamilies, fontPairs, preloadSubsets, scriptsForLanguage, type FontFamilyId } from "../src/design-system/fonts/library";
 import { resolveTheme } from "../src/design-system/theme";
 import { loadSite, resolveSiteDir, SiteValidationError } from "../src/site/loader";
 
@@ -56,7 +57,8 @@ const pair = fontPairs[theme.fontPair];
 const usesCyrillic = scriptsForLanguage(site.lang).includes("cyrillic");
 // latin-ext is always included: browsers download it only when a page needs it.
 const subsets = usesCyrillic ? ["latin", "latin-ext", "cyrillic"] : ["latin", "latin-ext"];
-const primarySubset = usesCyrillic ? "cyrillic" : "latin";
+// v3.12: Polish, Czech, Turkish… preload latin-ext too: their letters would otherwise come in a second swap.
+const preloaded: string[] = preloadSubsets(site.lang);
 
 function packageDir(id: FontFamilyId) {
   return path.resolve("node_modules/@fontsource-variable", fontFamilies[id].package);
@@ -140,7 +142,7 @@ for (const id of families) {
 
 `;
 
-    if (face.subset === primarySubset) preloads.push(`/fonts/${outputFile}`);
+    if (preloaded.includes(face.subset)) preloads.push(`/fonts/${outputFile}`);
   }
 
   const latin = faces.find((face) => face.subset === "latin");
@@ -158,7 +160,7 @@ fs.writeFileSync(
   `/* AUTO-GENERATED FILE – DO NOT EDIT */
 /* Source: scripts/build-fonts.ts */
 
-/** Font files preloaded in BaseLayout (main script of heading and body fonts). */
+/** Font files preloaded in BaseLayout (main script of heading and body fonts, latin-ext where the language needs it). */
 export const fontPreloads: string[] = ${JSON.stringify(preloads, null, 2)};
 `,
 );
