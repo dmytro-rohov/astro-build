@@ -101,6 +101,7 @@ npm run site:preview -- --site <dir> [--port 4321]  # dev server with live reloa
 npm run site:screenshot -- --site <dir> [--out <dir>] [--no-build]  # desktop + mobile PNG of every page
 npm run site:report -- --site <dir> [--out <dir>] [--no-lighthouse] [--no-screenshots]  # build + axe + Lighthouse + screenshots → report.json
 npm run site:compare -- --site <dirA> --site <dirB> [--same-brand-accent] [--json]  # two designs of one brief differ enough?
+npm run site:check-section -- --site <dir> --section <id> [--out <dir>] [--no-build]  # v3.13: gates of one section at 320/390/768/1440 → section.json
 ```
 
 `--out` may point anywhere, also outside the project (the orchestrator's workspace): the
@@ -236,6 +237,56 @@ to pick two clearly different designs for one brief.
 each archetype and saves element screenshots of every variant (min/max content, light/dark) to
 `dist-gallery/index.html`, filterable by type, variant, archetype, scheme and content. It is a
 local QA tool (replaces the v2 `/playground` page) and is never deployed.
+
+### Custom sections (`customLayouts`, since 3.13)
+
+A section no variant can draw (before/after photos, an unusual comparison) is a **custom section**:
+a layout of the site's own in `customLayouts.<name>`, drawn by every section `{ "type": "custom",
+"variant": "<name>" }` with that layout's content. The factory's AI writes it when a client asks for
+something the catalog does not have; a person reviews it later; a layout that proves itself becomes a
+real variant almost 1:1 (its parts mirror a variant's `.astro`, `.scss` and `schema.ts`).
+
+```json
+"customLayouts": {
+  "before-after": {
+    "version": 1,
+    "label": "Przed i po",
+    "fields": [
+      { "key": "title", "type": "text", "label": "Tytuł sekcji", "required": true },
+      { "key": "pairs", "type": "list", "label": "Pary zdjęć", "min": 1, "max": 6, "fields": [
+        { "key": "before", "type": "image", "label": "Przed", "aspect": [4, 3], "minWidth": 800, "required": true },
+        { "key": "after", "type": "image", "label": "Po", "aspect": [4, 3], "minWidth": 800, "required": true }
+      ] }
+    ],
+    "template": "<h2 class=\"c-title\" data-text=\"title\"></h2><ul class=\"c-pairs\"><li data-each=\"pairs\"><div data-behavior=\"compare\" data-before=\"before\" data-after=\"after\"></div></li></ul>",
+    "css": ".c-pairs { display: grid; gap: var(--spacing-lg); margin: 0; padding: 0; list-style: none; }"
+  }
+}
+```
+
+Every part is checked, so a layout can never break a site, its look or its safety
+(`src/sections/custom/`):
+
+- **fields** (`layout.ts`): the content, in the engine's field vocabulary (text, textarea,
+  richtext, image with aspect and minimum width, action, icon, toggle, list of items with ids).
+  The section's content is validated against them, its images get the usual size checks.
+- **template** (`template.ts`): HTML from a short list of elements; every text, image and link
+  comes from a field (`data-text`, `data-rich`, `data-image`, `data-action`, `data-icon`,
+  `data-each`, `data-if`, `data-unless`, `data-counter`). No scripts, styles, ids, handlers, URLs
+  or text of its own; the title is an `<h2 data-text>` (the page's h1 when the section opens it).
+  Classes start with `c-`.
+- **css** (`css.ts`): scoped to the section (`.s-custom--<name>`, `:scope` for the section itself)
+  in `@layer widgets`; colors and fonts only from the theme's tokens (so tones and dark mode just
+  work), no `url()`, `!important`, `position: fixed`, `@import`, text in `content`. Compiled into
+  the site's stylesheet (`virtual:custom-layouts.css`): the CSP stays without `unsafe-inline`.
+- **interactions** are the engine's widgets, picked with `data-behavior`: `compare` (before/after
+  photos with a slider, `components/widgets/Compare.astro`) and `slider`; questions open with
+  `<details>`.
+
+Refusals name the line and what to change, for the AI to fix. `catalog.json` `custom` holds the
+whole contract with an example; `npm run site:check-section` runs the gates of one section
+(drawn, nothing overflowing at 320/390/768/1440 px, images loaded, axe in every scheme) and writes
+`section.json` with one readable line per issue. The fixture `auto-bold` has one.
 
 ### Theme: archetypes, colors, fonts
 
@@ -1218,8 +1269,15 @@ are `signature.poweredBy` in every language). v3.12: no engine version anywhere 
 
 ## Version
 
-Current version: **v3.11** (`3.11.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
+Current version: **v3.13** (`3.13.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
 starter is kept on the `v2` branch / tag `v2.0.0`.
+
+v3.13: custom sections, layouts of the site's own (`customLayouts`: fields, template, CSS), checked
+by the engine and drawn like its variants ([Custom sections](#custom-sections-customlayouts-since-313));
+the before/after compare widget; `catalog.json` `custom`; `npm run site:check-section`. Sites with
+custom sections should ask for `"engine": "^3.13.0"`.
+
+v3.12: SEO and accessibility review (the v3.12 notes in the sections above).
 
 v3.11: the site's own button styles (`theme.buttons`: colors with hover, padding, border, radius,
 weight, uppercase and letter spacing, shadow, hover effect, per kind of button), contrast as

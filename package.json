@@ -1,7 +1,7 @@
 {
   "name": "astro-starter",
   "type": "module",
-  "version": "3.12.0",
+  "version": "3.13.0",
   "engines": {
     "node": ">=24.16.0 <25",
     "npm": ">=11"
@@ -40,6 +40,7 @@
     "site:preview": "tsx scripts/site/preview.ts",
     "site:screenshot": "tsx scripts/site/screenshot.ts",
     "site:report": "tsx scripts/site/report.ts",
+    "site:check-section": "tsx scripts/site/check-section.ts",
     "site:migrate": "tsx scripts/site/migrate.ts",
     "site:compare": "tsx scripts/site/compare.ts",
     "catalog": "tsx scripts/site/catalog.ts",
@@ -49,6 +50,8 @@
     "@astrojs/node": "^11.0.3",
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^7.1.6",
+    "parse5": "^7.3.0",
+    "postcss": "^8.5.33",
     "resend": "^6.18.1",
     "zod": "4.6.7"
   },

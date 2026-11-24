@@ -76,6 +76,13 @@ export default {
     pause: "Зупинити прокручування",
   },
 
+  // v3.13: before/after comparison (components/widgets/Compare.astro); the slider is named "<label>: <before> / <after>".
+  compare: {
+    before: "До",
+    after: "Після",
+    label: "Порівняння",
+  },
+
   lightbox: {
     label: "Перегляд фото",
     close: "Закрити",

@@ -15,6 +15,7 @@ import { AssetsSchema, type Assets } from "./schema/assets";
 import { META_IMAGE_SLOTS, SiteSchema, type Site } from "./schema/site";
 import { BlogSchema } from "./schema/blog";
 import { findImageSlots, valuesAt } from "./schema/slots";
+import { contentSchemaOf, CUSTOM_TYPE } from "../sections/custom/layout";
 import { fontFamilies, fontPairs, pairScripts, scriptsForLanguage } from "../design-system/fonts/library";
 import { checkContrast, resolveTheme } from "../design-system/theme";
 import { BUTTON_KINDS, buttonIssues, fixButtonStyles, type ButtonIssue, type ButtonPalette } from "../design-system/theme/buttons";
@@ -102,10 +103,12 @@ function checkImageSlots(site: Site, assets: Assets, dir: string): string[] {
     uses.push({ ref: page.seo.image, slot: META_IMAGE_SLOTS.ogImage, at: ["pages", pageIndex, "seo", "image"] });
 
     page.sections.forEach((section, sectionIndex) => {
-      const type = sectionTypes.find((candidate) => candidate.type === section.type);
-      if (!type) return;
+      // v3.13: a custom section's slots come from its layout's fields.
+      const layout = section.type === CUSTOM_TYPE ? site.customLayouts?.[section.variant] : undefined;
+      const content = layout ? contentSchemaOf(layout.fields) : sectionTypes.find((candidate) => candidate.type === section.type)?.content;
+      if (!content) return;
 
-      for (const { path, slot } of findImageSlots(type.content)) {
+      for (const { path, slot } of findImageSlots(content)) {
         for (const found of valuesAt(section.content, path)) {
           uses.push({ ref: found.value, slot, at: ["pages", pageIndex, "sections", sectionIndex, "content", ...found.at] });
         }

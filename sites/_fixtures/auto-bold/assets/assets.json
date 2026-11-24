@@ -10,5 +10,9 @@
   "about": {
     "file": "about.jpg",
     "alt": "Abstrakcyjna kompozycja geometryczna w odcieniach granatu"
+  },
+  "before": {
+    "file": "before.jpg",
+    "alt": "Ta sama grafika warsztatu w szarych barwach: stan przed naprawą"
   }
 }

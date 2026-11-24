@@ -76,6 +76,13 @@ export default {
     pause: "Zatrzymaj przewijanie",
   },
 
+  // v3.13: before/after comparison (components/widgets/Compare.astro); the slider is named "<label>: <before> / <after>".
+  compare: {
+    before: "Przed",
+    after: "Po",
+    label: "Porównanie",
+  },
+
   lightbox: {
     label: "Przeglądarka zdjęć",
     close: "Zamknij",

@@ -302,6 +302,13 @@ export default {
     ask: "Bize sorun",
   },
 
+  // v3.13: before/after comparison (components/widgets/Compare.astro); the slider is named "<label>: <before> / <after>".
+  compare: {
+    before: "Önce",
+    after: "Sonra",
+    label: "Karşılaştırma",
+  },
+
   lightbox: {
     label: "Fotoğraf görüntüleyici",
     close: "Kapat",

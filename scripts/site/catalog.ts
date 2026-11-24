@@ -32,6 +32,7 @@ import {
   LENGTH_TYPES, MAX_FORM_FIELDS, NUMBER, PLACEHOLDER_TYPES, RESERVED_FIELD_IDS, TEL, TYPE_MAX,
 } from "../../src/lib/contact/fields";
 import { getFlag } from "./args";
+import { customContract } from "../../src/sections/custom/contract";
 import { writeJson } from "./lib";
 
 const out = path.resolve(getFlag("out") ?? "dist-catalog");
@@ -130,6 +131,9 @@ const languages = await Promise.all(
   }),
 );
 
+/** v3.13: the theme's tokens a custom layout may use (the committed CssToken list, src/design-system/cssVars.ts). */
+const cssTokens = [...fs.readFileSync(path.resolve("src/design-system/cssVars.ts"), "utf8").matchAll(/\|\s*"([a-z0-9-]+)"/g)].map((match) => match[1]);
+
 const catalog = {
   engineVersion: ENGINE_VERSION,
   schemaVersion: SCHEMA_VERSION,
@@ -141,6 +145,7 @@ const catalog = {
     "Links: https://, mailto:, tel:, site paths or #anchors only. Rich text: **bold**, *italic*, [text](link) — never HTML.",
     "Images are referenced as asset:<id> from assets/assets.json and cropped to each slot's proportions.",
     "Business data (contact, address, hours) lives only in `business`; sections read it from there.",
+    "v3.13: a section no variant can draw (e.g. before/after photos) is a custom section with a layout of the site's own (custom); a catalog variant always comes first.",
   ],
   sections: sectionTypes.map((type) => ({
     type: type.type,
@@ -185,6 +190,8 @@ const catalog = {
     scripts: pairScripts(id as FontPairId),
   })),
   accentFamilies: ACCENT_FAMILIES,
+  // v3.13: what a custom layout may be (src/sections/custom/contract.ts).
+  custom: customContract(cssTokens),
   icons: Object.entries(icons).map(([name, icon]) => ({ name, category: icon.category, keywords: icon.keywords })),
   reservedSlugs: RESERVED_SLUGS,
   languages,

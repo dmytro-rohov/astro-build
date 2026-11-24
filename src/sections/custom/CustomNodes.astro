@@ -1,0 +1,129 @@
+---
+/**
+ * v3.13: draws the nodes of a custom layout's template (template.ts) with a scope of content: the section's, or one
+ * list item's inside data-each. Texts are escaped by Astro, rich text goes through the engine's renderer, images,
+ * buttons, links, icons, the slider and the compare are the engine's own components.
+ */
+import Img from "@/components/media/Img.astro";
+import Icon from "@/components/media/Icon.astro";
+import Button from "@/components/ui/Button.astro";
+import Link from "@/components/ui/Link.astro";
+import Compare from "@/components/widgets/Compare.astro";
+import Slider from "@/components/widgets/Slider.astro";
+import { getAsset } from "@/site/assets";
+import { renderRichTextLite } from "@/site/richtext";
+import type { CustomField, CustomItemField } from "./layout";
+import type { TemplateChild, TemplateElement } from "./template";
+
+type AnyField = CustomField | CustomItemField;
+type Scope = Record<string, unknown>;
+type Drawn = { node: TemplateChild; scope: Scope; fields: readonly AnyField[] };
+
+export interface Props {
+  nodes: readonly TemplateChild[];
+  scope: Scope;
+  fields: readonly AnyField[];
+  headingLevel: "h1" | "h2";
+}
+
+const { nodes, scope, fields, headingLevel } = Astro.props;
+
+const present = (value: unknown) => (Array.isArray(value) ? value.length > 0 : value !== undefined && value !== null && value !== "" && value !== false);
+const fieldOf = (list: readonly AnyField[], key: string) => list.find((item) => item.key === key);
+const imageField = (list: readonly AnyField[], key: string) => fieldOf(list, key) as Extract<AnyField, { type: "image" }> | undefined;
+
+/** Widths for an image: up to about twice the slot's sharp width. */
+const widthsFor = (minWidth = 800) => [480, 720, 960, 1280, 1600, 1920].filter((width) => width <= Math.max(960, minWidth * 2));
+
+/** Each node with the scope it is drawn in: a data-each node once per item, conditions applied. */
+const drawn = nodes.flatMap((node): Drawn[] => {
+  if (node === " ") return [{ node, scope, fields }];
+  if (node.each) {
+    const list = fieldOf(fields, node.each) as Extract<AnyField, { type: "list" }> | undefined;
+    const items = (scope[node.each] as Scope[] | undefined) ?? [];
+    return list ? items.map((item) => ({ node, scope: item, fields: list.fields as readonly AnyField[] })) : [];
+  }
+  if (node.when && !present(scope[node.when])) return [];
+  if (node.unless && present(scope[node.unless])) return [];
+  return [{ node, scope, fields }];
+});
+
+/** Items a slider shows: one per list item for a data-each <li>, else one per <li>. */
+const sliderItems = (node: TemplateElement, inner: Scope) =>
+  node.children.reduce((count, child) => (child === " " ? count : count + (child.each ? ((inner[child.each] as unknown[] | undefined)?.length ?? 0) : 1)), 0);
+---
+
+{drawn.map(({ node, scope: inner, fields: own }) => {
+  if (node === " ") return " ";
+
+  const Tag = (node.primary && headingLevel === "h1" ? "h1" : node.tag) as "div";
+  const { class: className, sizes, ...attrs } = node.attrs;
+
+  if (node.image) {
+    const ref = inner[node.image];
+    if (typeof ref !== "string") return null;
+    const asset = getAsset(ref);
+    const spec = imageField(own, node.image);
+    return (
+      <Img src={asset.image} alt={asset.alt} kind={asset.alt ? "content" : "decorative"} aspect={spec?.aspect} focal={asset.focal}
+        sizes={sizes ?? "(min-width: 768px) 50vw, 100vw"} widths={widthsFor(spec?.minWidth)} class={className} />
+    );
+  }
+
+  if (node.action) {
+    const action = inner[node.action] as { label: string; href: string } | undefined;
+    if (!action) return null;
+    return node.button
+      ? <Button href={action.href} variant={node.button} class={className}>{action.label}</Button>
+      : <Link href={action.href} class={className}>{action.label}</Link>;
+  }
+
+  if (node.icon) {
+    const name = inner[node.icon];
+    if (typeof name !== "string") return null;
+    return <span class={className} {...attrs}><Icon name={name} /></span>;
+  }
+
+  if (node.text) {
+    const value = inner[node.text];
+    if (!present(value)) return null;
+    return <Tag class={className} {...attrs} data-counter={node.counter ? "" : undefined}>{String(value)}</Tag>;
+  }
+
+  if (node.rich) {
+    const value = inner[node.rich];
+    if (typeof value !== "string" || !value) return null;
+    return <div class={className} {...attrs} set:html={renderRichTextLite(value)} />;
+  }
+
+  if (node.behavior?.name === "compare") {
+    const { before, after, beforeLabel, afterLabel } = node.behavior;
+    const first = inner[before];
+    const second = inner[after];
+    if (typeof first !== "string" || typeof second !== "string") return null;
+    const spec = imageField(own, before);
+    return (
+      <Compare before={getAsset(first)} after={getAsset(second)} aspect={spec?.aspect} widths={widthsFor(spec?.minWidth)} class={className}
+        beforeLabel={beforeLabel ? (inner[beforeLabel] as string | undefined) : undefined}
+        afterLabel={afterLabel ? (inner[afterLabel] as string | undefined) : undefined} />
+    );
+  }
+
+  if (node.behavior?.name === "slider") {
+    const count = sliderItems(node, inner);
+    const label = node.behavior.label ? (inner[node.behavior.label] as string | undefined) : undefined;
+    return (
+      <Slider label={label} single={node.behavior.single} dots={node.behavior.dots ? count : 0} class={className}>
+        <Astro.self nodes={node.children} scope={inner} fields={own} headingLevel={headingLevel} />
+      </Slider>
+    );
+  }
+
+  if (node.tag === "br" || node.tag === "hr") return <Tag class={className} {...attrs} />;
+
+  return (
+    <Tag class={className} {...attrs}>
+      <Astro.self nodes={node.children} scope={inner} fields={own} headingLevel={headingLevel} />
+    </Tag>
+  );
+})}
