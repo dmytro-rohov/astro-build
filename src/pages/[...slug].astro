@@ -16,6 +16,9 @@ import { blogPostingSchema, blogSchema } from "@/lib/seo/schema";
 import { getAsset } from "@/site/assets";
 import { getImage } from "astro:assets";
 import { t } from "@/i18n";
+import { pageSummary } from "@/site/seo";
+import { isoDateTime } from "@/site/dates";
+import { timeZoneOf } from "@/site/hours";
 
 export function getStaticPaths() {
   const blog = site.blog;
@@ -37,6 +40,9 @@ const { page, post } = Astro.props as Props;
 const siteUrl = Astro.site ?? Astro.url.origin;
 const absolute = (path: string) => new URL(path, siteUrl).toString();
 const blog = site.blog;
+// v3.12: post dates with the time and the business time zone (structured data, article meta).
+const zone = timeZoneOf(site.business.address?.country);
+const dateTime = (iso: string) => isoDateTime(iso, zone);
 
 let pageImage: string | undefined;
 let jsonLd: Record<string, unknown> | undefined;
@@ -48,18 +54,24 @@ if (post && blog) {
   const author = blog.author;
   const authorImage = author?.photo ? (await getImage({ src: getAsset(author.photo).image, width: 400, height: 400, fit: "cover", format: "jpg" })).src : undefined;
   const section = blog.categories.find((category) => category.id === post.category)?.name;
-  article = { published: post.date, modified: post.updated, section, tags: post.tags };
+  const published = dateTime(post.date);
+  const modified = post.updated ? dateTime(post.updated) : undefined;
+  // v3.12: the author's page: where the site tells about them (its about section).
+  const aboutPage = site.pages.find((entry) => entry.sections.some((section) => section.type === "about"));
+  const about = aboutPage?.sections.find((section) => section.type === "about");
+  const authorUrl = aboutPage && about ? absolute(aboutPage.sections[0] === about ? aboutPage.slug : `${aboutPage.slug}#${about.id}`) : undefined;
+  article = { published, modified, section, tags: post.tags };
   jsonLd = blogPostingSchema({
     url: absolute(postPath(blog, post)),
     title: post.title,
     description: postDescription(post),
     image: absolute(pageImage),
-    published: post.date,
-    modified: post.updated,
+    published,
+    modified,
     section,
     tags: post.tags,
     words: postText(post).split(/\s+/).filter(Boolean).length,
-    author: author ? { name: author.name, role: author.role, image: authorImage ? absolute(authorImage) : undefined } : undefined,
+    author: author ? { name: author.name, role: author.role, image: authorImage ? absolute(authorImage) : undefined, url: authorUrl } : undefined,
     siteUrl,
   });
 } else if (page && blog && page.slug === blog.path) {
@@ -67,7 +79,7 @@ if (post && blog) {
   jsonLd = blogSchema({
     url: absolute(page.slug),
     title: page.title,
-    posts: selectPosts(blog.posts).filter((entry) => !entry.seo.noindex).map((entry) => ({ title: entry.title, url: absolute(postPath(blog, entry)), published: entry.date })),
+    posts: selectPosts(blog.posts).filter((entry) => !entry.seo.noindex).map((entry) => ({ title: entry.title, url: absolute(postPath(blog, entry)), published: dateTime(entry.date) })),
     siteUrl,
   });
 } else {
@@ -75,12 +87,15 @@ if (post && blog) {
 }
 
 const blogPage = blog ? site.pages.find((entry) => entry.slug === blog.path) : undefined;
+// v3.12: a subpage without its own description says what its sections say, not the site's description again.
+const pageDescription = page ? (page.description ?? (page.slug === "/" ? undefined : pageSummary(page))) : undefined;
 const Article = layoutComponents.article;
 ---
 
 {post && blog ? (
   <BaseLayout
     title={post.title}
+    seoTitle={post.seo.title}
     description={postDescription(post)}
     image={pageImage}
     imageAlt={postImage(post) ? getAsset(postImage(post)!).alt || post.title : post.title}
@@ -100,8 +115,10 @@ const Article = layoutComponents.article;
   <BaseLayout
     title={page!.title}
     titleIsFull={page!.slug === "/"}
-    description={page!.description}
+    seoTitle={page!.seo.title}
+    description={pageDescription}
     image={pageImage}
+    imageAlt={page!.seo.image ? getAsset(page!.seo.image).alt || page!.title : undefined}
     robots={page!.seo.noindex ? "noindex, follow" : "index, follow, max-image-preview:large"}
     jsonLd={jsonLd}
   >

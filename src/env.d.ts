@@ -1,6 +1,7 @@
 interface ImportMetaEnv {
   readonly SITE_URL?: string;
   readonly SITE_DIR?: string;
+  readonly SITE_NOINDEX?: string;
   readonly PUBLIC_GA_MEASUREMENT_ID?: string;
 }
 
@@ -17,6 +18,8 @@ declare module "virtual:site" {
   export const assets: Assets;
   /** Absolute path of SITE_DIR. */
   export const siteDir: string;
+  /** v3.12: SITE_NOINDEX build: no page may be indexed (src/config/indexing.ts). */
+  export const noindex: boolean;
 }
 
 declare module "virtual:site/analytics" {

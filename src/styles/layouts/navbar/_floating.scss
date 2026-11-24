@@ -74,4 +74,15 @@
       translate: 0 calc(var(--spacing-xs) - var(--spacing-md));
     }
   }
+
+  // v3.12: the floating bar and its gap from the top (see _header.scss).
+  :root {
+    --header-offset: 4rem;
+  }
+
+  @include mq(md) {
+    :root {
+      --header-offset: 4.5rem;
+    }
+  }
 }

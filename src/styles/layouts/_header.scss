@@ -1,6 +1,13 @@
 @use "../abstracts/mixins" as *;
 
 @layer widgets {
+  // v3.12: the header's usual height (the simple bar: 4rem and its border) until the script measures the real one
+  // (BaseLayout): the hero fills the rest of the first screen from the first paint, nothing moves when the script
+  // runs. Each navbar variant sets its own (measured on the demo); a logo or long links may still differ a little.
+  :root {
+    --header-offset: calc(4rem + 1px);
+  }
+
   .site-header {
     z-index: var(--z-index-sticky);
     background: var(--color-background-primary);

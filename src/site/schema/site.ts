@@ -12,6 +12,7 @@ import { layoutTypes, sectionTypes } from "../registry";
 import { Action, DAYS, field, HttpsUrl, Id, imageSlot, Slug, text, Time, type ImageSlot } from "./fields";
 import { ICON_NAMES } from "../../design-system/icons/library";
 import { BlogSchema } from "./blog";
+import { TITLE_MAX } from "../seo";
 import { AUTOCOMPLETE_TOKENS, DEFAULT_FIELDS, FIELD_ID, FORM_DOM_IDS, FORM_FIELD_TYPES, ICON_TYPES, LENGTH_TYPES, MAX_FORM_FIELDS, PLACEHOLDER_TYPES, RESERVED_FIELD_IDS, TYPE_MAX, domIdsOf, fieldsOf } from "../../lib/contact/fields";
 
 export const SCHEMA_VERSION = 1;
@@ -42,6 +43,11 @@ export const RESERVED_IDS: readonly string[] = [
   "navbar-menu",
   "cookie-consent-title",
   "cookie-consent-description",
+  // v3.12: the titles of the footer's link groups (at most 4).
+  "footer-group-1",
+  "footer-group-2",
+  "footer-group-3",
+  "footer-group-4",
   ...DEFAULT_FIELDS.flatMap(domIdsOf),
   ...FORM_DOM_IDS,
   "contact-website-error",
@@ -139,7 +145,11 @@ export const BUSINESS_TYPES = [
   "HardwareStore", "JewelryStore", "PetStore", "SportingGoodsStore", "BikeStore",
   "LodgingBusiness", "Hotel", "BedAndBreakfast", "Hostel", "TravelAgency",
   "DryCleaningOrLaundry", "EmploymentAgency", "EntertainmentBusiness", "EventVenue", "SelfStorage",
+  // v3.12: a business that works online only (no place customers visit).
+  "OnlineBusiness", "OnlineStore",
 ] as const;
+
+export type BusinessType = (typeof BUSINESS_TYPES)[number];
 
 export function isReservedSlug(slug: string): boolean {
   return (RESERVED_SLUGS as readonly string[]).includes(slug) || RESERVED_PREFIXES.some((prefix) => slug.startsWith(prefix));
@@ -184,9 +194,37 @@ export const BusinessSchema = z.strictObject({
     label: "Rodzaj działalności",
     fieldType: "select",
     editable: false,
-    description: "schema.org type: Organization, LocalBusiness or a more specific subtype (DanceSchool, AutoRepair, CafeOrCoffeeShop…).",
+    description:
+      "schema.org type: Organization, LocalBusiness or a more specific subtype (DanceSchool, AutoRepair, CafeOrCoffeeShop…); " +
+      "v3.12: OnlineBusiness or OnlineStore for a business customers never visit.",
+  }),
+  // v3.12: who the site is about, for the structured data (src/site/structured-data.ts).
+  kind: field(z.enum(["business", "personal"]).optional(), {
+    label: "Strona firmy czy osoby",
+    fieldType: "select",
+    editable: false,
+    description:
+      '"personal": a site about one person (specialist, freelancer, artist, portfolio); the structured data then describe a Person ' +
+      '(name = business.name, with jobTitle and knowsAbout) and type keeps choosing the look. Default "business".',
   }),
   name: field(text(80).optional(), { label: "Nazwa firmy", fieldType: "text", description: "Legal or public business name; defaults to meta.name." }),
+  jobTitle: field(text(80).optional(), {
+    label: "Zawód",
+    fieldType: "text",
+    description: 'v3.12, personal sites: what the person does, e.g. "Fizjoterapeutka" (schema.org jobTitle).',
+  }),
+  knowsAbout: field(z.array(text(60)).max(10).optional(), {
+    label: "Specjalizacje",
+    fieldType: "list",
+    description: 'v3.12: up to 10 fields of expertise of the person or the business, e.g. ["rehabilitacja kolana", "masaż sportowy"].',
+  }),
+  areaServed: field(z.array(text(80)).max(10).optional(), {
+    label: "Obszar działania",
+    fieldType: "list",
+    description:
+      'v3.12: up to 10 places served, e.g. ["Wrocław", "powiat wrocławski"]; for a business that comes to its customers without a ' +
+      "public address. A local type (Plumber, HairSalon…) is described as a local business only with an address or this.",
+  }),
   email: field(z.email().max(254).optional(), { label: "E-mail", fieldType: "text", description: "Public contact email." }),
   phone: field(z.string().regex(/^\+?[\d\s()-]{6,20}$/, "Phone number, e.g. +48 600 100 200.").optional(), {
     label: "Telefon",
@@ -218,6 +256,11 @@ export const BusinessSchema = z.strictObject({
   sameAs: field(z.array(HttpsUrl).max(10).default([]), { label: "Profile w sieci", fieldType: "list", description: "Facebook, Instagram, Google Maps… (https)." }),
 });
 
+/** v3.12: a page's or a post's own title for search results and sharing. */
+const SEO_TITLE = `Title in search results and when shared, used as is (no site name added), at most ${TITLE_MAX} characters. Default: the title with " | site name" while the whole fits in ${TITLE_MAX} characters, else the title alone.`;
+
+const VERIFICATION_HINT = "Paste only the code from the content=\"…\" part of the verification meta tag.";
+
 const PageSchema = z.strictObject({
   id: Id.describe("Stable page id, unique in the site."),
   slug: Slug.describe('URL path, "/" for the home page.'),
@@ -225,8 +268,15 @@ const PageSchema = z.strictObject({
   description: field(text(160, 50).optional(), {
     label: "Opis dla wyszukiwarek",
     fieldType: "textarea",
-    description: "Meta description, 50–160 characters. Defaults to meta.description.",
+    description: "Meta description, 50–160 characters. Defaults to the home page: meta.description; other pages: the start of their sections' texts (v3.12), else meta.description.",
   }),
+  updated: z.iso
+    .date()
+    .optional()
+    .describe(
+      "v3.12: date of the last real change of the page's content (YYYY-MM-DD), the sitemap's lastmod. Without it the page has none " +
+        "(a page listing posts: its newest post). Set it when the content changes, never to the build date.",
+    ),
   nav: z
     .strictObject({
       show: z.boolean().default(true),
@@ -236,6 +286,7 @@ const PageSchema = z.strictObject({
     .default({ show: true }),
   seo: z
     .strictObject({
+      title: text(TITLE_MAX).optional().describe(SEO_TITLE),
       image: imageSlot(META_IMAGE_SLOTS.ogImage).optional().describe("Open Graph image for this page (1200×630)."),
       noindex: z.boolean().default(false),
     })
@@ -349,6 +400,26 @@ const SiteBase = z
         .date()
         .optional()
         .describe('Date of the last change of the privacy policy (YYYY-MM-DD), shown on /privacy. Default: the build date.'),
+      // v3.12: the webmaster tools (src/site/seo.ts).
+      verification: z
+        .strictObject({
+          google: z.string().regex(/^[A-Za-z0-9_-]{20,100}$/, VERIFICATION_HINT).optional().describe("Google Search Console: the content of google-site-verification."),
+          bing: z.string().regex(/^[0-9A-Fa-f]{32}$/, VERIFICATION_HINT).optional().describe("Bing Webmaster Tools: the content of msvalidate.01 (32 hexadecimal characters)."),
+          yandex: z.string().regex(/^[0-9A-Fa-f]{16,32}$/, VERIFICATION_HINT).optional().describe("Yandex Webmaster: the content of yandex-verification (hexadecimal)."),
+          seznam: z.string().regex(/^[A-Za-z0-9_-]{16,64}$/, VERIFICATION_HINT).optional().describe("Seznam Webmaster: the content of seznam-wmt."),
+        })
+        .optional()
+        .describe("v3.12: site verification codes of the webmaster tools, rendered as their meta tags: only the content value of each tag."),
+      indexNow: z
+        .string()
+        .regex(/^[A-Za-z0-9-]{8,128}$/, "The IndexNow key: 8 to 128 letters, digits or dashes.")
+        .optional()
+        .describe("v3.12: IndexNow key; the build writes /<key>.txt containing it, so a publish can ping IndexNow (Bing, Yandex, Seznam…) with the changed URLs."),
+      locale: z
+        .string()
+        .regex(/^[a-z]{2,3}_[A-Z]{2}$/, 'Open Graph locale: language_REGION, e.g. "en_GB", "pt_BR".')
+        .optional()
+        .describe("v3.12: the site's region for og:locale, e.g. en_GB or pt_BR, in the site's language. Default: the language's usual one (en_US, pt_PT…)."),
     }),
     business: BusinessSchema,
     theme: ThemeSchema.default({ archetype: "default" }),
@@ -386,6 +457,11 @@ export const SiteSchema = SiteBase
     const sectionIds = new Map<string, string>();
     // The form's own DOM ids (contact-<field>, its error and its hint): no section may take them.
     const formIds = new Set(fieldsOf(site.contact.form).flatMap(domIdsOf));
+
+    // v3.12: og:locale names the site's language with a region.
+    if (site.meta.locale && site.meta.locale.split("_")[0] !== site.lang.split("-")[0]) {
+      context.addIssue({ code: "custom", path: ["meta", "locale"], message: `"${site.meta.locale}" is not in the site's language "${site.lang}".` });
+    }
 
     // Without a form visitors call or write: the business needs a phone or an e-mail address.
     if (site.contact.form?.enabled === false && !site.business.phone && !site.business.email) {

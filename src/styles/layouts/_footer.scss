@@ -113,9 +113,11 @@
     min-width: 0;
   }
 
+  // v3.12: a <p>, no heading: the heading font as before.
   .site-footer__group-title {
     margin: 0 0 var(--spacing-md);
     color: var(--color-text-primary);
+    font-family: var(--font-family-heading);
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-semibold);
     line-height: var(--line-height-snug);

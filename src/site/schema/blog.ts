@@ -10,6 +10,7 @@
 import { z } from "zod";
 import { embedProvider } from "../embeds";
 import { Action, field, HttpsUrl, Id, imageSlot, listWithIds, multilineText, richTextLite, Slug, text } from "./fields";
+import { TITLE_MAX } from "../seo";
 
 /** At most this many posts per site (each one is a page with its own images). */
 export const MAX_POSTS = 60;
@@ -105,6 +106,7 @@ export const PostSchema = z.strictObject({
   body: field(z.array(PostBlock).min(1).max(120), { label: "Treść", fieldType: "list", description: "The post as blocks: paragraph, heading, list, quote, image, gallery, video, callout, cta." }),
   seo: z
     .strictObject({
+      title: text(TITLE_MAX).optional().describe(`v3.12: title in search results and when shared, used as is (no site name added), at most ${TITLE_MAX} characters. Default: the post title with " | site name" while the whole fits, else the post title alone.`),
       description: text(160, 50).optional().describe("Meta description, 50–160 characters. Defaults to the excerpt."),
       noindex: z.boolean().default(false),
     })

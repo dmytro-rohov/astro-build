@@ -127,18 +127,18 @@ export default {
     follow: "Ми в соцмережах",
   },
 
-  // v3.7: the Factory easter eggs (src/site/signature.ts). "Powered by Mytko Factory" is a brand name, not translated.
+  // v3.7: the Factory easter eggs (src/site/signature.ts). "Mytko Factory" is a brand name, not translated.
   signature: {
     comment: "Сайт {siteName} створено в Mytko Website Factory: {url}",
     commentHint: "Цікаво, як це працює? Відкрийте консоль браузера (F12), там на вас дещо чекає.",
     console: "Цей сайт створено в Mytko Website Factory. Хочете такий для свого бізнесу? {url}",
     consoleHint: "Пс-с… наступний секрет чекає за адресою {url}",
+    poweredBy: "Створено в",
     markLabel: "Як створено цей сайт",
     title: "Останній секрет знайдено",
     text: "Сайт {siteName} створено в Mytko Website Factory.",
     factStatic: "Статичні сторінки на Astro, тому вони швидко завантажуються",
     factStyles: "Лише стилі та скрипти секцій, які використовує цей сайт",
-    factEngine: "Рушій Factory {version}",
     link: "Дізнатися більше про Mytko Website Factory",
     close: "Закрити",
     humans: {
@@ -151,7 +151,6 @@ export default {
       language: "Мова",
       updated: "Останнє оновлення",
       technology: "Технології",
-      engine: "Рушій",
       secret: "І ЩЕ ДЕЩО",
       hint: "Залишився останній секрет: маленький знак унизу сайту. Натисніть на нього.",
     },

@@ -1,7 +1,6 @@
 import type { APIContext } from "astro";
 import { site as siteJson } from "virtual:site";
 import { getDictionary } from "@/i18n/dictionaries";
-import { ENGINE_VERSION } from "@/site/engine";
 import { humansTxt } from "@/site/signature";
 
 export const prerender = true;
@@ -12,7 +11,6 @@ export function GET({ site }: APIContext) {
     name: siteJson.meta.name,
     url: new URL("/", site).href,
     lang: siteJson.lang,
-    version: ENGINE_VERSION,
     updated: new Date().toISOString().slice(0, 10),
   });
 

@@ -1,22 +1,21 @@
 ---
 /**
  * v3.7: "Powered by Mytko Factory" in the footer's bottom row (v3.10: "Mytko" with a capital M, as everywhere). The lockup is a brand name and stays
- * the same in every language. The small mark is the last of the easter eggs (src/site/signature.ts):
- * it opens a native popover — no script — with a few words, in the site's language, about how the
- * site was made. Browsers without the Popover API just show the mark.
+ * the same in every language; v3.12 the words before it come from the dictionary (signature.poweredBy). The small mark is the last of the easter eggs (src/site/signature.ts):
+ * it opens a native popover, no script, with a few words, in the site's language, about how the
+ * site was made (v3.12 without the engine version). Browsers without the Popover API just show the mark.
  */
 import { siteConfig } from "@/config/site";
 import { format, t } from "@/i18n";
-import { ENGINE_VERSION } from "@/site/engine";
 import { FACTORY_URL } from "@/site/signature";
 
 const id = "factory-signature";
 const s = t.signature;
-const facts = [s.factStatic, s.factStyles, format(s.factEngine, { version: ENGINE_VERSION })];
+const facts = [s.factStatic, s.factStyles];
 ---
 
 <div class="factory-credit">
-  <span class="factory-credit__by">Powered by</span>
+  <span class="factory-credit__by">{s.poweredBy}</span>
   <button type="button" class="factory-credit__mark" popovertarget={id} aria-label={s.markLabel}>
     <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false">
       <rect width="32" height="32" rx="8" fill="#0b110d" />

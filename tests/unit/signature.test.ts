@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { availableLanguages, getDictionary } from "../../src/i18n/dictionaries";
-import { FACTORY_URL, commentSafe, generatorName, humansTxt, sourceComment } from "../../src/site/signature";
+import { FACTORY_URL, GENERATOR, commentSafe, humansTxt, sourceComment } from "../../src/site/signature";
 
-const site = { name: "Studio Ania", url: "https://studio-ania.pl/", lang: "pl", version: "3.7.0", updated: "2026-11-18" };
+const site = { name: "Studio Ania", url: "https://studio-ania.pl/", lang: "pl", updated: "2026-11-18" };
 
 describe("factory signature", () => {
   it("has the easter egg texts in every language, with their placeholders", () => {
@@ -13,7 +13,7 @@ describe("factory signature", () => {
       expect(s.console, lang).toContain("{url}");
       expect(s.consoleHint, lang).toContain("{url}");
       expect(s.text, lang).toContain("{siteName}");
-      expect(s.factEngine, lang).toContain("{version}");
+      expect(s.poweredBy.trim().length, lang).toBeGreaterThan(0);
       expect(Object.values(s.humans).every((value) => value.trim().length > 0), lang).toBe(true);
     }
   });
@@ -37,10 +37,18 @@ describe("factory signature", () => {
     expect(text).toContain(`Mytko Website Factory, ${FACTORY_URL}`);
     expect(text).toContain("Ostatnia aktualizacja: 2026-11-18");
     expect(text.trimEnd().split("\n").at(-1)).toContain("Kliknij");
+    // v3.12: no engine version anywhere.
+    expect(text).not.toMatch(/\d+\.\d+\.\d+/);
   });
 
-  it("names the factory as the generator", () => {
-    expect(generatorName("3.7.0")).toBe("Mytko Website Factory 3.7.0");
+  it("names the factory as the generator, without a version", () => {
+    expect(GENERATOR).toBe("Mytko Website Factory");
+  });
+
+  it('says "Powered by" in the site\'s language (v3.12)', () => {
+    expect(getDictionary("en").signature.poweredBy).toBe("Powered by");
+    expect(getDictionary("pl").signature.poweredBy).toBe("Stworzone w");
+    expect(new Set(availableLanguages.map((lang) => getDictionary(lang).signature.poweredBy)).size).toBeGreaterThan(8);
   });
 });
 
