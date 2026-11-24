@@ -408,9 +408,16 @@ import { t, format } from "@/i18n";
 - URLs have no trailing slash (`trailingSlash: "never"`) — canonical links and the
   sitemap use the same form; `/contact/` redirects to `/contact`.
 - `src/config/indexing.ts`:
-  - `noindexPaths` — `noindex` meta and left out of the sitemap (e.g. `/contact/sent`)
-  - `sitemapExcludedPaths` — indexable, but not in the sitemap (e.g. `/privacy`)
+  - `noindexPaths`: `noindex, follow` meta and left out of the sitemap (`/contact/sent`,
+    `/contact/failed`; v3.12 `/privacy` too: the same template on every Factory site)
+  - `sitemapExcludedPaths`: indexable, but not in the sitemap (empty by default)
 - Custom `404` (prerendered) and `500` pages, both `noindex`.
+- v3.12: `SITE_NOINDEX=1` (or `true`) at build time makes a site no search engine may index (the
+  factory's previews): every route (pages, blog posts, privacy, contact results, 404, 500) gets
+  `<meta name="robots" content="noindex, nofollow">` and no canonical, no sitemap is written and
+  `robots.txt` has no `Sitemap` line. Crawling stays allowed on purpose: a crawler must fetch a page to
+  see its `noindex` (a `Disallow` would keep a shared link in the results). Empty, `0` or `false` is
+  a normal build; any other value stops the build.
 - Every page has exactly one `<h1>`.
 
 ---
@@ -770,6 +777,12 @@ Preview builds for the factory editor only ([Editor Preview Bridge](#editor-prev
 
 ```env
 PREVIEW_EDITOR_ORIGIN=https://factory.mytko.dev
+```
+
+v3.12: builds no search engine may index, e.g. the factory's previews ([SEO and Indexing](#seo-and-indexing)):
+
+```env
+SITE_NOINDEX=1
 ```
 
 ---

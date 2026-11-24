@@ -4,12 +4,13 @@ import Footer from "@/layouts/Footer.astro";
 import CookieConsent from "@/components/CookieConsent.astro";
 import Counters from "@/components/widgets/Counters.astro";
 import { siteConfig } from "@/config/site";
-import { isNoindexPath } from "@/config/indexing";
+import { isNoindexPath, NOINDEX_ROBOTS } from "@/config/indexing";
 import { dir, format, ogLocale, pageTitle, t } from "@/i18n";
 import { siteTheme } from "@/site/theme";
 import { fontPreloads } from "@/design-system/fonts.generated";
 import { hasSvgFavicon } from "@/design-system/appIcons.generated";
 import { EditorBridge, editorOrigin } from "virtual:editor-bridge";
+import { noindex as siteNoindex } from "virtual:site";
 import { ENGINE_VERSION } from "@/site/engine";
 import { FACTORY_URL, WORDMARK, generatorName, sourceComment } from "@/site/signature";
 import {
@@ -79,7 +80,8 @@ const ogType = pageType;
 const hasFeed = Boolean(siteConfig.blogFeed);
 
 const fullTitle = titleIsFull && title ? title : pageTitle(title);
-const robots = isNoindexPath(Astro.url.pathname) ? "noindex, follow" : robotsProp;
+// v3.12: a SITE_NOINDEX build (the factory's previews) hides every page, whatever the page asks for.
+const robots = siteNoindex ? NOINDEX_ROBOTS : isNoindexPath(Astro.url.pathname) ? "noindex, follow" : robotsProp;
 const lang = siteConfig.lang;
 // Every Open Graph image is 1200×630 (generated or cropped at build time).
 const isDefaultImage = true;

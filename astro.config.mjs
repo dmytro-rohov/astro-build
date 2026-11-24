@@ -6,6 +6,7 @@ import sitemap from "@astrojs/sitemap";
 import {
   noindexPaths,
   normalizePath,
+  parseNoindex,
   sitemapExcludedPaths,
 } from "./src/config/indexing.ts";
 import { loadSite, resolveSiteDir, SiteValidationError } from "./src/site/loader.ts";
@@ -63,6 +64,17 @@ try {
   process.exit(1);
 }
 
+// v3.12: SITE_NOINDEX=1 builds a site for no search engine (the factory's previews): noindex on every
+// page, no canonical, no sitemap (src/config/indexing.ts).
+let noindex;
+
+try {
+  noindex = parseNoindex(env.SITE_NOINDEX);
+} catch (error) {
+  console.error(`\n✖ ${error instanceof Error ? error.message : error}\n`);
+  process.exit(1);
+}
+
 // contact.mode "local": Node server with /api/contact. "remote": a purely static
 // site (no adapter) whose form posts to the shared form service.
 const isLocalContact = siteData.contact.mode === "local";
@@ -90,7 +102,7 @@ export default defineConfig({
   adapter: isLocalContact ? node({ mode: "standalone" }) : undefined,
 
   vite: {
-    plugins: [siteVitePlugin(siteDir, { gaId, editorOrigin })],
+    plugins: [siteVitePlugin(siteDir, { gaId, editorOrigin, noindex })],
     server: {
       // SITE_DIR may live outside the project (client sites repository).
       fs: { allow: [process.cwd(), siteDir] },
@@ -124,13 +136,18 @@ export default defineConfig({
         },
       },
     },
-    sitemap({
-      filter: (page) => {
-        const pathname = normalizePath(new URL(page).pathname);
+    // v3.12: a SITE_NOINDEX build writes no sitemap at all.
+    ...(noindex
+      ? []
+      : [
+          sitemap({
+            filter: (page) => {
+              const pathname = normalizePath(new URL(page).pathname);
 
-        return ![...noindexPaths, ...sitemapExcludedPaths].includes(pathname);
-      },
-    }),
+              return ![...noindexPaths, ...sitemapExcludedPaths].includes(pathname);
+            },
+          }),
+        ]),
   ],
 
   security: {
