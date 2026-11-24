@@ -196,6 +196,65 @@ export function fixContrast(color: string, against: string, min: number): string
   return candidates[0] ?? (contrast("#000000", against) > contrast("#ffffff", against) ? "#000000" : "#ffffff");
 }
 
+/** A color the build changed so a kind passes: which property, from what, to what. */
+export type ButtonFix = { kind: ButtonKind; property: "background" | "border" | "text" | "hover.text"; from: string; to: string };
+
+/**
+ * v3.12: a kind's style with its contrast problems on a surface fixed by the nearest colors that pass (fixContrast),
+ * in the order the checks depend on each other: the shape first (the background the site set, else the border), then
+ * the label on it, then the label on hover (its background follows the fixed one). What passes stays as the site set it.
+ */
+export function fixButtonStyle(kind: ButtonKind, style: ButtonStyle, palette: ButtonPalette, surface = palette.background.primary): { style: ButtonStyle; fixes: ButtonFix[] } {
+  const next: ButtonStyle = { ...style, ...(style.hover ? { hover: { ...style.hover } } : {}) };
+  const fixes: ButtonFix[] = [];
+  const failing = (check: ButtonIssue["check"]) => buttonIssues(kind, next, palette, surface).find((issue) => issue.check === check);
+
+  if (failing("shape")) {
+    const paint = buttonPaint(kind, next, palette);
+    const bordered = (next.borderWidth ?? 1) > 0 && opaque(paint.border);
+    const property = bordered && (setColors(kind, next).background === undefined || !opaque(paint.background)) ? "border" : "background";
+    const to = fixContrast(paint[property], surface, SHAPE_CONTRAST);
+    fixes.push({ kind, property, from: paint[property], to });
+    next[property] = to;
+  }
+
+  const text = failing("text");
+  if (text) {
+    next.text = fixContrast(text.foreground, text.background, TEXT_CONTRAST);
+    fixes.push({ kind, property: "text", from: text.foreground, to: next.text });
+  }
+
+  const hoverText = failing("hoverText");
+  if (hoverText) {
+    next.hover = { ...next.hover, text: fixContrast(hoverText.foreground, hoverText.background, TEXT_CONTRAST) };
+    fixes.push({ kind, property: "hover.text", from: hoverText.foreground, to: next.hover.text! });
+  }
+
+  return { style: next, fixes };
+}
+
+/**
+ * v3.12: the site's button styles as the build shows them: every kind fixed on the palette of the scheme the site shows
+ * first (fixButtonStyle), so a client's choice never puts unreadable buttons on a live page. Parts with their own palette
+ * keep or reset these colors as before (buttonScopeVars). Only the operator's theme.allowLowContrastButtons keeps the
+ * site's colors as they are.
+ */
+export function fixButtonStyles(styles: ButtonStyles | undefined, palette: ButtonPalette): { styles: ButtonStyles | undefined; fixes: ButtonFix[] } {
+  if (!styles) return { styles, fixes: [] };
+
+  const fixed: ButtonStyles = { ...styles };
+  const fixes: ButtonFix[] = [];
+  for (const kind of BUTTON_KINDS) {
+    const style = styles[kind];
+    if (!style) continue;
+    const result = fixButtonStyle(kind, style, palette);
+    fixed[kind] = result.style;
+    fixes.push(...result.fixes);
+  }
+
+  return { styles: fixed, fixes };
+}
+
 /**
  * A part of the page with its own palette (an accent or inverse section, a bar, a footer, the other color scheme):
  * each kind's colors again, the site's where they stay visible there, "initial" where they would vanish (the theme's

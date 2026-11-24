@@ -304,6 +304,12 @@ is not styled by sites). Every property is optional; what is not set stays the t
 - **Contrast is a warning, not an error** (the build goes on): the label against its background, on
   hover too (4.5:1), and the button against the page (3:1, by its background or its border). Only
   colors the site sets are judged.
+- **v3.12: failing colors are fixed in the build**, in the scheme the site shows first: the nearest
+  colors that pass (only the lightness moves; `fixButtonStyles` in `design-system/theme/buttons.ts`),
+  the shape first (the background the site set, else the border), then the label, then the label on
+  hover. The warning says which colors the build used. The editor preview shows the same fixed colors.
+  Only the operator keeps a client's failing colors: `"theme": { "allowLowContrastButtons": true }`
+  (never set it from a brief or the client's panel; the warning stays).
 - **Parts of the page with their own palette** (inverse and accent sections, the brand and dark bars,
   footers, the cover hero, the other color scheme): a kind keeps the site's colors there unless they
   would vanish (the same checks against that palette); then the theme's button adapted to that part

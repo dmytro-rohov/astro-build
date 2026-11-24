@@ -275,7 +275,9 @@ const ButtonStyleSchema = ButtonColors.extend({
 });
 const ButtonStylesSchema = z
   .strictObject(Object.fromEntries(BUTTON_KINDS.map((kind) => [kind, ButtonStyleSchema.optional()])) as Record<(typeof BUTTON_KINDS)[number], z.ZodOptional<typeof ButtonStyleSchema>>)
-  .describe("v3.11: the site's own look of each kind of button, for every button of that kind. Contrast problems are warnings, not errors.");
+  .describe(
+    "v3.11: the site's own look of each kind of button, for every button of that kind. v3.12: colors that fail WCAG contrast are replaced in the build by the nearest ones that pass (a warning says which), unless theme.allowLowContrastButtons.",
+  );
 
 const ThemeSchema = z.strictObject({
   archetype: z.enum(ARCHETYPE_IDS).default("default").describe("Style preset: colors, fonts, shapes, spacing, section tones."),
@@ -290,6 +292,10 @@ const ThemeSchema = z.strictObject({
     .optional()
     .describe("Exceptional manual color tokens; must pass WCAG AA as they are (no auto-adjust)."),
   buttons: ButtonStylesSchema.optional(),
+  allowLowContrastButtons: z
+    .boolean()
+    .optional()
+    .describe("v3.12, operator only: keep the button colors of theme.buttons as they are even where they fail WCAG contrast (by default the build fixes them)."),
 });
 
 const NavigationSchema = z.strictObject({

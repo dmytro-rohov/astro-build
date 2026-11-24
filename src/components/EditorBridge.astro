@@ -10,6 +10,9 @@
  * usual. Protocol: README "Editor Preview Bridge".
  */
 import "@/styles/state/_editor-bridge.scss";
+import { site } from "virtual:site";
+import { resolveTheme } from "@/design-system/theme";
+import type { ButtonPalette } from "@/design-system/theme/buttons";
 
 interface Props {
   /** The editor's origin, e.g. https://factory.mytko.dev. */
@@ -17,13 +20,18 @@ interface Props {
 }
 
 const { origin } = Astro.props;
+// v3.12: a style shown live is fixed like the build fixes it (cssVars.ts): on the palette of the scheme the site
+// shows first, unless the operator keeps the site's colors (theme.allowLowContrastButtons).
+const theme = resolveTheme(site.theme);
+const { background, border, action } = theme.colorScheme === "dark" ? theme.dark : theme.light;
+const ownPalette: ButtonPalette = { background: { primary: background.primary, muted: background.muted }, border: { default: border.default }, action };
 ---
 
-<span hidden data-editor-origin={origin}></span>
+<span hidden data-editor-origin={origin} data-button-palette={site.theme.allowLowContrastButtons ? undefined : JSON.stringify(ownPalette)}></span>
 
 <script>
   import { buttonKindOf, parseEditorMessage, sectionOrder, type BridgeSection } from "@/site/editor-bridge";
-  import { BUTTON_KINDS, buttonColorVars, buttonVars, vanishingKinds, type ButtonPalette, type ButtonStyles } from "@/design-system/theme/buttons";
+  import { BUTTON_KINDS, buttonColorVars, buttonVars, fixButtonStyles, vanishingKinds, type ButtonPalette, type ButtonStyles } from "@/design-system/theme/buttons";
 
   const FOCUS = "is-editor-focus";
   // The page's sections (SectionShell) in their current order.
@@ -36,6 +44,9 @@ const { origin } = Astro.props;
     ".site-header--brand-bar", ".section.s-hero--cover-image", ".lightbox", ".site-footer--tone-dark",
     ".site-footer__band--image", ".site-header--dark-bar", ".site-footer--tone-light",
   ].join(", ");
+  // v3.12: the palette the build fixes a style's failing colors on (none: the operator keeps them).
+  const paletteData = document.querySelector("[data-editor-origin]")?.getAttribute("data-button-palette");
+  const ownPalette = paletteData ? (JSON.parse(paletteData) as ButtonPalette) : undefined;
   const PROPERTIES = ["padding-x-sm", "padding-x-md", "padding-x-lg", "padding-y", "border-width", "radius", "weight", "case", "tracking", "shadow", "lift", "glow"];
   const ALL_VARS = BUTTON_KINDS.flatMap((kind) => [...buttonColorVars(kind), ...PROPERTIES.map((name) => `button-${kind}-${name}`)]);
   const HEX = /^#[0-9a-f]{6}$/i;
@@ -61,12 +72,13 @@ const { origin } = Astro.props;
    * leaves out as "initial", so the built style does not show through) and, in each part with its own
    * palette, the kinds' colors kept or reset like the build does. null: back to the built style.
    */
-  function showButtonStyles(styles: ButtonStyles | null) {
+  function showButtonStyles(sent: ButtonStyles | null) {
     const root = document.documentElement;
     const scopes = [...document.querySelectorAll<HTMLElement>(SCOPES)];
     for (const element of [root, ...scopes]) for (const name of ALL_VARS) element.style.removeProperty(`--${name}`);
-    if (!styles) return;
+    if (!sent) return;
 
+    const styles = ownPalette ? (fixButtonStyles(sent, ownPalette).styles ?? sent) : sent;
     const vars = buttonVars(styles);
     for (const name of ALL_VARS) root.style.setProperty(`--${name}`, vars[name] ?? "initial");
 
