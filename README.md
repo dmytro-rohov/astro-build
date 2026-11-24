@@ -469,6 +469,11 @@ With analytics enabled:
 - "Cookie settings" in the footer (and on the privacy page) reopens the banner,
   so consent can be withdrawn at any time. Any element with
   `data-cookie-settings` does the same.
+- v3.12 (WCAG 2.4.11, 2.4.3): the banner comes right after the skip link (first in the Tab
+  order); Escape minimises it to a small "Cookie settings" button for the session (no choice
+  is stored); while it shows, focused elements scroll above it (`scroll-padding-bottom` and
+  room under the footer); it never gets taller than the screen (it scrolls, compact on phones);
+  after a choice focus returns to the control it was opened from.
 
 ---
 

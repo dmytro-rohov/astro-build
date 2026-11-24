@@ -1,62 +1,84 @@
 ---
+/**
+ * The analytics consent banner. v3.12 (WCAG 2.4.11 / 2.4.3): BaseLayout puts it right after the skip
+ * link, so it comes first in the Tab order; Escape minimises it to a small "Cookie settings" button
+ * (for the session, no choice is made); while it is on screen the page keeps focused elements above
+ * it (scroll-padding-bottom, and room under the footer so the last ones can scroll there too); it
+ * never gets taller than the screen; after a choice focus goes back
+ * to the "Cookie settings" control it was opened from. Its title is not a heading (no h2 in the
+ * page's outline): it names the region.
+ */
 import { ANALYTICS_CONFIG } from "@/config/analytics";
 import { t } from "@/i18n";
 ---
 
 {ANALYTICS_CONFIG.enabled && (
-  <aside
-    class="cookie-consent"
-    data-cookie-consent
-    data-consent-version={ANALYTICS_CONFIG.consentVersion}
-    aria-labelledby="cookie-consent-title"
-    aria-describedby="cookie-consent-description"
-    tabindex="-1"
-    hidden
-  >
-    <div class="cookie-consent__content">
-      <div class="cookie-consent__text">
-        <h2
-          id="cookie-consent-title"
-          class="cookie-consent__title"
-        >
-          {t.cookies.title}
-        </h2>
+  <Fragment>
+    <aside
+      class="cookie-consent"
+      data-cookie-consent
+      data-consent-version={ANALYTICS_CONFIG.consentVersion}
+      aria-labelledby="cookie-consent-title"
+      aria-describedby="cookie-consent-description"
+      tabindex="-1"
+      hidden
+    >
+      <div class="cookie-consent__content">
+        <div class="cookie-consent__text">
+          <p
+            id="cookie-consent-title"
+            class="cookie-consent__title"
+          >
+            {t.cookies.title}
+          </p>
 
-        <p
-          id="cookie-consent-description"
-          class="cookie-consent__description"
-        >
-          {t.cookies.description}
-        </p>
+          <p
+            id="cookie-consent-description"
+            class="cookie-consent__description"
+          >
+            {t.cookies.description}
+          </p>
 
-        <a
-          class="cookie-consent__privacy-link"
-          href="/privacy"
-        >
-          {t.cookies.privacyLink}
-        </a>
+          <a
+            class="cookie-consent__privacy-link"
+            href="/privacy"
+          >
+            {t.cookies.privacyLink}
+          </a>
+        </div>
+
+        <!-- Both choices have the same visual weight (GDPR / EDPB guidelines). -->
+        <div class="cookie-consent__actions">
+          <button
+            class="cookie-consent__button"
+            type="button"
+            data-consent-reject
+          >
+            {t.cookies.reject}
+          </button>
+
+          <button
+            class="cookie-consent__button"
+            type="button"
+            data-consent-accept
+          >
+            {t.cookies.accept}
+          </button>
+        </div>
       </div>
+    </aside>
 
-      <!-- Both choices have the same visual weight (GDPR / EDPB guidelines). -->
-      <div class="cookie-consent__actions">
-        <button
-          class="cookie-consent__button"
-          type="button"
-          data-consent-reject
-        >
-          {t.cookies.reject}
-        </button>
-
-        <button
-          class="cookie-consent__button"
-          type="button"
-          data-consent-accept
-        >
-          {t.cookies.accept}
-        </button>
-      </div>
-    </div>
-  </aside>
+    <!-- The minimised banner (Escape): opens it again like the footer's "Cookie settings". -->
+    <button
+      class="cookie-consent-reopen"
+      type="button"
+      data-cookie-settings
+      data-cookie-reopen
+      hidden
+    >
+      {t.footer.cookieSettings}
+    </button>
+  </Fragment>
 )}
 
 <script>
@@ -67,8 +89,14 @@ import { t } from "@/i18n";
     setAnalyticsConsent,
   } from "@scripts/analytics-consent";
 
+  // Minimised for this browser session: the next pages show only the small button.
+  const MINIMISED_KEY = "site-analytics-consent-minimised";
+
   const banner =
     document.querySelector<HTMLElement>("[data-cookie-consent]");
+
+  const reopenButton =
+    document.querySelector<HTMLButtonElement>("[data-cookie-reopen]");
 
   const acceptButton =
     banner?.querySelector<HTMLButtonElement>("[data-consent-accept]");
@@ -76,15 +104,48 @@ import { t } from "@/i18n";
   const rejectButton =
     banner?.querySelector<HTMLButtonElement>("[data-consent-reject]");
 
-  function setButtonsDisabled(disabled: boolean): void {
-    if (acceptButton) {
-      acceptButton.disabled = disabled;
-    }
+  // The "Cookie settings" control the banner was opened from: focus goes back there after a choice.
+  let opener: HTMLElement | undefined;
+  let busy = false;
 
-    if (rejectButton) {
-      rejectButton.disabled = disabled;
+  /**
+   * While a choice is being saved the buttons only look disabled (aria-disabled): a disabled
+   * button would drop the keyboard focus to the page.
+   */
+  function setBusy(value: boolean): void {
+    busy = value;
+
+    for (const button of [acceptButton, rejectButton]) {
+      if (value) {
+        button?.setAttribute("aria-disabled", "true");
+      } else {
+        button?.removeAttribute("aria-disabled");
+      }
     }
   }
+
+  function remember(minimised: boolean): void {
+    try {
+      if (minimised) {
+        sessionStorage.setItem(MINIMISED_KEY, "1");
+      } else {
+        sessionStorage.removeItem(MINIMISED_KEY);
+      }
+    } catch {
+      // Storage blocked: the banner shows in full on the next page.
+    }
+  }
+
+  function wasMinimised(): boolean {
+    try {
+      return sessionStorage.getItem(MINIMISED_KEY) === "1";
+    } catch {
+      return false;
+    }
+  }
+
+  const isShown = (element: HTMLElement | null | undefined): element is HTMLElement =>
+    Boolean(element?.isConnected && element.getClientRects().length > 0);
 
   /**
    * On page load the banner appears without taking focus, so keyboard and
@@ -96,8 +157,12 @@ import { t } from "@/i18n";
       return;
     }
 
-    setButtonsDisabled(false);
+    setBusy(false);
     banner.hidden = false;
+
+    if (reopenButton) {
+      reopenButton.hidden = true;
+    }
 
     if (focus) {
       banner.focus();
@@ -110,6 +175,37 @@ import { t } from "@/i18n";
     }
 
     banner.hidden = true;
+
+    if (reopenButton) {
+      reopenButton.hidden = true;
+    }
+  }
+
+  /** Escape without a choice: only the small button stays, for this session. */
+  function minimiseBanner(): void {
+    if (!banner) {
+      return;
+    }
+
+    banner.hidden = true;
+    remember(true);
+
+    if (reopenButton) {
+      reopenButton.hidden = false;
+    }
+  }
+
+  /** After a choice, or Escape: back to where the banner was opened from (else the small button). */
+  function returnFocus(): void {
+    const target = isShown(opener) ? opener : isShown(reopenButton) ? reopenButton : undefined;
+    opener = undefined;
+    target?.focus();
+  }
+
+  function chosen(): void {
+    remember(false);
+    hideBanner();
+    returnFocus();
   }
 
   async function initializeConsent(): Promise<void> {
@@ -131,24 +227,37 @@ import { t } from "@/i18n";
       return;
     }
 
+    if (wasMinimised()) {
+      minimiseBanner();
+      return;
+    }
+
     showBanner();
   }
 
   acceptButton?.addEventListener("click", async () => {
-    setButtonsDisabled(true);
+    if (busy) {
+      return;
+    }
+
+    setBusy(true);
 
     try {
       await setAnalyticsConsent("granted");
-      hideBanner();
+      chosen();
     } catch (error) {
       console.error("Could not enable analytics:", error);
     } finally {
-      setButtonsDisabled(false);
+      setBusy(false);
     }
   });
 
   rejectButton?.addEventListener("click", async () => {
-    setButtonsDisabled(true);
+    if (busy) {
+      return;
+    }
+
+    setBusy(true);
 
     const analyticsWasLoaded = Boolean(
       document.querySelector(
@@ -164,10 +273,10 @@ import { t } from "@/i18n";
         return;
       }
 
-      hideBanner();
+      chosen();
     } catch (error) {
       console.error("Could not disable analytics:", error);
-      setButtonsDisabled(false);
+      setBusy(false);
     }
   });
 
@@ -179,18 +288,67 @@ import { t } from "@/i18n";
       return;
     }
 
-    if (!target.closest("[data-cookie-settings]")) {
+    const trigger = target.closest<HTMLElement>("[data-cookie-settings]");
+
+    if (!trigger) {
       return;
     }
 
+    opener = trigger;
     showBanner({ focus: true });
   });
 
   window.addEventListener(analyticsConsentEvents.openSettings, () => {
+    const active = document.activeElement;
+    opener = active instanceof HTMLElement && active !== document.body ? active : undefined;
     showBanner({ focus: true });
   });
 
+  // Escape minimises the banner (a choice already made: it just closes). In the capture phase, so an
+  // open phone menu or dialog, which close on Escape themselves, can be left to go first.
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !banner || banner.hidden) {
+      return;
+    }
+
+    const inside = banner.contains(document.activeElement);
+
+    if (!inside && document.querySelector("[data-navbar][data-open], dialog[open]")) {
+      return;
+    }
+
+    if (getAnalyticsConsent()) {
+      hideBanner();
+    } else {
+      minimiseBanner();
+    }
+
+    if (inside) {
+      returnFocus();
+    }
+  }, { capture: true });
+
+  // While the banner (or its small button) is on screen, focused elements scroll above it (WCAG 2.4.11),
+  // also the last ones of the page: the page gets that much room under the footer.
+  // A constructed style sheet, not a style="" attribute: inline styles are blocked by the CSP.
+  const coverSheet = new CSSStyleSheet();
+  document.adoptedStyleSheets = [...document.adoptedStyleSheets, coverSheet];
+
+  const updateCover = (): void => {
+    const shown = [banner, reopenButton].find(isShown);
+    const covered = shown ? Math.ceil(document.documentElement.clientHeight - shown.getBoundingClientRect().top) : 0;
+    coverSheet.replaceSync(covered > 0 ? `:root { scroll-padding-bottom: ${covered + 8}px; } body { padding-block-end: ${covered}px; }` : "");
+  };
+
   if (banner) {
+    const observer = new ResizeObserver(updateCover);
+    observer.observe(banner);
+
+    if (reopenButton) {
+      observer.observe(reopenButton);
+    }
+
+    window.addEventListener("resize", updateCover, { passive: true });
     void initializeConsent();
   }
 </script>
@@ -209,6 +367,10 @@ import { t } from "@/i18n";
     justify-self: flex-end;
     left: clamp(1rem, 3vw, 2rem);
     max-width: 46rem;
+    // Never taller than the screen (zoom, short phones): the banner scrolls instead.
+    max-height: calc(100dvh - 2 * clamp(1rem, 3vw, 2rem));
+    overflow: auto;
+    overscroll-behavior: contain;
     padding: clamp(1.25rem, 3vw, 2rem);
     border: 1px solid currentColor;
     background: var(--color-background-inverse);
@@ -229,7 +391,10 @@ import { t } from "@/i18n";
     display: none;
   }
 
+  // Focus rings inside are drawn on the inverse background, in its text color (WCAG 2.4.7).
   .cookie-consent__content {
+    --color-focus-ring: var(--color-text-inverse);
+
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -238,8 +403,10 @@ import { t } from "@/i18n";
   .cookie-consent__title {
     margin: 0 0 1rem;
     color: inherit;
+    font-family: var(--font-family-heading);
     font-size: 2rem;
     font-weight: 600;
+    line-height: var(--line-height-tight);
   }
 
   .cookie-consent__description {
@@ -254,6 +421,11 @@ import { t } from "@/i18n";
     color: inherit;
     text-decoration: underline;
     text-underline-offset: 0.2em;
+  }
+
+  .cookie-consent__privacy-link:focus-visible {
+    outline: 2px solid var(--color-text-inverse);
+    outline-offset: 2px;
   }
 
   .cookie-consent__actions {
@@ -272,29 +444,78 @@ import { t } from "@/i18n";
     cursor: pointer;
   }
 
+  // The ring sits on the banner's background around a light button: in the banner's text color.
   .cookie-consent__button:focus-visible {
-    outline: 2px solid currentColor;
+    outline: 2px solid var(--color-text-inverse);
     outline-offset: 2px;
   }
 
-  .cookie-consent__button:disabled {
+  .cookie-consent__button[aria-disabled="true"] {
     cursor: wait;
     opacity: 0.65;
   }
 
+  // The minimised banner: a small button in the corner.
+  .cookie-consent-reopen {
+    position: fixed;
+    z-index: var(--z-index-toast);
+    inset-inline-start: clamp(1rem, 3vw, 2rem);
+    bottom: clamp(1rem, 3vw, 2rem);
+    min-height: 2.75rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-text-inverse);
+    border-radius: var(--radius-pill);
+    background: var(--color-background-inverse);
+    color: var(--color-text-inverse);
+    box-shadow: var(--shadow-lg);
+    font: inherit;
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+  }
 
-  @include mq-down(sm) {
+  .cookie-consent-reopen:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  .cookie-consent-reopen[hidden] {
+    display: none;
+  }
+
+  // Phones and short screens (zoom): a compact banner that covers as little of the page as it can.
+  @media (width < 40rem), (height < 32rem) {
+    .cookie-consent {
+      padding: 1rem;
+    }
+
+    .cookie-consent__content {
+      gap: 0.75rem;
+    }
+
     .cookie-consent__title {
-      font-size: 1.5rem;
-      margin-bottom: .5rem;
+      margin-bottom: 0.25rem;
+      font-size: 1.125rem;
     }
-    .cookie-consent__button {
-      padding: .4rem .5rem ;
-      font-size: .8rem;
-    }
+
     .cookie-consent__description,
     .cookie-consent__privacy-link {
-      font-size: .8rem;
+      font-size: 0.8125rem;
+      line-height: 1.45;
+    }
+
+    .cookie-consent__privacy-link {
+      margin-top: 0.25rem;
+    }
+
+    .cookie-consent__actions {
+      gap: 0.5rem;
+    }
+
+    .cookie-consent__button {
+      flex: 1 1 8rem;
+      min-height: 2.5rem;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.875rem;
     }
   }
 </style>
