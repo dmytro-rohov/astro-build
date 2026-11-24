@@ -82,11 +82,13 @@ export default {
     previous: "Попереднє фото",
     next: "Наступне фото",
     status: "Фото {number} з {count}",
+    item: "{title}: фото {number} з {count}",
   },
 
   common: {
     skipToContent: "Перейти до вмісту",
     backToHome: "Повернутися на головну",
+    newTab: "(відкриється в новій вкладці)",
   },
 
   nav: {
@@ -218,6 +220,7 @@ export default {
     privacyBefore: "Я приймаю",
     privacyLink: "політику конфіденційності",
     privacyAfter: ".",
+    requiredNote: "Поля, позначені *, обов’язкові для заповнення.",
     submit: "Надіслати повідомлення",
     sending: "Надсилання повідомлення…",
     success: "Повідомлення успішно надіслано.",

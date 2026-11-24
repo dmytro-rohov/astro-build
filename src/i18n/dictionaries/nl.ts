@@ -65,6 +65,7 @@ export default {
   common: {
     skipToContent: "Naar de inhoud",
     backToHome: "Terug naar de homepage",
+    newTab: "(opent in een nieuw tabblad)",
   },
 
   nav: {
@@ -191,6 +192,7 @@ export default {
     privacyBefore: "Ik ga akkoord met het",
     privacyLink: "privacybeleid",
     privacyAfter: ".",
+    requiredNote: "Velden met een * zijn verplicht.",
     submit: "Bericht versturen",
     sending: "Bericht wordt verstuurd…",
     success: "Je bericht is verstuurd.",
@@ -307,5 +309,6 @@ export default {
     previous: "Vorige foto",
     next: "Volgende foto",
     status: "Foto {number} van {count}",
+    item: "{title}: foto {number} van {count}",
   },
 } satisfies Dictionary;

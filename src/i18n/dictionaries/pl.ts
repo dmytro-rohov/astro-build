@@ -82,11 +82,13 @@ export default {
     previous: "Poprzednie zdjęcie",
     next: "Następne zdjęcie",
     status: "Zdjęcie {number} z {count}",
+    item: "{title}: zdjęcie {number} z {count}",
   },
 
   common: {
     skipToContent: "Przejdź do treści",
     backToHome: "Wróć na stronę główną",
+    newTab: "(otwiera się w nowej karcie)",
   },
 
   nav: {
@@ -218,6 +220,7 @@ export default {
     privacyBefore: "Akceptuję",
     privacyLink: "politykę prywatności",
     privacyAfter: ".",
+    requiredNote: "Pola oznaczone * są wymagane.",
     submit: "Wyślij wiadomość",
     sending: "Wysyłanie wiadomości…",
     success: "Wiadomość została wysłana.",

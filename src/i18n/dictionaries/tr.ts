@@ -65,6 +65,7 @@ export default {
   common: {
     skipToContent: "İçeriğe geç",
     backToHome: "Ana sayfaya dön",
+    newTab: "(yeni sekmede açılır)",
   },
 
   nav: {
@@ -191,6 +192,7 @@ export default {
     privacyBefore: "Okudum ve",
     privacyLink: "gizlilik politikasını",
     privacyAfter: " kabul ediyorum.",
+    requiredNote: "* ile işaretli alanlar zorunludur.",
     submit: "Mesaj gönder",
     sending: "Mesaj gönderiliyor…",
     success: "Mesajınız başarıyla gönderildi.",
@@ -307,5 +309,6 @@ export default {
     previous: "Önceki fotoğraf",
     next: "Sonraki fotoğraf",
     status: "Fotoğraf {number} / {count}",
+    item: "{title}: fotoğraf {number} / {count}",
   },
 } satisfies Dictionary;
