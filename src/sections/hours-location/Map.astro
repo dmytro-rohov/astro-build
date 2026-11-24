@@ -12,6 +12,7 @@ import MapArt from "@/sections/hours-location/MapArt.astro";
 import Stack from "@/components/layouts/Stack.astro";
 import Button from "@/components/ui/Button.astro";
 import Link from "@/components/ui/Link.astro";
+import NewTab from "@/components/ui/NewTab.astro";
 import Icon from "@/components/media/Icon.astro";
 import { site } from "virtual:site";
 import { format, t } from "@/i18n";
@@ -94,7 +95,7 @@ const marker = business.address?.street ?? business.address?.city;
               <p class="s-hours-map__notice">{format(t.sections.embedNotice, vars)}</p>
               <p class="s-hours-map__consent-actions">
                 <button type="button" class="button button--primary button--sm" data-map-load hidden>{t.sections.mapLoad}</button>
-                <a class="link" href={frameUrl} target="_blank" rel="noopener noreferrer">{format(t.sections.embedOpen, vars)}</a>
+                <a class="link" href={frameUrl} target="_blank" rel="noopener noreferrer">{format(t.sections.embedOpen, vars)}<NewTab /></a>
               </p>
             </div>
           )}

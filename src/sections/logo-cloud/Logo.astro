@@ -5,6 +5,7 @@
  * logo's alt; `decorative` (the marquee's repeats) renders it without alt and without the link.
  */
 import Img from "@/components/media/Img.astro";
+import NewTab from "@/components/ui/NewTab.astro";
 import { getAsset } from "@/site/assets";
 import { logoShape } from "@/sections/logo-cloud/layout";
 import "@/styles/sections/logo-cloud/_logo.scss";
@@ -30,7 +31,7 @@ const imgProps = { src: image, alt, kind: decorative ? ("decorative" as const) :
 
 {href && !decorative ? (
   <a class="s-logo-link" href={href} rel="noopener noreferrer" target="_blank">
-    {svg ? <img {...svgProps} loading="lazy" decoding="async" /> : <Img {...imgProps} />}
+    {svg ? <img {...svgProps} loading="lazy" decoding="async" /> : <Img {...imgProps} />}<NewTab />
   </a>
 ) : svg ? (
   <img {...svgProps} loading="lazy" decoding="async" />

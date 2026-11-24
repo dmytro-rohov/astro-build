@@ -6,6 +6,7 @@ import Tag from "@/components/ui/Tag.astro";
 import Accordion from "@/components/ui/Accordion.astro";
 import JsonLd from "@/sections/faq/JsonLd.astro";
 import { renderRichTextLite, richTextLiteToPlain } from "@/site/richtext";
+import { t } from "@/i18n";
 import type { VariantOf } from "@/site/types";
 import "@/styles/sections/faq/_accordion.scss";
 
@@ -22,7 +23,7 @@ const Heading = headingLevel;
 const items = content.items.map((item, index) => ({
   title: item.question,
   content: richTextLiteToPlain(item.answer),
-  contentHtml: renderRichTextLite(item.answer),
+  contentHtml: renderRichTextLite(item.answer, { newTab: t.common.newTab }),
   open: props.openFirst === true && index === 0,
 }));
 ---

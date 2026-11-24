@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { renderRichTextLite, richTextLiteToPlain } from "../../src/site/richtext";
+import { renderRichTextInline, renderRichTextLite, richTextLiteToPlain } from "../../src/site/richtext";
 
 test("renders paragraphs, bold, italic and links", () => {
   expect(renderRichTextLite("**A** *b* [c](/x)\n\nSecond")).toBe(
@@ -9,6 +9,13 @@ test("renders paragraphs, bold, italic and links", () => {
 
 test("external links open safely in a new tab", () => {
   expect(renderRichTextLite("[x](https://example.com)")).toContain('rel="noopener noreferrer" target="_blank"');
+});
+
+test("v3.12: a link to a new tab says so to screen readers, in the site's words (escaped); site links do not", () => {
+  expect(renderRichTextLite("[x](https://example.com) [y](/oferta)", { newTab: "(opens in <a> new tab)" })).toBe(
+    '<p><a class="link" href="https://example.com" rel="noopener noreferrer" target="_blank">x<span class="visually-hidden-inline"> (opens in &lt;a&gt; new tab)</span></a> <a class="link" href="/oferta">y</a></p>',
+  );
+  expect(renderRichTextInline("[x](https://example.com)", { newTab: "(nowa karta)" })).toContain('x<span class="visually-hidden-inline"> (nowa karta)</span></a>');
 });
 
 test("escapes any markup even if validation was skipped", () => {

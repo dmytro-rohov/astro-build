@@ -1,6 +1,7 @@
 ---
 /** richtext-lite from site.json, rendered and escaped by the engine. */
 import { renderRichTextLite } from "@/site/richtext";
+import { t } from "@/i18n";
 
 export interface Props {
   text: string;
@@ -10,4 +11,4 @@ export interface Props {
 const { text, class: className } = Astro.props;
 ---
 
-<div class:list={["s-richtext", className]} set:html={renderRichTextLite(text)} />
+<div class:list={["s-richtext", className]} set:html={renderRichTextLite(text, { newTab: t.common.newTab })} />

@@ -5,6 +5,7 @@
  * without JavaScript the link opens it in a new tab. Styles: _embed-frame.scss.
  */
 import Stack from "@/components/layouts/Stack.astro";
+import NewTab from "@/components/ui/NewTab.astro";
 import { format, t } from "@/i18n";
 import { embedProvider } from "@/site/embeds";
 import "@/styles/sections/_embed-frame.scss";
@@ -29,7 +30,7 @@ const frameClass = { "16:9": "wide", "4:3": "standard", tall: "tall" }[provider.
   <Stack space="md" class="s-embed__placeholder">
     <p class="s-embed__notice">{format(t.sections.embedNotice, vars)}</p>
     <button type="button" class="button button--primary button--md" data-embed-load hidden>{format(t.sections.embedLoad, vars)}</button>
-    <a class="link" href={frameUrl} target="_blank" rel="noopener noreferrer">{format(t.sections.embedOpen, vars)}</a>
+    <a class="link" href={frameUrl} target="_blank" rel="noopener noreferrer">{format(t.sections.embedOpen, vars)}<NewTab /></a>
   </Stack>
 </div>
 

@@ -3,6 +3,7 @@
  * Supported: paragraphs (blank line), **bold**, *italic*, [text](link).
  * The whole text is HTML-escaped first, so no markup from the input survives;
  * links are re-checked against the SafeUrl rule. Pure TS (also used in tests).
+ * v3.12: `newTab` (the dictionary's "(opens in a new tab)") is added, visually hidden, to links that open a new tab.
  */
 import { SafeUrl } from "./schema/fields";
 
@@ -15,9 +16,11 @@ function escapeHtml(value: string): string {
     .replaceAll("'", "&#039;");
 }
 
+export type RichTextOptions = { newTab?: string };
+
 const emphasis = (value: string) => value.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/\*([^*]+)\*/g, "<em>$1</em>");
 
-function renderInline(escaped: string): string {
+function renderInline(escaped: string, { newTab }: RichTextOptions = {}): string {
   // Links are rendered first and replaced by placeholders, so **/* inside a URL
   // never turn into markup in the href. (Validated text has no U+0000.)
   const links: string[] = [];
@@ -28,8 +31,10 @@ function renderInline(escaped: string): string {
     let html = emphasis(label);
 
     if (SafeUrl.safeParse(raw).success) {
-      const rel = /^https:/.test(raw) ? ' rel="noopener noreferrer" target="_blank"' : "";
-      html = `<a class="link" href="${href}"${rel}>${html}</a>`;
+      const external = /^https:/.test(raw);
+      const rel = external ? ' rel="noopener noreferrer" target="_blank"' : "";
+      const note = external && newTab ? `<span class="visually-hidden-inline"> ${escapeHtml(newTab)}</span>` : "";
+      html = `<a class="link" href="${href}"${rel}>${html}${note}</a>`;
     }
 
     links.push(html);
@@ -41,17 +46,17 @@ function renderInline(escaped: string): string {
 }
 
 /** HTML string for set:html. Paragraphs become <p>, single line breaks <br>. */
-export function renderRichTextLite(value: string): string {
+export function renderRichTextLite(value: string, options?: RichTextOptions): string {
   return value
     .trim()
     .split(/\n\s*\n/)
-    .map((paragraph) => `<p>${renderInline(escapeHtml(paragraph.trim())).replace(/\n/g, "<br>")}</p>`)
+    .map((paragraph) => `<p>${renderInline(escapeHtml(paragraph.trim()), options).replace(/\n/g, "<br>")}</p>`)
     .join("");
 }
 
 /** v3.9: one line of richtext-lite without the <p> (list items): line breaks become <br>. */
-export function renderRichTextInline(value: string): string {
-  return renderInline(escapeHtml(value.trim())).replace(/\s*\n\s*/g, "<br>");
+export function renderRichTextInline(value: string, options?: RichTextOptions): string {
+  return renderInline(escapeHtml(value.trim()), options).replace(/\s*\n\s*/g, "<br>");
 }
 
 /** Plain text without the markers (meta tags, JSON-LD). */

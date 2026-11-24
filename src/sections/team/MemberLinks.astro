@@ -4,6 +4,7 @@
  * describes it for screen readers; the tooltip helps where a generic icon stands for a brand.
  */
 import Icon from "@/components/media/Icon.astro";
+import { t } from "@/i18n";
 
 export interface Props {
   links: { label: string; href: string; icon: string }[];
@@ -22,7 +23,7 @@ const { links, describedBy, class: className } = Astro.props;
         class="s-team-links__link"
         href={link.href}
         title={link.label}
-        aria-label={link.label}
+        aria-label={link.href.startsWith("https:") ? `${link.label} ${t.common.newTab}` : link.label}
         aria-describedby={describedBy}
         {...(link.href.startsWith("https:") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       >

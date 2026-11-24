@@ -1,6 +1,7 @@
 ---
 /** Social profile icons (square buttons, or circles with `round`). */
 import Icon from "@/components/media/Icon.astro";
+import { t } from "@/i18n";
 import type { SocialLink } from "./types";
 
 export interface Props {
@@ -16,7 +17,7 @@ const { links, round = false, class: className } = Astro.props;
   <ul class:list={["site-footer__social-list", round && "site-footer__social-list--round", className]}>
     {links.map((item) => (
       <li class="site-footer__social-item">
-        <a class="site-footer__social-link" href={item.href} target="_blank" rel="noopener noreferrer" aria-label={item.label}>
+        <a class="site-footer__social-link" href={item.href} target="_blank" rel="noopener noreferrer" aria-label={`${item.label} ${t.common.newTab}`}>
           <Icon name={item.icon} />
         </a>
       </li>

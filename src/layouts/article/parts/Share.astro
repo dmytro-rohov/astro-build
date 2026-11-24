@@ -30,7 +30,7 @@ const links = [
   <ul class="article-share__list">
     {links.map((link) => (
       <li>
-        <a class="article-share__button" href={link.href} target={link.id === "email" ? undefined : "_blank"} rel="noopener noreferrer" aria-label={`${t.blog.share}: ${link.label}`}>
+        <a class="article-share__button" href={link.href} target={link.id === "email" ? undefined : "_blank"} rel="noopener noreferrer" aria-label={`${t.blog.share}: ${link.label}${link.id === "email" ? "" : ` ${t.common.newTab}`}`}>
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d={link.path} fill="currentColor" /></svg>
         </a>
       </li>

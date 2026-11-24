@@ -25,6 +25,21 @@
     white-space: nowrap;
     border: 0;
   }
+
+  // v3.12: the same, kept in the line (not positioned): inside a sideways scroller (a slider) it is
+  // clipped with the words around it, an absolute one would widen the page. For a few words in a
+  // link, like the new-tab note (NewTab.astro).
+  .visually-hidden-inline {
+    display: inline-block;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
 }
 
 @layer state {
