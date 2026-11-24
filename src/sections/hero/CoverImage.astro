@@ -4,7 +4,8 @@
  * cssVars.ts, also in dark sites) and a strong overlay (82 % of the
  * background color), so light text keeps ≥ 4.5:1 even on a white photo.
  * v3.12: the photo is the page's main picture: its alt text describes it (as in
- * the other heroes); only a photo without one is decorative.
+ * the other heroes); only a photo without one is decorative. It fills the whole
+ * section from SectionShell's background slot, outside the content container.
  */
 import SectionShell from "@/sections/_shared/SectionShell.astro";
 import SectionHeader from "@/sections/_shared/SectionHeader.astro";
@@ -37,7 +38,7 @@ const align = props.align ?? "left";
   class:list={[image && "s-hero-cover--with-image"]}
 >
   {image && (
-    <div class="s-hero-cover__media">
+    <div slot="background" class="s-hero-cover__media">
       <Img src={image.image} alt={image.alt} kind={image.alt ? "content" : "decorative"} priority="high" sizes="100vw" widths={[640, 960, 1280, 1600]} quality={55} aspect={[4, 3]} focal={image.focal} class="s-hero-cover__image" />
     </div>
   )}

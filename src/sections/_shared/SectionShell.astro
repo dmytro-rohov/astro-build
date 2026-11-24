@@ -2,6 +2,7 @@
 /**
  * Common wrapper of every section variant: anchor id, tone (section props or
  * the archetype default), vertical spacing and the container width.
+ * v3.12: slot "background" for media behind the whole section (outside the container).
  */
 import Section from "@/components/layouts/Section.astro";
 import Container from "@/components/layouts/Container.astro";
@@ -39,6 +40,7 @@ const {
   data-section-type={type}
   data-section-variant={variant}
 >
+  <slot name="background" />
   <Container size={width}>
     <slot />
   </Container>
