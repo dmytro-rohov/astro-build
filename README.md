@@ -639,7 +639,9 @@ per IP (invalid attempts do not count). The pure check is `src/lib/contact/check
 A filled honeypot gets a normal "sent" answer and nothing is sent.
 
 Without JavaScript the form still works: the browser posts it natively and the
-visitor is redirected to `/contact/sent` or `/contact/failed`.
+visitor is redirected to `/contact/sent` or `/contact/failed`. v3.12: the "failed" page links back
+to the page that holds the contact section, at that section (`/#kontakt`), found at build time
+(`src/site/contact-link.ts`).
 
 In development the form logs submissions to the terminal by default.
 In production `CONTACT_DELIVERY_MODE` **must** be set — otherwise the form
@@ -741,6 +743,7 @@ own `/api/contact` does. Both files are regenerated with the catalog; never edit
 | the form's fields | as set | one value per field `id` of `contact.form.fields` (checked by their rules: the service keeps the site's field list, given with the site, and runs `checkSubmission`); without a list the default form: `name` (2–100 chars, single line), `email` (valid, ≤ 254), `subject` (optional, ≤ 150, single line), `message` (10–5000) |
 | `privacy` | yes | non-empty (checkbox `on`) |
 | `website` | — | honeypot: when filled, answer like a success and send nothing |
+| `returnTo` | no | v3.12: the path of the form on the site with its section (`/#kontakt`, `/kontakt#form`): where a "failed" answer may send the visitor back (a path only; the service puts the site's domain in front) |
 
 The request comes from the site's origin (`Origin` header): allow it with CORS and reject other origins.
 
