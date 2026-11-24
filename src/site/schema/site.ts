@@ -43,6 +43,11 @@ export const RESERVED_IDS: readonly string[] = [
   "navbar-menu",
   "cookie-consent-title",
   "cookie-consent-description",
+  // v3.12: the titles of the footer's link groups (at most 4).
+  "footer-group-1",
+  "footer-group-2",
+  "footer-group-3",
+  "footer-group-4",
   ...DEFAULT_FIELDS.flatMap(domIdsOf),
   ...FORM_DOM_IDS,
   "contact-website-error",
