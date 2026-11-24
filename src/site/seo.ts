@@ -1,8 +1,9 @@
 /**
- * v3.12: the texts search engines show for a page: its title and its description. Pure TS (tests).
+ * v3.12: the texts search engines show for a page (its title and its description) and the webmaster tools'
+ * verification tags. Pure TS (tests).
  */
 import { richTextLiteToPlain } from "./richtext";
-import type { Page } from "./schema/site";
+import type { Page, Site } from "./schema/site";
 
 /** Longest title that search results show whole (about 60 characters). */
 export const TITLE_MAX = 60;
@@ -60,4 +61,20 @@ export function pageSummary(page: Pick<Page, "sections">): string | undefined {
   }
 
   return summary.length >= DESCRIPTION_MIN ? clip(summary, DESCRIPTION_MAX) : undefined;
+}
+
+/** v3.12: the meta tag name of each webmaster tool's site verification (meta.verification). */
+export const VERIFICATION_TAGS = {
+  google: "google-site-verification",
+  bing: "msvalidate.01",
+  yandex: "yandex-verification",
+  seznam: "seznam-wmt",
+} as const;
+
+/** The verification meta tags of a site: [name, content] in a fixed order. */
+export function verificationTags(verification: Site["meta"]["verification"]): [string, string][] {
+  return (Object.keys(VERIFICATION_TAGS) as (keyof typeof VERIFICATION_TAGS)[]).flatMap((tool) => {
+    const code = verification?.[tool];
+    return code ? [[VERIFICATION_TAGS[tool], code] as [string, string]] : [];
+  });
 }

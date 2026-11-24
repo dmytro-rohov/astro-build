@@ -259,6 +259,8 @@ export const BusinessSchema = z.strictObject({
 /** v3.12: a page's or a post's own title for search results and sharing. */
 const SEO_TITLE = `Title in search results and when shared, used as is (no site name added), at most ${TITLE_MAX} characters. Default: the title with " | site name" while the whole fits in ${TITLE_MAX} characters, else the title alone.`;
 
+const VERIFICATION_HINT = "Paste only the code from the content=\"…\" part of the verification meta tag.";
+
 const PageSchema = z.strictObject({
   id: Id.describe("Stable page id, unique in the site."),
   slug: Slug.describe('URL path, "/" for the home page.'),
@@ -392,6 +394,26 @@ const SiteBase = z
         .date()
         .optional()
         .describe('Date of the last change of the privacy policy (YYYY-MM-DD), shown on /privacy. Default: the build date.'),
+      // v3.12: the webmaster tools (src/site/seo.ts).
+      verification: z
+        .strictObject({
+          google: z.string().regex(/^[A-Za-z0-9_-]{20,100}$/, VERIFICATION_HINT).optional().describe("Google Search Console: the content of google-site-verification."),
+          bing: z.string().regex(/^[0-9A-Fa-f]{32}$/, VERIFICATION_HINT).optional().describe("Bing Webmaster Tools: the content of msvalidate.01 (32 hexadecimal characters)."),
+          yandex: z.string().regex(/^[0-9A-Fa-f]{16,32}$/, VERIFICATION_HINT).optional().describe("Yandex Webmaster: the content of yandex-verification (hexadecimal)."),
+          seznam: z.string().regex(/^[A-Za-z0-9_-]{16,64}$/, VERIFICATION_HINT).optional().describe("Seznam Webmaster: the content of seznam-wmt."),
+        })
+        .optional()
+        .describe("v3.12: site verification codes of the webmaster tools, rendered as their meta tags: only the content value of each tag."),
+      indexNow: z
+        .string()
+        .regex(/^[A-Za-z0-9-]{8,128}$/, "The IndexNow key: 8 to 128 letters, digits or dashes.")
+        .optional()
+        .describe("v3.12: IndexNow key; the build writes /<key>.txt containing it, so a publish can ping IndexNow (Bing, Yandex, Seznam…) with the changed URLs."),
+      locale: z
+        .string()
+        .regex(/^[a-z]{2,3}_[A-Z]{2}$/, 'Open Graph locale: language_REGION, e.g. "en_GB", "pt_BR".')
+        .optional()
+        .describe("v3.12: the site's region for og:locale, e.g. en_GB or pt_BR, in the site's language. Default: the language's usual one (en_US, pt_PT…)."),
     }),
     business: BusinessSchema,
     theme: ThemeSchema.default({ archetype: "default" }),
@@ -429,6 +451,11 @@ export const SiteSchema = SiteBase
     const sectionIds = new Map<string, string>();
     // The form's own DOM ids (contact-<field>, its error and its hint): no section may take them.
     const formIds = new Set(fieldsOf(site.contact.form).flatMap(domIdsOf));
+
+    // v3.12: og:locale names the site's language with a region.
+    if (site.meta.locale && site.meta.locale.split("_")[0] !== site.lang.split("-")[0]) {
+      context.addIssue({ code: "custom", path: ["meta", "locale"], message: `"${site.meta.locale}" is not in the site's language "${site.lang}".` });
+    }
 
     // Without a form visitors call or write: the business needs a phone or an e-mail address.
     if (site.contact.form?.enabled === false && !site.business.phone && !site.business.email) {

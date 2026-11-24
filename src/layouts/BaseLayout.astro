@@ -15,6 +15,7 @@ import { getImage } from "astro:assets";
 import { getAsset } from "@/site/assets";
 import { ogImageOf } from "@/site/og";
 import { FACTORY_URL, GENERATOR, WORDMARK, sourceComment } from "@/site/signature";
+import { verificationTags } from "@/site/seo";
 import {
   breadcrumbSchema,
   ownerSchema,
@@ -152,6 +153,8 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
     <meta name="description" content={description} />
     <meta name="robots" content={robots} />
     <meta name="generator" content={GENERATOR} />
+    {/* v3.12: the webmaster tools' site verification; none in a SITE_NOINDEX build. */}
+    {!siteNoindex && verificationTags(site.meta.verification).map(([name, content]) => <meta name={name} content={content} />)}
     {author && <meta name="author" content={author} />}
     {keywords && <meta name="keywords" content={keywords} />}
     <meta name="color-scheme" content={colorSchemeMeta} />

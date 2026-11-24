@@ -55,6 +55,8 @@ export const siteConfig = {
   name: site.meta.name,
   description: site.meta.description,
   lang: site.lang,
+  /** v3.12: og:locale with the site's region (meta.locale), when it has one. */
+  locale: site.meta.locale,
 
   author: "",
   keywords: [] as string[],

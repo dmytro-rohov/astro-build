@@ -10,7 +10,8 @@ export const lang = siteConfig.lang;
 /** UI texts in the active language. */
 export const t: Dictionary = getDictionary(lang);
 
-export const ogLocale = t.meta.ogLocale;
+/** v3.12: the site's own region (meta.locale, e.g. en_GB), else the language's usual one. */
+export const ogLocale = siteConfig.locale ?? t.meta.ogLocale;
 
 export const dir = t.meta.dir === "rtl" ? "rtl" : "ltr";
 

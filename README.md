@@ -419,6 +419,13 @@ import { t, format } from "@/i18n";
   `robots.txt` has no `Sitemap` line. Crawling stays allowed on purpose: a crawler must fetch a page to
   see its `noindex` (a `Disallow` would keep a shared link in the results). Empty, `0` or `false` is
   a normal build; any other value stops the build.
+- v3.12 webmaster tools: `meta.verification` (`google`, `bing`, `yandex`, `seznam`: only the
+  `content` value) renders `google-site-verification`, `msvalidate.01`, `yandex-verification` and
+  `seznam-wmt` meta tags; `meta.indexNow` (an 8 to 128 character key) makes the build write
+  `/<key>.txt` containing the key, so a publish can ping IndexNow. Neither in a `SITE_NOINDEX`
+  build.
+- v3.12 `meta.locale` (e.g. `en_GB`, `pt_BR`, in the site's language) sets `og:locale`; default:
+  the language's usual one (`en_US`, `pt_PT`…). `<html lang>` stays the language.
 - v3.12 sitemap: the home page as `https://host/` (as its canonical link) and `<lastmod>` only
   where the site knows when a page changed: a post's `updated`, else its `date`; a page's own
   `pages[].updated` (YYYY-MM-DD, set when its content changes); a page listing posts also moves

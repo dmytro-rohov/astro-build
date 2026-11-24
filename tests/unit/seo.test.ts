@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { loadSite, SiteValidationError } from "../../src/site/loader";
-import { clip, composeTitle, pageSummary, TITLE_MAX } from "../../src/site/seo";
+import { clip, composeTitle, pageSummary, TITLE_MAX, verificationTags } from "../../src/site/seo";
 import { demoSite, writeSite } from "./helpers";
 
 /** Issues of the demo site after `change` ([] when it is valid). */
@@ -77,5 +77,41 @@ describe("business for the structured data", () => {
     expect(issuesFor((site) => (site.business.type = "OnlineStore"))).toEqual([]);
     expect(issuesFor((site) => (site.business.kind = "person"))[0]).toMatch(/^business\.kind: /);
     expect(issuesFor((site) => (site.business.areaServed = Array(11).fill("Wrocław")))[0]).toMatch(/^business\.areaServed: Too big/);
+  });
+});
+
+describe("webmaster tools", () => {
+  const codes = { google: "3ndRkO8rjf2D3xEh-jg0bOoTLtCXg9ZRAKeYbjK7FWA", bing: "0123456789ABCDEF0123456789ABCDEF", yandex: "5c9e2f1a0b3d4e6f", seznam: "kfa9WbX3_t0Qm1Nz7Lp2Yc4" };
+
+  test("verification codes become their meta tags", () => {
+    expect(issuesFor((site) => (site.meta.verification = codes))).toEqual([]);
+    expect(verificationTags(codes)).toEqual([
+      ["google-site-verification", codes.google],
+      ["msvalidate.01", codes.bing],
+      ["yandex-verification", codes.yandex],
+      ["seznam-wmt", codes.seznam],
+    ]);
+    expect(verificationTags({ bing: codes.bing })).toEqual([["msvalidate.01", codes.bing]]);
+    expect(verificationTags(undefined)).toEqual([]);
+  });
+
+  test("a pasted whole tag or a wrong code is an error", () => {
+    expect(issuesFor((site) => (site.meta.verification = { google: `<meta name="google-site-verification" content="${codes.google}" />` }))[0]).toMatch(
+      /^meta\.verification\.google: Paste only the code/,
+    );
+    expect(issuesFor((site) => (site.meta.verification = { bing: "xyz" }))[0]).toMatch(/^meta\.verification\.bing: /);
+    expect(issuesFor((site) => (site.meta.verification = { other: "abc" }))[0]).toMatch(/^meta\.verification: Unrecognized key/);
+  });
+
+  test("an IndexNow key: 8 to 128 letters, digits or dashes", () => {
+    expect(issuesFor((site) => (site.meta.indexNow = "f3a9c1e7b2d84a6f9e0c5b1d7a3e8f42"))).toEqual([]);
+    expect(issuesFor((site) => (site.meta.indexNow = "short"))[0]).toMatch(/^meta\.indexNow: The IndexNow key/);
+    expect(issuesFor((site) => (site.meta.indexNow = "../robots"))[0]).toMatch(/^meta\.indexNow: /);
+  });
+
+  test("og:locale with a region of the site's language", () => {
+    expect(issuesFor((site) => (site.meta.locale = "en_GB"))).toEqual([]);
+    expect(issuesFor((site) => (site.meta.locale = "pt_BR"))[0]).toMatch(/^meta\.locale: "pt_BR" is not in the site's language "en"/);
+    expect(issuesFor((site) => (site.meta.locale = "en-GB"))[0]).toMatch(/^meta\.locale: Open Graph locale/);
   });
 });
