@@ -24,7 +24,10 @@
     max-width: 68rem;
   }
 
+  // The brand panel: focus rings in its text color, the accent ring would vanish on it (WCAG 2.4.7).
   .s-contact-centered__panel {
+    --color-focus-ring: var(--color-action-primary-text);
+
     position: relative;
     isolation: isolate;
     display: grid;

@@ -147,6 +147,11 @@
       grid-template-columns: minmax(14rem, 22rem) minmax(0, 1fr);
     }
 
+    // The box clips its corners (overflow: clip): the panel's focus ring goes inside it (v3.12, WCAG 2.4.7).
+    .s-faq-help--tabs .s-faq-help__panel:focus-visible {
+      outline-offset: -0.375rem;
+    }
+
     .s-faq-help--tabs .s-faq-help__menu {
       display: grid;
       align-content: start;
