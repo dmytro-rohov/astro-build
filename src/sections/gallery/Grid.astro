@@ -44,7 +44,7 @@ const align = props.align ?? "center";
                 aspect={[4, 3]}
                 widths={[400, 640, 960]}
                 sizes={tileSizes(Number(columns), count < 4 ? 1 : 2)}
-                label={format(t.lightbox.status, { number: index + 1, count })}
+                label={format(t.lightbox.item, { title: content.title, number: index + 1, count })}
               />
               {item.caption && <figcaption class="s-gallery-grid__caption">{item.caption}</figcaption>}
             </figure>

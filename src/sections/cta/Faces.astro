@@ -3,6 +3,7 @@
  * Light card with centered text; round photos of real people float around it, in eight spots
  * on both sides. Spots without a photo are tinted dots, so the card never looks unfinished.
  * The photos only set the mood: decorative (empty alt), hidden from assistive technology.
+ * v3.12: they float once when the section comes into view, then rest (WCAG 2.2.2).
  */
 import SectionShell from "@/sections/_shared/SectionShell.astro";
 import Copy from "@/sections/cta/Copy.astro";
@@ -23,7 +24,7 @@ const spots = Array.from({ length: 8 }, (_, index) => photos[index]);
 ---
 
 <SectionShell id={section.id} type="cta" variant="faces" tone={props.tone} spacing={props.spacing} defaultSpacing="md">
-  <div class:list={["s-cta-faces", photos.length > 0 && "s-cta-faces--photos"]}>
+  <div class:list={["s-cta-faces", photos.length > 0 && "s-cta-faces--photos"]} data-cta-faces>
     <div class="s-cta-faces__spots" aria-hidden="true">
       {spots.map((photo) => (
         <span class:list={["s-cta-faces__spot", !photo && "s-cta-faces__spot--dot"]}>
@@ -36,3 +37,23 @@ const spots = Array.from({ length: 8 }, (_, index) => photos[index]);
     <Copy content={content} headingLevel={headingLevel} align="center" class="s-cta-faces__copy" />
   </div>
 </SectionShell>
+
+<script>
+  // The float of the photos starts once the section is in view (_faces.scss), so it is seen and
+  // still ends within five seconds.
+  const faces = document.querySelectorAll<HTMLElement>("[data-cta-faces]");
+
+  if (faces.length && "IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          observer.unobserve(entry.target);
+          (entry.target as HTMLElement).dataset.float = "";
+        }
+      },
+      { threshold: 0.4 },
+    );
+    faces.forEach((element) => observer.observe(element));
+  }
+</script>

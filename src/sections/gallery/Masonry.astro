@@ -58,7 +58,7 @@ const narrow = masonryLayout(ratios, 2);
                   aspect={[MASONRY_UNIT, wide[index].span - 1]}
                   widths={[320, 480, 640, 800]}
                   sizes={tileSizes(columns, 2)}
-                  label={format(t.lightbox.status, { number: index + 1, count })}
+                  label={format(t.lightbox.item, { title: content.title, number: index + 1, count })}
                 />
                 {item.caption && <figcaption class="s-gallery__overlay">{item.caption}</figcaption>}
               </figure>

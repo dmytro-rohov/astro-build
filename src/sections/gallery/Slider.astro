@@ -59,7 +59,7 @@ const tiles: Record<SliderTile, { aspect: [number, number]; widths: number[]; si
           <li class:list={["s-gallery-slider__page", `s-gallery-slider__page--${page.length}`]}>
             {page.map(({ item, number }, index) => (
               <figure class="s-gallery-slider__tile">
-                <Photo image={item.image} caption={item.caption} lightbox={lightbox} {...tiles[SLIDER_TILES[page.length][index]]} label={format(t.lightbox.status, { number, count })} />
+                <Photo image={item.image} caption={item.caption} lightbox={lightbox} {...tiles[SLIDER_TILES[page.length][index]]} label={format(t.lightbox.item, { title: content.title, number, count })} />
                 {item.caption && <figcaption class="s-gallery__overlay s-gallery-slider__caption">{item.caption}</figcaption>}
               </figure>
             ))}

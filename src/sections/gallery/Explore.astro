@@ -64,7 +64,7 @@ const panelProps = link
                   aspect={[4, 5]}
                   widths={[320, 480, 640]}
                   sizes={tileSizes(columns + 1, 2)}
-                  label={format(t.lightbox.status, { number: index + 1, count })}
+                  label={format(t.lightbox.item, { title: content.title, number: index + 1, count })}
                 />
                 {item.caption && <figcaption class="s-explore__caption">{item.caption}</figcaption>}
               </figure>
