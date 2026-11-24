@@ -54,6 +54,31 @@ test.describe("mobile menu", () => {
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
 
+  // v3.12 (WCAG 2.4.3).
+  test("while open, the page behind it is inert", async ({ page }) => {
+    const toggle = page.locator("[data-navbar-toggle]");
+    await toggle.click();
+    await expect(page.locator("main")).toHaveJSProperty("inert", true);
+    await expect(page.locator("footer.site-footer")).toHaveJSProperty("inert", true);
+
+    await toggle.click();
+    await expect(page.locator("main")).toHaveJSProperty("inert", false);
+  });
+
+  test("a section link of this page closes the menu and puts focus on the section's heading", async ({ page }) => {
+    const section = page.locator("main [data-section-type]").nth(1);
+    const id = await section.getAttribute("id");
+    // The demo's menu lists pages: its first link becomes a link to a section of this page.
+    await page.locator("#navbar-menu a").first().evaluate((link, hash) => link.setAttribute("href", `/#${hash}`), id);
+
+    await page.locator("[data-navbar-toggle]").click();
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Enter");
+
+    await expect(page.locator("[data-navbar-toggle]")).toHaveAttribute("aria-expanded", "false");
+    await expect(section.locator("h1, h2").first()).toBeFocused();
+  });
+
   test("the menu covers the screen under the header and the page does not scroll", async ({ page }) => {
     await page.locator("[data-navbar-toggle]").click();
     const header = await page.locator(".site-header").boundingBox();
