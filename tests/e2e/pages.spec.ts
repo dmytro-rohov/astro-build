@@ -63,6 +63,9 @@ test("robots.txt, sitemap and manifest", async ({ request }) => {
   expect(sitemap).toContain("/contact</loc>");
   expect(sitemap).not.toContain("/contact/sent");
   expect(sitemap).not.toContain("/privacy");
+  // v3.12: the home page as in its canonical link, lastmod from the posts' dates.
+  expect(sitemap).toMatch(/<loc>https?:\/\/[^<]+\/<\/loc>/);
+  expect(sitemap).toMatch(/\/blog\/why-fast-pages-win<\/loc><lastmod>2026-11-12/);
 
   const manifest = await (await request.get("/site.webmanifest")).json();
   expect(manifest.icons.length).toBeGreaterThan(0);
@@ -92,7 +95,9 @@ test("factory signature: source comment, generator, humans.txt and the secret fo
   const response = await page.goto("/");
   const html = (await response?.text()) ?? "";
   expect(html).toMatch(/<!--\n\n {2}┏┳┓/);
-  await expect(page.locator('meta[name="generator"]').first()).toHaveAttribute("content", /^Mytko Website Factory \d+\.\d+\.\d+$/);
+  // v3.12: one generator tag, without a version.
+  await expect(page.locator('meta[name="generator"]')).toHaveCount(1);
+  await expect(page.locator('meta[name="generator"]')).toHaveAttribute("content", "Mytko Website Factory");
   await expect(page.locator('link[rel="author"]')).toHaveAttribute("href", "/humans.txt");
 
   const humans = await request.get("/humans.txt");
@@ -121,7 +126,8 @@ test("blog: posts list with category buttons, post page with BlogPosting and the
   await page.goto("/blog/why-fast-pages-win");
   await expect(page.locator("h1")).toHaveText("Why fast pages win more clients");
   await expect(page.locator('meta[property="og:type"]')).toHaveAttribute("content", "article");
-  await expect(page.locator('meta[property="article:published_time"]')).toHaveAttribute("content", "2026-11-12");
+  // v3.12: with the time and the zone (noon in the business time zone).
+  await expect(page.locator('meta[property="article:published_time"]')).toHaveAttribute("content", /^2026-11-12T12:00:00[+-]\d\d:\d\d$/);
   const graph = JSON.parse((await page.locator('script[type="application/ld+json"]').first().textContent()) ?? "{}")["@graph"] as { "@type": string }[];
   expect(graph.map((node) => node["@type"])).toEqual(expect.arrayContaining(["BlogPosting", "BreadcrumbList"]));
   await expect(page.locator('.navbar a[href="/blog"]').first()).toHaveAttribute("aria-current", "true");

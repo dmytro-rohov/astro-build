@@ -118,4 +118,9 @@
       transition-duration: 0s;
     }
   }
+
+  // v3.12: the large name (see _header.scss).
+  :root {
+    --header-offset: calc(4.5rem + 1px);
+  }
 }

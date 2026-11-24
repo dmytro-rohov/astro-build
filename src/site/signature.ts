@@ -22,10 +22,8 @@ function fill(template: string, values: Record<string, string>): string {
   return template.replace(/\{(\w+)\}/g, (match, key: string) => values[key] ?? match);
 }
 
-/** The Factory's own `<meta name="generator">`; Astro keeps a second one. */
-export function generatorName(version: string): string {
-  return `Mytko Website Factory ${version}`;
-}
+/** The Factory's `<meta name="generator">`. v3.12: no version (it only helps to fingerprint the stack), and no Astro tag. */
+export const GENERATOR = "Mytko Website Factory";
 
 /** Text that cannot end or break an HTML comment: no "--" anywhere (a site name could have one). */
 export function commentSafe(text: string): string {
@@ -49,7 +47,6 @@ export type HumansSite = {
   name: string;
   url: string;
   lang: string;
-  version: string;
   /** YYYY-MM-DD of the build. */
   updated: string;
 };
@@ -68,7 +65,6 @@ export function humansTxt(t: Texts, site: HumansSite): string {
     `  ${h.language}: ${site.lang}`,
     `  ${h.updated}: ${site.updated}`,
     `  ${h.technology}: Astro, TypeScript, Sass`,
-    `  ${h.engine}: Mytko Website Factory ${site.version}`,
     "",
     `/* ${h.secret} */`,
     `  ${h.hint}`,

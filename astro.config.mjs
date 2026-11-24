@@ -1,4 +1,7 @@
 // @ts-check
+import { readdir, readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "astro/config";
 import { loadEnv } from "vite";
 import node from "@astrojs/node";
@@ -6,12 +9,14 @@ import sitemap from "@astrojs/sitemap";
 import {
   noindexPaths,
   normalizePath,
+  parseNoindex,
   sitemapExcludedPaths,
 } from "./src/config/indexing.ts";
 import { loadSite, resolveSiteDir, SiteValidationError } from "./src/site/loader.ts";
 import { siteVitePlugin } from "./src/site/vite-plugin.ts";
 import { cspForSite } from "./src/site/csp.ts";
 import { previewEditorOrigin } from "./src/site/editor-bridge.ts";
+import { sitemapDates } from "./src/site/sitemap.ts";
 
 const env = loadEnv(process.env.NODE_ENV ?? "development", process.cwd(), "");
 
@@ -48,6 +53,9 @@ for (const post of blog?.posts ?? []) {
 
 const siteUrl = new URL(env.SITE_URL || siteData.meta.url || "http://localhost:4321");
 
+// v3.12: <lastmod> where the site knows when a page changed (src/site/sitemap.ts).
+const lastmod = sitemapDates(siteData);
+
 // Analytics: site.json analytics.gaId; PUBLIC_GA_MEASUREMENT_ID overrides it (test builds).
 const gaId = env.PUBLIC_GA_MEASUREMENT_ID || siteData.analytics.gaId || "";
 const csp = cspForSite(siteData, gaId);
@@ -58,6 +66,17 @@ let editorOrigin;
 
 try {
   editorOrigin = previewEditorOrigin(env.PREVIEW_EDITOR_ORIGIN);
+} catch (error) {
+  console.error(`\n✖ ${error instanceof Error ? error.message : error}\n`);
+  process.exit(1);
+}
+
+// v3.12: SITE_NOINDEX=1 builds a site for no search engine (the factory's previews): noindex on every
+// page, no canonical, no sitemap (src/config/indexing.ts).
+let noindex;
+
+try {
+  noindex = parseNoindex(env.SITE_NOINDEX);
 } catch (error) {
   console.error(`\n✖ ${error instanceof Error ? error.message : error}\n`);
   process.exit(1);
@@ -77,6 +96,26 @@ const allowedDomains = isLocalhost
       { protocol, hostname: `www.${hostname}` },
     ];
 
+/**
+ * v3.12: @astrojs/sitemap writes the home page as "https://host" (trailingSlash "never"); its canonical link is
+ * "https://host/". Listed after the sitemap integration, so it runs once the sitemap files are written.
+ * @type {import("astro").AstroIntegration}
+ */
+const sitemapHome = {
+  name: "mytko-sitemap-home",
+  hooks: {
+    "astro:build:done": async ({ dir }) => {
+      const outDir = fileURLToPath(dir);
+      const home = `<loc>${siteUrl.origin}</loc>`;
+
+      for (const file of (await readdir(outDir)).filter((name) => /^sitemap-\d+\.xml$/.test(name))) {
+        const xml = await readFile(path.join(outDir, file), "utf8");
+        if (xml.includes(home)) await writeFile(path.join(outDir, file), xml.replace(home, `<loc>${siteUrl.origin}/</loc>`));
+      }
+    },
+  },
+};
+
 export default defineConfig({
   site: siteUrl.origin,
   // Build output; `npm run site:build -- --out <dir>` sets OUT_DIR.
@@ -90,7 +129,7 @@ export default defineConfig({
   adapter: isLocalContact ? node({ mode: "standalone" }) : undefined,
 
   vite: {
-    plugins: [siteVitePlugin(siteDir, { gaId, editorOrigin })],
+    plugins: [siteVitePlugin(siteDir, { gaId, editorOrigin, noindex })],
     server: {
       // SITE_DIR may live outside the project (client sites repository).
       fs: { allow: [process.cwd(), siteDir] },
@@ -124,13 +163,25 @@ export default defineConfig({
         },
       },
     },
-    sitemap({
-      filter: (page) => {
-        const pathname = normalizePath(new URL(page).pathname);
+    // v3.12: a SITE_NOINDEX build writes no sitemap at all.
+    ...(noindex
+      ? []
+      : [
+          sitemap({
+            filter: (page) => {
+              const pathname = normalizePath(new URL(page).pathname);
 
-        return ![...noindexPaths, ...sitemapExcludedPaths].includes(pathname);
-      },
-    }),
+              return ![...noindexPaths, ...sitemapExcludedPaths].includes(pathname);
+            },
+            // v3.12: lastmod where the site knows the date.
+            serialize: (item) => {
+              const date = lastmod.get(normalizePath(new URL(item.url).pathname));
+
+              return date ? { ...item, lastmod: date } : item;
+            },
+          }),
+          sitemapHome,
+        ]),
   ],
 
   security: {

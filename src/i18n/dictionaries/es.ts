@@ -103,18 +103,18 @@ export default {
     contact: "Contacto",
   },
 
-  // v3.7: the Factory easter eggs (src/site/signature.ts). "Powered by Mytko Factory" is a brand name, not translated.
+  // v3.7: the Factory easter eggs (src/site/signature.ts). "Mytko Factory" is a brand name, not translated.
   signature: {
     comment: "El sitio web {siteName} se ha creado con Mytko Website Factory: {url}",
     commentHint: "¿Te pica la curiosidad? Abre la consola del navegador (F12), allí te espera algo.",
     console: "Este sitio web se ha creado con Mytko Website Factory. ¿Quieres uno así para tu negocio? {url}",
     consoleHint: "Psst… el siguiente secreto te espera en {url}",
+    poweredBy: "Creado con",
     markLabel: "Cómo se creó este sitio web",
     title: "Has descubierto el último secreto",
     text: "El sitio web {siteName} se ha creado con Mytko Website Factory.",
     factStatic: "Páginas estáticas creadas con Astro, por eso cargan rápido",
     factStyles: "Solo los estilos y scripts de las secciones que usa este sitio",
-    factEngine: "Motor Factory {version}",
     link: "Descubre Mytko Website Factory",
     close: "Cerrar",
     humans: {
@@ -127,7 +127,6 @@ export default {
       language: "Idioma",
       updated: "Última actualización",
       technology: "Tecnología",
-      engine: "Motor",
       secret: "UNA COSA MÁS",
       hint: "Queda un último secreto: una pequeña marca al pie del sitio web. Haz clic en ella.",
     },

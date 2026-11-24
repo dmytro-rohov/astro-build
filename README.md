@@ -332,7 +332,8 @@ Images are referenced as `"asset:<id>"` and described in `assets/assets.json`:
 - `meta.icon` (square, ≥ 512 px) becomes the favicon and app icons; without it a **monogram**
   (first letter of the name on the accent color) is generated.
 - Open Graph image: `pages[].seo.image` or `meta.seo.image` (cropped to 1200×630); otherwise
-  `og-cover.jpg` is generated from the name, description and colors.
+  `og-cover.jpg` is generated: v3.12 from the home page's hero photo (cropped around its focal
+  point, its alt text as `og:image:alt`), without one from the name, description and colors.
 - Fonts, icons, favicon and `og-cover.jpg` are generated per site by `npm run build:system`
   (part of `npm run build`) and are not committed.
 
@@ -350,8 +351,8 @@ The public site URL is `meta.url` (origin only, e.g. `https://example.com`); the
 `Astro.site`, canonical links, sitemap, Open Graph URLs and `security.allowedDomains`
 (`www.` is added automatically).
 
-Without `meta.seo.image` the build generates `og-cover.jpg` (1200×630) from the site
-name, description and colors.
+Without `meta.seo.image` the build generates `og-cover.jpg` (1200×630) from the home page's
+hero photo (v3.12), without one from the site name, description and colors.
 
 ---
 
@@ -408,9 +409,33 @@ import { t, format } from "@/i18n";
 - URLs have no trailing slash (`trailingSlash: "never"`) — canonical links and the
   sitemap use the same form; `/contact/` redirects to `/contact`.
 - `src/config/indexing.ts`:
-  - `noindexPaths` — `noindex` meta and left out of the sitemap (e.g. `/contact/sent`)
-  - `sitemapExcludedPaths` — indexable, but not in the sitemap (e.g. `/privacy`)
+  - `noindexPaths`: `noindex, follow` meta and left out of the sitemap (`/contact/sent`,
+    `/contact/failed`; v3.12 `/privacy` too: the same template on every Factory site)
+  - `sitemapExcludedPaths`: indexable, but not in the sitemap (empty by default)
 - Custom `404` (prerendered) and `500` pages, both `noindex`.
+- v3.12: `SITE_NOINDEX=1` (or `true`) at build time makes a site no search engine may index (the
+  factory's previews): every route (pages, blog posts, privacy, contact results, 404, 500) gets
+  `<meta name="robots" content="noindex, nofollow">` and no canonical, no sitemap is written and
+  `robots.txt` has no `Sitemap` line. Crawling stays allowed on purpose: a crawler must fetch a page to
+  see its `noindex` (a `Disallow` would keep a shared link in the results). Empty, `0` or `false` is
+  a normal build; any other value stops the build.
+- v3.12 webmaster tools: `meta.verification` (`google`, `bing`, `yandex`, `seznam`: only the
+  `content` value) renders `google-site-verification`, `msvalidate.01`, `yandex-verification` and
+  `seznam-wmt` meta tags; `meta.indexNow` (an 8 to 128 character key) makes the build write
+  `/<key>.txt` containing the key, so a publish can ping IndexNow. Neither in a `SITE_NOINDEX`
+  build.
+- v3.12 `meta.locale` (e.g. `en_GB`, `pt_BR`, in the site's language) sets `og:locale`; default:
+  the language's usual one (`en_US`, `pt_PT`…). `<html lang>` stays the language.
+- v3.12 sitemap: the home page as `https://host/` (as its canonical link) and `<lastmod>` only
+  where the site knows when a page changed: a post's `updated`, else its `date`; a page's own
+  `pages[].updated` (YYYY-MM-DD, set when its content changes); a page listing posts also moves
+  with its newest post. Never the build time (that would say every page changes on every build).
+- v3.12 titles: `{title} | {site name}` only while the whole fits in 60 characters, else the title
+  alone (search results cut longer ones). `pages[].seo.title` and `blog.posts[].seo.title` (at most
+  60 characters) replace the whole `<title>` and `og:title` as they are.
+- v3.12 descriptions: a subpage without its own `description` gets the start of its sections' texts
+  (section descriptions, the about text, cut at a word to 155 characters) instead of repeating
+  `meta.description` on every page; the home page keeps `meta.description`.
 - Every page has exactly one `<h1>`.
 
 ---
@@ -420,8 +445,21 @@ import { t, format } from "@/i18n";
 Every page gets one `@graph` built from `siteConfig` (`src/lib/seo/schema.ts`);
 the FAQ widget adds a separate `FAQPage` block:
 
-- `Organization` / `LocalBusiness` — set `siteConfig.organization` (type, address,
-  phone, email, opening hours, price range, `sameAs` profiles). Empty fields are skipped.
+- The site's owner from `business` (v3.12, `src/site/structured-data.ts`; empty fields are skipped):
+  - `business.kind: "personal"` (a site about one person): a `Person` (`name`, `jobTitle`,
+    `knowsAbout`, contact, `sameAs`, the blog author's photo as `image`); when the person has a
+    place (see below) also the practice as a local business, linked by `worksFor` / `founder`
+  - a business with an address or a service area (`business.areaServed`): its `LocalBusiness`
+    subtype with the address, opening hours, price range and `hasMap` (the Google Maps link
+    among `sameAs`); engine types schema.org does not have become real ones (`DanceSchool`,
+    `MusicSchool`, `LanguageSchool`: `LocalBusiness` + `EducationalOrganization`, `YogaStudio`:
+    `SportsActivityLocation`)
+  - without either: an `Organization` (Google wants an address for every `LocalBusiness`);
+    `OnlineBusiness` / `OnlineStore` and `Organization` types stay as they are
+  - `name` is `business.name` with `meta.name` as `alternateName` when they differ; `logo` is
+    `meta.logo` as a PNG of at least 112 px (`/icons/logo.png`), else an uploaded `meta.icon`,
+    none for a monogram; `image` is the sharing photo (the hero photo or `meta.seo.image`, not
+    the text card)
 - `WebSite` and `WebPage` (with language)
 - `BreadcrumbList` — automatic Home › page on subpages; override with
   `<BaseLayout breadcrumbs={[...]}>` or turn off with `breadcrumbs={false}`
@@ -429,7 +467,9 @@ the FAQ widget adds a separate `FAQPage` block:
 - v3.9: `BlogPosting` on every post page (headline, dates, image, category, tags, word count, the
   blog's author as a `Person` or the business), `Blog` with its posts on the blog page; post pages
   have `og:type` article with `article:published_time`, `modified_time`, `section` and `tag`, and
-  the trail Home › Blog › post
+  the trail Home › Blog › post. v3.12: dates with the time and zone (noon in the business time
+  zone, e.g. `2026-11-18T12:00:00+01:00`); the author's `url` is the site's about section; on a
+  personal site an author with the person's name is the `Person` node
 
 Extra nodes (Service, Product, Event…) can be passed with `<BaseLayout jsonLd={...}>`.
 
@@ -772,6 +812,12 @@ Preview builds for the factory editor only ([Editor Preview Bridge](#editor-prev
 PREVIEW_EDITOR_ORIGIN=https://factory.mytko.dev
 ```
 
+v3.12: builds no search engine may index, e.g. the factory's previews ([SEO and Indexing](#seo-and-indexing)):
+
+```env
+SITE_NOINDEX=1
+```
+
 ---
 
 ## Installation
@@ -883,7 +929,9 @@ build draws a monogram — the first letter of `meta.name` on the accent color.
 `npm run build:app-icons` (part of `build:system`) generates `favicon.ico`,
 `favicon.svg` (SVG sources and monograms), `icons/icon-192.png`, `icons/icon-512.png`
 and `icons/apple-touch-icon.png` (opaque), plus the Open Graph image when
-`meta.seo.image` is not set. The 512 px icon is also the logo in structured data;
+`meta.seo.image` is not set (v3.12: the home page's hero photo cropped to 1200×630 around its
+focal point, the text card only without one), and `icons/logo.png` from `meta.logo` for structured
+data (v3.12; an uploaded icon serves without a logo, a monogram never);
 `site.webmanifest` is generated from site.json.
 
 ---
@@ -902,7 +950,9 @@ content hash in each file name, and generates:
 - `src/styles/abstracts/_fonts.scss` — `@font-face` rules (variable weight range,
   `unicode-range`) and a metric-matched `"<Family> Fallback"` face per family
   (local Arial / Times New Roman with `size-adjust` and ascent/descent overrides);
-- `src/design-system/fonts.generated.ts` — the regular face of the main script is preloaded;
+- `src/design-system/fonts.generated.ts`: the regular face of the main script is preloaded
+  (v3.12: `latin-ext` too for languages whose letters are in it, e.g. Polish, Czech, Turkish:
+  `preloadSubsets` in `library.ts`, so ą ę ł ś ż come without a second font swap);
 - `public/fonts/LICENSES.txt` — the licenses of the shipped fonts.
 
 **Adding a family:** `npm install @fontsource-variable/<family>`, add it to
@@ -1133,15 +1183,16 @@ each post has its own date, cover, category and tags); every post gets its own p
 ## Factory Signature
 
 v3.7: every site carries a few quiet easter eggs that lead to one another (`src/site/signature.ts`).
-Their texts are in the site's language (`signature` in every dictionary); the "Powered by Mytko
-Factory" lockup is a brand name and stays the same everywhere.
+Their texts are in the site's language (`signature` in every dictionary); the "Mytko Factory"
+lockup is a brand name and stays the same everywhere (v3.12: the words before it, "Powered by",
+are `signature.poweredBy` in every language). v3.12: no engine version anywhere on a site.
 
 | Where | What |
 |---|---|
 | page source | a comment under the viewport meta: "mytko factory" in box-drawing letters, who built the site, a hint to open the console (no `--` inside, whatever the site name) |
 | browser console | the wordmark on a dark card, a link to factory.mytko.dev and the way to `/humans.txt` |
 | `/humans.txt` | the site owner, Mytko Website Factory and the studio, language, last build date, technology; ends with the hint to the footer mark (`<link rel="author">` points to it) |
-| `<meta name="generator">` | `Mytko Website Factory <engine version>`; Astro's own generator tag stays as a second one |
+| `<meta name="generator">` | `Mytko Website Factory`, the only generator tag (v3.12: no versions, no Astro tag) |
 | footer | "Powered by [mark] Mytko Factory" at the end of the bottom row; the link goes to factory.mytko.dev (`rel="noopener nofollow"`: a footer link on every client site must not look like a link scheme). The mark is a button that opens a native popover (no script) with a few words about how the site was made. |
 
 ---

@@ -1,6 +1,7 @@
 /**
  * Vite plugin that exposes the validated site to the build:
- * - "virtual:site"                → { site, assets, siteDir } (server/build code)
+ * - "virtual:site"                → { site, assets, siteDir, noindex } (server/build code; v3.12 noindex:
+ *   the build is a SITE_NOINDEX one, src/config/indexing.ts)
  * - "virtual:site/analytics"      → { gaId } only, safe to import in browser scripts
  * - "virtual:section-components"  → { sectionComponents } for the variants the site uses
  *   (its components bring their styles, so unused variants add no CSS)
@@ -68,7 +69,7 @@ function layoutComponentsModule(site: Site): string {
   ].join("\n");
 }
 
-export function siteVitePlugin(siteDir: string, options: { gaId: string; editorOrigin: string }): Plugin {
+export function siteVitePlugin(siteDir: string, options: { gaId: string; editorOrigin: string; noindex: boolean }): Plugin {
   const resolved = (id: string) => `\0${id}`;
 
   return {
@@ -117,6 +118,7 @@ export function siteVitePlugin(siteDir: string, options: { gaId: string; editorO
         `export const site = ${JSON.stringify(site)};`,
         `export const assets = ${JSON.stringify(assets)};`,
         `export const siteDir = ${JSON.stringify(siteDir)};`,
+        `export const noindex = ${JSON.stringify(options.noindex)};`,
       ].join("\n");
     },
   };

@@ -140,18 +140,19 @@ export const en = {
     follow: "Follow us",
   },
 
-  // v3.7: the Factory easter eggs (src/site/signature.ts). "Powered by Mytko Factory" is a brand name, not translated.
+  // v3.7: the Factory easter eggs (src/site/signature.ts). "Mytko Factory" is a brand name, not translated.
   signature: {
     comment: "{siteName} was built with Mytko Website Factory: {url}",
     commentHint: "Curious how it works? Open the browser console (F12), something is waiting for you there.",
     console: "This website was built with Mytko Website Factory. Want one like it for your business? {url}",
     consoleHint: "Psst… the next secret is waiting at {url}",
+    /** v3.12: the words before the "Mytko Factory" lockup in the footer. */
+    poweredBy: "Powered by",
     markLabel: "How this website was made",
     title: "You found the last secret",
     text: "{siteName} was built with Mytko Website Factory.",
     factStatic: "Static pages built with Astro, so they load fast",
     factStyles: "Only the styles and scripts of the sections this site uses",
-    factEngine: "Factory engine {version}",
     link: "Discover Mytko Website Factory",
     close: "Close",
     humans: {
@@ -164,7 +165,6 @@ export const en = {
       language: "Language",
       updated: "Last update",
       technology: "Technology",
-      engine: "Engine",
       secret: "ONE MORE THING",
       hint: "One last secret is left: a small mark at the bottom of the website. Click it.",
     },

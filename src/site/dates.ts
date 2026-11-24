@@ -17,3 +17,14 @@ export function monthLabel(iso: string, lang: string): string {
 
 /** RFC 822 date for RSS: "Wed, 18 Nov 2026 12:00:00 GMT". */
 export const rssDate = (iso: string) => at(iso).toUTCString();
+
+/**
+ * v3.12: a date as an ISO 8601 date and time for structured data and article meta, which want a time and a zone:
+ * noon in the business time zone, with that zone's offset on that day ("2026-11-18T12:00:00+01:00").
+ */
+export function isoDateTime(iso: string, timeZone: string): string {
+  const zone = new Intl.DateTimeFormat("en-US", { timeZone, timeZoneName: "longOffset" }).formatToParts(at(iso)).find((part) => part.type === "timeZoneName")?.value;
+  // "GMT+01:00", "GMT-03:30"; plain "GMT" is UTC.
+  const offset = zone?.match(/^GMT([+-]\d{2}:\d{2})$/)?.[1] ?? "+00:00";
+  return `${iso}T12:00:00${offset}`;
+}

@@ -1,5 +1,5 @@
 ---
-/** Contact details under a heading: address, phone and e-mail as icon rows (nothing without them). */
+/** Contact details under a title (v3.12 no heading, as the link groups): address, phone and e-mail as icon rows (nothing without them). */
 import Icon from "@/components/media/Icon.astro";
 import Link from "@/components/ui/Link.astro";
 import { t } from "@/i18n";
@@ -16,7 +16,7 @@ const { address, phone, phoneHref, email } = contact;
 
 {(phone || email || address) && (
   <div class:list={["site-footer__group site-footer__group--contact", className]}>
-    <h2 class="site-footer__group-title">{t.footer.contact}</h2>
+    <p class="site-footer__group-title">{t.footer.contact}</p>
     <ul class="site-footer__contact">
       {address && (
         <li class="site-footer__contact-item">

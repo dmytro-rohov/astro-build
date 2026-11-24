@@ -1,5 +1,8 @@
 ---
-/** Link groups, each its own labelled navigation with a heading. */
+/**
+ * Link groups, each its own navigation labelled by its title. v3.12: the title is no heading (a few more h2 on every
+ * page would only blur the page's outline); `aria-labelledby` still names the navigation.
+ */
 import Link from "@/components/ui/Link.astro";
 import type { FooterLinkGroup } from "./types";
 
@@ -11,9 +14,9 @@ export interface Props {
 const { groups, class: className } = Astro.props;
 ---
 
-{groups.map((group) => (
-  <nav class:list={["site-footer__group", className]} aria-label={group.title}>
-    <h2 class="site-footer__group-title">{group.title}</h2>
+{groups.map((group, index) => (
+  <nav class:list={["site-footer__group", className]} aria-labelledby={`footer-group-${index + 1}`}>
+    <p id={`footer-group-${index + 1}`} class="site-footer__group-title">{group.title}</p>
     <ul class="site-footer__link-list">
       {group.links.map((link) => (
         <li>

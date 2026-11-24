@@ -103,18 +103,18 @@ export default {
     contact: "Kontakt",
   },
 
-  // v3.7: the Factory easter eggs (src/site/signature.ts). "Powered by Mytko Factory" is a brand name, not translated.
+  // v3.7: the Factory easter eggs (src/site/signature.ts). "Mytko Factory" is a brand name, not translated.
   signature: {
     comment: "Web {siteName} vznikl v Mytko Website Factory: {url}",
     commentHint: "Zajímá vás, jak funguje? Otevřete konzoli prohlížeče (F12), něco tam na vás čeká.",
     console: "Tento web vznikl v Mytko Website Factory. Chcete takový i pro svou firmu? {url}",
     consoleHint: "Psst… další tajemství čeká na adrese {url}",
+    poweredBy: "Vytvořeno v",
     markLabel: "Jak vznikl tento web",
     title: "Poslední tajemství odhaleno",
     text: "Web {siteName} vznikl v Mytko Website Factory.",
     factStatic: "Statické stránky postavené na Astru, proto se rychle načítají",
     factStyles: "Jen styly a skripty sekcí, které tento web používá",
-    factEngine: "Jádro Factory {version}",
     link: "Poznejte Mytko Website Factory",
     close: "Zavřít",
     humans: {
@@ -127,7 +127,6 @@ export default {
       language: "Jazyk",
       updated: "Poslední aktualizace",
       technology: "Technologie",
-      engine: "Jádro",
       secret: "JEŠTĚ JEDNA VĚC",
       hint: "Zbývá poslední tajemství: malá značka v patičce webu. Klikněte na ni.",
     },
