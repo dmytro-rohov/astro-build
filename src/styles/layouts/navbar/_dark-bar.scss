@@ -86,4 +86,9 @@
       align-self: center;
     }
   }
+
+  // v3.12: the lower bar (see _header.scss).
+  :root {
+    --header-offset: calc(3.5rem + 1px);
+  }
 }

@@ -10,4 +10,11 @@
       padding-block: var(--spacing-md);
     }
   }
+
+  // v3.12: the logo row and the links row (see _header.scss).
+  @include mq(md) {
+    :root {
+      --header-offset: calc(5.75rem + 1px);
+    }
+  }
 }

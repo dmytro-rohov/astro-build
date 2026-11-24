@@ -78,4 +78,11 @@
       justify-content: flex-start;
     }
   }
+
+  // v3.12: the taller split bar on wide screens (see _header.scss).
+  @include mq(lg) {
+    :root {
+      --header-offset: calc(5rem + 1px);
+    }
+  }
 }
