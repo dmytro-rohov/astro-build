@@ -42,9 +42,9 @@ test("preloads latin-ext for languages whose letters are in it", () => {
   expect(preloadSubsets("uk")).toEqual(["cyrillic"]);
 });
 
-// Letters of each engine language outside the latin subset (U+0000-00FF, ı, œ, Œ): they need latin-ext.
+// Letters of each engine language outside the latin subset (U+0000-00FF, ı, œ, Œ…): they need latin-ext.
 test("every engine language with letters beyond latin preloads latin-ext", () => {
-  const LATIN = /^[\u0000-\u00ff\u0131\u0152\u0153\u2000-\u206f\u20ac\u2122]*$/;
+  const LATIN = /^[\u0020-\u00ff\u0131\u0152\u0153\u2000-\u206f\u20ac\u2122]*$/;
   const letters: Record<string, string> = {
     cs: "ěščřžýáíéůú", de: "äöüß", en: "", es: "ñáéíóúü", fr: "àâçéèêëîïôùûüÿœ", it: "àèéìòù", nl: "éëïö",
     pl: "ąćęłńóśźż", pt: "ãâáàçéêíóôõú", ru: "", tr: "çğıİöşü", uk: "",

@@ -1,5 +1,5 @@
 /**
- * Schema.org structured data (JSON-LD) built from siteConfig.
+ * Schema.org structured data (JSON-LD) built from siteConfig and (v3.12, the owner) site.json.
  * BaseLayout renders these on every page as one @graph.
  */
 import { site } from "virtual:site";

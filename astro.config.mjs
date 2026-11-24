@@ -96,6 +96,26 @@ const allowedDomains = isLocalhost
       { protocol, hostname: `www.${hostname}` },
     ];
 
+/**
+ * v3.12: @astrojs/sitemap writes the home page as "https://host" (trailingSlash "never"); its canonical link is
+ * "https://host/". Listed after the sitemap integration, so it runs once the sitemap files are written.
+ * @type {import("astro").AstroIntegration}
+ */
+const sitemapHome = {
+  name: "mytko-sitemap-home",
+  hooks: {
+    "astro:build:done": async ({ dir }) => {
+      const outDir = fileURLToPath(dir);
+      const home = `<loc>${siteUrl.origin}</loc>`;
+
+      for (const file of (await readdir(outDir)).filter((name) => /^sitemap-\d+\.xml$/.test(name))) {
+        const xml = await readFile(path.join(outDir, file), "utf8");
+        if (xml.includes(home)) await writeFile(path.join(outDir, file), xml.replace(home, `<loc>${siteUrl.origin}/</loc>`));
+      }
+    },
+  },
+};
+
 export default defineConfig({
   site: siteUrl.origin,
   // Build output; `npm run site:build -- --out <dir>` sets OUT_DIR.
@@ -160,22 +180,7 @@ export default defineConfig({
               return date ? { ...item, lastmod: date } : item;
             },
           }),
-          {
-            // v3.12: @astrojs/sitemap writes the home page as "https://host" (trailingSlash "never"); its canonical
-            // link is "https://host/". Runs after the sitemap integration has written its files.
-            name: "mytko-sitemap-home",
-            hooks: {
-              "astro:build:done": async ({ dir }) => {
-                const outDir = fileURLToPath(dir);
-                const home = `<loc>${siteUrl.origin}</loc>`;
-
-                for (const file of (await readdir(outDir)).filter((name) => /^sitemap-\d+\.xml$/.test(name))) {
-                  const xml = await readFile(path.join(outDir, file), "utf8");
-                  if (xml.includes(home)) await writeFile(path.join(outDir, file), xml.replace(home, `<loc>${siteUrl.origin}/</loc>`));
-                }
-              },
-            },
-          },
+          sitemapHome,
         ]),
   ],
 
