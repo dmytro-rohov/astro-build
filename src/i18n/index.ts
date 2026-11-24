@@ -1,5 +1,6 @@
 import { siteConfig } from "@/config/site";
 import { getDictionary, type Dictionary } from "./dictionaries";
+import { composeTitle } from "@/site/seo";
 
 export { availableLanguages, getDictionary, type Dictionary } from "./dictionaries";
 
@@ -26,11 +27,7 @@ export function format(
   );
 }
 
-/** Page title built from the language's title template. */
+/** Page title built from the language's title template; v3.12 without the site name when too long (src/site/seo.ts). */
 export function pageTitle(title?: string): string {
-  if (!title || title === siteConfig.name) {
-    return siteConfig.name;
-  }
-
-  return format(t.meta.titleTemplate, { title, siteName: siteConfig.name });
+  return composeTitle(t.meta.titleTemplate, title, siteConfig.name);
 }

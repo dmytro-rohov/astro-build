@@ -30,6 +30,8 @@ export interface Props {
   title?: string;
   /** Use `title` as is, without the "{title} | {site name}" template (home page). */
   titleIsFull?: boolean;
+  /** v3.12: the page's own title for search results and sharing (seo.title), used as is in <title> and og:title. */
+  seoTitle?: string;
   description?: string;
   canonicalPath?: string;
   image?: string;
@@ -57,6 +59,7 @@ export interface Props {
 const {
   title,
   titleIsFull = false,
+  seoTitle,
   description = siteConfig.description,
   image = siteConfig.seo.image,
   imageAlt = siteConfig.seo.imageAlt,
@@ -79,7 +82,7 @@ const ogType = pageType;
 // v3.9: the blog's feed, announced on every page of a site with posts.
 const hasFeed = Boolean(siteConfig.blogFeed);
 
-const fullTitle = titleIsFull && title ? title : pageTitle(title);
+const fullTitle = seoTitle ?? (titleIsFull && title ? title : pageTitle(title));
 // v3.12: a SITE_NOINDEX build (the factory's previews) hides every page, whatever the page asks for.
 const robots = siteNoindex ? NOINDEX_ROBOTS : isNoindexPath(Astro.url.pathname) ? "noindex, follow" : robotsProp;
 const lang = siteConfig.lang;

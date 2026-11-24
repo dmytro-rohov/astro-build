@@ -418,6 +418,12 @@ import { t, format } from "@/i18n";
   `robots.txt` has no `Sitemap` line. Crawling stays allowed on purpose: a crawler must fetch a page to
   see its `noindex` (a `Disallow` would keep a shared link in the results). Empty, `0` or `false` is
   a normal build; any other value stops the build.
+- v3.12 titles: `{title} | {site name}` only while the whole fits in 60 characters, else the title
+  alone (search results cut longer ones). `pages[].seo.title` and `blog.posts[].seo.title` (at most
+  60 characters) replace the whole `<title>` and `og:title` as they are.
+- v3.12 descriptions: a subpage without its own `description` gets the start of its sections' texts
+  (section descriptions, the about text, cut at a word to 155 characters) instead of repeating
+  `meta.description` on every page; the home page keeps `meta.description`.
 - Every page has exactly one `<h1>`.
 
 ---

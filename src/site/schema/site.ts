@@ -12,6 +12,7 @@ import { layoutTypes, sectionTypes } from "../registry";
 import { Action, DAYS, field, HttpsUrl, Id, imageSlot, Slug, text, Time, type ImageSlot } from "./fields";
 import { ICON_NAMES } from "../../design-system/icons/library";
 import { BlogSchema } from "./blog";
+import { TITLE_MAX } from "../seo";
 import { AUTOCOMPLETE_TOKENS, DEFAULT_FIELDS, FIELD_ID, FORM_DOM_IDS, FORM_FIELD_TYPES, ICON_TYPES, LENGTH_TYPES, MAX_FORM_FIELDS, PLACEHOLDER_TYPES, RESERVED_FIELD_IDS, TYPE_MAX, domIdsOf, fieldsOf } from "../../lib/contact/fields";
 
 export const SCHEMA_VERSION = 1;
@@ -218,6 +219,9 @@ export const BusinessSchema = z.strictObject({
   sameAs: field(z.array(HttpsUrl).max(10).default([]), { label: "Profile w sieci", fieldType: "list", description: "Facebook, Instagram, Google Maps… (https)." }),
 });
 
+/** v3.12: a page's or a post's own title for search results and sharing. */
+const SEO_TITLE = `Title in search results and when shared, used as is (no site name added), at most ${TITLE_MAX} characters. Default: the title with " | site name" while the whole fits in ${TITLE_MAX} characters, else the title alone.`;
+
 const PageSchema = z.strictObject({
   id: Id.describe("Stable page id, unique in the site."),
   slug: Slug.describe('URL path, "/" for the home page.'),
@@ -225,7 +229,7 @@ const PageSchema = z.strictObject({
   description: field(text(160, 50).optional(), {
     label: "Opis dla wyszukiwarek",
     fieldType: "textarea",
-    description: "Meta description, 50–160 characters. Defaults to meta.description.",
+    description: "Meta description, 50–160 characters. Defaults to the home page: meta.description; other pages: the start of their sections' texts (v3.12), else meta.description.",
   }),
   nav: z
     .strictObject({
@@ -236,6 +240,7 @@ const PageSchema = z.strictObject({
     .default({ show: true }),
   seo: z
     .strictObject({
+      title: text(TITLE_MAX).optional().describe(SEO_TITLE),
       image: imageSlot(META_IMAGE_SLOTS.ogImage).optional().describe("Open Graph image for this page (1200×630)."),
       noindex: z.boolean().default(false),
     })

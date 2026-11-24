@@ -16,6 +16,7 @@ import { blogPostingSchema, blogSchema } from "@/lib/seo/schema";
 import { getAsset } from "@/site/assets";
 import { getImage } from "astro:assets";
 import { t } from "@/i18n";
+import { pageSummary } from "@/site/seo";
 
 export function getStaticPaths() {
   const blog = site.blog;
@@ -75,12 +76,15 @@ if (post && blog) {
 }
 
 const blogPage = blog ? site.pages.find((entry) => entry.slug === blog.path) : undefined;
+// v3.12: a subpage without its own description says what its sections say, not the site's description again.
+const pageDescription = page ? (page.description ?? (page.slug === "/" ? undefined : pageSummary(page))) : undefined;
 const Article = layoutComponents.article;
 ---
 
 {post && blog ? (
   <BaseLayout
     title={post.title}
+    seoTitle={post.seo.title}
     description={postDescription(post)}
     image={pageImage}
     imageAlt={postImage(post) ? getAsset(postImage(post)!).alt || post.title : post.title}
@@ -100,7 +104,8 @@ const Article = layoutComponents.article;
   <BaseLayout
     title={page!.title}
     titleIsFull={page!.slug === "/"}
-    description={page!.description}
+    seoTitle={page!.seo.title}
+    description={pageDescription}
     image={pageImage}
     robots={page!.seo.noindex ? "noindex, follow" : "index, follow, max-image-preview:large"}
     jsonLd={jsonLd}
