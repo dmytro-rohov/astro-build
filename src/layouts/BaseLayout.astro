@@ -14,8 +14,7 @@ import { site, noindex as siteNoindex } from "virtual:site";
 import { getImage } from "astro:assets";
 import { getAsset } from "@/site/assets";
 import { ogImageOf } from "@/site/og";
-import { ENGINE_VERSION } from "@/site/engine";
-import { FACTORY_URL, WORDMARK, generatorName, sourceComment } from "@/site/signature";
+import { FACTORY_URL, GENERATOR, WORDMARK, sourceComment } from "@/site/signature";
 import {
   breadcrumbSchema,
   ownerSchema,
@@ -152,8 +151,7 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
     <Fragment set:html={sourceComment(t.signature, siteConfig.name)} />
     <meta name="description" content={description} />
     <meta name="robots" content={robots} />
-    <meta name="generator" content={generatorName(ENGINE_VERSION)} />
-    <meta name="generator" content={Astro.generator} />
+    <meta name="generator" content={GENERATOR} />
     {author && <meta name="author" content={author} />}
     {keywords && <meta name="keywords" content={keywords} />}
     <meta name="color-scheme" content={colorSchemeMeta} />

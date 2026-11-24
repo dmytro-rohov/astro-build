@@ -95,7 +95,9 @@ test("factory signature: source comment, generator, humans.txt and the secret fo
   const response = await page.goto("/");
   const html = (await response?.text()) ?? "";
   expect(html).toMatch(/<!--\n\n {2}┏┳┓/);
-  await expect(page.locator('meta[name="generator"]').first()).toHaveAttribute("content", /^Mytko Website Factory \d+\.\d+\.\d+$/);
+  // v3.12: one generator tag, without a version.
+  await expect(page.locator('meta[name="generator"]')).toHaveCount(1);
+  await expect(page.locator('meta[name="generator"]')).toHaveAttribute("content", "Mytko Website Factory");
   await expect(page.locator('link[rel="author"]')).toHaveAttribute("href", "/humans.txt");
 
   const humans = await request.get("/humans.txt");

@@ -1176,15 +1176,16 @@ each post has its own date, cover, category and tags); every post gets its own p
 ## Factory Signature
 
 v3.7: every site carries a few quiet easter eggs that lead to one another (`src/site/signature.ts`).
-Their texts are in the site's language (`signature` in every dictionary); the "Powered by Mytko
-Factory" lockup is a brand name and stays the same everywhere.
+Their texts are in the site's language (`signature` in every dictionary); the "Mytko Factory"
+lockup is a brand name and stays the same everywhere (v3.12: the words before it, "Powered by",
+are `signature.poweredBy` in every language). v3.12: no engine version anywhere on a site.
 
 | Where | What |
 |---|---|
 | page source | a comment under the viewport meta: "mytko factory" in box-drawing letters, who built the site, a hint to open the console (no `--` inside, whatever the site name) |
 | browser console | the wordmark on a dark card, a link to factory.mytko.dev and the way to `/humans.txt` |
 | `/humans.txt` | the site owner, Mytko Website Factory and the studio, language, last build date, technology; ends with the hint to the footer mark (`<link rel="author">` points to it) |
-| `<meta name="generator">` | `Mytko Website Factory <engine version>`; Astro's own generator tag stays as a second one |
+| `<meta name="generator">` | `Mytko Website Factory`, the only generator tag (v3.12: no versions, no Astro tag) |
 | footer | "Powered by [mark] Mytko Factory" at the end of the bottom row; the link goes to factory.mytko.dev (`rel="noopener nofollow"`: a footer link on every client site must not look like a link scheme). The mark is a button that opens a native popover (no script) with a few words about how the site was made. |
 
 ---

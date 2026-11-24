@@ -103,18 +103,18 @@ export default {
     contact: "İletişim",
   },
 
-  // v3.7: the Factory easter eggs (src/site/signature.ts). "Powered by Mytko Factory" is a brand name, not translated.
+  // v3.7: the Factory easter eggs (src/site/signature.ts). "Mytko Factory" is a brand name, not translated.
   signature: {
     comment: "{siteName} web sitesi Mytko Website Factory ile oluşturuldu: {url}",
     commentHint: "Nasıl çalıştığını merak mı ediyorsunuz? Tarayıcı konsolunu açın (F12), orada sizi bir şey bekliyor.",
     console: "Bu web sitesi Mytko Website Factory ile oluşturuldu. İşletmeniz için böyle bir site ister misiniz? {url}",
     consoleHint: "Psst… sıradaki sır şu adreste bekliyor: {url}",
+    poweredBy: "Altyapı:",
     markLabel: "Bu web sitesi nasıl yapıldı",
     title: "Son sırrı buldunuz",
     text: "{siteName} web sitesi Mytko Website Factory ile oluşturuldu.",
     factStatic: "Astro ile oluşturulan statik sayfalar, bu yüzden hızlı yüklenir",
     factStyles: "Yalnızca bu sitenin kullandığı bölümlerin stilleri ve betikleri",
-    factEngine: "Factory motoru {version}",
     link: "Mytko Website Factory'yi keşfedin",
     close: "Kapat",
     humans: {
@@ -127,7 +127,6 @@ export default {
       language: "Dil",
       updated: "Son güncelleme",
       technology: "Teknoloji",
-      engine: "Motor",
       secret: "BİR ŞEY DAHA",
       hint: "Son bir sır kaldı: sitenin en altındaki küçük işaret. Üzerine tıklayın.",
     },
