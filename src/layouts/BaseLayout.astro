@@ -223,12 +223,13 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
 
   <body>
     <a class="skip-link" href="#main-content">{t.common.skipToContent}</a>
+    <!-- v3.12: the consent banner right after the skip link, first in the Tab order (WCAG 2.4.11). -->
+    <CookieConsent />
     {showHeader && <Header />}
     <main id="main-content">
       <slot />
     </main>
     {showFooter && <Footer />}
-    <CookieConsent />
     <Counters />
     <span
       hidden

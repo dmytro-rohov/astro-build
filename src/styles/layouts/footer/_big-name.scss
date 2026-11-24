@@ -51,6 +51,9 @@
     text-wrap: balance;
     mask-image: linear-gradient(to bottom, #000 55%, transparent 105%);
     user-select: none;
+
+    // v3.12: a name measured with the fallback font, before the refit, never widens the page (WCAG 1.4.10).
+    overflow-x: clip;
   }
 
   .site-footer__wordmark--xl {

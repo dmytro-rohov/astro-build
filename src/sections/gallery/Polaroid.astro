@@ -51,7 +51,7 @@ const aspects = { landscape: [4, 3], square: [1, 1], portrait: [4, 5] } as const
                   aspect={aspects[shape]}
                   widths={[320, 480, 640]}
                   sizes={tileSizes(Number(columns), 2)}
-                  label={format(t.lightbox.status, { number: index + 1, count })}
+                  label={format(t.lightbox.item, { title: content.title, number: index + 1, count })}
                   class="s-polaroid__photo"
                 />
                 {item.caption && <figcaption class="s-polaroid__caption">{item.caption}</figcaption>}

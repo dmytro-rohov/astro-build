@@ -212,19 +212,21 @@
     }
   }
 
+  // v3.12 (WCAG 2.2.2): the photos float up and back once when the section comes into view
+  // (data-float, Faces.astro), all within five seconds, then rest; never with reduced motion.
   @media (prefers-reduced-motion: no-preference) {
-    .s-cta-faces__spot {
-      animation: s-cta-float 7s var(--motion-easing-standard) infinite alternate;
+    .s-cta-faces[data-float] .s-cta-faces__spot {
+      animation: s-cta-float 2.4s var(--motion-easing-standard) 2 alternate;
     }
 
-    .s-cta-faces__spot:nth-child(3n + 2) {
-      animation-duration: 9s;
-      animation-delay: -3s;
+    .s-cta-faces[data-float] .s-cta-faces__spot:nth-child(3n + 2) {
+      animation-duration: 2.1s;
+      animation-delay: 0.3s;
     }
 
-    .s-cta-faces__spot:nth-child(3n) {
-      animation-duration: 8s;
-      animation-delay: -5s;
+    .s-cta-faces[data-float] .s-cta-faces__spot:nth-child(3n) {
+      animation-duration: 2s;
+      animation-delay: 0.6s;
     }
   }
 

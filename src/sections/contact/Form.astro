@@ -2,10 +2,12 @@
 /**
  * ContactForm wired to the site: its fields and button (contact.form), and where it posts: this site's /api/contact
  * (local) or the form service (remote). Nothing when the site has no form (contact.form.enabled false): the contact
- * variants then show the details only.
+ * variants then show the details only. v3.12: a remote form also sends where it is (returnTo, src/site/contact-link.ts),
+ * for a service that sends a failed visitor back to the form.
  */
 import ContactForm from "@/components/form/ContactForm.astro";
 import { fieldsOf } from "@/lib/contact/fields";
+import { contactLink } from "@/site/contact-link";
 import { site } from "virtual:site";
 
 export interface Props {
@@ -19,7 +21,7 @@ const form = site.contact.form;
 {form?.enabled !== false && (
   <ContactForm
     action={remote ? remote.endpoint : "/api/contact"}
-    hiddenFields={remote ? { siteId: site.siteId, lang: site.lang } : {}}
+    hiddenFields={remote ? { siteId: site.siteId, lang: site.lang, returnTo: contactLink(site, Astro.url.pathname) } : {}}
     method="post"
     privacyHref="/privacy"
     fields={fieldsOf(form)}

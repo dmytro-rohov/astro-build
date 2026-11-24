@@ -35,14 +35,14 @@ const blocks = article.post.body
   {blocks.map(({ block, index }) => {
     switch (block.type) {
       case "paragraph":
-        return <Fragment set:html={renderRichTextLite(block.text)} />;
+        return <Fragment set:html={renderRichTextLite(block.text, { newTab: t.common.newTab })} />;
       case "heading": {
         const Heading = block.level === 3 ? "h3" : "h2";
         return <Heading id={ids.get(index)} class="prose__heading">{block.text}</Heading>;
       }
       case "list": {
         const List = block.ordered ? "ol" : "ul";
-        return <List class="prose__list">{block.items.map((item) => <li set:html={renderRichTextInline(item)} />)}</List>;
+        return <List class="prose__list">{block.items.map((item) => <li set:html={renderRichTextInline(item, { newTab: t.common.newTab })} />)}</List>;
       }
       case "quote":
         return (
@@ -96,7 +96,7 @@ const blocks = article.post.body
         return (
           <aside class="prose__callout">
             {block.title && <p class="prose__callout-title">{block.title}</p>}
-            <div set:html={renderRichTextLite(block.text)} />
+            <div set:html={renderRichTextLite(block.text, { newTab: t.common.newTab })} />
           </aside>
         );
       case "cta":

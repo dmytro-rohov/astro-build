@@ -96,11 +96,15 @@ export const en = {
     previous: "Previous photo",
     next: "Next photo",
     status: "Photo {number} of {count}",
+    /** v3.12: a gallery photo without a description, named by its gallery. */
+    item: "{title}: photo {number} of {count}",
   },
 
   common: {
     skipToContent: "Skip to content",
     backToHome: "Back to home page",
+    /** v3.12: after a link that opens a new tab, for screen readers. */
+    newTab: "(opens in a new tab)",
   },
 
   nav: {
@@ -233,6 +237,8 @@ export const en = {
     privacyBefore: "I accept the",
     privacyLink: "privacy policy",
     privacyAfter: ".",
+    /** v3.12: above the form, explains the mark of required fields. */
+    requiredNote: "Fields marked * are required.",
     submit: "Send message",
     sending: "Sending message…",
     success: "Your message has been sent successfully.",

@@ -7,7 +7,8 @@
  * - src/design-system/theme.generated.json — resolved theme (for build reports)
  *
  * Colors come from the archetype and site.json theme; failing contrast stops here.
- * v3.11: the site's button styles (theme.buttons) as --button-<kind>-<name> (theme/buttons.ts).
+ * v3.11: the site's button styles (theme.buttons) as --button-<kind>-<name> (theme/buttons.ts);
+ * v3.12: with their failing colors fixed (fixButtonStyles) unless theme.allowLowContrastButtons.
  * Usage: SITE_DIR=sites/_demo tsx src/design-system/utils/cssVars.ts
  */
 import fs from "fs";
@@ -15,7 +16,7 @@ import path from "path";
 import { loadSite, resolveSiteDir, SiteValidationError } from "../../site/loader";
 import { fontPairs, fontStack } from "../fonts/library";
 import { accentPalette, resolveTheme, type SemanticPalette } from "../theme";
-import { buttonScopeVars, buttonVars } from "../theme/buttons";
+import { buttonScopeVars, buttonVars, fixButtonStyles } from "../theme/buttons";
 import { relativeLuminance } from "../theme/color";
 import { shapeTokens } from "../theme/shape";
 import { tokens } from "../tokens/index";
@@ -100,9 +101,11 @@ const colorVars = (palette: SemanticPalette) => ({ ...flatten({ color: palette }
 // its own palette (inverse and accent sections, bars, footers, the other color scheme) re-declares
 // each kind's colors: the site's where they stay visible there, "initial" where they would vanish
 // (the theme's buttons adapted to that part stay). Parts in the site's own scheme need nothing.
-const buttons = site.theme.buttons;
-const ownButtonVars = buttonVars(buttons);
+// v3.12: colors failing contrast in the site's own scheme are fixed first (the loader warns which), unless
+// the operator keeps them (theme.allowLowContrastButtons).
 const ownPalette = theme.colorScheme === "dark" ? theme.dark : theme.light;
+const buttons = site.theme.allowLowContrastButtons ? site.theme.buttons : fixButtonStyles(site.theme.buttons, ownPalette).styles;
+const ownButtonVars = buttonVars(buttons);
 const scoped = (palette: SemanticPalette) => ({ ...colorVars(palette), ...buttonScopeVars(buttons, palette, { own: palette === ownPalette }) });
 
 const lines = (values: Record<string, TokenValue>, indent = "  ") =>

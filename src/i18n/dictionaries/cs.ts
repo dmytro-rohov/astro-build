@@ -65,6 +65,7 @@ export default {
   common: {
     skipToContent: "Přejít na obsah",
     backToHome: "Zpět na úvodní stránku",
+    newTab: "(otevře se v nové kartě)",
   },
 
   nav: {
@@ -190,6 +191,7 @@ export default {
     privacyBefore: "Souhlasím se",
     privacyLink: "zásadami ochrany osobních údajů",
     privacyAfter: ".",
+    requiredNote: "Pole označená * jsou povinná.",
     submit: "Odeslat zprávu",
     sending: "Odesílání zprávy…",
     success: "Vaše zpráva byla úspěšně odeslána.",
@@ -306,5 +308,6 @@ export default {
     previous: "Předchozí fotografie",
     next: "Další fotografie",
     status: "Fotografie {number} z {count}",
+    item: "{title}: fotografie {number} z {count}",
   },
 } satisfies Dictionary;

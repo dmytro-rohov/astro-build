@@ -10,6 +10,7 @@ import SectionHeader from "@/sections/_shared/SectionHeader.astro";
 import Photo from "@/sections/gallery/Photo.astro";
 import Stack from "@/components/layouts/Stack.astro";
 import Icon from "@/components/media/Icon.astro";
+import NewTab from "@/components/ui/NewTab.astro";
 import Lightbox from "@/components/widgets/Lightbox.astro";
 import { tileSizes } from "@/sections/gallery/layout";
 import { format, t } from "@/i18n";
@@ -47,7 +48,7 @@ const panelProps = link
         <span class:list={["s-explore__word", `s-explore__word--${Math.min(word.length, 40)}`]} aria-hidden={content.eyebrow ? undefined : "true"}>{word}</span>
         {link && (
           <span class="s-explore__more">
-            {link.label}<Icon name="arrow-right" size="1.125em" />
+            {link.label}<Icon name="arrow-right" size="1.125em" />{external && <NewTab />}
           </span>
         )}
       </Panel>
@@ -63,7 +64,7 @@ const panelProps = link
                   aspect={[4, 5]}
                   widths={[320, 480, 640]}
                   sizes={tileSizes(columns + 1, 2)}
-                  label={format(t.lightbox.status, { number: index + 1, count })}
+                  label={format(t.lightbox.item, { title: content.title, number: index + 1, count })}
                 />
                 {item.caption && <figcaption class="s-explore__caption">{item.caption}</figcaption>}
               </figure>

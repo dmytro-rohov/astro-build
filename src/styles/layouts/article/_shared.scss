@@ -294,7 +294,10 @@
     border-top: 1px solid var(--color-border-default);
   }
 
+  // The brand box: focus rings in its text color, the accent ring would vanish on it (WCAG 2.4.7).
   .article-cta {
+    --color-focus-ring: var(--color-action-primary-text);
+
     display: grid;
     justify-items: start;
     gap: var(--spacing-sm);

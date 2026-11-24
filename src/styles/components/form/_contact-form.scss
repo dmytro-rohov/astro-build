@@ -88,4 +88,12 @@
   .contact-form__required {
     color: var(--color-feedback-error);
   }
+
+  // v3.12: what the mark means, above the fields (WCAG 3.3.2).
+  .contact-form__required-note {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+  }
 }

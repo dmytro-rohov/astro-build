@@ -78,18 +78,20 @@
       opacity var(--motion-duration-fast) var(--motion-easing-standard);
   }
 
-  .slider__button:hover:not(:disabled) {
+  .slider__button:hover:not([aria-disabled="true"]) {
     background: var(--color-background-muted);
     border-color: var(--color-border-strong);
   }
 
-  .slider__button:disabled {
+  // At an end (v3.12: aria-disabled, the button keeps the focus; Slider.astro).
+  .slider__button[aria-disabled="true"] {
     opacity: 0.35;
     cursor: default;
   }
 
   // A dot per item (v3.3): the target is 1.5rem (WCAG 2.5.8), the dot inside it; the current
-  // one grows into a bar in the accent color.
+  // one grows into a bar in the accent color. v3.12: the others in the controls' border color,
+  // checked for 3:1 against the background (WCAG 1.4.11).
   .slider__dots {
     display: flex;
     flex-wrap: wrap;
@@ -103,7 +105,7 @@
     width: 1.5rem;
     height: 1.5rem;
     padding: 0;
-    color: var(--color-border-strong);
+    color: var(--color-border-control);
     background: none;
     border: 0;
     cursor: pointer;

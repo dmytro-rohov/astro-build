@@ -79,7 +79,8 @@ const { label = t.lightbox.label, enabled = true, class: className } = Astro.pro
         image.height = Number(link.dataset.height);
         image.src = link.href;
       }
-      image.alt = link.querySelector("img")?.alt ?? "";
+      // v3.12: the photo's own alt text (data-alt, gallery/Photo.astro), else the tile's.
+      image.alt = link.dataset.alt ?? link.querySelector("img")?.alt ?? "";
       caption.textContent = link.dataset.caption ?? "";
       caption.hidden = !link.dataset.caption;
       count.textContent = `${current + 1} / ${links.length}`;

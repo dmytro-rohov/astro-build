@@ -2,7 +2,9 @@
 /**
  * A gallery photo cropped for its tile, in a frame that fills the tile. With the lightbox the
  * frame is a link to the whole photo (up to 1600px): the viewer opens it, without JavaScript
- * the browser shows the image.
+ * the browser shows the image. v3.12: a photo without alt text is named by its caption, else by
+ * its gallery and place ("Our work: photo 3 of 8"); the viewer shows the enlarged photo with the
+ * same alt text (data-alt).
  */
 import { getImage } from "astro:assets";
 import Img from "@/components/media/Img.astro";
@@ -16,7 +18,7 @@ export interface Props {
   aspect?: readonly [number, number];
   widths: number[];
   sizes: string;
-  /** Name of the link when the photo has no alt text, e.g. "Zdjęcie 3 z 8". */
+  /** Name of the link when the photo has no alt text, e.g. "Realizacje: zdjęcie 3 z 8". */
   label: string;
   class?: string;
 }
@@ -35,6 +37,8 @@ const frameProps = large
       "data-height": height,
       "data-caption": caption,
       "aria-label": photo.alt ? undefined : (caption ?? label),
+      // The enlarged photo's alt text: the asset's, else the link's name (a caption is shown under it anyway).
+      "data-alt": photo.alt || (caption ? "" : label),
     }
   : {};
 ---

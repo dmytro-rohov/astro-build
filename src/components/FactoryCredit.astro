@@ -3,10 +3,11 @@
  * v3.7: "Powered by Mytko Factory" in the footer's bottom row (v3.10: "Mytko" with a capital M, as everywhere). The lockup is a brand name and stays
  * the same in every language; v3.12 the words before it come from the dictionary (signature.poweredBy). The small mark is the last of the easter eggs (src/site/signature.ts):
  * it opens a native popover, no script, with a few words, in the site's language, about how the
- * site was made (v3.12 without the engine version). Browsers without the Popover API just show the mark.
+ * site was made (v3.12 without the engine version). Both links say they open a new tab (NewTab). Browsers without the Popover API just show the mark.
  */
 import { siteConfig } from "@/config/site";
 import { format, t } from "@/i18n";
+import NewTab from "@/components/ui/NewTab.astro";
 import { FACTORY_URL } from "@/site/signature";
 
 const id = "factory-signature";
@@ -27,7 +28,7 @@ const facts = [s.factStatic, s.factStyles];
   </button>
   <a class="factory-credit__name" href={FACTORY_URL} target="_blank" rel="noopener nofollow">
     <strong>Mytko</strong>
-    <span>Factory</span>
+    <span>Factory</span><NewTab />
   </a>
 
   <div id={id} class="factory-signature" popover role="dialog" aria-labelledby={`${id}-title`}>
@@ -43,6 +44,6 @@ const facts = [s.factStatic, s.factStyles];
     <ul class="factory-signature__facts">
       {facts.map((fact) => <li>{fact}</li>)}
     </ul>
-    <a class="factory-signature__link" href={FACTORY_URL} target="_blank" rel="noopener nofollow">{s.link} →</a>
+    <a class="factory-signature__link" href={FACTORY_URL} target="_blank" rel="noopener nofollow">{s.link} →<NewTab /></a>
   </div>
 </div>

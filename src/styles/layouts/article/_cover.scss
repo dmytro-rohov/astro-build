@@ -17,6 +17,9 @@
     background: var(--color-background-inverse, #111);
     color: #fff;
     isolation: isolate;
+
+    // The trail's links sit on the darkened photo: a ring in the text's white, not the accent (3:1, v3.12).
+    --color-focus-ring: #fff;
   }
 
   .a-cover__image {
@@ -41,6 +44,8 @@
     min-height: min(56vh, 32rem);
     background: var(--color-action-primary);
     color: var(--color-action-primary-text);
+
+    --color-focus-ring: var(--color-action-primary-text);
   }
 
   .a-cover__hero--plain::after {

@@ -1,4 +1,6 @@
 ---
+import NewTab from "@/components/ui/NewTab.astro";
+
 export interface Props {
   variant?: "primary" | "secondary" | "ghost" | "danger";
   size?: "sm" | "md" | "lg";
@@ -42,7 +44,7 @@ const isExternal =
     rel={isExternal ? "noopener noreferrer" : undefined}
     aria-disabled={disabled ? "true" : undefined}
   >
-    <slot />
+    <slot />{isExternal && <NewTab />}
   </a>
 ) : (
   <button

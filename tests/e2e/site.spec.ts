@@ -9,6 +9,7 @@ import fs from "node:fs";
 import path from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 import { test, expect } from "./fixtures";
+import { focusRingProblems } from "./focus-ring";
 
 const enabled = process.env.SITE_SMOKE === "1";
 const siteDir = path.resolve(process.env.SITE_DIR ?? ".generated/catalog");
@@ -41,6 +42,15 @@ test.describe(`site ${path.basename(siteDir)}`, () => {
       expect(duplicates, "duplicate ids").toEqual([]);
     });
 
+    // v3.12 (WCAG 2.4.7, 1.4.11): also on brand-colored panels, where a ring in the accent color would vanish.
+    test(`${slug}: every focus ring shows with 3:1 against its background`, async ({ page }) => {
+      // Every keyboard stop of a long page (the catalog's twenty sections at their maximum).
+      test.setTimeout(120_000);
+      await page.goto(slug);
+      await page.waitForTimeout(400);
+      expect(await focusRingProblems(page)).toEqual([]);
+    });
+
     test(`${slug}: nothing overflows at 320, 768 and 1440 px`, async ({ page }) => {
       for (const width of [320, 768, 1440]) {
         await page.setViewportSize({ width, height: 900 });
@@ -69,7 +79,7 @@ test.describe(`site ${path.basename(siteDir)}`, () => {
 
             for (const element of container.querySelectorAll<HTMLElement>("*")) {
               // Items of a slider scroll sideways inside its track by design (the track itself must fit).
-              if (element.closest("[aria-hidden='true'], .visually-hidden, svg, [data-slider-track] > *")) continue;
+              if (element.closest("[aria-hidden='true'], .visually-hidden, .visually-hidden-inline, svg, [data-slider-track] > *")) continue;
 
               const rect = element.getBoundingClientRect();
               if (!rect.width || !rect.height) continue;
@@ -84,7 +94,7 @@ test.describe(`site ${path.basename(siteDir)}`, () => {
           // v3.9: a blog post's page is not a section: nothing in it may stick out of the screen.
           for (const article of document.querySelectorAll<HTMLElement>("[data-overflow-check]")) {
             for (const element of article.querySelectorAll<HTMLElement>("*")) {
-              if (element.closest("[aria-hidden='true'], .visually-hidden, svg, [data-slider-track] > *")) continue;
+              if (element.closest("[aria-hidden='true'], .visually-hidden, .visually-hidden-inline, svg, [data-slider-track] > *")) continue;
 
               const rect = element.getBoundingClientRect();
               if (!rect.width || !rect.height) continue;

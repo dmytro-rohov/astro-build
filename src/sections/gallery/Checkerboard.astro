@@ -60,7 +60,7 @@ const TileHeading = headingLevel === "h1" ? "h2" : "h3";
                 aspect={text ? [1, 1] : [2, 1]}
                 widths={text ? [320, 480, 640, 800] : [480, 800, 1200]}
                 sizes={text ? "(min-width: 1280px) 306px, (min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" : "(min-width: 1280px) 612px, (min-width: 1024px) 50vw, 100vw"}
-                label={format(t.lightbox.status, { number: index + 1, count })}
+                label={format(t.lightbox.item, { title: content.title, number: index + 1, count })}
                 class="s-checker__photo"
               />
               {text && (

@@ -4,25 +4,40 @@
 @use "../abstracts/mixins" as *;
 
 @layer widgets {
+  // v3.12 (WCAG 1.4.12): before the visitor loads it, the provider's proportions are only the
+  // placeholder's minimum: an empty spacer keeps them and the text shares its grid cell, so bigger
+  // text or more spacing makes the box taller instead of clipping the button and the link. The
+  // frame takes the proportions itself, clipped to the rounded corners, once it is loaded.
   .s-embed__frame {
     display: grid;
     place-items: center;
-    overflow: hidden;
     background: var(--color-background-muted);
     border: 1px solid var(--color-border-default);
     border-radius: var(--radius-image);
   }
 
-  .s-embed__frame--wide { aspect-ratio: 16 / 9; }
-  .s-embed__frame--standard { aspect-ratio: 4 / 3; }
+  .s-embed__frame::before {
+    content: "";
+    grid-area: 1 / 1;
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .s-embed__frame--wide::before,
+  .s-embed__frame--wide[data-embed-loaded] { aspect-ratio: 16 / 9; }
+
+  .s-embed__frame--standard::before,
+  .s-embed__frame--standard[data-embed-loaded] { aspect-ratio: 4 / 3; }
 
   // Wide maps would be taller than the screen in 4:3.
   @include mq(md) {
-    .s-embed__layout--full .s-embed__frame--standard { aspect-ratio: 16 / 9; }
+    .s-embed__layout--full .s-embed__frame--standard::before,
+    .s-embed__layout--full .s-embed__frame--standard[data-embed-loaded] { aspect-ratio: 16 / 9; }
   }
   .s-embed__frame--tall { min-height: 42rem; }
 
   .s-embed__placeholder {
+    grid-area: 1 / 1;
     max-width: 28rem;
     padding: var(--spacing-lg);
     text-align: center;
@@ -43,6 +58,11 @@
 
   .s-embed__frame[data-embed-loaded] {
     display: block;
+    overflow: hidden;
+  }
+
+  .s-embed__frame[data-embed-loaded]::before {
+    content: none;
   }
 
   .s-embed__frame--tall .s-embed__iframe {

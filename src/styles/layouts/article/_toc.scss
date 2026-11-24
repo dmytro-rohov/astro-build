@@ -76,6 +76,11 @@
       gap: var(--spacing-xl);
       max-height: calc(100vh - var(--header-offset, 0px) - var(--spacing-2xl));
       overflow-y: auto;
+
+      // v3.12: a scroll box clips what sticks out: room for the focus rings of its links and
+      // share buttons (WCAG 2.4.7), the content stays where it was.
+      margin: -0.375rem;
+      padding: 0.375rem;
     }
   }
 }

@@ -4,6 +4,8 @@
  * holds a number ("od 2012", "15 lat", "4,9", "1 200 klientów") counts up to it when it scrolls
  * into view. The HTML keeps the final text (no JavaScript, crawlers, screen readers: the real
  * value); years count up from 30 years before, other numbers from 0; reduced motion: no animation.
+ * v3.12: while it counts, screen readers get the final value from a visually hidden copy and skip the
+ * moving one (aria-hidden), never the numbers in between (an aria-label on a <dd> is not read reliably).
  * Included once by BaseLayout.
  */
 ---
@@ -13,7 +15,7 @@
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const NUMBER = /\d[\d\s\u00a0\u202f]*(?:[.,]\d+)?/;
 
-  type Counter = { element: HTMLElement; before: string; after: string; from: number; to: number; decimals: number; comma: boolean; grouped: boolean };
+  type Counter = { element: HTMLElement; shown: HTMLElement; before: string; after: string; from: number; to: number; decimals: number; comma: boolean; grouped: boolean };
 
   const counters: Counter[] = elements.flatMap((element) => {
     const text = element.textContent ?? "";
@@ -27,8 +29,7 @@
     const to = Number(plain.replace(",", "."));
     if (!Number.isFinite(to) || to <= 0) return [];
     const year = !grouped && decimals === 0 && to >= 1900 && to <= 2100;
-    element.setAttribute("aria-label", text.trim());
-    return [{ element, before: text.slice(0, match.index), after: text.slice(match.index + raw.length), from: year ? to - 30 : 0, to, decimals, comma, grouped }];
+    return [{ element, shown: element, before: text.slice(0, match.index), after: text.slice(match.index + raw.length), from: year ? to - 30 : 0, to, decimals, comma, grouped }];
   });
 
   const format = (counter: Counter, value: number) => {
@@ -45,13 +46,25 @@
     const step = (now: number) => {
       const progress = Math.min(1, (now - start) / duration);
       const eased = 1 - (1 - progress) ** 3;
-      counter.element.textContent = format(counter, counter.from + (counter.to - counter.from) * eased);
+      counter.shown.textContent = format(counter, counter.from + (counter.to - counter.from) * eased);
       if (progress < 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
   };
 
   if (!reduced && counters.length && "IntersectionObserver" in window) {
+    // The final text for screen readers, the counting copy only for the eyes.
+    for (const counter of counters) {
+      const final = document.createElement("span");
+      final.className = "visually-hidden";
+      final.textContent = counter.element.textContent;
+      const shown = document.createElement("span");
+      shown.setAttribute("aria-hidden", "true");
+      shown.textContent = counter.element.textContent;
+      counter.element.replaceChildren(final, shown);
+      counter.shown = shown;
+    }
+
     const byElement = new Map(counters.map((counter) => [counter.element, counter]));
     // Runs the count when the number is mostly visible.
     const start = new IntersectionObserver(
@@ -74,7 +87,7 @@
           prepare.unobserve(entry.target);
           const counter = byElement.get(entry.target as HTMLElement);
           if (!counter) continue;
-          counter.element.textContent = format(counter, counter.from);
+          counter.shown.textContent = format(counter, counter.from);
           start.observe(counter.element);
         }
       },

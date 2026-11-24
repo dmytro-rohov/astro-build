@@ -1,4 +1,7 @@
 ---
+import NewTab from "@/components/ui/NewTab.astro";
+import { t } from "@/i18n";
+
 export interface Props {
   href: string;
   variant?: "default" | "muted" | "underline" | "nav";
@@ -23,6 +26,8 @@ const isExternal =
 
 const rel = isExternal ? "noopener noreferrer" : undefined;
 const target = isExternal ? "_blank" : undefined;
+// v3.12: a link to a new tab says so to screen readers (in its own name when it has one).
+const label = ariaLabel && isExternal ? `${ariaLabel} ${t.common.newTab}` : ariaLabel;
 ---
 
 <a
@@ -35,7 +40,7 @@ const target = isExternal ? "_blank" : undefined;
   href={href}
   target={target}
   rel={rel}
-  aria-label={ariaLabel}
+  aria-label={label}
 >
-  <slot />
+  <slot />{isExternal && !ariaLabel && <NewTab />}
 </a>

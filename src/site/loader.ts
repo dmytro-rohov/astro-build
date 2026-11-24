@@ -17,7 +17,7 @@ import { BlogSchema } from "./schema/blog";
 import { findImageSlots, valuesAt } from "./schema/slots";
 import { fontFamilies, fontPairs, pairScripts, scriptsForLanguage } from "../design-system/fonts/library";
 import { checkContrast, resolveTheme } from "../design-system/theme";
-import { BUTTON_KINDS, buttonIssues, type ButtonIssue } from "../design-system/theme/buttons";
+import { BUTTON_KINDS, buttonIssues, fixButtonStyles, type ButtonIssue, type ButtonPalette } from "../design-system/theme/buttons";
 
 export const DEFAULT_SITE_DIR = "sites/_demo";
 
@@ -252,7 +252,8 @@ export function loadSite(dir = resolveSiteDir()): LoadedSite {
     ...(site.layout.article && !site.blog ? ["layout.article: the site has no blog, so the article layout is not used."] : []),
     // v3.11: the site's button styles are its own choice: weak contrast is a warning (in the scheme
     // the site shows first); where a kind would vanish, the theme's adapted buttons stay (cssVars.ts).
-    ...BUTTON_KINDS.flatMap((kind) => buttonIssues(kind, site.theme.buttons?.[kind], theme[theme.colorScheme === "dark" ? "dark" : "light"]).map(buttonWarning)),
+    // v3.12: the build fixes those colors (cssVars.ts) unless the operator keeps them; the warning says which.
+    ...buttonWarnings(site.theme, theme[theme.colorScheme === "dark" ? "dark" : "light"]),
     // Only the schemes the site can show (both for "auto").
     ...theme.adjustments
       .filter((adjustment) => theme.colorScheme === "auto" || adjustment.scheme === theme.colorScheme)
@@ -290,4 +291,22 @@ const BUTTON_CHECKS: Record<ButtonIssue["check"], string> = { text: "the label",
 
 function buttonWarning(issue: ButtonIssue): string {
   return `theme.buttons.${issue.kind}: ${BUTTON_CHECKS[issue.check]} (${issue.foreground} on ${issue.background}) has contrast ${issue.ratio}:1, WCAG AA asks for ${issue.required}:1.`;
+}
+
+/** The contrast problems of the site's button styles and what the build does about them (fixButtonStyles). */
+function buttonWarnings(theme: Site["theme"], palette: ButtonPalette): string[] {
+  const issues = BUTTON_KINDS.flatMap((kind) => buttonIssues(kind, theme.buttons?.[kind], palette));
+  if (!issues.length) return [];
+  if (theme.allowLowContrastButtons) {
+    return issues.map((issue) => `${buttonWarning(issue)} Kept as set (theme.allowLowContrastButtons).`);
+  }
+
+  const { fixes } = fixButtonStyles(theme.buttons, palette);
+  return [
+    ...issues.map(buttonWarning),
+    ...BUTTON_KINDS.flatMap((kind) => {
+      const changed = fixes.filter((fix) => fix.kind === kind).map((fix) => `${fix.property} ${fix.from} → ${fix.to}`);
+      return changed.length ? [`theme.buttons.${kind}: the build uses the nearest colors that pass: ${changed.join(", ")} (theme.allowLowContrastButtons keeps the site's).`] : [];
+    }),
+  ];
 }

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { buttonDefaults } from "../../src/design-system/theme/button-defaults";
-import { buttonIssues, buttonPaint, buttonScopeVars, buttonVars, fixContrast, hoverShade, setColors, vanishingKinds } from "../../src/design-system/theme/buttons";
+import { buttonIssues, buttonPaint, buttonScopeVars, buttonVars, fixButtonStyle, fixButtonStyles, fixContrast, hoverShade, setColors, vanishingKinds } from "../../src/design-system/theme/buttons";
 import { contrast } from "../../src/design-system/theme/color";
 import { accentPalette, resolveTheme } from "../../src/design-system/theme";
 import { loadSite, SiteValidationError } from "../../src/site/loader";
@@ -9,9 +9,9 @@ import { demoSite, writeSite } from "./helpers";
 // v3.11: the site's own button styles (theme.buttons, design-system/theme/buttons.ts).
 const theme = resolveTheme({ archetype: "warm", accent: "#c2410c" });
 
-function load(buttons: unknown) {
+function load(buttons: unknown, extra: Record<string, unknown> = {}) {
   const site = demoSite();
-  site.theme = { ...site.theme, buttons };
+  site.theme = { ...site.theme, buttons, ...extra };
   try {
     return { warnings: loadSite(writeSite(site, { hero: { file: "hero.jpg", alt: "Hero" }, icon: { file: "icon.png", alt: "" } }, ["hero.jpg", "icon.png"])).warnings, issues: [] as string[] };
   } catch (error) {
@@ -36,14 +36,24 @@ describe("theme.buttons in site.json", () => {
     for (const field of ["paddingX", "paddingY", "borderWidth", "radius", "weight", "text", "background", "danger"]) expect(text).toContain(field);
   });
 
-  test("weak contrast is a warning, never an error", () => {
+  test("weak contrast is a warning, never an error; the warning says what the build uses instead", () => {
     const { issues, warnings } = load({ primary: { background: "#eeeeee", text: "#ffffff" } });
     expect(issues).toEqual([]);
     expect(warnings.filter((line) => line.startsWith("theme.buttons.primary"))).toEqual([
       expect.stringContaining("the label (#ffffff on #eeeeee)"),
       expect.stringContaining("the label on hover"),
       expect.stringContaining("the button against the page"),
+      expect.stringMatching(/the build uses the nearest colors that pass: background #eeeeee → #[0-9a-f]{6}, text #ffffff → #[0-9a-f]{6}/),
     ]);
+  });
+
+  test("v3.12: only the operator's flag keeps failing colors, still with the warning", () => {
+    const { issues, warnings } = load({ primary: { background: "#eeeeee", text: "#ffffff" } }, { allowLowContrastButtons: true });
+    expect(issues).toEqual([]);
+    const lines = warnings.filter((line) => line.startsWith("theme.buttons.primary"));
+    expect(lines).toHaveLength(3);
+    for (const line of lines) expect(line).toContain("Kept as set (theme.allowLowContrastButtons).");
+    expect(load({ primary: { text: "#ffffff" } }, { allowLowContrastButtons: "yes" }).issues.join("\n")).toContain("allowLowContrastButtons");
   });
 });
 
@@ -130,6 +140,36 @@ describe("contrast", () => {
     const fixed = fixContrast("#ffffff", "#eeeeee", 4.5);
     expect(contrast(fixed, "#eeeeee")).toBeGreaterThanOrEqual(4.5);
     expect(fixContrast("#000000", "#ffffff", 4.5)).toBe("#000000");
+  });
+
+  test("v3.12: a style is fixed shape first, then its label, then the label on hover; what passes stays", () => {
+    const page = theme.light.background.primary;
+    // White on a pale grey: the background darkens to 3:1 against the page, the label then reads on it,
+    // and on the hover shade that follows the new background.
+    const pale = fixButtonStyle("primary", { background: "#eeeeee", text: "#ffffff", radius: "pill" }, theme.light);
+    expect(pale.fixes.map((fix) => fix.property)).toEqual(["background", "text", "hover.text"]);
+    expect(pale.style.radius).toBe("pill");
+    expect(contrast(pale.style.background!, page)).toBeGreaterThanOrEqual(3);
+    expect(buttonIssues("primary", pale.style, theme.light)).toEqual([]);
+
+    // An outlined button is fixed by its border; a hover background the site set gets a label that reads on it.
+    const outlined = fixButtonStyle("secondary", { background: "transparent", border: "#f4f4f4", text: "#123456", hover: { background: "#123456" } }, theme.light);
+    expect(outlined.fixes.map((fix) => fix.property)).toEqual(["border", "hover.text"]);
+    expect(outlined.style.background).toBe("transparent");
+    expect(buttonIssues("secondary", outlined.style, theme.light)).toEqual([]);
+
+    // Nothing failing: the very same colors.
+    const fine = { background: "#123456", text: "#ffffff" };
+    expect(fixButtonStyle("primary", fine, theme.light)).toEqual({ style: fine, fixes: [] });
+  });
+
+  test("v3.12: the site's styles as built: every kind passes in the scheme it shows", () => {
+    const styles = { primary: { background: "#ffffff", text: "#ffffff" }, ghost: { text: "#fafafa" }, secondary: { paddingX: 2 } };
+    const { styles: fixed, fixes } = fixButtonStyles(styles, theme.light);
+    for (const kind of ["primary", "secondary", "ghost"] as const) expect(buttonIssues(kind, fixed?.[kind], theme.light)).toEqual([]);
+    expect(fixed?.secondary).toEqual({ paddingX: 2 });
+    expect(new Set(fixes.map((fix) => fix.kind))).toEqual(new Set(["primary", "ghost"]));
+    expect(fixButtonStyles(undefined, theme.light)).toEqual({ styles: undefined, fixes: [] });
   });
 });
 

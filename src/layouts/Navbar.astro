@@ -165,6 +165,15 @@ const lists = split && items.length > 1
 
     const isOpen = () => toggle.getAttribute("aria-expanded") === "true";
 
+    // v3.12: the phone menu covers the page: while it is open the page behind it (main, footer) is
+    // inert, so a screen reader cannot wander into what is hidden under it (WCAG 2.4.3).
+    const behind = () => [...document.querySelectorAll<HTMLElement>("main, body > footer, .site-footer")];
+    const setBehindInert = (inert: boolean) => {
+      for (const element of behind()) {
+        element.inert = inert;
+      }
+    };
+
     const closeMenu = ({ returnFocus = false } = {}) => {
       if (!isOpen()) {
         return;
@@ -172,6 +181,7 @@ const lists = split && items.length > 1
 
       toggle.setAttribute("aria-expanded", "false");
       navbar.removeAttribute("data-open");
+      setBehindInert(false);
 
       if (returnFocus) {
         toggle.focus();
@@ -181,6 +191,37 @@ const lists = split && items.length > 1
     const openMenu = () => {
       toggle.setAttribute("aria-expanded", "true");
       navbar.setAttribute("data-open", "");
+      // Only where the menu is a layer over the page (the toggle shows: phones, the overlay menu).
+      setBehindInert(toggle.getClientRects().length > 0);
+    };
+
+    /**
+     * v3.12: a section of this page chosen in the open menu: the menu closes, the page scrolls to the
+     * section and focus moves to its heading (it would fall to the page's start with the hidden link).
+     * Done here, not by the browser: its jump to a section that cannot take focus clears the focus.
+     * Returns false for any other link (it works as usual).
+     */
+    const goToSection = (link: HTMLAnchorElement) => {
+      if (!link.hash || link.origin !== location.origin || link.pathname !== location.pathname) {
+        return false;
+      }
+
+      const section = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+      const heading = section?.querySelector<HTMLElement>("h1, h2, h3") ?? section;
+
+      if (!section || !heading) {
+        return false;
+      }
+
+      if (!heading.hasAttribute("tabindex")) {
+        heading.setAttribute("tabindex", "-1");
+      }
+
+      history.pushState(null, "", link.hash);
+      // Smooth or not as the page scrolls (reduced motion: at once); below the sticky header (scroll-padding-top).
+      section.scrollIntoView({ block: "start" });
+      heading.focus({ preventScroll: true });
+      return true;
     };
 
     toggle.addEventListener("click", () => {
@@ -193,8 +234,15 @@ const lists = split && items.length > 1
 
     // A link, or the empty part of the full-screen phone menu, closes it.
     menu.addEventListener("click", (event) => {
-      if (event.target === menu || (event.target instanceof Element && event.target.closest("a"))) {
+      const link = event.target instanceof Element ? event.target.closest("a") : null;
+
+      if (event.target === menu || link) {
+        const wasOpen = isOpen();
         closeMenu();
+
+        if (wasOpen && link && goToSection(link)) {
+          event.preventDefault();
+        }
       }
     });
 
@@ -212,6 +260,13 @@ const lists = split && items.length > 1
         closeMenu();
       }
     });
+
+    // Grown out of the phone layout while open (rotation, zoom out): the menu is a plain row again.
+    window.addEventListener("resize", () => {
+      if (isOpen() && toggle.getClientRects().length === 0) {
+        closeMenu();
+      }
+    }, { passive: true });
 
     navbar.addEventListener("focusout", (event) => {
       const next = (event as FocusEvent).relatedTarget;

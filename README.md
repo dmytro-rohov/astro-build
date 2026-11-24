@@ -304,6 +304,12 @@ is not styled by sites). Every property is optional; what is not set stays the t
 - **Contrast is a warning, not an error** (the build goes on): the label against its background, on
   hover too (4.5:1), and the button against the page (3:1, by its background or its border). Only
   colors the site sets are judged.
+- **v3.12: failing colors are fixed in the build**, in the scheme the site shows first: the nearest
+  colors that pass (only the lightness moves; `fixButtonStyles` in `design-system/theme/buttons.ts`),
+  the shape first (the background the site set, else the border), then the label, then the label on
+  hover. The warning says which colors the build used. The editor preview shows the same fixed colors.
+  Only the operator keeps a client's failing colors: `"theme": { "allowLowContrastButtons": true }`
+  (never set it from a brief or the client's panel; the warning stays).
 - **Parts of the page with their own palette** (inverse and accent sections, the brand and dark bars,
   footers, the cover hero, the other color scheme): a kind keeps the site's colors there unless they
   would vanish (the same checks against that palette); then the theme's button adapted to that part
@@ -509,6 +515,11 @@ With analytics enabled:
 - "Cookie settings" in the footer (and on the privacy page) reopens the banner,
   so consent can be withdrawn at any time. Any element with
   `data-cookie-settings` does the same.
+- v3.12 (WCAG 2.4.11, 2.4.3): the banner comes right after the skip link (first in the Tab
+  order); Escape minimises it to a small "Cookie settings" button for the session (no choice
+  is stored); while it shows, focused elements scroll above it (`scroll-padding-bottom` and
+  room under the footer); it never gets taller than the screen (it scrolls, compact on phones);
+  after a choice focus returns to the control it was opened from.
 
 ---
 
@@ -668,7 +679,9 @@ per IP (invalid attempts do not count). The pure check is `src/lib/contact/check
 A filled honeypot gets a normal "sent" answer and nothing is sent.
 
 Without JavaScript the form still works: the browser posts it natively and the
-visitor is redirected to `/contact/sent` or `/contact/failed`.
+visitor is redirected to `/contact/sent` or `/contact/failed`. v3.12: the "failed" page links back
+to the page that holds the contact section, at that section (`/#kontakt`), found at build time
+(`src/site/contact-link.ts`).
 
 In development the form logs submissions to the terminal by default.
 In production `CONTACT_DELIVERY_MODE` **must** be set — otherwise the form
@@ -770,6 +783,7 @@ own `/api/contact` does. Both files are regenerated with the catalog; never edit
 | the form's fields | as set | one value per field `id` of `contact.form.fields` (checked by their rules: the service keeps the site's field list, given with the site, and runs `checkSubmission`); without a list the default form: `name` (2–100 chars, single line), `email` (valid, ≤ 254), `subject` (optional, ≤ 150, single line), `message` (10–5000) |
 | `privacy` | yes | non-empty (checkbox `on`) |
 | `website` | — | honeypot: when filled, answer like a success and send nothing |
+| `returnTo` | no | v3.12: the path of the form on the site with its section (`/#kontakt`, `/kontakt#form`): where a "failed" answer may send the visitor back (a path only; the service puts the site's domain in front) |
 
 The request comes from the site's origin (`Origin` header): allow it with CORS and reject other origins.
 
@@ -998,12 +1012,17 @@ End-to-end tests (`tests/e2e/`, desktop and mobile Chrome, demo site):
   404 page, trailing-slash redirect, `robots.txt`, sitemap, manifest, icons
 - **a11y** — axe-core WCAG 2.2 AA on every page, light and dark scheme
 - **cookies** — banner without focus stealing, reject, accept (GA loads only after
-  consent), reopening from the footer, equal button weight
+  consent), reopening from the footer, equal button weight; v3.12: right after the skip
+  link, Escape minimises it, focus back to "Cookie settings", focused elements above it
 - **contact** — successful send, field errors (focus on the first invalid field),
   consent and length validation, rate limit, honeypot, header injection, no-JS
-  redirect, `405` with `Allow`
+  redirect, `405` with `Allow`; v3.12: the form's own check in the site's language
+  (`novalidate`), the required note, focus on the status line after sending
 - **keyboard** — skip link, mobile menu (Enter, Tab into links, Escape returns focus,
-  outside click closes), navigation without JavaScript, visible focus
+  outside click closes; v3.12: the page behind is inert, a section link focuses the
+  section's heading), navigation without JavaScript, visible focus
+- **focus** (v3.12): every keyboard stop shows its focus ring with 3:1 against what it
+  is drawn on (also brand-colored panels); the generic site tests run it on every page
 - **security** — headers on pages, 404, API and static files, CSP without
   `unsafe-inline`, immutable assets/fonts/sprite, `/_image` disabled, no inline `style`
 - **editor-bridge** (`npm run test:bridge`, `PREVIEW_EDITOR_ORIGIN`) — the demo in an iframe of a

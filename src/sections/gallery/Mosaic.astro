@@ -46,7 +46,7 @@ const align = props.align ?? "left";
                     aspect={tile === "wide" ? [2, 1] : [1, 1]}
                     widths={tile ? [480, 800, 1200] : [320, 480, 640]}
                     sizes={tile ? tileSizes(2, 1) : tileSizes(4, 2)}
-                    label={format(t.lightbox.status, { number: index + 1, count })}
+                    label={format(t.lightbox.item, { title: content.title, number: index + 1, count })}
                   />
                   {item.caption && <figcaption class="s-gallery__label">{item.caption}</figcaption>}
                 </figure>

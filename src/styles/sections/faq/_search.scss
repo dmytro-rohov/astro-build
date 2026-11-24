@@ -169,6 +169,11 @@
     padding-inline: var(--spacing-lg);
   }
 
+  // The list clips its corners (overflow: clip): a question's focus ring goes inside its row (v3.12, WCAG 2.4.7).
+  .s-faq-desk__questions :focus-visible {
+    outline-offset: -2px;
+  }
+
   .s-faq-desk__ask {
     display: flex;
     flex-wrap: wrap;

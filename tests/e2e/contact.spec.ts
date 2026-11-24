@@ -22,6 +22,35 @@ test.describe("contact form", () => {
 
     await expect(page.locator("[data-contact-status]")).toHaveAttribute("data-state", "success");
     await expect(page.locator("#contact-name")).toHaveValue("");
+    // v3.12: the fields are empty now, focus goes to what happened (WCAG 2.4.3).
+    await expect(page.locator("[data-contact-status]")).toBeFocused();
+  });
+
+  // v3.12 (WCAG 3.3.1, 3.3.2): the form checks itself with the server's rules and messages in the site's
+  // language, instead of the browser's bubbles; the required mark is explained, also on the consent.
+  test("the form checks itself before sending, in the site's language", async ({ page }) => {
+    let posted = false;
+    page.on("request", (request) => {
+      if (request.method() === "POST") posted = true;
+    });
+    await page.goto("/contact");
+    await page.locator("[data-consent-reject]").click();
+
+    const form = page.locator("form[data-contact-form]");
+    await expect(form).toHaveAttribute("novalidate", "");
+    await expect(form.locator(".contact-form__required-note")).toBeVisible();
+    await expect(form.locator(".checkbox:has(#contact-privacy) .contact-form__required")).toHaveText("*");
+
+    await page.locator("#contact-email").fill("not-an-email");
+    const submit = page.locator('button[type="submit"]');
+    await submit.focus();
+    await page.keyboard.press("Enter");
+
+    await expect(page.locator("[data-contact-status]")).toHaveAttribute("data-state", "error");
+    await expect(page.locator('[data-error-for="email"]')).toHaveText("Enter a valid email address.");
+    await expect(page.locator('[data-error-for="privacy"]')).not.toBeEmpty();
+    await expect(page.locator("#contact-name")).toBeFocused();
+    expect(posted).toBe(false);
   });
 
   test.describe("with server errors", () => {
@@ -33,8 +62,8 @@ test.describe("contact form", () => {
       await page.goto("/contact");
       await page.locator("[data-consent-reject]").click();
 
-      // Skip browser validation to test the server response.
-      await page.locator("form[data-contact-form]").evaluate((form) => form.setAttribute("novalidate", ""));
+      // Skip the form's own check (v3.12) to test the server response.
+      await page.locator("form[data-contact-form]").evaluate((form) => form.removeAttribute("data-check-messages"));
       await page.locator("#contact-email").fill("not-an-email");
       await page.locator('button[type="submit"]').click();
 

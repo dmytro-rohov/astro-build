@@ -5,9 +5,13 @@ import Container from "@/components/layouts/Container.astro";
 import Stack from "@/components/layouts/Stack.astro";
 import Button from "@/components/ui/Button.astro";
 import { t } from "@/i18n";
+import { contactLink } from "@/site/contact-link";
+import { site } from "virtual:site";
 
 // Shown when a contact form submitted without JavaScript could not be sent.
 const page = t.pages.contactFailed;
+// v3.12: back to the page and section that hold the form (there is no /contact page of its own).
+const back = contactLink(site);
 ---
 
 <BaseLayout title={page.title} description={page.description}>
@@ -17,7 +21,7 @@ const page = t.pages.contactFailed;
         <h1>{page.heading}</h1>
         <p>{page.description}</p>
         <div>
-          <Button href="/contact">{page.back}</Button>
+          <Button href={back}>{page.back}</Button>
         </div>
       </Stack>
     </Container>

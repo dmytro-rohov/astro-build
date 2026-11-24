@@ -4,6 +4,10 @@
  * message), consent, honeypot, status line and the script that sends it with fetch (server field errors next to the
  * fields, focus on the first invalid one). Without JavaScript the browser posts it and the server redirects to a result
  * page. The section layouts around it are the contact variants (src/sections/contact/).
+ * v3.12: a visible note explains the required mark (also on the consent); with JavaScript the form checks itself before
+ * sending, with the same rules and messages in the site's language as the server (checkSubmission), instead of the
+ * browser's bubbles in the browser's language (novalidate); the send button keeps the focus while sending, and the
+ * focus moves to the status line once the message is sent (WCAG 3.3.2, 3.3.1, 2.4.3).
  */
 import Link from "@/components/ui/Link.astro";
 import Button from "@/components/ui/Button.astro";
@@ -21,6 +25,7 @@ import Select from "@/components/form/Select.astro";
 
 import { autocompleteOf, DEFAULT_FIELDS, hasHint, maxLengthOf, type FormField as Field } from "@/lib/contact/fields";
 import { fieldLabel } from "@/lib/contact/validateContactForm";
+import type { FormMessages } from "@/lib/contact/checkSubmission";
 import { t } from "@/i18n";
 
 const m = t.contactForm;
@@ -52,6 +57,8 @@ const {
 const hintOf = (field: Field) => field.hint ?? (hasHint(field) ? m.emailHint : undefined);
 const describedBy = (field: Field) => [hintOf(field) ? `contact-${field.id}-hint` : "", `contact-${field.id}-error`].filter(Boolean).join(" ");
 const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
+// The form's own check in the browser: the fields and the dictionary's messages, as the server has them.
+const checkMessages: FormMessages = { nameLabel: m.nameLabel, emailLabel: m.emailLabel, subjectLabel: m.subjectLabel, messageLabel: m.messageLabel, errors: m.errors };
 ---
 
 <form
@@ -63,8 +70,12 @@ const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
   data-msg-success={m.success}
   data-msg-correct-fields={m.correctFields}
   data-msg-generic-error={m.genericError}
+  data-check-fields={JSON.stringify(fields)}
+  data-check-messages={JSON.stringify(checkMessages)}
 >
   <FormGroup gap="lg" class="contact-form__fields">
+    <p class="contact-form__required-note">{m.requiredNote}</p>
+
     {fields.map((field) => (
       <FormField class:list={[field.width === "half" && "contact-form__field--half", `contact-form__field--${field.type}`]}>
         {field.type === "checkbox" ? (
@@ -152,13 +163,13 @@ const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
         <Link href={privacyHref}>
           {m.privacyLink}
         </Link>
-        {m.privacyAfter}
+        {m.privacyAfter}<span class="contact-form__required" aria-hidden="true"> *</span>
       </Checkbox>
 
       <FieldError id="contact-privacy-error" class="contact-form__error" data-error-for="privacy" />
     </FormField>
 
-    <p class="contact-form__status" data-contact-status aria-live="polite"></p>
+    <p class="contact-form__status" data-contact-status aria-live="polite" tabindex="-1"></p>
 
     <Button type="submit" size="lg" class="contact-form__submit">
       {submitLabel}
@@ -167,6 +178,9 @@ const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
 </form>
 
 <script>
+  import { checkSubmission, type FormMessages } from "@/lib/contact/checkSubmission";
+  import type { FormField } from "@/lib/contact/fields";
+
   const forms = document.querySelectorAll("[data-contact-form]");
 
   forms.forEach((form) => {
@@ -174,7 +188,11 @@ const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
       return;
     }
 
-    const status = form.querySelector("[data-contact-status]");
+    // The script checks the form itself (below): no browser bubbles in the browser's language. Without
+    // JavaScript the browser's own check stays.
+    form.noValidate = true;
+
+    const status = form.querySelector<HTMLElement>("[data-contact-status]");
     // Read through attributes and the prototype: a control named like a form property ("action", "reset")
     // would shadow form.action or form.reset().
     const messages = {
@@ -185,7 +203,7 @@ const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
     };
     const action = form.getAttribute("action") ?? "";
     const method = form.getAttribute("method") ?? "post";
-    const submit = form.querySelector('button[type="submit"]');
+    const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
 
     const clearErrors = () => {
       form.querySelectorAll("[data-error-for]").forEach((node) => {
@@ -210,19 +228,60 @@ const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
       }
     };
 
+    const showErrors = (errors: { field: string; message: string }[]) => {
+      errors.forEach((error) => {
+        setFieldError(error.field, error.message);
+      });
+
+      // Move focus to the first invalid field so keyboard and screen reader
+      // users land where the problem is.
+      form.querySelector<HTMLElement>("[aria-invalid='true']")?.focus();
+    };
+
+    // While sending, the button only looks unavailable (aria-disabled): a disabled button would drop
+    // the keyboard focus to the page. A second submit in the meantime does nothing.
+    let sending = false;
+    const setSending = (value: boolean) => {
+      sending = value;
+
+      if (value) {
+        submit?.setAttribute("aria-disabled", "true");
+      } else {
+        submit?.removeAttribute("aria-disabled");
+      }
+    };
+
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
 
+      if (sending) {
+        return;
+      }
+
       clearErrors();
+
+      // The same check as the server's, before anything is sent (the form's fields and messages).
+      const fields = JSON.parse(form.getAttribute("data-check-fields") ?? "[]") as FormField[];
+      const checkMessages = JSON.parse(form.getAttribute("data-check-messages") ?? "null") as FormMessages | null;
+      const check = checkMessages ? checkSubmission(new FormData(form), fields, checkMessages) : undefined;
+
+      if (check && !check.success) {
+        showErrors(check.errors);
+
+        if (status) {
+          status.textContent = messages.msgCorrectFields ?? "";
+          status.setAttribute("data-state", "error");
+        }
+
+        return;
+      }
 
       if (status) {
         status.textContent = messages.msgSending ?? "";
         status.setAttribute("data-state", "pending");
       }
 
-      if (submit instanceof HTMLButtonElement) {
-        submit.disabled = true;
-      }
+      setSending(true);
 
       try {
         const response = await fetch(action, {
@@ -237,13 +296,7 @@ const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
 
         if (!response.ok || !result.success) {
           if (Array.isArray(result.errors)) {
-            result.errors.forEach((error: { field: string; message: string }) => {
-              setFieldError(error.field, error.message);
-            });
-
-            // Move focus to the first invalid field so keyboard and screen reader
-            // users land where the problem is.
-            form.querySelector<HTMLElement>("[aria-invalid='true']")?.focus();
+            showErrors(result.errors);
           }
 
           if (status) {
@@ -259,6 +312,8 @@ const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
         if (status) {
           status.textContent = result.message || messages.msgSuccess || "";
           status.setAttribute("data-state", "success");
+          // The fields are empty now: focus goes to what happened.
+          status.focus();
         }
       } catch (error) {
         console.error(error);
@@ -268,9 +323,7 @@ const INPUT_TYPES = ["text", "email", "tel", "date", "number"] as const;
           status.setAttribute("data-state", "error");
         }
       } finally {
-        if (submit instanceof HTMLButtonElement) {
-          submit.disabled = false;
-        }
+        setSending(false);
       }
     });
   });

@@ -65,6 +65,7 @@ export default {
   common: {
     skipToContent: "Vai al contenuto",
     backToHome: "Torna alla home page",
+    newTab: "(si apre in una nuova scheda)",
   },
 
   nav: {
@@ -190,6 +191,7 @@ export default {
     privacyBefore: "Ho letto e accetto",
     privacyLink: "l’informativa sulla privacy",
     privacyAfter: ".",
+    requiredNote: "I campi contrassegnati da * sono obbligatori.",
     submit: "Invia messaggio",
     sending: "Invio del messaggio…",
     success: "Il tuo messaggio è stato inviato correttamente.",
@@ -306,5 +308,6 @@ export default {
     previous: "Foto precedente",
     next: "Foto successiva",
     status: "Foto {number} di {count}",
+    item: "{title}: foto {number} di {count}",
   },
 } satisfies Dictionary;
