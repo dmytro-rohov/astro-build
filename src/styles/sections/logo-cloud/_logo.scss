@@ -35,4 +35,11 @@
   :is(.s-logos--grid, .s-coverflow, .s-logo-split__tiles) .s-logo {
     mix-blend-mode: multiply;
   }
+
+  // v3.12: the accent ring of a dark scheme (gold, lime) vanishes on the light tile (2.27:1). A mid grey
+  // shows on the tile and on a dark page around it (both over 3:1, WCAG 1.4.11).
+  // On the tile or around it (a tile may draw the ring for its link, :has()), so for the whole group.
+  :is(.s-logos--grid, .s-coverflow, .s-logo-split__tiles) {
+    --color-focus-ring: #6e6e6e;
+  }
 }

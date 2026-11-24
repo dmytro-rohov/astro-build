@@ -66,6 +66,10 @@
     --tilt: -2deg;
     --drop: 0rem;
 
+    // The paper stays light in dark schemes: a dark scheme's accent ring would vanish on it (2.24:1). A mid grey shows
+    // on the paper and on the page around it (both over 3:1, v3.12).
+    --color-focus-ring: #6e6e6e;
+
     display: grid;
     grid-template-rows: auto minmax(2.5rem, auto);
     width: calc(100% + var(--overlap) * 2);

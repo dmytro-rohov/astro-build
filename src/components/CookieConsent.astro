@@ -331,13 +331,25 @@ import { t } from "@/i18n";
   // While the banner (or its small button) is on screen, focused elements scroll above it (WCAG 2.4.11),
   // also the last ones of the page: the page gets that much room under the footer.
   // A constructed style sheet, not a style="" attribute: inline styles are blocked by the CSP.
-  const coverSheet = new CSSStyleSheet();
-  document.adoptedStyleSheets = [...document.adoptedStyleSheets, coverSheet];
+  // Without constructed style sheets (Safari before 16.4) the same values go through the CSSOM, which the CSP allows;
+  // the banner itself never depends on them.
+  let coverSheet: CSSStyleSheet | undefined;
+  try {
+    coverSheet = new CSSStyleSheet();
+    document.adoptedStyleSheets = [...document.adoptedStyleSheets, coverSheet];
+  } catch {
+    coverSheet = undefined;
+  }
 
   const updateCover = (): void => {
     const shown = [banner, reopenButton].find(isShown);
     const covered = shown ? Math.ceil(document.documentElement.clientHeight - shown.getBoundingClientRect().top) : 0;
-    coverSheet.replaceSync(covered > 0 ? `:root { scroll-padding-bottom: ${covered + 8}px; } body { padding-block-end: ${covered}px; }` : "");
+    if (coverSheet) {
+      coverSheet.replaceSync(covered > 0 ? `:root { scroll-padding-bottom: ${covered + 8}px; } body { padding-block-end: ${covered}px; }` : "");
+      return;
+    }
+    document.documentElement.style.setProperty("scroll-padding-bottom", covered > 0 ? `${covered + 8}px` : "");
+    document.body.style.setProperty("padding-block-end", covered > 0 ? `${covered}px` : "");
   };
 
   if (banner) {

@@ -69,6 +69,9 @@ export async function focusRingProblems(page: Page, maxStops = 400): Promise<Rin
       };
       let start: HTMLElement | null = reach <= 0 ? ringed : ringed.parentElement;
       while (start && start.parentElement && !around(start)) start = start.parentElement;
+      // Nothing around the ring (a stop scrolled to the edge of its slider or the viewport): the colours behind its
+      // own boxes, not the page's white default (a dark scheme read as white).
+      if (start && !around(start)) start = reach <= 0 ? ringed : ringed.parentElement;
       const layers: Rgba[] = [];
       for (let node: HTMLElement | null = start; node; node = node.parentElement) {
         const own = getComputedStyle(node);

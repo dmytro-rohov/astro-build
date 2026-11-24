@@ -29,6 +29,11 @@
   // v3.12: the same, kept in the line (not positioned): inside a sideways scroller (a slider) it is
   // clipped with the words around it, an absolute one would widen the page. For a few words in a
   // link, like the new-tab note (NewTab.astro).
+  // In a flex button (Button.astro, the gallery's Explore link) it leaves the flow: no gap before it.
+  :is(.button, .s-explore__more) > .visually-hidden-inline {
+    position: absolute;
+  }
+
   .visually-hidden-inline {
     display: inline-block;
     width: 1px;
