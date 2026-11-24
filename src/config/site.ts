@@ -5,8 +5,9 @@
  * layouts, SEO and JSON-LD code that existed in v2, so they keep working
  * unchanged. Do not put content here.
  */
-import { site } from "virtual:site";
+import { assets, site } from "virtual:site";
 import { getDictionary } from "@/i18n/dictionaries";
+import { ogCover } from "@/design-system/appIcons.generated";
 import { resolveTheme } from "@/design-system/theme";
 import { menuLinks, pageLinks } from "@/site/menu";
 
@@ -44,6 +45,12 @@ const footerGroups: SiteLinkGroup[] = footerContent.groups ?? [
 
 const { business } = site;
 
+/** v3.12: the alt text of the default sharing image when it is a photo (the hero photo or meta.seo.image). */
+const assetAlt = (ref: unknown) => (typeof ref === "string" ? assets[ref.replace(/^asset:/, "")]?.alt : undefined);
+const homeHero = site.pages.find((page) => page.slug === "/")?.sections[0];
+const ogPhotoAlt =
+  ogCover === "photo" && homeHero?.type === "hero" ? assetAlt((homeHero.content as { image?: string }).image) : site.meta.seo.image ? assetAlt(site.meta.seo.image) : undefined;
+
 export const siteConfig = {
   name: site.meta.name,
   description: site.meta.description,
@@ -56,7 +63,7 @@ export const siteConfig = {
 
   seo: {
     image: "/og-cover.jpg",
-    imageAlt: site.meta.seo.imageAlt ?? site.meta.name,
+    imageAlt: site.meta.seo.imageAlt ?? (ogPhotoAlt || site.meta.name),
     imageWidth: 1200,
     imageHeight: 630,
   },
@@ -64,7 +71,6 @@ export const siteConfig = {
   organization: {
     type: business.type,
     name: business.name ?? "",
-    logo: "/icons/icon-512.png",
     email: business.email ?? "",
     phone: business.phone ?? "",
     address: {

@@ -2,9 +2,10 @@
  * Schema.org structured data (JSON-LD) built from siteConfig.
  * BaseLayout renders these on every page as one @graph.
  */
+import { site } from "virtual:site";
 import { siteConfig } from "@/config/site";
 import { lang } from "@/i18n";
-import { openingHoursSpecification } from "@/site/hours";
+import { compact, ownerId, ownerName, ownerNodes, schemaIds, type OwnerOptions } from "@/site/structured-data";
 
 type JsonLdNode = Record<string, unknown>;
 
@@ -19,67 +20,23 @@ export type FaqEntry = {
   answer: string;
 };
 
-/** Removes empty strings, empty arrays and empty objects (recursively). */
-function compact<T>(value: T): T {
-  if (Array.isArray(value)) {
-    return value.map(compact).filter((item) => !isEmpty(item)) as T;
-  }
-
-  if (value && typeof value === "object") {
-    const entries = Object.entries(value)
-      .map(([key, item]) => [key, compact(item)] as const)
-      .filter(([, item]) => !isEmpty(item));
-
-    return Object.fromEntries(entries) as T;
-  }
-
-  return value;
-}
-
-function isEmpty(value: unknown): boolean {
-  if (value === undefined || value === null || value === "") return true;
-  if (Array.isArray(value)) return value.length === 0;
-  if (typeof value === "object") return Object.keys(value).length === 0;
-
-  return false;
-}
-
 const absolute = (path: string, siteUrl: URL | string) =>
   new URL(path, siteUrl).toString();
 
-export const schemaIds = {
-  organization: (siteUrl: URL | string) => absolute("/#organization", siteUrl),
-  website: (siteUrl: URL | string) => absolute("/#website", siteUrl),
-};
+export { schemaIds };
 
-export function organizationSchema(siteUrl: URL | string): JsonLdNode {
-  const org = siteConfig.organization;
-  const { address } = org;
-  const hasAddress = Boolean(address.street || address.city);
+/** v3.12: reference to the site's owner (the Person of a personal site, else the organization), with its name and home page. */
+export function ownerReference(siteUrl: URL | string): JsonLdNode {
+  return { "@id": ownerId(site, siteUrl), name: ownerName(site), url: absolute("/", siteUrl) };
+}
 
-  return compact({
-    "@type": org.type,
-    "@id": schemaIds.organization(siteUrl),
-    name: org.name || siteConfig.name,
-    url: absolute("/", siteUrl),
-    logo: org.logo ? absolute(org.logo, siteUrl) : "",
-    image: org.logo ? absolute(org.logo, siteUrl) : "",
-    email: org.email,
-    telephone: org.phone,
-    address: hasAddress
-      ? {
-          "@type": "PostalAddress",
-          streetAddress: address.street,
-          addressLocality: address.city,
-          postalCode: address.postalCode,
-          addressRegion: address.region,
-          addressCountry: address.country,
-        }
-      : undefined,
-    openingHoursSpecification: openingHoursSpecification(org.hours),
-    priceRange: org.priceRange,
-    sameAs: org.sameAs,
-  });
+/**
+ * The site's owner (src/site/structured-data.ts): a Person (personal sites), a LocalBusiness subtype (with an
+ * address or a service area) or an Organization; v3.12 with the raster logo, a photo instead of the app icon,
+ * hasMap and alternateName.
+ */
+export function ownerSchema(options: Omit<OwnerOptions, "site">): JsonLdNode[] {
+  return ownerNodes({ site, ...options });
 }
 
 export function websiteSchema(siteUrl: URL | string): JsonLdNode {
@@ -90,7 +47,7 @@ export function websiteSchema(siteUrl: URL | string): JsonLdNode {
     name: siteConfig.name,
     description: siteConfig.description,
     inLanguage: lang,
-    publisher: { "@id": schemaIds.organization(siteUrl) },
+    publisher: { "@id": ownerId(site, siteUrl) },
   });
 }
 
@@ -110,7 +67,7 @@ export function webPageSchema(options: {
     description: options.description,
     inLanguage: lang,
     isPartOf: { "@id": schemaIds.website(options.siteUrl) },
-    about: { "@id": schemaIds.organization(options.siteUrl) },
+    about: { "@id": ownerId(site, options.siteUrl) },
     primaryImageOfPage: options.image
       ? { "@type": "ImageObject", url: options.image }
       : undefined,
@@ -162,22 +119,28 @@ export function serializeJsonLd(data: unknown): string {
   return JSON.stringify(data).replace(/</g, "\\u003c");
 }
 
-/** v3.9: one blog post (BlogPosting): its page, dates, image, author and the business as publisher. */
+/**
+ * v3.9: one blog post (BlogPosting): its page, dates, image, author and the owner as publisher. v3.12: dates with
+ * the time and the zone, the author's page (url) when the site has one.
+ */
 export function blogPostingSchema(options: {
   url: string;
   title: string;
   description: string;
   image?: string;
+  /** ISO 8601 date and time with the zone, e.g. "2026-11-18T12:00:00+01:00". */
   published: string;
   modified?: string;
   section?: string;
   tags: string[];
   words: number;
-  /** The blog's author; without one the business wrote it. */
-  author?: { name: string; role?: string; image?: string };
+  /** The blog's author; without one the owner wrote it. */
+  author?: { name: string; role?: string; image?: string; url?: string };
   siteUrl: URL | string;
 }): JsonLdNode {
-  const organization = { "@id": schemaIds.organization(options.siteUrl) };
+  const owner = ownerReference(options.siteUrl);
+  // The author of a personal site's blog is usually the person: then the Person node, with the role and photo.
+  const isOwner = site.business.kind === "personal" && options.author?.name === ownerName(site);
 
   return compact({
     "@type": "BlogPosting",
@@ -194,9 +157,17 @@ export function blogPostingSchema(options: {
     wordCount: options.words,
     inLanguage: lang,
     author: options.author
-      ? { "@type": "Person", name: options.author.name, jobTitle: options.author.role, image: options.author.image, worksFor: organization }
-      : organization,
-    publisher: organization,
+      ? {
+          "@type": "Person",
+          ...(isOwner ? { "@id": schemaIds.person(options.siteUrl) } : {}),
+          name: options.author.name,
+          url: isOwner ? owner.url : options.author.url,
+          jobTitle: options.author.role,
+          image: options.author.image,
+          worksFor: site.business.kind === "personal" ? undefined : { "@id": schemaIds.organization(options.siteUrl) },
+        }
+      : owner,
+    publisher: owner,
     isPartOf: { "@id": schemaIds.website(options.siteUrl) },
   });
 }
@@ -209,7 +180,7 @@ export function blogSchema(options: { url: string; title: string; posts: { title
     url: options.url,
     name: options.title,
     inLanguage: lang,
-    publisher: { "@id": schemaIds.organization(options.siteUrl) },
+    publisher: { "@id": ownerId(site, options.siteUrl) },
     blogPost: options.posts.map((post) => ({ "@type": "BlogPosting", headline: post.title, url: post.url, datePublished: post.published })),
   });
 }

@@ -121,7 +121,8 @@ test("blog: posts list with category buttons, post page with BlogPosting and the
   await page.goto("/blog/why-fast-pages-win");
   await expect(page.locator("h1")).toHaveText("Why fast pages win more clients");
   await expect(page.locator('meta[property="og:type"]')).toHaveAttribute("content", "article");
-  await expect(page.locator('meta[property="article:published_time"]')).toHaveAttribute("content", "2026-11-12");
+  // v3.12: with the time and the zone (noon in the business time zone).
+  await expect(page.locator('meta[property="article:published_time"]')).toHaveAttribute("content", /^2026-11-12T12:00:00[+-]\d\d:\d\d$/);
   const graph = JSON.parse((await page.locator('script[type="application/ld+json"]').first().textContent()) ?? "{}")["@graph"] as { "@type": string }[];
   expect(graph.map((node) => node["@type"])).toEqual(expect.arrayContaining(["BlogPosting", "BreadcrumbList"]));
   await expect(page.locator('.navbar a[href="/blog"]').first()).toHaveAttribute("aria-current", "true");

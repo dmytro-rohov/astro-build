@@ -68,3 +68,14 @@ describe("descriptions", () => {
     expect(pageSummary({ sections: [section({ title: "Gallery", description: "Our work." })] })).toBeUndefined();
   });
 });
+
+describe("business for the structured data", () => {
+  test("a personal site, its job and expertise, a service area and online types", () => {
+    expect(
+      issuesFor((site) => Object.assign(site.business, { kind: "personal", name: "Anna Kowalska", jobTitle: "Fizjoterapeutka", knowsAbout: ["masaż sportowy"], areaServed: ["Wrocław"] })),
+    ).toEqual([]);
+    expect(issuesFor((site) => (site.business.type = "OnlineStore"))).toEqual([]);
+    expect(issuesFor((site) => (site.business.kind = "person"))[0]).toMatch(/^business\.kind: /);
+    expect(issuesFor((site) => (site.business.areaServed = Array(11).fill("Wrocław")))[0]).toMatch(/^business\.areaServed: Too big/);
+  });
+});

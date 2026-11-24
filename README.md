@@ -332,7 +332,8 @@ Images are referenced as `"asset:<id>"` and described in `assets/assets.json`:
 - `meta.icon` (square, ≥ 512 px) becomes the favicon and app icons; without it a **monogram**
   (first letter of the name on the accent color) is generated.
 - Open Graph image: `pages[].seo.image` or `meta.seo.image` (cropped to 1200×630); otherwise
-  `og-cover.jpg` is generated from the name, description and colors.
+  `og-cover.jpg` is generated: v3.12 from the home page's hero photo (cropped around its focal
+  point, its alt text as `og:image:alt`), without one from the name, description and colors.
 - Fonts, icons, favicon and `og-cover.jpg` are generated per site by `npm run build:system`
   (part of `npm run build`) and are not committed.
 
@@ -350,8 +351,8 @@ The public site URL is `meta.url` (origin only, e.g. `https://example.com`); the
 `Astro.site`, canonical links, sitemap, Open Graph URLs and `security.allowedDomains`
 (`www.` is added automatically).
 
-Without `meta.seo.image` the build generates `og-cover.jpg` (1200×630) from the site
-name, description and colors.
+Without `meta.seo.image` the build generates `og-cover.jpg` (1200×630) from the home page's
+hero photo (v3.12), without one from the site name, description and colors.
 
 ---
 
@@ -433,8 +434,21 @@ import { t, format } from "@/i18n";
 Every page gets one `@graph` built from `siteConfig` (`src/lib/seo/schema.ts`);
 the FAQ widget adds a separate `FAQPage` block:
 
-- `Organization` / `LocalBusiness` — set `siteConfig.organization` (type, address,
-  phone, email, opening hours, price range, `sameAs` profiles). Empty fields are skipped.
+- The site's owner from `business` (v3.12, `src/site/structured-data.ts`; empty fields are skipped):
+  - `business.kind: "personal"` (a site about one person): a `Person` (`name`, `jobTitle`,
+    `knowsAbout`, contact, `sameAs`, the blog author's photo as `image`); when the person has a
+    place (see below) also the practice as a local business, linked by `worksFor` / `founder`
+  - a business with an address or a service area (`business.areaServed`): its `LocalBusiness`
+    subtype with the address, opening hours, price range and `hasMap` (the Google Maps link
+    among `sameAs`); engine types schema.org does not have become real ones (`DanceSchool`,
+    `MusicSchool`, `LanguageSchool`: `LocalBusiness` + `EducationalOrganization`, `YogaStudio`:
+    `SportsActivityLocation`)
+  - without either: an `Organization` (Google wants an address for every `LocalBusiness`);
+    `OnlineBusiness` / `OnlineStore` and `Organization` types stay as they are
+  - `name` is `business.name` with `meta.name` as `alternateName` when they differ; `logo` is
+    `meta.logo` as a PNG of at least 112 px (`/icons/logo.png`), else an uploaded `meta.icon`,
+    none for a monogram; `image` is the sharing photo (the hero photo or `meta.seo.image`, not
+    the text card)
 - `WebSite` and `WebPage` (with language)
 - `BreadcrumbList` — automatic Home › page on subpages; override with
   `<BaseLayout breadcrumbs={[...]}>` or turn off with `breadcrumbs={false}`
@@ -442,7 +456,9 @@ the FAQ widget adds a separate `FAQPage` block:
 - v3.9: `BlogPosting` on every post page (headline, dates, image, category, tags, word count, the
   blog's author as a `Person` or the business), `Blog` with its posts on the blog page; post pages
   have `og:type` article with `article:published_time`, `modified_time`, `section` and `tag`, and
-  the trail Home › Blog › post
+  the trail Home › Blog › post. v3.12: dates with the time and zone (noon in the business time
+  zone, e.g. `2026-11-18T12:00:00+01:00`); the author's `url` is the site's about section; on a
+  personal site an author with the person's name is the `Person` node
 
 Extra nodes (Service, Product, Event…) can be passed with `<BaseLayout jsonLd={...}>`.
 
@@ -902,7 +918,9 @@ build draws a monogram — the first letter of `meta.name` on the accent color.
 `npm run build:app-icons` (part of `build:system`) generates `favicon.ico`,
 `favicon.svg` (SVG sources and monograms), `icons/icon-192.png`, `icons/icon-512.png`
 and `icons/apple-touch-icon.png` (opaque), plus the Open Graph image when
-`meta.seo.image` is not set. The 512 px icon is also the logo in structured data;
+`meta.seo.image` is not set (v3.12: the home page's hero photo cropped to 1200×630 around its
+focal point, the text card only without one), and `icons/logo.png` from `meta.logo` for structured
+data (v3.12; an uploaded icon serves without a logo, a monogram never);
 `site.webmanifest` is generated from site.json.
 
 ---

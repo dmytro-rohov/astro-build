@@ -140,7 +140,11 @@ export const BUSINESS_TYPES = [
   "HardwareStore", "JewelryStore", "PetStore", "SportingGoodsStore", "BikeStore",
   "LodgingBusiness", "Hotel", "BedAndBreakfast", "Hostel", "TravelAgency",
   "DryCleaningOrLaundry", "EmploymentAgency", "EntertainmentBusiness", "EventVenue", "SelfStorage",
+  // v3.12: a business that works online only (no place customers visit).
+  "OnlineBusiness", "OnlineStore",
 ] as const;
+
+export type BusinessType = (typeof BUSINESS_TYPES)[number];
 
 export function isReservedSlug(slug: string): boolean {
   return (RESERVED_SLUGS as readonly string[]).includes(slug) || RESERVED_PREFIXES.some((prefix) => slug.startsWith(prefix));
@@ -185,9 +189,37 @@ export const BusinessSchema = z.strictObject({
     label: "Rodzaj działalności",
     fieldType: "select",
     editable: false,
-    description: "schema.org type: Organization, LocalBusiness or a more specific subtype (DanceSchool, AutoRepair, CafeOrCoffeeShop…).",
+    description:
+      "schema.org type: Organization, LocalBusiness or a more specific subtype (DanceSchool, AutoRepair, CafeOrCoffeeShop…); " +
+      "v3.12: OnlineBusiness or OnlineStore for a business customers never visit.",
+  }),
+  // v3.12: who the site is about, for the structured data (src/site/structured-data.ts).
+  kind: field(z.enum(["business", "personal"]).optional(), {
+    label: "Strona firmy czy osoby",
+    fieldType: "select",
+    editable: false,
+    description:
+      '"personal": a site about one person (specialist, freelancer, artist, portfolio); the structured data then describe a Person ' +
+      '(name = business.name, with jobTitle and knowsAbout) and type keeps choosing the look. Default "business".',
   }),
   name: field(text(80).optional(), { label: "Nazwa firmy", fieldType: "text", description: "Legal or public business name; defaults to meta.name." }),
+  jobTitle: field(text(80).optional(), {
+    label: "Zawód",
+    fieldType: "text",
+    description: 'v3.12, personal sites: what the person does, e.g. "Fizjoterapeutka" (schema.org jobTitle).',
+  }),
+  knowsAbout: field(z.array(text(60)).max(10).optional(), {
+    label: "Specjalizacje",
+    fieldType: "list",
+    description: 'v3.12: up to 10 fields of expertise of the person or the business, e.g. ["rehabilitacja kolana", "masaż sportowy"].',
+  }),
+  areaServed: field(z.array(text(80)).max(10).optional(), {
+    label: "Obszar działania",
+    fieldType: "list",
+    description:
+      'v3.12: up to 10 places served, e.g. ["Wrocław", "powiat wrocławski"]; for a business that comes to its customers without a ' +
+      "public address. A local type (Plumber, HairSalon…) is described as a local business only with an address or this.",
+  }),
   email: field(z.email().max(254).optional(), { label: "E-mail", fieldType: "text", description: "Public contact email." }),
   phone: field(z.string().regex(/^\+?[\d\s()-]{6,20}$/, "Phone number, e.g. +48 600 100 200.").optional(), {
     label: "Telefon",

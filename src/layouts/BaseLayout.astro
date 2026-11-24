@@ -8,14 +8,17 @@ import { isNoindexPath, NOINDEX_ROBOTS } from "@/config/indexing";
 import { dir, format, ogLocale, pageTitle, t } from "@/i18n";
 import { siteTheme } from "@/site/theme";
 import { fontPreloads } from "@/design-system/fonts.generated";
-import { hasSvgFavicon } from "@/design-system/appIcons.generated";
+import { brandLogo, hasSvgFavicon, ogCover } from "@/design-system/appIcons.generated";
 import { EditorBridge, editorOrigin } from "virtual:editor-bridge";
-import { noindex as siteNoindex } from "virtual:site";
+import { site, noindex as siteNoindex } from "virtual:site";
+import { getImage } from "astro:assets";
+import { getAsset } from "@/site/assets";
+import { ogImageOf } from "@/site/og";
 import { ENGINE_VERSION } from "@/site/engine";
 import { FACTORY_URL, WORDMARK, generatorName, sourceComment } from "@/site/signature";
 import {
   breadcrumbSchema,
-  organizationSchema,
+  ownerSchema,
   schemaGraph,
   serializeJsonLd,
   webPageSchema,
@@ -61,7 +64,7 @@ const {
   titleIsFull = false,
   seoTitle,
   description = siteConfig.description,
-  image = siteConfig.seo.image,
+  image: imageProp,
   imageAlt = siteConfig.seo.imageAlt,
   canonicalPath = Astro.url.pathname,
   robots: robotsProp = "index, follow",
@@ -76,6 +79,9 @@ const {
 } = Astro.props;
 
 const siteUrl = Astro.site ?? Astro.url.origin;
+// The site's own sharing image (meta.seo.image cropped, else /og-cover.jpg): also on the engine's pages.
+const siteImage = await ogImageOf();
+const image = imageProp ?? siteImage;
 const canonicalUrl = new URL(canonicalPath, siteUrl);
 const socialImageUrl = new URL(image, siteUrl);
 const ogType = pageType;
@@ -102,8 +108,21 @@ const breadcrumbNode = isIndexable && breadcrumbItems
   : undefined;
 const extraNodes = jsonLd ? [jsonLd].flat() : [];
 
+// v3.12: the owner's logo (none for a monogram), a photo of the business (not the text card) and the person's portrait
+// (a personal site's blog author photo).
+const authorPhoto = site.business.kind === "personal" ? site.blog?.author?.photo : undefined;
+const portrait = authorPhoto
+  ? (await getImage({ src: getAsset(authorPhoto).image, width: 400, height: 400, fit: "cover", format: "jpg" })).src
+  : undefined;
+const absoluteUrl = (path?: string | null) => (path ? new URL(path, siteUrl).toString() : undefined);
+
 const structuredData = schemaGraph([
-  organizationSchema(siteUrl),
+  ...ownerSchema({
+    siteUrl,
+    logo: absoluteUrl(brandLogo),
+    image: site.meta.seo.image || ogCover === "photo" ? absoluteUrl(siteImage) : undefined,
+    portrait: absoluteUrl(portrait),
+  }),
   websiteSchema(siteUrl),
   ...(isIndexable
     ? [webPageSchema({
