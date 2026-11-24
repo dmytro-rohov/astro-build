@@ -962,12 +962,17 @@ End-to-end tests (`tests/e2e/`, desktop and mobile Chrome, demo site):
   404 page, trailing-slash redirect, `robots.txt`, sitemap, manifest, icons
 - **a11y** — axe-core WCAG 2.2 AA on every page, light and dark scheme
 - **cookies** — banner without focus stealing, reject, accept (GA loads only after
-  consent), reopening from the footer, equal button weight
+  consent), reopening from the footer, equal button weight; v3.12: right after the skip
+  link, Escape minimises it, focus back to "Cookie settings", focused elements above it
 - **contact** — successful send, field errors (focus on the first invalid field),
   consent and length validation, rate limit, honeypot, header injection, no-JS
-  redirect, `405` with `Allow`
+  redirect, `405` with `Allow`; v3.12: the form's own check in the site's language
+  (`novalidate`), the required note, focus on the status line after sending
 - **keyboard** — skip link, mobile menu (Enter, Tab into links, Escape returns focus,
-  outside click closes), navigation without JavaScript, visible focus
+  outside click closes; v3.12: the page behind is inert, a section link focuses the
+  section's heading), navigation without JavaScript, visible focus
+- **focus** (v3.12): every keyboard stop shows its focus ring with 3:1 against what it
+  is drawn on (also brand-colored panels); the generic site tests run it on every page
 - **security** — headers on pages, 404, API and static files, CSP without
   `unsafe-inline`, immutable assets/fonts/sprite, `/_image` disabled, no inline `style`
 - **editor-bridge** (`npm run test:bridge`, `PREVIEW_EDITOR_ORIGIN`) — the demo in an iframe of a
