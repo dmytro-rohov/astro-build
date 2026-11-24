@@ -61,16 +61,21 @@ const head = Astro.slots.has("head");
       const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
       return item ? item.offsetWidth + gap : track.clientWidth;
     };
+    // v3.12: at an end a button is only marked unavailable (aria-disabled): a disabled button would
+    // drop the keyboard focus to the page (WCAG 2.4.3). A click there does nothing.
+    const setAvailable = (button: HTMLButtonElement, available: boolean) =>
+      available ? button.removeAttribute("aria-disabled") : button.setAttribute("aria-disabled", "true");
+    const available = (button: HTMLButtonElement) => button.getAttribute("aria-disabled") !== "true";
     const update = () => {
-      previous.disabled = track.scrollLeft <= 2;
-      next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+      setAvailable(previous, track.scrollLeft > 2);
+      setAvailable(next, track.scrollLeft + track.clientWidth < track.scrollWidth - 2);
 
       const current = Math.round(track.scrollLeft / step());
       dots.forEach((dot, index) => (index === current ? dot.setAttribute("aria-current", "true") : dot.removeAttribute("aria-current")));
     };
 
-    previous.addEventListener("click", () => track.scrollBy({ left: -step() }));
-    next.addEventListener("click", () => track.scrollBy({ left: step() }));
+    previous.addEventListener("click", () => available(previous) && track.scrollBy({ left: -step() }));
+    next.addEventListener("click", () => available(next) && track.scrollBy({ left: step() }));
     dots.forEach((dot, index) => dot.addEventListener("click", () => track.scrollTo({ left: index * step() })));
     track.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update, { passive: true });

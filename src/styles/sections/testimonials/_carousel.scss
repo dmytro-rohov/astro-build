@@ -118,7 +118,7 @@
     border-color: color-mix(in srgb, var(--ink) 45%, transparent);
   }
 
-  .s-carousel .slider__button:hover:not(:disabled) {
+  .s-carousel .slider__button:hover:not([aria-disabled="true"]) {
     background: color-mix(in srgb, var(--ink) 14%, transparent);
     border-color: var(--ink);
   }

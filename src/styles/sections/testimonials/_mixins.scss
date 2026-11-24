@@ -9,6 +9,9 @@
   --color-text-muted: color-mix(in srgb, var(--ink) 45%, transparent);
   --color-border-default: color-mix(in srgb, var(--ink) 28%, transparent);
   --color-border-strong: color-mix(in srgb, var(--ink) 55%, transparent);
+
+  // v3.12: controls (the slider's dots) in the ink, as in an accent section (3:1 needed).
+  --color-border-control: var(--ink);
   --color-action-primary: var(--ink);
   --color-action-primary-text: var(--brand);
   --color-focus-ring: var(--ink);
