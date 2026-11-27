@@ -3,6 +3,9 @@ import type { Page } from "@playwright/test";
 import { test, expect, PAGES } from "./fixtures";
 
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
+
+// v3.14: every block as it is (entrance animations off), so axe checks the whole page, not only the first screen.
+test.use({ reducedMotion: "reduce" });
 const THEMES = ["light", "dark"] as const;
 
 async function expectNoViolations(page: Page, path: string, theme: (typeof THEMES)[number]) {

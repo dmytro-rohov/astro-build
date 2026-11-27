@@ -8,7 +8,7 @@
 import { assets, site } from "virtual:site";
 import { getDictionary } from "@/i18n/dictionaries";
 import { ogCover } from "@/design-system/appIcons.generated";
-import { resolveTheme } from "@/design-system/theme";
+import { DEFAULT_MOTION, resolveTheme, type MotionLevel } from "@/design-system/theme";
 import { menuLinks, pageLinks } from "@/site/menu";
 
 export type SiteLink = {
@@ -62,6 +62,8 @@ export const siteConfig = {
   keywords: [] as string[],
 
   colorScheme: resolveTheme(site.theme).colorScheme as SiteColorScheme,
+  /** v3.14: entrance animations (<html data-motion>, widgets/Reveal.astro). */
+  motion: (site.theme?.motion ?? DEFAULT_MOTION) as MotionLevel,
 
   seo: {
     image: "/og-cover.jpg",

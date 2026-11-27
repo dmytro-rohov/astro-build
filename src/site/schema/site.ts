@@ -6,7 +6,7 @@ import { z } from "zod";
 import { ENGINE_RANGE_PATTERN, ENGINE_VERSION, satisfiesEngine } from "../engine";
 import { ARCHETYPE_IDS } from "../../design-system/archetypes";
 import { fontPairs, type FontPairId } from "../../design-system/fonts/library";
-import { OVERRIDABLE_KEYS } from "../../design-system/theme";
+import { MOTION_LEVELS, OVERRIDABLE_KEYS } from "../../design-system/theme";
 import { BUTTON_HOVER_EFFECTS, BUTTON_KINDS, BUTTON_RADII, BUTTON_RANGES, BUTTON_SHADOWS, BUTTON_WEIGHTS, TRANSPARENT } from "../../design-system/theme/buttons";
 import { layoutTypes, sectionTypes } from "../registry";
 import { Action, DAYS, field, HttpsUrl, Id, imageSlot, Slug, text, Time, type ImageSlot } from "./fields";
@@ -349,6 +349,10 @@ const ThemeSchema = z.strictObject({
     .boolean()
     .optional()
     .describe("v3.12, operator only: keep the button colors of theme.buttons as they are even where they fail WCAG contrast (by default the build fixes them)."),
+  motion: z
+    .enum(MOTION_LEVELS)
+    .optional()
+    .describe("v3.14: how the sections come in while the page scrolls: none, subtle (the default: a short rise with a fade) or lively (more movement, pictures grow in, out at the top and back). Never for visitors who reduce motion, in the editor or in print."),
 });
 
 const NavigationSchema = z.strictObject({

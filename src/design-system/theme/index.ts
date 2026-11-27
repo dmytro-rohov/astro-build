@@ -28,6 +28,11 @@ export const OVERRIDABLE_KEYS = [
 
 export type OverrideKey = (typeof OVERRIDABLE_KEYS)[number];
 
+/** v3.14: how the sections come in while the page scrolls (theme.motion; widgets/Reveal.astro). */
+export const MOTION_LEVELS = ["none", "subtle", "lively"] as const;
+export type MotionLevel = (typeof MOTION_LEVELS)[number];
+export const DEFAULT_MOTION: MotionLevel = "subtle";
+
 export type ThemeInput = {
   archetype?: ArchetypeId;
   colorScheme?: "light" | "dark" | "auto";
@@ -36,6 +41,8 @@ export type ThemeInput = {
   overrides?: { light?: Partial<Record<OverrideKey, string>>; dark?: Partial<Record<OverrideKey, string>> };
   /** v3.11: the site's own button styles (./buttons.ts); not part of the palette. */
   buttons?: ButtonStyles;
+  /** v3.14: entrance animations (DEFAULT_MOTION when not set); not part of the palette. */
+  motion?: MotionLevel;
 };
 
 export type ContrastAdjustment = { scheme: "light" | "dark"; token: string; from: string; to: string };

@@ -1,0 +1,83 @@
+---
+/**
+ * v3.14: entrance animations (theme.motion, read from <html data-motion>), included by BaseLayout unless
+ * the site says "none". Blocks of the sections below the first screen come in when they scroll into view:
+ * "subtle" a short rise with a fade, once; "lively" more movement, pictures grow in, and a block that
+ * leaves at the top goes out and comes back when it is scrolled to again (styles/components/_reveal.scss).
+ *
+ * Only blocks below the first screen wait hidden (data-reveal=""), so nothing on the first screen moves or
+ * blinks, and without JavaScript nothing is hidden at all. Blocks: section headers, list items, cards,
+ * tiles and pictures; nothing inside a block is marked again. The hero, custom sections (their own motion),
+ * the logo cloud and anything inside [data-no-reveal] stay still. Visitors who reduce motion get no marks;
+ * the editor (html[data-editor]), print and keyboard focus show every block as it is.
+ * Data attributes only: a style="" attribute would break the CSP.
+ */
+---
+
+<script>
+  const root = document.documentElement;
+  const level = root.dataset.motion;
+  const SECTIONS = "main > .s:not(.s-hero, .s-custom, .s-logo-cloud)";
+  const BLOCKS = [
+    ".s-header",
+    "li",
+    "[class*='__item']",
+    "[class*='__card']:not([class*='__cards'])",
+    "[class*='__tile']",
+    "figure",
+    "picture",
+    "img",
+    "[class*='__media']",
+    "[class*='__image']",
+  ].join(", ");
+  const isMedia = (block: HTMLElement) => /^(FIGURE|PICTURE|IMG)$/.test(block.tagName) || /__(media|image)\b/.test(block.className);
+
+  if ((level === "subtle" || level === "lively") && "IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const lively = level === "lively";
+    // The first screen (a little above its bottom edge, where the observer starts too) never waits.
+    const fold = window.innerHeight * 0.9;
+    // Reads first, writes after: one layout for the whole page.
+    const chosen: { block: HTMLElement; below: boolean }[] = [];
+    let last: HTMLElement | undefined;
+    for (const section of document.querySelectorAll<HTMLElement>(SECTIONS)) {
+      for (const block of section.querySelectorAll<HTMLElement>(BLOCKS)) {
+        // Nothing inside a block is a block of its own (also when the outer one stays still).
+        if (last?.contains(block) || block.closest("[data-no-reveal]")) continue;
+        const box = block.getBoundingClientRect();
+        if (!box.width && !box.height) continue;
+        last = block;
+        const below = box.top >= fold;
+        // "subtle" leaves the first screen alone; "lively" also lets it go out at the top.
+        if (below || lively) chosen.push({ block, below });
+      }
+    }
+
+    const order = new Map<Element | null, number>();
+    for (const { block, below } of chosen) {
+      // Neighbours come in one after another (a row of cards), four steps at most.
+      const index = order.get(block.parentElement) ?? 0;
+      order.set(block.parentElement, index + 1);
+      if (index % 4) block.dataset.revealOrder = String(index % 4);
+      if (isMedia(block)) block.dataset.revealKind = "media";
+      block.dataset.reveal = below ? "" : "shown";
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const { target, isIntersecting, boundingClientRect } of entries) {
+          const block = target as HTMLElement;
+          const state = block.dataset.reveal;
+          if (isIntersecting) {
+            if (state === "" || state === "out" || state === "down") block.dataset.reveal = state === "out" ? "back" : "in";
+            if (!lively) observer.unobserve(block);
+          } else if (lively && state !== "") {
+            // Out at the top (scrolling down) or at the bottom (scrolling back up).
+            block.dataset.reveal = boundingClientRect.top < 0 ? "out" : "down";
+          }
+        }
+      },
+      { rootMargin: lively ? "-8% 0px -10% 0px" : "0px 0px -10% 0px" },
+    );
+    for (const { block } of chosen) observer.observe(block);
+  }
+</script>
