@@ -103,6 +103,8 @@ const ownPalette: ButtonPalette = { background: { primary: background.primary, m
 
   function start(origin: string) {
     const post = (message: object) => window.parent.postMessage(message, origin);
+    // v3.14: in the editor every block shows as it is, without entrance animations (styles/components/_reveal.scss).
+    document.documentElement.dataset.editor = "";
     let focused: HTMLElement | undefined;
 
     post({

@@ -1,0 +1,86 @@
+// v3.14: entrance animations (theme.motion; widgets/Reveal.astro marks the blocks with data-reveal).
+// The states: "" waits below the first screen (hidden), "in" comes in from below, "back" comes in from
+// above, "out" leaves at the top, "down" leaves at the bottom (both "lively" only), "shown" was on the
+// first screen. Animations, not transitions: a section's own transitions (hover) stay as they are, and
+// once a block is in, its own styles apply again (fill "backwards" only).
+// Hidden states only on screen, for visitors who allow motion, outside the editor: reduced motion (also
+// the factory's screenshots), print and the editor always show the page as it is.
+@layer motion {
+  :root[data-motion="subtle"] {
+    --reveal-distance: 1.75rem;
+    --reveal-scale: 1;
+    --reveal-duration: 700ms;
+    --reveal-step: 90ms;
+  }
+
+  :root[data-motion="lively"] {
+    --reveal-distance: 3.5rem;
+    --reveal-scale: 0.92;
+    --reveal-duration: 850ms;
+    --reveal-step: 110ms;
+  }
+
+  @media screen and (prefers-reduced-motion: no-preference) {
+    :root:not([data-editor]) {
+      [data-reveal=""] {
+        opacity: 0;
+      }
+
+      [data-reveal="in"],
+      [data-reveal="back"] {
+        animation: reveal-in var(--reveal-duration) var(--motion-easing-out) backwards;
+      }
+
+      [data-reveal="back"] {
+        --reveal-from: -1;
+      }
+
+      [data-reveal="out"],
+      [data-reveal="down"] {
+        animation: reveal-out var(--reveal-duration) var(--motion-easing-standard) forwards;
+      }
+
+      [data-reveal="out"] {
+        --reveal-to: -1;
+      }
+
+      [data-reveal-kind="media"] {
+        --reveal-grow: var(--reveal-scale);
+      }
+
+      [data-reveal-order="1"] {
+        animation-delay: var(--reveal-step);
+      }
+
+      [data-reveal-order="2"] {
+        animation-delay: calc(var(--reveal-step) * 2);
+      }
+
+      [data-reveal-order="3"] {
+        animation-delay: calc(var(--reveal-step) * 3);
+      }
+
+      // Keyboard focus never lands on something hidden (WCAG 2.4.7).
+      [data-reveal]:focus-within {
+        opacity: 1;
+        animation: none;
+      }
+    }
+  }
+
+  @keyframes reveal-in {
+    from {
+      opacity: 0;
+      translate: 0 calc(var(--reveal-distance) * var(--reveal-from, 1));
+      scale: var(--reveal-grow, 1);
+    }
+  }
+
+  @keyframes reveal-out {
+    to {
+      opacity: 0;
+      translate: 0 calc(var(--reveal-distance) * var(--reveal-to, 1));
+      scale: var(--reveal-grow, 1);
+    }
+  }
+}

@@ -3,6 +3,7 @@ import Header from "@/layouts/Header.astro";
 import Footer from "@/layouts/Footer.astro";
 import CookieConsent from "@/components/CookieConsent.astro";
 import Counters from "@/components/widgets/Counters.astro";
+import Reveal from "@/components/widgets/Reveal.astro";
 import { siteConfig } from "@/config/site";
 import { isNoindexPath, NOINDEX_ROBOTS } from "@/config/indexing";
 import { dir, format, ogLocale, pageTitle, t } from "@/i18n";
@@ -138,14 +139,14 @@ const structuredData = schemaGraph([
   ...extraNodes,
 ]);
 
-const { colorScheme } = siteConfig;
+const { colorScheme, motion } = siteConfig;
 const dataTheme = colorScheme === "auto" ? undefined : colorScheme;
 const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
 
 ---
 
 <!doctype html>
-<html lang={lang} dir={dir} data-theme={dataTheme}>
+<html lang={lang} dir={dir} data-theme={dataTheme} data-motion={motion}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -231,6 +232,7 @@ const colorSchemeMeta = colorScheme === "auto" ? "light dark" : colorScheme;
     </main>
     {showFooter && <Footer />}
     <Counters />
+    {motion !== "none" && <Reveal />}
     <span
       hidden
       data-signature

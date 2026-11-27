@@ -14,6 +14,7 @@ import {
 } from "./src/config/indexing.ts";
 import { loadSite, resolveSiteDir, SiteValidationError } from "./src/site/loader.ts";
 import { siteVitePlugin } from "./src/site/vite-plugin.ts";
+import { CSS_TARGET } from "./src/site/css-target.ts";
 import { cspForSite } from "./src/site/csp.ts";
 import { previewEditorOrigin } from "./src/site/editor-bridge.ts";
 import { sitemapDates } from "./src/site/sitemap.ts";
@@ -130,6 +131,9 @@ export default defineConfig({
 
   vite: {
     plugins: [siteVitePlugin(siteDir, { gaId, editorOrigin, noindex })],
+    // v3.14: the CSS minifier gets the browsers written out (src/site/css-target.ts), or it folds
+    // animation-timeline into the animation shorthand and browsers drop the whole declaration.
+    build: { cssTarget: CSS_TARGET },
     server: {
       // SITE_DIR may live outside the project (client sites repository).
       fs: { allow: [process.cwd(), siteDir] },

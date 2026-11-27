@@ -373,6 +373,30 @@ is not styled by sites). Every property is optional; what is not set stays the t
   module) for an editor: the properties and ranges, `buttonVars`, `buttonIssues`, `fixContrast` and
   `buttonDefaults(theme)` (each kind's colors in both schemes, the page, the theme's radius).
 
+#### Entrance animations (`theme.motion`, since 3.14)
+
+How the blocks of the sections come in while the page scrolls:
+
+```json
+"theme": { "archetype": "energetic", "motion": "lively" }
+```
+
+| Value | What a visitor sees |
+| --- | --- |
+| `subtle` (the default) | a short rise (1.75 rem) with a fade, once; neighbours (a row of cards) one after another |
+| `lively` | more movement (3.5 rem), pictures grow in (92 % to 100 %); a block that leaves at the top goes out and comes back when it is scrolled to again |
+| `none` | no entrance animations (the script is not on the page) |
+
+Only blocks below the first screen wait hidden: nothing on the first screen moves or blinks, and
+without JavaScript nothing is hidden at all. Blocks are section headers, list items, cards, tiles and
+pictures (`src/components/widgets/Reveal.astro`); nothing inside a block is marked again. The hero,
+custom sections (their own motion), the logo cloud and anything inside `[data-no-reveal]` stay still.
+Visitors who reduce motion, print, the editor (`html[data-editor]`, set by the bridge) and keyboard
+focus always show a block as it is; the factory's screenshots reduce motion. The script sets data
+attributes only (`data-reveal`, `data-reveal-order`, `data-reveal-kind`), never `style=""` (CSP); the
+styles are animations, not transitions, so a section's own hover transitions stay as they are
+(`src/styles/components/_reveal.scss`, cascade layer `motion`, after `tokens`).
+
 ### Assets and images
 
 Images are referenced as `"asset:<id>"` and described in `assets/assets.json`:
@@ -1181,6 +1205,8 @@ In the editor, links do not leave the page: a click on a link to another page, `
 a new tab only selects its section (the panel is the place to edit; header and footer links do
 nothing). Links within the page, buttons, forms and widgets (menu, sliders, lightbox, FAQ) work as
 usual. Opened on its own, outside a frame, a preview build behaves like a normal site.
+v3.14: in the editor the bridge sets `html[data-editor]`, and every block shows as it is, without
+entrance animations.
 
 ---
 
@@ -1269,8 +1295,15 @@ are `signature.poweredBy` in every language). v3.12: no engine version anywhere 
 
 ## Version
 
-Current version: **v3.13** (`3.13.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
+Current version: **v3.14** (`3.14.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
 starter is kept on the `v2` branch / tag `v2.0.0`.
+
+v3.14: entrance animations (`theme.motion`: `subtle` by default, `lively` or `none`;
+[Entrance animations](#entrance-animations-thememotion-since-314)). The CSS minifier gets its
+browsers written out (`src/site/css-target.ts`, `vite.build.cssTarget`): without them Lightning CSS
+folded `animation-timeline` into the `animation` shorthand, browsers dropped the whole declaration and
+the scroll-driven animations of custom sections never ran. Sites that set `theme.motion` should ask
+for `"engine": "^3.14.0"`; sites without it get `subtle`.
 
 v3.13: custom sections, layouts of the site's own (`customLayouts`: fields, template, CSS), checked
 by the engine and drawn like its variants ([Custom sections](#custom-sections-customlayouts-since-313));

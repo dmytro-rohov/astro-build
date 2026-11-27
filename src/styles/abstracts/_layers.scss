@@ -1,4 +1,5 @@
 // Cascade layer order: the first rule of main.scss and of every stylesheet a section component
 // imports, so a sheet loaded in any order still lands in the right layer. It is the order the
 // layers have always had in the bundle (first use in main.scss), so nothing moves.
-@layer reset, base, components, layout, utilities, state, widgets, tokens;
+// v3.14: "motion" last: the entrance animations (components/_reveal.scss) over a section's own styles.
+@layer reset, base, components, layout, utilities, state, widgets, tokens, motion;
