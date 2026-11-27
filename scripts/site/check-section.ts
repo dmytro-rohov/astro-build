@@ -124,7 +124,8 @@ try {
 
   const schemes = site.theme.colorScheme === "auto" ? (["light", "dark"] as const) : ([site.theme.colorScheme === "dark" ? "dark" : "light"] as const);
   for (const scheme of schemes) {
-    const browserContext = await browser.newContext({ colorScheme: scheme, viewport: { width: 1440, height: 900 } });
+    // v3.14.1: reduced motion, so every block shows as it is (theme.motion).
+    const browserContext = await browser.newContext({ colorScheme: scheme, viewport: { width: 1440, height: 900 }, reducedMotion: "reduce" });
     const tab = await browserContext.newPage();
     await tab.goto(server.url + page!.slug);
     await tab.waitForTimeout(300);

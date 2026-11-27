@@ -90,7 +90,8 @@ if (buildOk) {
 
       for (const scheme of schemes) {
         // axe needs a page from an explicit browser context.
-        const browserContext = await browser.newContext({ colorScheme: scheme as "light" | "dark" });
+        // v3.14.1: reduced motion, so every block shows as it is (entrance animations hide the ones below the first screen).
+        const browserContext = await browser.newContext({ colorScheme: scheme as "light" | "dark", reducedMotion: "reduce" });
         const tab = await browserContext.newPage();
         await tab.route(/googletagmanager\.com|google-analytics\.com/, (route) => route.abort());
         await tab.goto(server.url + page.slug);
@@ -118,7 +119,8 @@ if (buildOk) {
         // where one runs, headless Chrome waited 25 s for it before its first request.
         const chrome = await chromeLauncher.launch({
           chromePath: chromium.executablePath(),
-          chromeFlags: ["--headless=new", "--no-sandbox"],
+          // v3.14.1: reduced motion here too, for the same reason as axe above.
+          chromeFlags: ["--headless=new", "--no-sandbox", "--force-prefers-reduced-motion"],
           envVars: { ...process.env, DBUS_SESSION_BUS_ADDRESS: "disabled:" },
         });
 
