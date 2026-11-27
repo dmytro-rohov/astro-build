@@ -1295,7 +1295,7 @@ are `signature.poweredBy` in every language). v3.12: no engine version anywhere 
 
 ## Version
 
-Current version: **v3.14** (`3.14.0`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
+Current version: **v3.14** (`3.14.1`), `schemaVersion` 1 (v3.0 sites work unchanged). The v2
 starter is kept on the `v2` branch / tag `v2.0.0`.
 
 v3.14: entrance animations (`theme.motion`: `subtle` by default, `lively` or `none`;
@@ -1303,7 +1303,9 @@ v3.14: entrance animations (`theme.motion`: `subtle` by default, `lively` or `no
 browsers written out (`src/site/css-target.ts`, `vite.build.cssTarget`): without them Lightning CSS
 folded `animation-timeline` into the `animation` shorthand, browsers dropped the whole declaration and
 the scroll-driven animations of custom sections never ran. Sites that set `theme.motion` should ask
-for `"engine": "^3.14.0"`; sites without it get `subtle`.
+for `"engine": "^3.14.0"`; sites without it get `subtle`. 3.14.1: the site report's axe and Lighthouse
+and `site:check-section`'s axe run with reduced motion, so they check every block, not only the first
+screen.
 
 v3.13: custom sections, layouts of the site's own (`customLayouts`: fields, template, CSS), checked
 by the engine and drawn like its variants ([Custom sections](#custom-sections-customlayouts-since-313));
